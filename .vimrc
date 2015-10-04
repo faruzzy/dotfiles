@@ -1,4 +1,4 @@
-set nocompatible    "Behave like vime and not like vi! (Much, much better)
+set nocompatible    "Behave like vim and not like vi! (Much, much better)
 filetype off                  " required
 
 filetype plugin indent on    " required
