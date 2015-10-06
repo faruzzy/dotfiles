@@ -1,7 +1,27 @@
 set nocompatible    "Behave like vim and not like vi! (Much, much better)
-filetype off                  " required
+if has("autocmd")
+    " Enable file type detection
+    filetype on                  
+    filetype plugin indent on    
+    " Treat .json files as .js
+    autocmd BufNewFile,Bufread *.json setfiletype json syntax=javascript
+    " Treat .md files as Markdown
+    autocmd BufNewFile,Bufread *.md setlocal filetype=markdown
+endif
 
-filetype plugin indent on    " required
+" Strip trailing whitespace (,ss)
+function! StripWhitespace()
+    let save_cursor = getpos(".")
+    let old_query = getreg('/')
+    :%s/\s\+$//e
+    call setpos('.', save_cursor)
+    call setreg('/', old_query)
+endfunction
+
+"noremap <leader>ss :call StripWhitespace()<CR>
+" Save a file as root (,W)
+"noremap <leader>W :w !sudo tee % > /dev/null<CR>
+
 syntax on
 
 set autoindent      "alwasy set autoindenting on
@@ -19,9 +39,21 @@ set sw=4
 
 set splitright  "By default, split to the right
 set splitbelow
+
 set ruler       "Display Cursor Position
+
+" Don't add empty new lines at the end of files
+set binary
+set noeol
+
+" Highlight current line
+set cursorline
 set title       "Display filename in titlebar
 set titleold=   "Prevent the "Thanks for flying Vim"
+
+" Show "invisible" characters
+"set lcs=tab:▸\ ,trail:·,eol:¬,nbsp:_
+"set list
 
 
 " Search options
@@ -29,13 +61,14 @@ set incsearch   "Display search resultings as you type
 set hlsearch    "Highlight search
 set ignorecase
 set smartcase
+" Optimize for fast terminal connections
 set ttyfast
 set ttymouse=xterm2
 set ttyscroll=3
 set lazyredraw          	    " Wait to redraw "
 
 " ------------------
-set mouse=a;    "Enable mouse in all modes
+set mouse=a    "Enable mouse in all modes
 set wildmenu
 
 set backspace=indent,eol,start
@@ -47,12 +80,18 @@ set nocursorline
 
 "
 " Settings
-"
 
-set noerrorbells	"No beeps
-set number      "Add line numbers
-set showcmd	" Show me what I'm typing
-set showmode    "Show the current mode
+"No beeps
+set noerrorbells	"No beeps 
+
+"Add line numbbbers
+set number      
+
+"Show me what I'm typing
+set showcmd	    
+
+"Show the current mode
+set showmode    
 
 set noswapfile                  " No beeps
 set nobackup                    " Don't create annoying backup files
@@ -64,7 +103,7 @@ set hidden
 
 syntax sync minlines=256
 set synmaxcol=300
-set re=1
+"set re=1
 set statusline=%<%f\ %h%m%r%{fugitive#statusline()}%=%-14.(%l,%c%V%)\ %P
 
 set fileformats=unix,dos,mac    " Prefer Unix over Windows over OS 9 formats
@@ -99,4 +138,3 @@ set wildignore+=*.orig                           " Merge resolution files
 
 set ofu=syntaxcomplete#Complete                  "Set omni-completion method.
 set report=0    "Show all changes
-
