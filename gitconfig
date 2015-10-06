@@ -24,7 +24,7 @@
 	required = true
 [alias]
     st = status -sb
-    ci = commit
+    c = commit
     all = commit -am
     br = branch
     co = checkout
@@ -41,6 +41,42 @@
     unstage = reset HEAD --
     prev = checkout -
     discard = checkout -- 
+    rlc = !git reset --hard HEAD~1                  # Remove last commit
+    ulc = reset --soft HEAD~1                       # Undo last commit
+
+    # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+    # Credit an author on the latest commit
+
+    credit = "!f() { \
+        if [ -n \"$1\" ] && [ -n \"$2\" ]; then \
+            git commit --amend --author \"$1 <$2>\" -C HEAD; \
+        fi \
+    }; f"
+
+    # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+    # List remote branches
+
+    lrb = "!f() { \
+        remote="${1:-origin}"; \
+        git ls-remote --heads "$remote"; \
+    }; f"
+
+    # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+    # Merge GitHub pull request on top of the `master` branch
+
+    mpr = "!f() { \
+        if [ $(printf \"%s\" \"$1\" | grep '^[0-9]\\+$' > /dev/null; printf $?) -eq 0 ]; then \
+            git fetch origin refs/pull/$1/head:pr/$1 && \
+            git rebase master pr/$1 && \
+            git checkout master && \
+            git merge pr/$1 && \
+            git branch -D pr/$1 && \
+            git commit --amend -m \"$(git log -1 --pretty=%B)\n\nClose #$1\"; \
+        fi \
+    }; f"
 [color]
     ui = auto
 [color "branch"]
