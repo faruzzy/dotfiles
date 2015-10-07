@@ -1,3 +1,7 @@
+alias mysql=/usr/local/mysql/bin/mysql
+alias mysqladmin=/usr/local/mysql/bin/mysqladmin
+alias python="python3"
+
 # Easier navigation: .., ..., ~ and -
 alias ..="cd .."
 alias ...="cd ../.."
@@ -40,7 +44,7 @@ alias nom="rm -rf node_modules && npm cache clear && npm i"
 
 # general shortcuts
 alias pro="cd ~/projects"
-alias gh="open -a google\ chrome 'http://github.com/addyosmani'"
+alias gh="open -a google\ chrome 'http://github.com/faruzzy'"
 alias bl="open -a google\ chrome 'http://browserling.com'"
 
 # be nice

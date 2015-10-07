@@ -1,8 +1,5 @@
 # Load ~/.extra, ~/.bash_prompt, ~/.exports, ~/.aliases and ~/.functions
 # ~/.extra can be used for settings you don’t want to commit
-#alias python="python3"
-#alias mysql=/usr/local/mysql/bin/mysql
-#alias mysqladmin=/usr/local/mysql/bin/mysqladmin
 for file in ~/.{extra,bash_prompt,exports,aliases,functions}; do
         [ -r "$file" ] && source "$file"
 done
