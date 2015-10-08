@@ -69,6 +69,10 @@ set lazyredraw          	    " Wait to redraw "
 
 " ------------------
 set mouse=a    "Enable mouse in all modes
+
+" Option to aid in pasting text unmodified from other applications
+set paste
+
 set wildmenu
 
 set backspace=indent,eol,start
