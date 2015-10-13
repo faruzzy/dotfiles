@@ -151,5 +151,8 @@ set report=0    "Show all changes
 " https://github.com/junegunn/fzf
 set rtp+=~/.fzf
 
+" Enabling neocomplete at startup
+let g:neocomplete#enable_at_startup = 1
+
 autocmd StdinReadPre * let s:std_in=1
 autocmd VimEnter * if argc() == 0 && !exists("s:std_in") | NERDTree | endif
