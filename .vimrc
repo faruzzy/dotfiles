@@ -1,4 +1,4 @@
-set nocompatible    "Behave like vim and not like vi! (Much, much better)
+et nocompatible    "Behave like vim and not like vi! (Much, much better)
 colorscheme hybrid
 set background=dark
 
@@ -147,3 +147,9 @@ set wildignore+=*.orig                           " Merge resolution files
 
 set ofu=syntaxcomplete#Complete                  "Set omni-completion method.
 set report=0    "Show all changes
+
+" https://github.com/junegunn/fzf
+set rtp+=~/.fzf
+
+autocmd StdinReadPre * let s:std_in=1
+autocmd VimEnter * if argc() == 0 && !exists("s:std_in") | NERDTree | endif
