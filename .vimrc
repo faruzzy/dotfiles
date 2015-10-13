@@ -1,4 +1,9 @@
 set nocompatible    "Behave like vim and not like vi! (Much, much better)
+colorscheme hybrid
+set background=dark
+
+execute pathogen#infect()
+
 if has("autocmd")
     " Enable file type detection
     filetype on                  
