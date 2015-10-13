@@ -1,4 +1,4 @@
-et nocompatible    "Behave like vim and not like vi! (Much, much better)
+set nocompatible    "Behave like vim and not like vi! (Much, much better)
 colorscheme hybrid
 set background=dark
 
@@ -56,7 +56,7 @@ set cursorline
 set nocursorcolumn
 "hi CursorLine term=none ctermbg=darkblue ctermfg=white
 "hi CursorLine term=none ctermbg=LightBlue ctermfg=white
-hi CursorLine term=none ctermbg=250 ctermfg=white "235
+hi CursorLine term=none ctermbg=205 ctermfg=white 
 
 set title       "Display filename in titlebar
 set titleold=   "Prevent the "Thanks for flying Vim"
