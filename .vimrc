@@ -53,6 +53,11 @@ set noeol
 
 " Highlight current line
 set cursorline
+set nocursorcolumn
+"hi CursorLine term=none ctermbg=darkblue ctermfg=white
+"hi CursorLine term=none ctermbg=LightBlue ctermfg=white
+hi CursorLine term=none ctermbg=250 ctermfg=white "235
+
 set title       "Display filename in titlebar
 set titleold=   "Prevent the "Thanks for flying Vim"
 
@@ -83,11 +88,6 @@ set wildmenu
 set backspace=indent,eol,start
 set history=100
 
-" speed up syntax highlighting
-set nocursorcolumn
-set nocursorline
-
-"
 " Settings
 
 "No beeps
