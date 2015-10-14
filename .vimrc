@@ -29,6 +29,9 @@ noremap <leader>ss :call StripWhitespace()<CR>
 " Save a file as root (,W)
 noremap <leader>W :w !sudo tee % > /dev/null<CR>
 
+" Run python code by pressing F9
+nnoremap <buffer> <F9> :exec '!python' shellescape(@%, 1)<cr>
+
 set autoindent      "alwasy set autoindenting on
 set smartindent
 
