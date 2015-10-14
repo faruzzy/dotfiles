@@ -14,6 +14,16 @@ if has("autocmd")
     autocmd BufNewFile,Bufread *.json setfiletype json syntax=javascript
     " Treat .md files as Markdown
     autocmd BufNewFile,Bufread *.md setlocal filetype=markdown
+
+	autocmd StdinReadPre * let s:std_in=1
+	autocmd VimEnter * if argc() == 0 && !exists("s:std_in") | NERDTree | endif
+
+	autocmd BufNewFile,BufRead *.py
+		\ setlocal tabstop=4
+		\ setlocal softtabstop=4
+		\ setlocal shiftwidth=4
+		\ setlocal smarttab
+		\ setlocal expandtab
 endif
 
 " Strip trailing whitespace (,ss)
@@ -162,6 +172,3 @@ let mapleader=","
 
 " Explore with NerdTree Style by default
 let g:netrw_liststyle=3
-
-autocmd StdinReadPre * let s:std_in=1
-autocmd VimEnter * if argc() == 0 && !exists("s:std_in") | NERDTree | endif
