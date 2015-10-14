@@ -1,6 +1,7 @@
 set nocompatible    "Behave like vim and not like vi! (Much, much better)
 colorscheme hybrid
 set background=dark
+syntax on
 
 execute pathogen#infect()
 
@@ -22,12 +23,10 @@ function! StripWhitespace()
     call setpos('.', save_cursor)
     call setreg('/', old_query)
 endfunction
+noremap <leader>ss :call StripWhitespace()<CR>
 
-"noremap <leader>ss :call StripWhitespace()<CR>
 " Save a file as root (,W)
-"noremap <leader>W :w !sudo tee % > /dev/null<CR>
-
-syntax on
+noremap <leader>W :w !sudo tee % > /dev/null<CR>
 
 set autoindent      "alwasy set autoindenting on
 set smartindent
