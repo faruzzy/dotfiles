@@ -10,20 +10,22 @@ if has("autocmd")
     " Enable file type detection
     filetype on                  
     filetype plugin indent on    
+
     " Treat .json files as .js
     autocmd BufNewFile,Bufread *.json setfiletype json syntax=javascript
+
     " Treat .md files as Markdown
     autocmd BufNewFile,Bufread *.md setlocal filetype=markdown
 
 	autocmd StdinReadPre * let s:std_in=1
 	autocmd VimEnter * if argc() == 0 && !exists("s:std_in") | NERDTree | endif
 
-	autocmd BufNewFile,BufRead *.py
-		\ setlocal tabstop=4
-		\ setlocal softtabstop=4
-		\ setlocal shiftwidth=4
-		\ setlocal smarttab
-		\ setlocal expandtab
+	autocmd BufNewFile,Bufread *.py
+		setlocal tabstop=4
+		setlocal softtabstop=4
+		setlocal shiftwidth=4
+		setlocal smarttab
+		setlocal expandtab
 endif
 
 " Strip trailing whitespace (,ss)
