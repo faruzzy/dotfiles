@@ -4,6 +4,7 @@ set background=dark
 syntax on
 
 execute pathogen#infect()
+execute pathogen#helptags()
 
 if has("autocmd")
     " Enable file type detection
@@ -14,9 +15,6 @@ if has("autocmd")
     " Treat .md files as Markdown
     autocmd BufNewFile,Bufread *.md setlocal filetype=markdown
 endif
-
-" Change leader to ','
-let mapleader=","
 
 " Strip trailing whitespace (,ss)
 function! StripWhitespace()
@@ -155,6 +153,12 @@ set rtp+=~/.fzf
 
 " Enabling neocomplete at startup
 let g:neocomplete#enable_at_startup = 1
+
+" Change leader to ','
+let mapleader=","
+
+" Explore with NerdTree Style by default
+let g:netrw_liststyle=3
 
 autocmd StdinReadPre * let s:std_in=1
 autocmd VimEnter * if argc() == 0 && !exists("s:std_in") | NERDTree | endif
