@@ -15,6 +15,9 @@ if has("autocmd")
     autocmd BufNewFile,Bufread *.md setlocal filetype=markdown
 endif
 
+" Change leader to ','
+let mapleader=","
+
 " Strip trailing whitespace (,ss)
 function! StripWhitespace()
     let save_cursor = getpos(".")
