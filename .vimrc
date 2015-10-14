@@ -19,14 +19,18 @@ if has("autocmd")
 
 	autocmd StdinReadPre * let s:std_in=1
 	autocmd VimEnter * if argc() == 0 && !exists("s:std_in") | NERDTree | endif
-
-	autocmd BufNewFile,Bufread *.py
-		setlocal tabstop=4
-		setlocal softtabstop=4
-		setlocal shiftwidth=4
-		setlocal smarttab
-		setlocal expandtab
+	autocmd Filetype python call SetPythonOptions()
 endif
+
+" Sets python options 
+function! SetPythonOptions()
+	setlocal tabstop=4
+	setlocal softtabstop=4
+	setlocal shiftwidth=4
+	setlocal textwidth=80
+	setlocal smarttab
+	setlocal expandtab
+endfunction
 
 " Strip trailing whitespace (,ss)
 function! StripWhitespace()
@@ -69,9 +73,6 @@ set noeol
 " Highlight current line
 set cursorline
 set nocursorcolumn
-"hi CursorLine term=none ctermbg=darkblue ctermfg=white
-"hi CursorLine term=none ctermbg=LightBlue ctermfg=white
-hi CursorLine term=none ctermbg=205 ctermfg=white 
 
 set title       "Display filename in titlebar
 set titleold=   "Prevent the "Thanks for flying Vim"
