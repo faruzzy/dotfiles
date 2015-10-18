@@ -41,6 +41,8 @@ Session.vim
 # ----------------------------------------------------------------------
 
 .idea/
+.vim/plugged/
+.gitignore
 # Compiled Python files
 *.pyc
 
