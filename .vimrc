@@ -3,8 +3,14 @@ colorscheme hybrid
 set background=dark
 syntax on
 
-execute pathogen#infect()
-execute pathogen#helptags()
+call plug#begin('~/.vim/plugged')
+
+Plug 'tpope/vim-fugitive'
+Plug 'gregsexton/gitv', { 'on': 'Gitv' }
+Plug 'easymotion/vim-easymotion'
+Plug 'airblade/vim-gitgutter'
+Plug 'Shougo/neocomplete.vim'
+Plug 'bling/vim-airline'
 
 if has("autocmd")
     " Enable file type detection
@@ -109,8 +115,10 @@ set history=100
 "No beeps
 set noerrorbells	"No beeps 
 
-"Add line numbbbers
+"Add line numbers
 set number      
+
+set relativenumber
 
 "Show me what I'm typing
 set showcmd	    
