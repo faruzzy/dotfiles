@@ -11,6 +11,14 @@ Plug 'gregsexton/gitv', { 'on': 'Gitv' }
 if v:version >= 703
   Plug 'mhinz/vim-signify'
 endif
+
+"Lang
+Plug 'groenewege/vim-less'
+Plug 'pangloss/vim-javascript'
+Plug 'kchmck/vim-coffee-script'
+Plug 'plasticboy/vim-markdown'
+Plug 'elzr/vim-json', {'for' : 'json'}
+
 Plug 'easymotion/vim-easymotion'
 "Plug 'airblade/vim-gitgutter'
 Plug 'Shougo/neocomplete.vim'
@@ -136,7 +144,7 @@ set lazyredraw          	    " Wait to redraw "
 set mouse=a    "Enable mouse in all modes
 
 " Option to aid in pasting text unmodified from other applications
-set paste
+"set paste
 
 set wildmenu
 
@@ -211,6 +219,12 @@ set rtp+=~/.fzf
 
 " Enabling neocomplete at startup
 let g:neocomplete#enable_at_startup = 1
+
+" Use smartcase
+let g:neocomplete#enable_smart_case = 1
+
+" Set minimum syntax keyword length.
+let g:neocomplete#sources#syntax#min_keyword_length = 3
 
 " Change leader to ','
 let mapleader=","
