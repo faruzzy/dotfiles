@@ -43,6 +43,14 @@ function parse_git_branch() {
 	git branch --no-color 2> /dev/null | sed -e '/^[^*]/d' -e "s/* \(.*\)/\1$(parse_git_dirty)/"
 }
 
+# https://gist.github.com/jamiew/790086
+function parse_svn_revision() {
+	local DIRTY REV=$(svn info 2>/dev/null | grep Revision | sed -e 's/Revision: //')
+	[ "$REV" ] || return
+	[ "$(svn st)" ] && DIRTY=' *'
+	echo "(r$REV$DIRTY)"
+}
+
 # iTerm Tab and Title Customization and prompt customization
 # http://sage.ucsc.edu/xtal/iterm_tab_customization.html
 
@@ -54,4 +62,4 @@ function parse_git_branch() {
 # in the iterm tab
 # \[\e]1;\]$(basename $(dirname $PWD))/\W\[\a\]
 
-PS1="\[\e]2;$PWD\[\a\]\[\e]1;\]$(basename "$(dirname "$PWD")")/\W\[\a\]\[${BOLD}${MAGENTA}\]\u \[$WHITE\]at \[$ORANGE\]\h \[$WHITE\]in \[$GREEN\]\w\[$WHITE\]\$([[ -n \$(git branch 2> /dev/null) ]] && echo \" on \")\[$PURPLE\]\$(parse_git_branch)\[$WHITE\]\n\$ \[$RESET\]"
+PS1="\[\e]2;$PWD\[\a\]\[\e]1;\]$(basename "$(dirname "$PWD")")/\W\[\a\]\[${BOLD}${MAGENTA}\]\u \[$WHITE\]at \[$ORANGE\]\h \[$WHITE\]in \[$GREEN\]\w\[$WHITE\]\$([[ -n \$(git branch 2> /dev/null) ]] && echo \" on \")\[$PURPLE\]\$(parse_git_branch)\$(parse_svn_revision)\[$WHITE\]\n\$ \[$RESET\]"
