@@ -1,4 +1,4 @@
-set nocompatible    "Behave like vim and not like vi! (Much, much better)
+"set nocompatible    "Behave like vim and not like vi! (Much, much better)
 colorscheme hybrid
 set background=dark
 syntax on
@@ -6,8 +6,8 @@ syntax on
 call plug#begin('~/.vim/plugged')
 
 " Git
-Plug 'tpope/vim-fugitive'
 Plug 'gregsexton/gitv', { 'on': 'Gitv' }
+Plug 'tpope/vim-fugitive'
 if v:version >= 703
   Plug 'mhinz/vim-signify'
 endif
@@ -25,6 +25,8 @@ Plug 'Shougo/neocomplete.vim'
 Plug 'bling/vim-airline'
 Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': 'yes \| ./install' }
 Plug 'tpope/vim-surround'
+Plug 'fatih/vim-go'
+Plug 'mileszs/ack.vim'
 
 function! BuildYCM(info)
   " info is a dictionary with 3 fields
@@ -39,7 +41,6 @@ endfunction
 Plug 'Valloric/YouCompleteMe', { 'do': function('BuildYCM') }
 Plug 'junegunn/vim-pseudocl'
 Plug 'junegunn/vim-oblique'
-Plug 'junegunn/limelight.vim'
 
 call plug#end()
 
@@ -164,8 +165,8 @@ set relativenumber
 "Show me what I'm typing
 set showcmd	    
 
-"Show the current mode
-set showmode    
+"Don't Show the current mode Since we're using airline
+set noshowmode    
 
 set noswapfile                  " No beeps
 set nobackup                    " Don't create annoying backup files
@@ -226,8 +227,26 @@ let g:neocomplete#enable_smart_case = 1
 " Set minimum syntax keyword length.
 let g:neocomplete#sources#syntax#min_keyword_length = 3
 
+" ==================== YouCompleteMe ====================
+let g:ycm_autoclose_preview_window_after_completion = 1
+let g:ycm_min_num_of_chars_for_completion = 1
+
+" <TAB>: completion.
+inoremap <expr><TAB>  pumvisible() ? "\<C-n>" : "\<TAB>"
+
+let g:airline_theme='powerlineish'
+
 " Change leader to ','
 let mapleader=","
+
+" ==================== FZF =========================
+nnoremap <Leader>f :FZF<CR>
+
+" ==================== Fugitive ====================
+nnoremap <leader>ga :Git add %:p<CR><CR>
+nnoremap <leader>gs :Gstatus<CR>
+nnoremap <leader>gp :Gpush<CR>
+vnoremap <leader>gb :Gblame<CR>
 
 " Explore with NerdTree Style by default
 let g:netrw_liststyle=3
