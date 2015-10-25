@@ -11,27 +11,6 @@ unset file
 # init rvm
 #source ~/.rvm/scripts/rvm
 
-# Case-insensitive globbing (used in pathname expansion)
-shopt -s nocaseglob
-
-# Prefer US English and use UTF-8
-export LC_ALL="en_US.UTF-8"
-export LANG="en_US"
-
-export PATH="/usr/local/mysql/bin:$PATH"
-export M2_HOME=/Applications/apache-maven-3.2.5
-export PATH=$PATH:$M2_HOME/bin
-export JAVA_HOME=$(/usr/libexec/java_home -v 1.6)
-
-# Case-insensitive globbing (used in pathname expansion)
-shopt -s nocaseglob
-
-# Append to the Bash history file, rather than overwriting it
-shopt -s histappend
-
-# Autocorrect typos in path names when using `cd`
-shopt -s cdspell
-
 # Enable some Bash 4 features when possible:
 # * `autocd`, e.g. `**/qux` will enter `./foo/bar/baz/qux`
 # * Recursive globbing, e.g. `echo **/*.txt`
