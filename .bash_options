@@ -1,0 +1,28 @@
+# !/bin/bash
+
+# Autocorrect typos in path names when using `cd`
+shopt -s cdspell
+
+# Case-insensitive globbing (used in pathname expansion)
+shopt -s nocaseglob
+
+# Append to the Bash histroy file, rather than overwritting it
+shopt -s histappend
+
+# Do not attempt to search the PATH for possible completions when 
+# completion is attempted on an empty line
+shopt -s no_empty_cmd_completion
+
+# Use extended pattern matching features
+shopt -s extglob
+
+# Include filenames beginning with a "." in the filename expansion
+shopt -s dotglob
+
+# Save all lines of a multiple-line command in the same history entry
+shopt -s cmdhist
+
+# Check the window size after each command and, if necessary, update
+# the values of `LINES` and `COLUMNS`
+shopt -s checkwinsize
+
