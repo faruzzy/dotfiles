@@ -9,36 +9,47 @@ call plug#begin('~/.vim/plugged')
 Plug 'gregsexton/gitv', { 'on': 'Gitv' }
 Plug 'tpope/vim-fugitive'
 if v:version >= 703
-  Plug 'mhinz/vim-signify'
+	Plug 'mhinz/vim-signify'
+elseif
+	Plug 'airblade/vim-gitgutter'
 endif
 
-"Lang
+" Lang
+Plug 'plasticboy/vim-markdown'
+Plug 'fatih/vim-go'
+Plug 'garyburd/go-explorer'
+
+" Web Development
+Plug 'mattn/emmet-vim', { 'for' : ['html', 'css'] }
+Plug 'skammer/vim-css-color', {'for': 'css'}
+Plug 'Shutnik/jshint2.vim'
 Plug 'groenewege/vim-less'
 Plug 'pangloss/vim-javascript'
 Plug 'kchmck/vim-coffee-script'
-Plug 'plasticboy/vim-markdown'
 Plug 'elzr/vim-json', {'for' : 'json'}
+Plug 'digitaltoad/vim-jade', {'for': 'jade'}
 
+" Misc
 Plug 'easymotion/vim-easymotion'
-"Plug 'airblade/vim-gitgutter'
-Plug 'Shougo/neocomplete.vim'
 Plug 'bling/vim-airline'
 Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': 'yes \| ./install' }
 Plug 'tpope/vim-surround'
-Plug 'fatih/vim-go'
 Plug 'mileszs/ack.vim'
 
 function! BuildYCM(info)
-  " info is a dictionary with 3 fields
-  " - name:   name of the plugin
-  " - status: 'installed', 'updated', or 'unchanged'
-  " - force:  set on PlugInstall! or PlugUpdate!
-  if a:info.status == 'installed' || a:info.force
-    !./install.py --clang-completer --omnisharp-completer 
-  endif
+	" info is a dictionary with 3 fields
+	" - name:   name of the plugin
+	" - status: 'installed', 'updated', or 'unchanged'
+	" - force:  set on PlugInstall! or PlugUpdate!
+	if a:info.status == 'installed' || a:info.force
+		!./install.py --clang-completer --omnisharp-completer 
+	endif
 endfunction
 
+" Auto Completion
 Plug 'Valloric/YouCompleteMe', { 'do': function('BuildYCM') }
+Plug 'Shougo/neocomplete.vim'
+
 Plug 'junegunn/vim-pseudocl'
 Plug 'junegunn/vim-oblique'
 
@@ -46,12 +57,12 @@ call plug#end()
 
 set formatoptions+=1
 if has('patch-7.3.541')
-  set formatoptions+=j
+	set formatoptions+=j
 endif
 if has('patch-7.4.338')
-  let &showbreak = '↳ '
-  set breakindent
-  set breakindentopt=sbr
+	let &showbreak = '↳ '
+	set breakindent
+	set breakindentopt=sbr
 endif
 
 if has("autocmd")
@@ -68,6 +79,7 @@ if has("autocmd")
 	autocmd StdinReadPre * let s:std_in=1
 	autocmd VimEnter * if argc() == 0 && !exists("s:std_in") | NERDTree | endif
 	autocmd Filetype python call SetPythonOptions()
+	autocmd BufWritePost *.js silent :JSHint
 endif
 
 " Sets python options 
@@ -246,6 +258,7 @@ nnoremap <Leader>f :FZF<CR>
 nnoremap <leader>ga :Git add %:p<CR><CR>
 nnoremap <leader>gs :Gstatus<CR>
 nnoremap <leader>gp :Gpush<CR>
+nnoremap <leader>gc :Gcommit<CR>
 vnoremap <leader>gb :Gblame<CR>
 
 " Explore with NerdTree Style by default
