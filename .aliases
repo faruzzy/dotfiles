@@ -249,15 +249,13 @@ alias emptytrash="sudo rm -rfv /Volumes/*/.Trashes; sudo rm -rfv ~/.Trash; sudo 
 alias hidedesktop="defaults write com.apple.finder CreateDesktop -bool false && killall Finder"
 alias showdesktop="defaults write com.apple.finder CreateDesktop -bool true && killall Finder"
 
-# Run DropboxUploader if you have it installed
-alias dropbox="~/code/Dropbox-Uploader/dropbox_uploader.sh $1"
-
 # Merge PDF files
 # Usage: `mergepdf -o output.pdf input{1,2,3}.pdf`
 alias mergepdf='/System/Library/Automator/Combine\ PDF\ Pages.action/Contents/Resources/join.py'
 
 # Disable Spotlight
 alias spotoff="sudo mdutil -a -i off"
+
 # Enable Spotlight
 alias spoton="sudo mdutil -a -i on"
 
@@ -275,14 +273,6 @@ command -v grunt > /dev/null && alias grunt="grunt --stack"
 # Kill all the tabs in Chrome to free up memory
 # [C] explained: http://www.commandlinefu.com/commands/view/402/exclude-grep-from-your-grepped-output-of-ps-alias-included-in-description
 alias chromekill="ps ux | grep '[C]hrome Helper --type=renderer' | grep -v extension-process | tr -s ' ' | cut -d ' ' -f2 | xargs kill"
-
-# Stuff I never really use but cannot delete either because of http://xkcd.com/530/
-alias stfu="osascript -e 'set volume output muted true'"
-alias pumpitup="osascript -e 'set volume 10'"
-alias hax="growlnotify -a 'Activity Monitor' 'System error' -m 'WTF R U DOIN'"
-
-# Faster npm for europeans
-command -v npm > /dev/null && alias npme="npm --registry http://registry.npmjs.eu"
 
 # npm offline
 # install npm dependencies from cache

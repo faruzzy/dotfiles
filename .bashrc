@@ -30,5 +30,5 @@ complete -W "NSGlobalDomain" defaults
 
 [ -s "~/.dnx/dnvm/dnvm.sh" ] && . "~/.dnx/dnvm/dnvm.sh" # Load dnvm
 
-source kvm.sh
+#source kvm.sh
 
