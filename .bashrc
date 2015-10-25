@@ -5,22 +5,13 @@
 
 # Load ~/.extra, ~/.bash_prompt, ~/.exports, ~/.aliases and ~/.functions
 # ~/.extra can be used for settings you don't want to commit
-for file in ~/.{extra,bash_prompt,exports,aliases,functions}; do
+for file in ~/.{extra,bash_prompt,exports,aliases,functions,bash_options}; do
 	[ -r "$file" ] && source "$file"
 done
 unset file
 
 # init rvm
 #source ~/.rvm/scripts/rvm
-
-# Case-insensitive globbing (used in pathname expansion)
-shopt -s nocaseglob
-
-# Append to the Bash histroy file, rather than overwritting it
-shopt -s histappend
-
-# Autocorrect typos in path names when using `cd`
-shopt -s cdspell
 
 # Enable some Bash 4 features ehen possible:
 # * `autocd`, e.g. `**/qux` will enter `./foo/bar/baz/qux`
