@@ -61,19 +61,10 @@ alias la="ls -l | awk '
   printf(\" %9s  %3s %2s %5s  %6s  %s %s %s\n\", \$3, \$6, \$7, \$8, \$5, \$9,\$10, \$11);
 }'"
 
-# List only directories
-alias lsd='ls -l | grep "^d"'
-
-# List only hidden files
-alias lsh= "ls -la | grep "^\."'
-
-# ls options: F = put `/` after folders, h = byte unit suffixes, color! (even with piping to awk)
-alias ls='CLICOLOR_FORCE=1 gls -aFh ${colorflag} --group-directories-first'
 
 # handy things
 alias bunyip='node ~/code/bunyip/cli.js'
 alias spotify="osascript ~/code/SpotifyControl/SpotifyControl.scpt"
-
 
 # Detect which `ls` flavor is in use
 if ls --color > /dev/null 2>&1; then # GNU `ls`
@@ -90,6 +81,15 @@ alias la="ls -la ${colorflag}"
 
 # List only directories
 alias lsd="ls -lF ${colorflag} | grep --color=never '^d'"
+#
+# List only directories
+alias lsd='ls -l | grep "^d"'
+
+# List only hidden files
+alias lsh='ls -la | grep "^\."'
+
+# ls options: F = put `/` after folders, h = byte unit suffixes, color! (even with piping to awk)
+alias ls='CLICOLOR_FORCE=1 gls -aFh ${colorflag} --group-directories-first'
 
 # Stopwatch
 alias timer='echo "Timer started. Stop with Ctrl-D." && date && time cat && date'
