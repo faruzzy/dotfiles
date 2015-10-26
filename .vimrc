@@ -28,14 +28,9 @@ Plug 'pangloss/vim-javascript'
 Plug 'kchmck/vim-coffee-script'
 Plug 'elzr/vim-json', {'for' : 'json'}
 Plug 'digitaltoad/vim-jade', {'for': 'jade'}
+Plug 'jaxbot/browserlink.vim'
 
-" Misc
-Plug 'easymotion/vim-easymotion'
-Plug 'bling/vim-airline'
-Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': 'yes \| ./install' }
-Plug 'tpope/vim-surround'
-Plug 'mileszs/ack.vim'
-
+" Auto Completion
 function! BuildYCM(info)
 	" info is a dictionary with 3 fields
 	" - name:   name of the plugin
@@ -45,11 +40,15 @@ function! BuildYCM(info)
 		!./install.py --clang-completer --omnisharp-completer 
 	endif
 endfunction
-
-" Auto Completion
 Plug 'Valloric/YouCompleteMe', { 'do': function('BuildYCM') }
 Plug 'Shougo/neocomplete.vim'
 
+" Misc
+Plug 'easymotion/vim-easymotion'
+Plug 'bling/vim-airline'
+Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': 'yes \| ./install' }
+Plug 'tpope/vim-surround'
+Plug 'mileszs/ack.vim'
 Plug 'junegunn/vim-pseudocl'
 Plug 'junegunn/vim-oblique'
 
@@ -79,7 +78,7 @@ if has("autocmd")
 	autocmd StdinReadPre * let s:std_in=1
 	autocmd VimEnter * if argc() == 0 && !exists("s:std_in") | NERDTree | endif
 	autocmd Filetype python call SetPythonOptions()
-	autocmd BufWritePost *.js silent :JSHint
+	"autocmd BufWritePost *.js silent :JSHint
 endif
 
 " Sets python options 
@@ -107,6 +106,14 @@ noremap <leader>W :w !sudo tee % > /dev/null<CR>
 
 " Run python code by pressing F9
 nnoremap <buffer> <F9> :exec '!python' shellescape(@%, 1)<cr>
+
+" Convenient mappings for compiling and running quick, used mostly for school
+" gcc compile C files
+autocmd filetype c nnoremap <Leader>c :w <CR>:!gcc % -o %:r && ./%:r<CR>
+" java compile files
+autocmd filetype java nnoremap <Leader>c :w <CR>:!javac % && java %:r<CR>
+" node run files
+autocmd filetype javascript nnoremap <Leader>c :w <CR>:!node %<CR>
 
 set autoindent      "alwasy set autoindenting on
 set smartindent
@@ -250,6 +257,10 @@ let g:airline_theme='powerlineish'
 
 " Change leader to ','
 let mapleader=","
+
+let jshint2_read = 1
+
+let jshint2_save = 1
 
 " ==================== FZF =========================
 nnoremap <Leader>f :FZF<CR>
