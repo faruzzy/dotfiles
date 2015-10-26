@@ -1,7 +1,4 @@
 let g:netrw_dirhistmax  =10
-let g:netrw_dirhist_cnt =5
-let g:netrw_dirhist_1='/Users/faruzzy/Applications'
-let g:netrw_dirhist_2='/Users/faruzzy/Applications/Chrome Canary Apps.localized'
-let g:netrw_dirhist_3='/Users/faruzzy/Applications/Chrome Canary Apps.localized/Default aciahcmjmecflokailenpkdchphgkefd.app'
-let g:netrw_dirhist_4='/Users/faruzzy/Applications/Chrome Canary Apps.localized/Default aciahcmjmecflokailenpkdchphgkefd.app/Contents'
-let g:netrw_dirhist_5='/Users/faruzzy/Applications/Chrome Canary Apps.localized/Default aciahcmjmecflokailenpkdchphgkefd.app/Contents/Resources'
+let g:netrw_dirhist_cnt =2
+let g:netrw_dirhist_1='/Users/faruzzy/GitHub'
+let g:netrw_dirhist_2='/Users/faruzzy/scripts'
