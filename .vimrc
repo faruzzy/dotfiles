@@ -1,6 +1,7 @@
 "set nocompatible    "Behave like vim and not like vi! (Much, much better)
 colorscheme hybrid
 set background=dark
+let python_highlight_all=1
 syntax on
 
 call plug#begin('~/.vim/plugged')
@@ -14,10 +15,13 @@ elseif
 	Plug 'airblade/vim-gitgutter'
 endif
 
-" Lang
+" Lang "
 Plug 'plasticboy/vim-markdown'
 Plug 'fatih/vim-go'
 Plug 'garyburd/go-explorer'
+" Python
+Plug 'scrooloose/syntastic'
+Plug 'nvie/vim-flake8'
 
 " Web Development
 Plug 'mattn/emmet-vim', { 'for' : ['html', 'css'] }
@@ -81,6 +85,16 @@ if has("autocmd")
 	"autocmd BufWritePost *.js silent :JSHint
 endif
 
+" python with virtualenv support
+py << EOF
+import os
+import sys
+if 'VIRTUAL_ENV' in os.environ:
+  project_base_dir = os.environ['VIRTUAL_ENV']
+  activate_this = os.path.join(project_base_dir, 'bin/activate_this.py')
+  execfile(activate_this, dict(__file__=activate_this))
+EOF
+
 " Sets python options 
 function! SetPythonOptions()
 	setlocal tabstop=4
@@ -89,6 +103,8 @@ function! SetPythonOptions()
 	setlocal textwidth=80
 	setlocal smarttab
 	setlocal expandtab
+	setlocal autoindent
+	set fileformat=unix
 endfunction
 
 " Strip trailing whitespace (,ss)
@@ -104,8 +120,21 @@ noremap <leader>ss :call StripWhitespace()<CR>
 " Save a file as root (,W)
 noremap <leader>W :w !sudo tee % > /dev/null<CR>
 
-" Run python code by pressing F9
+" Enable folding with the spacebar
+nnoremap <space> za" Run python code by pressing F9
+
 nnoremap <buffer> <F9> :exec '!python' shellescape(@%, 1)<cr>
+
+" Split navigation "
+
+" Ctrl-j move to the split below
+nnoremap <C-J> <C-W><C-J>
+" Ctrl-k move to the split above
+nnoremap <C-K> <C-W><C-K>
+" Ctrl-l move to the split to the right
+nnoremap <C-L> <C-W><C-L>
+" Ctrl-h move to the split to the left
+nnoremap <C-H> <C-W><C-H>
 
 " Convenient mappings for compiling and running quick, used mostly for school
 " gcc compile C files
@@ -197,6 +226,11 @@ set hidden
 
 syntax sync minlines=256
 set synmaxcol=300
+
+" Enable folding
+set foldmethod=indent
+set foldlevel=99
+
 "set re=1
 "set statusline=%<%f\ %h%m%r%{fugitive#statusline()}%=%-14.(%l,%c%V%)\ %P
 set statusline=%<[%n]\ %F\ %m%r%y\ %{exists('g:loaded_fugitive')?fugitive#statusline():''}\ %=%-14.(%l,%c%V%)\ %P
@@ -204,8 +238,7 @@ set statusline=%<[%n]\ %F\ %m%r%y\ %{exists('g:loaded_fugitive')?fugitive#status
 set fileformats=unix,dos,mac    " Prefer Unix over Windows over OS 9 formats
 
 "http://stackoverflow.com/questions/20186975/vim-mac-how-to-copy-to-clipboard-without-pbcopy
-set clipboard^=unnamed
-set clipboard^=unnamedplus
+set clipboard=unnamed
 
 " Better Completion
 " set complete-=i
@@ -249,6 +282,7 @@ let g:neocomplete#sources#syntax#min_keyword_length = 3
 " ==================== YouCompleteMe ====================
 let g:ycm_autoclose_preview_window_after_completion = 1
 let g:ycm_min_num_of_chars_for_completion = 1
+map <leader>g :YcmCompleter GoToDefinitionElseDeclaration<CR>
 
 " <TAB>: completion.
 inoremap <expr><TAB>  pumvisible() ? "\<C-n>" : "\<TAB>"
