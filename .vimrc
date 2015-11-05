@@ -20,7 +20,7 @@ Plug 'plasticboy/vim-markdown'
 Plug 'fatih/vim-go'
 Plug 'garyburd/go-explorer'
 " Python
-Plug 'scrooloose/syntastic'
+Plug 'scrooloose/syntastic', { 'for' : 'python' }
 Plug 'nvie/vim-flake8'
 
 " Web Development
@@ -50,7 +50,7 @@ Plug 'Shougo/neocomplete.vim'
 " Misc
 Plug 'easymotion/vim-easymotion'
 Plug 'bling/vim-airline'
-Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': 'yes \| ./install' }
+Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': 'yes \| ./install --all' }
 Plug 'tpope/vim-surround'
 Plug 'mileszs/ack.vim'
 Plug 'junegunn/vim-pseudocl'
@@ -84,6 +84,17 @@ if has("autocmd")
 	autocmd Filetype python call SetPythonOptions()
 	"autocmd BufWritePost *.js silent :JSHint
 endif
+
+" File Type settings
+au BufNewFile,Bufread *.vim setlocal noet ts=4 sw=4 sts=4
+au BufNewFile,Bufread *.txt setlocal noet ts=4 sw=4
+au BufNewFile,Bufread *.md setlocal noet ts=4 sw=4
+
+" Go settings
+au BufNewFile,Bufread *.go setlocal noet ts=4 sw=4 sts=4
+
+" coffeescript settings
+autocmd BufNewFile,BufreadPost *.coffee setl shiftwidth=2 expandtab
 
 " python with virtualenv support
 py << EOF
@@ -282,6 +293,30 @@ let g:neocomplete#sources#syntax#min_keyword_length = 3
 " ==================== YouCompleteMe ====================
 let g:ycm_autoclose_preview_window_after_completion = 1
 let g:ycm_min_num_of_chars_for_completion = 1
+
+" ==================== Vim-go ====================
+let g:go_fmt_fail_silently = 0
+let g:go_fmt_command = "goimports"
+let g:go_autodetect_gopath = 1
+
+let g:go_highlight_space_tab_error = 0
+let g:go_highlight_array_whitespace_error = 0
+let g:go_highlight_trailing_whitespace_error = 0
+let g:go_highlight_extra_types = 0
+let g:go_highlight_operators = 0
+
+au FileType go nmap <Leader>s <Plug>(go-def-split)
+au FileType go nmap <Leader>v <Plug>(go-def-vertical)
+au FileType go nmap <Leader>in <Plug>(go-info)
+au FileType go nmap <Leader>ii <Plug>(go-implements)
+
+au FileType go nmap <leader>r  <Plug>(go-run)
+au FileType go nmap <leader>b  <Plug>(go-build)
+au FileType go nmap <leader>g  <Plug>(go-gbbuild)
+au FileType go nmap <leader>t  <Plug>(go-test-compile)
+au FileType go nmap <Leader>d <Plug>(go-doc)
+au FileType go nmap <Leader>f :GoImports<CR>
+
 map <leader>g :YcmCompleter GoToDefinitionElseDeclaration<CR>
 
 " <TAB>: completion.
