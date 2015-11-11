@@ -15,9 +15,25 @@ elseif
 	Plug 'airblade/vim-gitgutter'
 endif
 
+" Auto Completion
+function! BuildYCM(info)
+	" info is a dictionary with 3 fields
+	" - name:   name of the plugin
+	" - status: 'installed', 'updated', or 'unchanged'
+	" - force:  set on PlugInstall! or PlugUpdate!
+	if a:info.status == 'installed' || a:info.force
+		!./install.py --clang-completer --omnisharp-completer 
+	endif
+endfunction
+Plug 'Valloric/YouCompleteMe', { 'do': function('BuildYCM') }
+Plug 'Shougo/neocomplete.vim'
+
 " Lang "
 Plug 'plasticboy/vim-markdown'
 Plug 'fatih/vim-go'
+Plug 'nsf/gocode'
+Plug 'Shougo/vimproc.vim'
+Plug 'Shougo/unite.vim'
 Plug 'garyburd/go-explorer'
 " Python
 Plug 'scrooloose/syntastic', { 'for' : 'python' }
@@ -33,19 +49,6 @@ Plug 'kchmck/vim-coffee-script'
 Plug 'elzr/vim-json', {'for' : 'json'}
 Plug 'digitaltoad/vim-jade', {'for': 'jade'}
 Plug 'jaxbot/browserlink.vim'
-
-" Auto Completion
-function! BuildYCM(info)
-	" info is a dictionary with 3 fields
-	" - name:   name of the plugin
-	" - status: 'installed', 'updated', or 'unchanged'
-	" - force:  set on PlugInstall! or PlugUpdate!
-	if a:info.status == 'installed' || a:info.force
-		!./install.py --clang-completer --omnisharp-completer 
-	endif
-endfunction
-Plug 'Valloric/YouCompleteMe', { 'do': function('BuildYCM') }
-Plug 'Shougo/neocomplete.vim'
 
 " Misc
 Plug 'easymotion/vim-easymotion'
@@ -303,12 +306,17 @@ let g:go_highlight_space_tab_error = 0
 let g:go_highlight_array_whitespace_error = 0
 let g:go_highlight_trailing_whitespace_error = 0
 let g:go_highlight_extra_types = 0
-let g:go_highlight_operators = 0
+let g:go_highlight_operators = 1
+let g:go_highlight_functions = 1
+let g:go_highlight_methods = 1
+let g:go_highlight_structs = 1
+let g:go_hightlight_operators = 1
+let g:go_hightlight_build_constraints = 1
 
 au FileType go nmap <Leader>s <Plug>(go-def-split)
 au FileType go nmap <Leader>v <Plug>(go-def-vertical)
 au FileType go nmap <Leader>in <Plug>(go-info)
-au FileType go nmap <Leader>ii <Plug>(go-implements)
+au FileType go nmap <Leader>i <Plug>(go-implements)
 
 au FileType go nmap <leader>r  <Plug>(go-run)
 au FileType go nmap <leader>b  <Plug>(go-build)
