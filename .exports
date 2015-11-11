@@ -12,18 +12,18 @@ export HISTIGNORE="ls:ls *:cd:cd -:pwd;exit:date:* --help"
 
 # For GoLang
 export GOARCH="386"
-export GOBIN=""
+export GOBIN=$HOME/.go/bin
 export GOCHAR="8"
 export GOEXE=""
 export GOHOSTARCH="386"
 export GOHOSTOS="darwin"
 export GORACE=""
-export GOROOT=/usr/local/go
+#export GOROOT=/usr/local/go
 export GOTOOLDIR="/usr/local/go/pkg/tool/darwin_amd64"
 export CC="gcc"
 export GOGCCFLAGS="-g -O2 -fPIC -m32 -pthread -fno-common"
 export CGO_ENABLED="1"
-export GOPATH=~/.go
+export GOPATH=$HOME/.go
 
 # Prefer US English and use UTF-8
 export LC_ALL="en_US.UTF-8"
@@ -33,4 +33,4 @@ export LANG="en_US"
 export M2_HOME=/Applications/apache-maven-3.2.5
 export JAVA_HOME=$(/usr/libexec/java_homve -v 1.6)
 
-export PATH=/bin:/sbin:/usr/bin:/usr/local/sbin:/usr/local/bin:/usr/local/mysql/bin:$PATH:$GOPATH/bin:$GOROOT/bin:$M2_HOME/bin
+export PATH=/bin:/sbin:/usr/bin:/usr/local/sbin:/usr/local/bin:/usr/local/mysql/bin:$GOPATH/bin:$GOROOT/bin:$M2_HOME/bin
