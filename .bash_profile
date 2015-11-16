@@ -1,3 +1,10 @@
+[ -f ~/.fzf.bash ] && source ~/.fzf.bash
+
+# Set up git completions
+if [ -f ~/.git-completion ]; then
+  . ~/.git-completion
+fi
+
 # Load ~/.extra, ~/.bash_prompt, ~/.exports, ~/.aliases and ~/.functions
 # ~/.extra can be used for settings you don't want to commit
 for file in ~/.{extra,bash_prompt,exports,aliases,functions,bash_options}; do
