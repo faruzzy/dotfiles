@@ -58,6 +58,9 @@ Plug 'tpope/vim-surround'
 Plug 'mileszs/ack.vim'
 Plug 'junegunn/vim-pseudocl'
 Plug 'junegunn/vim-oblique'
+Plug 'majutsushi/tagbar'
+Plug 'scrooloose/nerdtree'
+Plug 'scrooloose/nerdtree-git-plugin'
 
 call plug#end()
 
@@ -138,6 +141,12 @@ noremap <leader>W :w !sudo tee % > /dev/null<CR>
 nnoremap <space> za" Run python code by pressing F9
 
 nnoremap <buffer> <F9> :exec '!python' shellescape(@%, 1)<cr>
+
+" tagbar installation, see:
+" https://thomashunter.name/blog/installing-vim-tagbar-with-macvim-in-os-x://thomashunter.name/blog/installing-vim-tagbar-with-macvim-in-os-x/ 
+let g:tagbar_ctags_bin='/usr/local/bin/ctags' " Proper Ctags locations
+let g:tagbar_width=26	" Default is 40, seems too wide
+nmap <F8> :TagbarToggle<CR>
 
 " Split navigation "
 
@@ -296,6 +305,54 @@ let g:neocomplete#sources#syntax#min_keyword_length = 3
 " ==================== YouCompleteMe ====================
 let g:ycm_autoclose_preview_window_after_completion = 1
 let g:ycm_min_num_of_chars_for_completion = 1
+
+" ==================== NERDTree Options =================
+let NERDTreeIgnore=['CVS','\.dSYM$', '.git', '.DS_Store', '*.swp', '*.swo', '*.swo']
+
+
+" setting root dir in NT also sets VIM's cd
+let NERDTreeChDirMode=2
+
+" Open nerdtree in current dir, write our own custom function because
+" NerdTreeToggle just sucks and doesn't work for buffers
+function! g:NerdTreeFindToggle()
+  if nerdtree#isTreeOpen()
+    exec 'NERDTreeClose'
+  else
+    exec 'NERDTree'
+  endif
+endfunction
+
+" For toggling
+noremap <Leader>n :<C-u>call g:NerdTreeFindToggle()<cr>
+
+" These prevent accidentally loading files while focused on NERDTree
+autocmd FileType nerdtree noremap <buffer> <c-left> <nop>
+autocmd FileType nerdtree noremap <buffer> <c-h> <nop>
+autocmd FileType nerdtree noremap <buffer> <c-right> <nop>
+autocmd FileType nerdtree noremap <buffer> <c-l> <nop>
+
+" Open NERDTree if we're executing vim without specifying a file to open
+autocmd vimenter * if !argc() | NERDTree | endif
+
+" Hides "Press ? for help"
+let NERDTreeMinimalUI=1
+
+" Shows invisibles
+let g:NERDTreeShowHidden=1
+
+" ==================== NERDTree-git-plugin =======
+let g:NERDTreeIndicatorMapCustom = {
+    \ "Modified"  : "✹",
+    \ "Staged"    : "✚",
+    \ "Untracked" : "✭",
+    \ "Renamed"   : "➜",
+    \ "Unmerged"  : "═",
+    \ "Deleted"   : "✖",
+    \ "Dirty"     : "✗",
+    \ "Clean"     : "✔︎",
+    \ "Unknown"   : "?"
+    \ }
 
 " ==================== Vim-go ====================
 let g:go_fmt_fail_silently = 0
