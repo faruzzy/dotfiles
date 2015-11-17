@@ -53,6 +53,13 @@ function _jump {
     return 0
 }
 
+function _completemarks {
+	local curw=${COMP_WORDS[COMP_CWORD]} 
+	local wordlist=$(find $MARKPATH -type l -printf "%f\n")
+	COMPREPLY=($(compgen -W '${wordlist[@]}' -- "$curw"))
+	return 0
+}
+
 complete -o default -o nospace -F _jump jump
 
 # Epoch time conversion
@@ -73,20 +80,20 @@ epoch() {
 
 # Simple calculator
 function calc() {
-        local result=""
-        result="$(printf "scale=10;$*\n" | bc --mathlib | tr -d '\\\n')"
-        #                       └─ default (when `--mathlib` is used) is 20
-        #
-        if [[ "$result" == *.* ]]; then
-                # improve the output for decimal numbers
-                printf "$result" |
-                sed -e 's/^\./0./'        `# add "0" for cases like ".5"` \
-                    -e 's/^-\./-0./'      `# add "0" for cases like "-.5"`\
-                    -e 's/0*$//;s/\.$//'   # remove trailing zeros
-        else
-                printf "$result"
-        fi
-        printf "\n"
+	local result=""
+	result="$(printf "scale=10;$*\n" | bc --mathlib | tr -d '\\\n')"
+	#                       └─ default (when `--mathlib` is used) is 20
+	#
+	if [[ "$result" == *.* ]]; then
+			# improve the output for decimal numbers
+			printf "$result" |
+			sed -e 's/^\./0./'        `# add "0" for cases like ".5"` \
+				-e 's/^-\./-0./'      `# add "0" for cases like "-.5"`\
+				-e 's/0*$//;s/\.$//'   # remove trailing zeros
+	else
+			printf "$result"
+	fi
+	printf "\n"
 }
 
 # Extract archives - use: extract <file>
@@ -163,6 +170,7 @@ function f() {
     find . -name "$1"
 }
 
+# search chrome browser History
 function ch() {
 	local cols sep
 	cols=$(( COLUMNS / 3 ))
@@ -179,7 +187,7 @@ function ch() {
 
 # Change working directory to the top-most Finder window location
 function cdf() { # short for `cdfinder`
-        cd "$(osascript -e 'tell app "Finder" to POSIX path of (insertion location as alias)')"
+	cd "$(osascript -e 'tell app "Finder" to POSIX path of (insertion location as alias)')"
 }
 
 # Start an HTTP server from a directory, optionally specifying the port
@@ -193,22 +201,21 @@ function server() {
 
 # Create a data URL from a file
 function dataurl() {
-        local mimeType=$(file -b --mime-type "$1")
-        if [[ $mimeType == text/* ]]; then
-                mimeType="${mimeType};charset=utf-8"
-        fi
-        echo "data:${mimeType};base64,$(openssl base64 -in "$1" | tr -d '\n')"
+	local mimeType=$(file -b --mime-type "$1")
+	if [[ $mimeType == text/* ]]; then
+			mimeType="${mimeType};charset=utf-8"
+	fi
+	echo "data:${mimeType};base64,$(openssl base64 -in "$1" | tr -d '\n')"
 }
 
 # Create a git.io short URL
 function gitio() {
-        if [ -z "${1}" -o -z "${2}" ]; then
-                echo "Usage: \`gitio slug url\`"
-                return 1
-        fi
-        curl -i http://git.io/ -F "url=${2}" -F "code=${1}"
+	if [ -z "${1}" -o -z "${2}" ]; then
+		echo "Usage: \`gitio slug url\`"
+		return 1
+	fi
+	curl -i http://git.io/ -F "url=${2}" -F "code=${1}"
 }
-
 
 # A better git clone
 # clones a repository, cds into it, and opens it in my editor.
@@ -238,27 +245,27 @@ function gitio() {
 #     .. subl .
 
 function clone {
-  # customize username to your own 
-  local username="addyosmani"
+	# customize username to your own 
+	local username="faruzzy"
 
-  local url=$1;
-  local repo=$2;
+	local url=$1;
+	local repo=$2;
 
-  if [[ ${url:0:4} == 'http' || ${url:0:3} == 'git' ]]
-  then
-    # just clone this thing.
-    repo=$(echo $url | awk -F/ '{print $NF}' | sed -e 's/.git$//');
-  elif [[ -z $repo ]]
-  then
-    # my own stuff.
-    repo=$url;
-    url="git@github.com:$username/$repo";
-  else
-    # not my own, but I know whose it is.
-    url="git@github.com:$url/$repo.git";
-  fi
+	if [[ ${url:0:4} == 'http' || ${url:0:3} == 'git' ]]
+	then
+	# just clone this thing.
+	repo=$(echo $url | awk -F/ '{print $NF}' | sed -e 's/.git$//');
+	elif [[ -z $repo ]]
+	then
+	# my own stuff.
+	repo=$url;
+	url="git@github.com:$username/$repo";
+	else
+	# not my own, but I know whose it is.
+	url="git@github.com:$url/$repo.git";
+	fi
 
-  git clone $url $repo && cd $repo && subl .;
+	git clone $url $repo && cd $repo && subl .;
 }
 
 # simple git log
@@ -344,15 +351,15 @@ function unidecode() {
 # Usage: `note 'title' 'body'` or `echo 'body' | note`
 # Title is optional
 function note() {
-        local title
-        local body
-        if [ -t 0 ]; then
-                title="$1"
-                body="$2"
-        else
-                title=$(cat)
-        fi
-        osascript >/dev/null <<EOF
+	local title
+	local body
+	if [ -t 0 ]; then
+			title="$1"
+			body="$2"
+	else
+			title=$(cat)
+	fi
+	osascript >/dev/null <<EOF
 tell application "Notes"
         tell account "iCloud"
                 tell folder "Notes"
@@ -384,60 +391,50 @@ EOF
 # Install Grunt plugins and add them as `devDependencies` to `package.json`
 # Usage: `gi contrib-watch contrib-uglify zopfli`
 function gi() {
-        npm install --save-dev ${*/#/grunt-}
+	npm install --save-dev ${*/#/grunt-}
 }
 
 # Install Gulp plugins and add them as `devDependencies` to `package.json`
 # Usage: `gp uglify clean cache csso`
 function gp() {
-        npm install --save-dev ${*/#/gulp-}
+	npm install --save-dev ${*/#/gulp-}
 }
 
 # Install Yeoman generators
 # Usage: `yi webapp gruntfile angular`
 function yi() {
-        npm install --save-dev ${*/#/generator-}
+	npm install --save-dev ${*/#/generator-}
 }
 
-
-# `m` with no arguments opens the current directory in TextMate, otherwise
-# opens the given location
-function m() {
-        if [ $# -eq 0 ]; then
-                mate .
-        else
-                mate "$@"
-        fi
-}
 
 # `s` with no arguments opens the current directory in Sublime Text, otherwise
 # opens the given location
 function s() {
-        if [ $# -eq 0 ]; then
-                subl .
-        else
-                subl "$@"
-        fi
+	if [ $# -eq 0 ]; then
+		subl .
+	else
+		subl "$@"
+	fi
 }
 
 # `v` with no arguments opens the current directory in Vim, otherwise opens the
 # given location
 function v() {
-        if [ $# -eq 0 ]; then
-                vim .
-        else
-                vim "$@"
-        fi
+	if [ $# -eq 0 ]; then
+			vim .
+	else
+			vim "$@"
+	fi
 }
 
 # `o` with no arguments opens current directory, otherwise opens the given
 # location
 function o() {
-        if [ $# -eq 0 ]; then
-                open .
-        else
-                open "$@"
-        fi
+	if [ $# -eq 0 ]; then
+			open .
+	else
+			open "$@"
+	fi
 }
 
 
@@ -453,17 +450,17 @@ function browsers(){
 # Create animated GIFs from any video
 # Uses http://gist.github.com/SlexAxton/4989674
 gifify() {
-  if [[ -n "$1" ]]; then
-    if [[ $2 == '--good' ]]; then
-      ffmpeg -i $1 -r 10 -vcodec png out-static-%05d.png
-      time convert -verbose +dither -layers Optimize -resize 600x600\> out-static*.png  GIF:- | gifsicle --colors 128 --delay=5 --loop --optimize=3 --multifile - > $1.gif
-      rm out-static*.png
-    else
-      ffmpeg -i $1 -s 600x400 -pix_fmt rgb24 -r 10 -f gif - | gifsicle --optimize=3 --delay=3 > $1.gif
-    fi
-  else
-    echo "proper usage: gifify <input_movie.mov>. You DO need to include an extension."
-  fi
+	if [[ -n "$1" ]]; then
+		if [[ $2 == '--good' ]]; then
+		  ffmpeg -i $1 -r 10 -vcodec png out-static-%05d.png
+		  time convert -verbose +dither -layers Optimize -resize 600x600\> out-static*.png  GIF:- | gifsicle --colors 128 --delay=5 --loop --optimize=3 --multifile - > $1.gif
+		  rm out-static*.png
+		else
+		  ffmpeg -i $1 -s 600x400 -pix_fmt rgb24 -r 10 -f gif - | gifsicle --optimize=3 --delay=3 > $1.gif
+		fi
+	else
+		echo "proper usage: gifify <input_movie.mov>. You DO need to include an extension."
+	fi
 }
 
 # Browserstack shortcuts, now with added hotness thanks to the Browserstack team.
@@ -546,24 +543,24 @@ function win7ff(){
 
 # GitHub URL for current repo.
 function gurl() {
-  local remotename="${@:-origin}"
-  local remote="$(git remote -v | awk '/^'"$remotename"'.*\(push\)$/ {print $2}')"
-  [[ "$remote" ]] || return
-  local user_repo="$(echo "$remote" | perl -pe 's/.*://;s/\.git$//')"
-  echo "https://github.com/$user_repo"
+	local remotename="${@:-origin}"
+	local remote="$(git remote -v | awk '/^'"$remotename"'.*\(push\)$/ {print $2}')"
+	[[ "$remote" ]] || return
+	local user_repo="$(echo "$remote" | perl -pe 's/.*://;s/\.git$//')"
+	echo "https://github.com/$user_repo"
 }
 
 # open all changed files (that still actually exist) in the editor
 # credit: @cowboy
 function ged() {
-  local files=()
-  for f in $(git diff --name-only "$@"); do
-    [[ -e "$f" ]] && files=("${files[@]}" "$f")
-  done
-  local n=${#files[@]}
-  echo "Opening $n $([[ "$@" ]] || echo "modified ")file$([[ $n != 1 ]] && \
-    echo s)${@:+ modified in }$@"
-  q "${files[@]}"
+	local files=()
+	for f in $(git diff --name-only "$@"); do
+	[[ -e "$f" ]] && files=("${files[@]}" "$f")
+	done
+	local n=${#files[@]}
+	echo "Opening $n $([[ "$@" ]] || echo "modified ")file$([[ $n != 1 ]] && \
+	echo s)${@:+ modified in }$@"
+	q "${files[@]}"
 }
 
 # open last commit in GitHub, in the browser.
