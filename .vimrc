@@ -40,11 +40,13 @@ Plug 'scrooloose/syntastic', { 'for' : 'python' }
 Plug 'nvie/vim-flake8'
 
 " Web Development
+Plug 'othree/html5.vim', {'for': 'html'}
 Plug 'mattn/emmet-vim', { 'for' : ['html', 'css'] }
 Plug 'skammer/vim-css-color', {'for': 'css'}
 Plug 'Shutnik/jshint2.vim'
 Plug 'groenewege/vim-less'
-Plug 'pangloss/vim-javascript'
+Plug 'pangloss/vim-javascript', {'for': 'javascript'}
+Plug 'nono/jquery.vim', {'for': 'javascript' }
 Plug 'kchmck/vim-coffee-script'
 Plug 'elzr/vim-json', {'for' : 'json'}
 Plug 'digitaltoad/vim-jade', {'for': 'jade'}
@@ -308,22 +310,13 @@ let g:ycm_min_num_of_chars_for_completion = 1
 " ==================== NERDTree Options =================
 let NERDTreeIgnore=['CVS','\.dSYM$', '.git', '.DS_Store', '*.swp', '*.swo', '*.swo']
 
-
 " setting root dir in NT also sets VIM's cd
 let NERDTreeChDirMode=2
 
-" Open nerdtree in current dir, write our own custom function because
-" NerdTreeToggle just sucks and doesn't work for buffers
-function! g:NerdTreeFindToggle()
-  if nerdtree#isTreeOpen()
-    exec 'NERDTreeClose'
-  else
-    exec 'NERDTree'
-  endif
-endfunction
-
 " For toggling
-noremap <Leader>n :<C-u>call g:NerdTreeFindToggle()<cr>
+"noremap <Leader>n :<C-u>call g:NerdTreeFindToggle()<cr>
+map <C-z> :NERDTree<CR>
+map <C-c> :NERDTreeToggle<CR>
 
 " These prevent accidentally loading files while focused on NERDTree
 autocmd FileType nerdtree noremap <buffer> <c-left> <nop>
@@ -374,6 +367,7 @@ map <leader>g :YcmCompleter GoToDefinitionElseDeclaration<CR>
 inoremap <expr><TAB>  pumvisible() ? "\<C-n>" : "\<TAB>"
 
 let g:airline_theme='powerlineish'
+let g:airline_powerline_fonts = 1
 
 " Change leader to ','
 let mapleader=","
@@ -392,5 +386,51 @@ nnoremap <leader>gp :Gpush<CR>
 nnoremap <leader>gc :Gcommit<CR>
 vnoremap <leader>gb :Gblame<CR>
 
+command! FZFTag if !empty(tagfiles()) | call fzf#run({
+\   'source': "sed '/^\\!/d;s/\t.*//' " . join(tagfiles()) . ' | uniq',
+\   'sink':   'tag',
+\ }) | else | echo 'No tags' | endif
+
+command! -bar FZFTags if !empty(tagfiles()) | 
+            \ call fzf#run({
+            \   'source': 'sed ''/^\\!/ d; s/^\([^\t]*\)\t.*\t\(\w\)\(\t.*\)\?/\2\t\1/; /^l/ d'' ' . join(tagfiles()) . ' | uniq',
+            \   'sink': function('<SID>tag_line_handler'),
+            \ }) | else | call MakeTags() | FZFTags | endif
+
+command! FZFTagsBuffer call fzf#run({
+            \   'source': 'ctags -f - --sort=no ' . bufname("") . ' | sed ''s/^\([^\t]*\)\t.*\t\(\w\)\(\t.*\)\?/\2\t\1/'' | sort -k 1.1,1.1 -s',
+            \   'sink': function('<SID>tag_line_handler'),
+            \   'options': '--tac',
+            \ })
+
+function! s:tag_line_handler(l)
+    let keys = split(a:l, '\t')
+    exec 'tag' keys[1]
+endfunction
+
+function! MakeTags()
+    echo 'Preparing tags...'
+    call system('ctags -R')
+    echo 'Tags done'
+endfunction
+
+let php_sql_query=1
+let php_htmlInStrings=1
+let g:rooter_use_lcd=1
+
 " Explore with NerdTree Style by default
 let g:netrw_liststyle=3
+
+" Resize splits when the window is resized
+au VimResized * :wincmd =
+
+" Typos since I suck @ typing
+command! -bang E e<bang>
+command! -bang Q q<bang>
+command! -bang W w<bang>
+command! -bang QA qa<bang>
+command! -bang Qa qa<bang>
+command! -bang Wa wa<bang>
+command! -bang WA wa<bang>
+command! -bang Wq wq<bang>
+command! -bang WQ wq<bang>
