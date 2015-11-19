@@ -78,6 +78,53 @@ epoch() {
   fi
 }
 
+# fshow - git commit browser
+# thanks to http://junegunn.kr/2015/03/browsing-git-commits-with-fzf/
+fshow() {
+  git log --graph --color=always \
+      --format="%C(auto)%h%d %s %C(black)%C(bold)%cr" "$@" |
+  fzf --ansi --no-sort --reverse --tiebreak=index --toggle-sort=\` \
+      --bind "ctrl-m:execute:
+                echo '{}' | grep -o '[a-f0-9]\{7\}' | head -1 |
+                xargs -I % sh -c 'git show --color=always % | less -R'"
+}
+
+# fstash - easier way to deal with stashes
+# type fstash to get a list of your stashes
+# enter shows you the contents of the stash
+# ctrl-d shows a diff of the stash against your current HEAD
+# ctrl-b checks the stash out as a branch, for easier merging
+fstash() {
+  local out q k sha
+    while out=$(
+      git stash list --pretty="%C(yellow)%h %>(14)%Cgreen%cr %C(blue)%gs" |
+      fzf --ansi --no-sort --query="$q" --print-query \
+          --expect=ctrl-d,ctrl-b);
+    do
+      q=$(head -1 <<< "$out")
+      k=$(head -2 <<< "$out" | tail -1)
+      sha=$(tail -1 <<< "$out" | cut -d' ' -f1)
+      [ -z "$sha" ] && continue
+      if [ "$k" = 'ctrl-d' ]; then
+        git diff $sha
+      elif [ "$k" = 'ctrl-b' ]; then
+        git stash branch "stash-$sha" $sha
+        break;
+      else
+        git stash show -p $sha
+      fi
+    done
+}
+
+# fcs - get git commit sha
+# example usage: git rebase -i `fcs`
+fcs() {
+  local commits commit
+  commits=$(git log --color=always --pretty=oneline --abbrev-commit --reverse) &&
+  commit=$(echo "$commits" | fzf --tac +s +m -e --ansi --reverse) &&
+  echo -n $(echo "$commit" | sed "s/ .*//")
+}
+
 # Simple calculator
 function calc() {
 	local result=""
@@ -95,6 +142,7 @@ function calc() {
 	fi
 	printf "\n"
 }
+
 
 # Extract archives - use: extract <file>
 # Based on http://dotfiles.org/~pseup/.bashrc
@@ -174,8 +222,10 @@ function f() {
 function ch() {
 	local cols sep
 	cols=$(( COLUMNS / 3 ))
-	sep='{::}'
+	sep='{{::}}'
 
+	# Copy History DB to circumvent the lock
+	# - See http://stackoverflow.com/questions/8936878 for the file path
 	cp -f ~/Library/Application\ Support/Google/Chrome/Default/History /tmp/h
 
 	sqlite3 -separator $sep /tmp/h \
@@ -183,6 +233,20 @@ function ch() {
 	   from urls order by last_visit_time desc" |
 	awk -F $sep '{printf "%-'$cols's  \x1b[36m%s\x1b[m\n", $1, $2}' |
 	fzf --ansi --multi | sed 's#.*\(https*://\)#\1#' | xargs open
+}
+
+# fd - cd to selected directory
+fd() {
+  local dir
+  dir=$(find ${1:-*} -path '*/\.*' -prune \
+                  -o -type d -print 2> /dev/null | fzf +m) &&
+  cd "$dir"
+}
+
+# fda - including hidden directories
+fda() {
+  local dir
+  dir=$(find ${1:-.} -type d 2> /dev/null | fzf +m) && cd "$dir"
 }
 
 # Change working directory to the top-most Finder window location
