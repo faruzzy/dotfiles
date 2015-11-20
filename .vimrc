@@ -89,7 +89,7 @@ if has("autocmd")
 	autocmd StdinReadPre * let s:std_in=1
 	autocmd VimEnter * if argc() == 0 && !exists("s:std_in") | NERDTree | endif
 	autocmd Filetype python call SetPythonOptions()
-	"autocmd BufWritePost *.js silent :JSHint
+	autocmd BufWritePost *.js silent :JSHint
 endif
 
 " File Type settings
@@ -255,8 +255,6 @@ set synmaxcol=300
 set foldmethod=indent
 set foldlevel=99
 
-"set re=1
-"set statusline=%<%f\ %h%m%r%{fugitive#statusline()}%=%-14.(%l,%c%V%)\ %P
 set statusline=%<[%n]\ %F\ %m%r%y\ %{exists('g:loaded_fugitive')?fugitive#statusline():''}\ %=%-14.(%l,%c%V%)\ %P
 
 set fileformats=unix,dos,mac    " Prefer Unix over Windows over OS 9 formats
