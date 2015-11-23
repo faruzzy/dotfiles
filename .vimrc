@@ -1,7 +1,13 @@
-"set nocompatible    "Behave like vim and not like vi! (Much, much better)
+" Type :so % to refresh .vimrc after making changes -> Thanks to https://github.com/colbycheeze/dotfiles/blob/master/vimrc
+"Behave like vim and not like vi! (Much, much better)
+set nocompatible    
+
 colorscheme hybrid
+
+" Change leader to ','
+let mapleader=","
+
 set background=dark
-let python_highlight_all=1
 syntax on
 
 call plug#begin('~/.vim/plugged')
@@ -125,6 +131,8 @@ function! SetPythonOptions()
 	set fileformat=unix
 endfunction
 
+let python_highlight_all=1
+
 " Strip trailing whitespace (,ss)
 function! StripWhitespace()
     let save_cursor = getpos(".")
@@ -170,6 +178,88 @@ autocmd filetype javascript nnoremap <Leader>c :w <CR>:!node %<CR>
 
 set autoindent      "alwasy set autoindenting on
 set smartindent
+
+" HTML Editing
+set matchpairs+=<:>
+
+"Toggle relative numbering, and set to absolute on loss of focus or insert mode
+set rnu
+
+function! ToggleNumbersOn()
+    set nu!
+    set rnu
+endfunction
+
+function! ToggleRelativeOn()
+    set rnu!
+    set nu
+endfunction
+
+autocmd FocusLost * call ToggleRelativeOn()
+autocmd FocusGained * call ToggleRelativeOn()
+autocmd InsertEnter * call ToggleRelativeOn()
+autocmd InsertLeave * call ToggleRelativeOn()
+
+" Quicker window movement
+nnoremap <C-j> <C-w>j
+nnoremap <C-k> <C-w>k
+nnoremap <C-h> <C-w>h
+nnoremap <C-l> <C-w>l
+
+" Use tab to jump between blocks, because it's easier
+nnoremap <tab> %
+vnoremap <tab> %
+
+" Treat <li> and <p> tags like the block tags they are
+let g:html_indent_tags = 'li\|p'
+
+" Quickly close windows
+nnoremap <leader>x :x<cr>
+nnoremap <leader>X :q!<cr>
+
+augroup vimrcEx
+  autocmd!
+
+  " When editing a file, always jump to the last known cursor position.
+  " Don't do it for commit messages, when the position is invalid, or when
+  " inside an event handler (happens when dropping a file on gvim).
+  autocmd BufReadPost *
+    \ if &ft != 'gitcommit' && line("'\"") > 0 && line("'\"") <= line("$") |
+    \   exe "normal g`\"" |
+    \ endif
+
+  " Set syntax highlighting for specific file types
+  autocmd BufRead,BufNewFile Appraisals set filetype=ruby
+  autocmd BufRead,BufNewFile *.md set filetype=markdown
+
+  " autocmd BufRead *.jsx set ft=jsx.html
+  " autocmd BufNewFile *.jsx set ft=jsx.html
+
+  " Enable spellchecking for Markdown
+  autocmd FileType markdown setlocal spell
+
+  " Automatically wrap at 80 characters for Markdown
+  autocmd BufRead,BufNewFile *.md setlocal textwidth=80
+
+  " Automatically wrap at 72 characters and spell check git commit messages
+  autocmd FileType gitcommit setlocal textwidth=72
+  autocmd FileType gitcommit setlocal spell
+
+  " Allow stylesheets to autocomplete hyphenated words
+  autocmd FileType css,scss,sass,less setlocal iskeyword+=-
+augroup END
+
+" Tab completion
+" will insert tab at beginning of line,
+" will use completion if not at beginning
+function! InsertTabWrapper()
+    let col = col('.') - 1
+    if !col || getline('.')[col - 1] !~ '\k'
+        return "\<tab>"
+    else
+        return "\<c-p>"
+    endif
+endfunction
 
 set t_Co=16
 
@@ -231,6 +321,9 @@ set noerrorbells	"No beeps
 
 "Add line numbers
 set number      
+set numberwidth=2
+" Make it obvious where 80 characters is
+set textwidth=80
 
 set relativenumber
 
@@ -367,9 +460,6 @@ inoremap <expr><TAB>  pumvisible() ? "\<C-n>" : "\<TAB>"
 let g:airline_theme='powerlineish'
 let g:airline_powerline_fonts = 1
 
-" Change leader to ','
-let mapleader=","
-
 let jshint2_read = 1
 
 let jshint2_save = 1
@@ -421,6 +511,9 @@ let g:netrw_liststyle=3
 
 " Resize splits when the window is resized
 au VimResized * :wincmd =
+
+" update dir to current file
+autocmd BufEnter * silent! cd %:p:h
 
 " Typos since I suck @ typing
 command! -bang E e<bang>
