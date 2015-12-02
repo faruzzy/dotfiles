@@ -7,7 +7,6 @@ colorscheme hybrid
 " Change leader to ','
 let mapleader=","
 
-set background=dark
 syntax on
 
 call plug#begin('~/.vim/plugged')
@@ -35,10 +34,9 @@ Plug 'Valloric/YouCompleteMe', { 'do': function('BuildYCM') }
 Plug 'Shougo/neocomplete.vim'
 
 " Lang "
-Plug 'plasticboy/vim-markdown'
 Plug 'fatih/vim-go'
 Plug 'nsf/gocode'
-Plug 'Shougo/vimproc.vim'
+"Plug 'Shougo/vimproc.vim'
 Plug 'Shougo/unite.vim'
 Plug 'garyburd/go-explorer'
 " Python
@@ -51,7 +49,8 @@ Plug 'mattn/emmet-vim', { 'for' : ['html', 'css'] }
 Plug 'skammer/vim-css-color', {'for': 'css'}
 Plug 'Shutnik/jshint2.vim'
 Plug 'groenewege/vim-less'
-Plug 'pangloss/vim-javascript', {'for': 'javascript'}
+"Plug 'pangloss/vim-javascript', {'for': 'javascript'}
+Plug 'jelera/vim-javascript-syntax', {'for': 'javascript'}
 Plug 'nono/jquery.vim', {'for': 'javascript' }
 Plug 'kchmck/vim-coffee-script'
 Plug 'elzr/vim-json', {'for' : 'json'}
@@ -93,7 +92,7 @@ if has("autocmd")
     autocmd BufNewFile,Bufread *.md setlocal filetype=markdown
 
 	autocmd StdinReadPre * let s:std_in=1
-	autocmd VimEnter * if argc() == 0 && !exists("s:std_in") | NERDTree | endif
+	"autocmd VimEnter * if argc() == 0 && !exists("s:std_in") | NERDTree | endif
 	autocmd Filetype python call SetPythonOptions()
 	autocmd BufWritePost *.js silent :JSHint
 endif
