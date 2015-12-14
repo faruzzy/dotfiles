@@ -1,6 +1,7 @@
 " Type :so % to refresh .vimrc after making changes -> Thanks to https://github.com/colbycheeze/dotfiles/blob/master/vimrc
 "Behave like vim and not like vi! (Much, much better)
 set nocompatible    
+set background=dark
 
 colorscheme hybrid
 
