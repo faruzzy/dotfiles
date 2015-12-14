@@ -45,17 +45,17 @@ Plug 'scrooloose/syntastic', { 'for' : 'python' }
 Plug 'nvie/vim-flake8'
 
 " Web Development
-Plug 'othree/html5.vim', {'for': 'html'}
+Plug 'othree/html5.vim', { 'for': 'html' }
 Plug 'mattn/emmet-vim', { 'for' : ['html', 'css'] }
-Plug 'skammer/vim-css-color', {'for': 'css'}
+Plug 'skammer/vim-css-color', { 'for': 'css' }
 Plug 'Shutnik/jshint2.vim'
 Plug 'groenewege/vim-less'
 "Plug 'pangloss/vim-javascript', {'for': 'javascript'}
-Plug 'jelera/vim-javascript-syntax', {'for': 'javascript'}
-Plug 'nono/jquery.vim', {'for': 'javascript' }
+Plug 'jelera/vim-javascript-syntax', { 'for': 'javascript' }
+Plug 'nono/jquery.vim', { 'for': 'javascript' }
 Plug 'kchmck/vim-coffee-script'
-Plug 'elzr/vim-json', {'for' : 'json'}
-Plug 'digitaltoad/vim-jade', {'for': 'jade'}
+Plug 'elzr/vim-json', { 'for' : 'json' }
+Plug 'digitaltoad/vim-jade', { 'for': 'jade' }
 Plug 'jaxbot/browserlink.vim'
 
 " Misc
@@ -72,13 +72,32 @@ Plug 'scrooloose/nerdtree', { 'on': 'NERDTreeToggle' }
 call plug#end()
 
 set formatoptions+=1
+
 if has('patch-7.3.541')
 	set formatoptions+=j
 endif
+
 if has('patch-7.4.338')
 	let &showbreak = '↳ '
 	set breakindent
 	set breakindentopt=sbr
+endif
+
+if has("gui_macvim")
+  " No toolbars, menu or scrollbars in the GUI
+  set guifont=Source\ Code\ Pro\ Light:h12
+  set clipboard+=unnamed
+  set vb t_vb=
+  set guioptions-=m  "no menu
+  set guioptions-=T  "no toolbar
+  set guioptions-=l
+  set guioptions-=L
+  set guioptions-=r  "no scrollbar
+  set guioptions-=R
+
+  let macvim_skip_colorscheme=1
+  let g:molokai_original=1
+  highlight SignColumn guibg=#272822
 endif
 
 if has("autocmd")
