@@ -21,6 +21,13 @@ elseif
 	Plug 'airblade/vim-gitgutter'
 endif
 
+" Handy function to switch between current
+" and previous buffer
+function! SwitchBuffer()
+	b#
+endfunction
+nmap b<Tab> :call SwitchBuffer()<CR>
+
 " Auto Completion
 function! BuildYCM(info)
 	" info is a dictionary with 3 fields
@@ -327,6 +334,9 @@ set mouse=a    "Enable mouse in all modes
 
 " Option to aid in pasting text unmodified from other applications
 "set paste
+
+" You need this (trust me) to move around
+set path=$PWD/**
 
 set wildmenu
 
