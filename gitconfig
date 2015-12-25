@@ -39,6 +39,7 @@
     shoot = push origin --delete
     up = pull
     unstage = reset HEAD --
+	hardrs = reset --hard HEAD
     prev = checkout -
     discard = checkout -- 
     rlc = !git reset --hard HEAD~1                  # Remove last commit
@@ -96,3 +97,7 @@
     keepBackup = true
 [push]
     default = simple
+[web]
+	browser = ch
+[browser "ch"]
+	cmd = open -a \"/Applications/Google\\ Chrome.app\"
