@@ -79,8 +79,12 @@
             git commit --amend -m \"$(git log -1 --pretty=%B)\n\nClose #$1\"; \
         fi \
     }; f"
+[help]
+	autocorrect = 10
 [color]
     ui = auto
+	grep = auto
+	interactive = auto
 [color "branch"]
     current = yellow reverse
     local = yellow
@@ -98,6 +102,6 @@
 [push]
     default = simple
 [web]
-	browser = ch
+	browser = open
 [browser "ch"]
 	cmd = open -a \"/Applications/Google\\ Chrome.app\"
