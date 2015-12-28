@@ -328,9 +328,11 @@ set ttyfast
 set ttymouse=xterm2
 set ttyscroll=3
 set lazyredraw          	    " Wait to redraw "
+set linebreak
 
 " ------------------
 set mouse=a    "Enable mouse in all modes
+set mousemodel=popup
 
 " Option to aid in pasting text unmodified from other applications
 "set paste
@@ -355,6 +357,7 @@ set numberwidth=2
 set textwidth=80
 
 set relativenumber
+set cmdheight=2
 
 "Show me what I'm typing
 set showcmd	    
@@ -367,7 +370,7 @@ set nobackup                    " Don't create annoying backup files
 set encoding=utf-8              " Set default encoding to UTF-8
 set autowrite                   " Automatically save before :next, :make etc.
 set autoread                    " Automatically reread changed files without asking me anything
-set laststatus=2
+set laststatus=2				" Always show status line
 set hidden
 
 syntax sync minlines=256
