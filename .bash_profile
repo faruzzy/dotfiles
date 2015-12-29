@@ -22,6 +22,15 @@ for option in autocd globstar; do
 	shopt -s "$option" 2> /dev/null
 done
 
+# git-prompt
+if [ ! -e ~/.git-prompt.sh ]; then
+  	curl https://raw.githubusercontent.com/git/git/master/contrib/completion/git-prompt.sh -o ~/.git-prompt.sh
+fi
+
+if [ -e ~/.git-prompt.sh ]; then
+	source ~/.git-prompt.sh
+fi
+
 # Add bash completion for git.
 # See: https://github.com/bobthecow/git-flow-completion/wiki/Install-Bash-git-completion
 if [ "$OS" == 'osx' ]; then

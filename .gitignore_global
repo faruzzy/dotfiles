@@ -42,6 +42,7 @@ Session.vim
 
 .idea/
 .vim/plugged/
+.vim/.netrwhist
 .gitignore
 # Compiled Python files
 *.pyc

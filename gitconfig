@@ -31,6 +31,10 @@
     df = diff --color --color-words --abbrev
     dfc = diff --cached
     lg = log -p
+	logr3 = log --stat -M -3
+	logit = log --stat -M
+	l = log --stat -C
+	logsimple = log --graph --abbrev-commit --pretty=oneline --all --decorate
     lol = log --color --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit --all
     lola = log --graph --decorate --pretty=oneline --abbrev-commit --all
     ls = ls-files
@@ -85,6 +89,11 @@
     ui = auto
 	grep = auto
 	interactive = auto
+[color "diff"]
+	meta = yellow bold
+	frag = magenta bold
+	old = red bold
+	new = green bold
 [color "branch"]
     current = yellow reverse
     local = yellow
@@ -96,7 +105,9 @@
 [merge]
     log = true
 [github]
-    user = faruzzy
+    user = Roland Pangu
+	email = faruzzy@gmail.com
+	username = faruzzy
 [mergetool]
     keepBackup = true
 [push]

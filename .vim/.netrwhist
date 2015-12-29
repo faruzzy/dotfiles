@@ -1,4 +1,8 @@
 let g:netrw_dirhistmax  =10
-let g:netrw_dirhist_cnt =2
-let g:netrw_dirhist_1='/Users/faruzzy/GitHub'
-let g:netrw_dirhist_2='/Users/faruzzy/scripts'
+let g:netrw_dirhist_cnt =6
+let g:netrw_dirhist_1='/Users/faruzzy/learn-git'
+let g:netrw_dirhist_2='/Users/faruzzy/learn-git/directory'
+let g:netrw_dirhist_3='/Users/faruzzy/learn-git/directory/roland'
+let g:netrw_dirhist_4='/Users/faruzzy/learn-git/directory'
+let g:netrw_dirhist_5='/Users/faruzzy/learn-git'
+let g:netrw_dirhist_6='/Users/faruzzy/learn-git/directory'
