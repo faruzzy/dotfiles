@@ -232,6 +232,8 @@ nnoremap <C-k> <C-w>k
 nnoremap <C-h> <C-w>h
 nnoremap <C-l> <C-w>l
 
+nnoremap <F12> :exec ':silent !open -a /Applications/Google\ Chrome.app %'<CR>
+
 " Use tab to jump between blocks, because it's easier
 nnoremap <tab> %
 vnoremap <tab> %
@@ -493,8 +495,9 @@ let g:airline_theme='powerlineish'
 let g:airline_powerline_fonts = 1
 
 let jshint2_read = 1
-
 let jshint2_save = 1
+let jshint2_min_height = 3
+
 
 " ==================== FZF =========================
 nnoremap <Leader>f :FZF<CR>
