@@ -498,15 +498,16 @@ let jshint2_read = 1
 let jshint2_save = 1
 let jshint2_min_height = 3
 
-
 " ==================== FZF =========================
 nnoremap <Leader>f :FZF<CR>
 
 " ==================== Fugitive ====================
 nnoremap <leader>ga :Git add %:p<CR><CR>
 nnoremap <leader>gs :Gstatus<CR>
+nnoremap <leader>pp :Git push origin master<CR>
 nnoremap <leader>gp :Gpush<CR>
 nnoremap <leader>gc :Gcommit<CR>
+nnoremap <leader>gd :Gdiff<CR>
 vnoremap <leader>gb :Gblame<CR>
 
 command! FZFTag if !empty(tagfiles()) | call fzf#run({
