@@ -21,7 +21,9 @@ export LANG="en_US"
 
 # JAVA
 export M2_HOME=/Applications/apache-maven-3.2.5
-export JAVA_HOME=$(/usr/libexec/java_home -v 1.6)
+#export JAVA_HOME=$(/usr/libexec/java_home -v 1.6)
+export JAVA_HOME=$(/usr/libexec/java_home -v 1.7)
+#export JAVA_HOME=$(/usr/libexec/java_home) #1.8
 
 export PATH=/bin:/sbin:/usr/local/bin:/usr/bin:/usr/sbin:/usr/local/sbin:/usr/local/mysql/bin:$GOPATH/bin:$GOROOT/bin:$M2_HOME/bin
 
