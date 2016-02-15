@@ -42,32 +42,40 @@ Plug 'Valloric/YouCompleteMe', { 'do': function('BuildYCM') }
 Plug 'Shougo/neocomplete.vim'
 
 " Lang "
+" ==== Go ==== "
+Plug 'garyburd/go-explorer'
 Plug 'fatih/vim-go'
 Plug 'nsf/gocode'
 "Plug 'Shougo/vimproc.vim'
 Plug 'Shougo/unite.vim'
-Plug 'garyburd/go-explorer'
-" Python
+
+" ==== Python ==== "
 Plug 'scrooloose/syntastic', { 'for' : 'python' }
 Plug 'nvie/vim-flake8'
 
-" Web Development
+" Web Development "
+" ==== HTML ==== "
 Plug 'othree/html5.vim', { 'for': 'html' }
 Plug 'mattn/emmet-vim', { 'for' : ['html', 'css'] }
-Plug 'skammer/vim-css-color', { 'for': 'css' }
+Plug 'digitaltoad/vim-jade', { 'for': 'jade' }
+
+" ==== ECMAScript ==== "
 Plug 'Shutnik/jshint2.vim'
-Plug 'groenewege/vim-less'
-"Plug 'pangloss/vim-javascript', {'for': 'javascript'}
 Plug 'jelera/vim-javascript-syntax', { 'for': 'javascript' }
 Plug 'nono/jquery.vim', { 'for': 'javascript' }
 Plug 'kchmck/vim-coffee-script'
+"Plug 'pangloss/vim-javascript', {'for': 'javascript'}
+
+Plug 'skammer/vim-css-color', { 'for': 'css' }
+Plug 'groenewege/vim-less'
+
+" ==== JSON ==== "
 Plug 'elzr/vim-json', { 'for' : 'json' }
-Plug 'digitaltoad/vim-jade', { 'for': 'jade' }
-Plug 'jaxbot/browserlink.vim'
 
 " Misc
 Plug 'easymotion/vim-easymotion'
-Plug 'bling/vim-airline'
+Plug 'vim-airline/vim-airline'
+Plug 'vim-airline/vim-airline-themes'
 Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': 'yes \| ./install --all' }
 Plug 'tpope/vim-surround'
 Plug 'mileszs/ack.vim'
@@ -554,10 +562,10 @@ autocmd BufEnter * silent! cd %:p:h
 " Typos since I suck @ typing
 command! -bang E e<bang>
 command! -bang Q q<bang>
-command! -bang W w<bang>
 command! -bang QA qa<bang>
 command! -bang Qa qa<bang>
 command! -bang Wa wa<bang>
 command! -bang WA wa<bang>
 command! -bang Wq wq<bang>
 command! -bang WQ wq<bang>
+command W w !sudo tee %
