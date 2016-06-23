@@ -64,6 +64,9 @@ Plug 'Shutnik/jshint2.vim'
 Plug 'jelera/vim-javascript-syntax', { 'for': 'javascript' }
 Plug 'nono/jquery.vim', { 'for': 'javascript' }
 Plug 'kchmck/vim-coffee-script'
+Plug 'leafgarland/typescript-vim'
+Plug 'HerringtonDarkholme/yats.vim'
+Plug 'Quramy/tsuquyomi'
 "Plug 'pangloss/vim-javascript', {'for': 'javascript'}
 
 Plug 'skammer/vim-css-color', { 'for': 'css' }
@@ -440,6 +443,12 @@ let g:neocomplete#sources#syntax#min_keyword_length = 3
 " ==================== YouCompleteMe ====================
 let g:ycm_autoclose_preview_window_after_completion = 1
 let g:ycm_min_num_of_chars_for_completion = 1
+
+" for TypeScript
+if !exists("g:ycm_semantic_triggers")
+	let g:ycm_semantic_triggers = {}
+endif
+let g:ycm_semantic_triggers['typescript'] = ['.']
 
 " ==================== NERDTree Options =================
 let NERDTreeIgnore=['CVS','\.dSYM$', '.git', '.DS_Store', '*.swp', '*.swo', '*.swo']
