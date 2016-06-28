@@ -21,9 +21,16 @@ alias dt="cd ~/Desktop"
 alias gg="cd ~/Github"
 alias g="git"
 alias h="history"
+alias gotoauthor="cd ~/adobe/author"
+alias gotopublisher="cd ~/adobe/publisher"
+
+alias startauthor="gotoauthor; java $JAVA_OPTIONS -Xdebug -Xnoagent -jar cq-author-4502.jar -verbose"
+alias startauthorDebug='gotoauthor; java $JAVA_OPTIONS -Xdebug -agentlib:jdwp=transport=dt_socket,address=30303,suspend=n,server=y -javaagent:/Users/hzbhyl/Library/Caches/IntelliJIdea2016.1/groovyHotSwap/gragent.jar -Dorg.apache.sling.commons.log.level=DEBUG -Xnoagent -jar cq-author-4502.jar -verbose | sed -e "s/Listening \(.*\)/`tput setaf 5` Listening \1`tput sgr0` /g"' # -Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=30303
+
+alias startpublish="gotopublisher; java $JAVA_OPTIONS -Xdebug -Xnoagent -jar cq-publish-4503.jar -verbose"
+alias startpublishDebug="gotopublisher; java $JAVA_OPTIONS -Xdebug -agentlib:jdwp=transport=dt_socket,address=30305,suspend=n,server=y -javaagent:/Users/hzbhyl/Library/Caches/IntelliJIdea2016.1/groovyHotSwap/gragent.jar -Xnoagent -jar cq-publish-4503.jar -verbose" 
 
 # programs
-
 alias st='open -a "Sublime Text"'
 alias preview="open -a '$PREVIEW'"
 alias xcode="open -a '/Developer/Applications/Xcode.app'"
@@ -35,9 +42,7 @@ alias chrome="open -a google\ chrome"
 alias chromium="open -a chromium"
 alias dashcode="open -a dashcode"
 alias f='open -a Finder'
-#alias fireworks="open -a '/Applications/Adobe Fireworks CS6/Adobe Fireworks CS6.app'"
-#alias photoshop="open -a '/Applications/Adobe Photoshop CS6/Adobe Photoshop.app'"
-#alias gpr="~/code/gpr $1"
+alias photoshop="open -a '/Applications/Adobe Photoshop CS6/Adobe Photoshop.app'"
 alias nom="rm -rf node_modules && npm cache clear && npm i"
 
 # general shortcuts
