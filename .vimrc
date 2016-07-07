@@ -56,6 +56,7 @@ Plug 'nvie/vim-flake8'
 " Web Development "
 " ==== HTML ==== "
 Plug 'othree/html5.vim', { 'for': 'html' }
+Plug 'othree/html5-syntax.vim', { 'for': 'html' }
 Plug 'mattn/emmet-vim', { 'for' : ['html', 'css'] }
 Plug 'digitaltoad/vim-jade', { 'for': 'jade' }
 
@@ -70,7 +71,7 @@ Plug 'Quramy/tsuquyomi'
 "Plug 'pangloss/vim-javascript', {'for': 'javascript'}
 
 Plug 'skammer/vim-css-color', { 'for': 'css' }
-Plug 'groenewege/vim-less'
+Plug 'groenewege/vim-less', { 'for': 'less' }
 
 " ==== JSON ==== "
 Plug 'elzr/vim-json', { 'for' : 'json' }
@@ -126,6 +127,9 @@ if has("autocmd")
 
     " Treat .json files as .js
     autocmd BufNewFile,Bufread *.json setfiletype json syntax=javascript
+
+	autocmd BufNewFile,BufRead *.less set filetype=less
+	autocmd FileType less set omnifunc=csscomplete#CompleteCSS
 
     " Treat .md files as Markdown
     autocmd BufNewFile,Bufread *.md setlocal filetype=markdown
