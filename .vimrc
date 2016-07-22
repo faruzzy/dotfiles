@@ -1,9 +1,20 @@
+""
+"   ██╗   ██╗ ██╗ ███╗   ███╗ ██████╗   ██████╗
+"   ██║   ██║ ██║ ████╗ ████║ ██╔══██╗ ██╔════╝
+"   ██║   ██║ ██║ ██╔████╔██║ ██████╔╝ ██║
+"   ╚██╗ ██╔╝ ██║ ██║╚██╔╝██║ ██╔══██╗ ██║
+" ██╗╚████╔╝  ██║ ██║ ╚═╝ ██║ ██║  ██║ ╚██████╗
+" ╚═╝ ╚═══╝   ╚═╝ ╚═╝     ╚═╝ ╚═╝  ╚═╝  ╚═════╝
+" 
 " Type :so % to refresh .vimrc after making changes -> Thanks to https://github.com/colbycheeze/dotfiles/blob/master/vimrc
+"
 "Behave like vim and not like vi! (Much, much better)
 set nocompatible    
 set background=dark
 
 colorscheme hybrid
+"colorscheme gruvbox
+
 
 " Change leader to ','
 let mapleader=","
@@ -38,6 +49,8 @@ function! BuildYCM(info)
 		!./install.py --clang-completer --omnisharp-completer 
 	endif
 endfunction
+
+Plug 'morhetz/gruvbox'
 Plug 'Valloric/YouCompleteMe', { 'do': function('BuildYCM') }
 Plug 'Shougo/neocomplete.vim'
 
@@ -50,7 +63,7 @@ Plug 'nsf/gocode'
 Plug 'Shougo/unite.vim'
 
 " ==== Python ==== "
-Plug 'scrooloose/syntastic', { 'for' : 'python' }
+Plug 'scrooloose/syntastic'
 Plug 'nvie/vim-flake8'
 
 " Web Development "
@@ -60,15 +73,33 @@ Plug 'othree/html5-syntax.vim', { 'for': 'html' }
 Plug 'mattn/emmet-vim', { 'for' : ['html', 'css'] }
 Plug 'digitaltoad/vim-jade', { 'for': 'jade' }
 
+" highlight matching html tag
+Plug 'gregsexton/MatchTag'
+
+" Syntax
+Plug 'StanAngeloff/php.vim', { 'for': 'php' }
+
 " ==== ECMAScript ==== "
-Plug 'Shutnik/jshint2.vim'
+"Plug 'Shutnik/jshint2.vim'
+Plug 'pangloss/vim-javascript', {'for': 'javascript'}
 Plug 'jelera/vim-javascript-syntax', { 'for': 'javascript' }
+Plug 'othree/yajs.vim', { 'for': 'javascript' }
+Plug 'othree/jspc.vim', { 'for': 'javascript' }
 Plug 'nono/jquery.vim', { 'for': 'javascript' }
+
+" After syntax, ftplugin, indent for JSX
+Plug 'mxw/vim-jsx'
+
+Plug 'bigfish/vim-js-context-coloring'
+Plug 'sheerun/vim-polyglot'
 Plug 'kchmck/vim-coffee-script'
 Plug 'leafgarland/typescript-vim'
 Plug 'HerringtonDarkholme/yats.vim'
 Plug 'Quramy/tsuquyomi'
-"Plug 'pangloss/vim-javascript', {'for': 'javascript'}
+
+" detect extensionless node scripts (executables) via shebang
+" and add gf for going to node_modules files
+Plug 'moll/vim-node'
 
 Plug 'skammer/vim-css-color', { 'for': 'css' }
 Plug 'groenewege/vim-less', { 'for': 'less' }
@@ -88,6 +119,8 @@ Plug 'junegunn/vim-pseudocl'
 Plug 'junegunn/vim-oblique'
 Plug 'majutsushi/tagbar'
 Plug 'scrooloose/nerdtree', { 'on': 'NERDTreeToggle' }
+Plug 'plasticboy/vim-markdown'
+Plug 'sickill/vim-pasta'
 
 call plug#end()
 
@@ -130,6 +163,7 @@ if has("autocmd")
 
 	autocmd BufNewFile,BufRead *.less set filetype=less
 	autocmd FileType less set omnifunc=csscomplete#CompleteCSS
+	autocmd FileType javascript setlocal omnifunc=javascriptcomplete#CompleteJS
 
     " Treat .md files as Markdown
     autocmd BufNewFile,Bufread *.md setlocal filetype=markdown
@@ -137,7 +171,7 @@ if has("autocmd")
 	autocmd StdinReadPre * let s:std_in=1
 	"autocmd VimEnter * if argc() == 0 && !exists("s:std_in") | NERDTree | endif
 	autocmd Filetype python call SetPythonOptions()
-	autocmd BufWritePost *.js silent :JSHint
+	"autocmd BufWritePost *.js silent :JSHint
 endif
 
 " File Type settings
@@ -363,10 +397,8 @@ set wildmenu
 set backspace=indent,eol,start
 set history=100
 
-" Settings
-
 "No beeps
-set noerrorbells	"No beeps 
+set noerrorbells	
 
 "Add line numbers
 set number      
@@ -465,6 +497,18 @@ let NERDTreeChDirMode=2
 map <C-z> :NERDTree<CR>
 map <C-c> :NERDTreeToggle<CR>
 
+"nmap <silent> <leader>n :NERDTreeToggle<CR>
+let NERDTreeMapOpenSplit = "s"
+let NERDTreeMapOpenVSplit = "v"
+let NERDTreeMinimalUI = 1
+let NERDTreeShowHidden = 1
+let NERDTreeIgnore = ['\~$', '^\.git$', '^\.hg$', '^\.bundle$', '^\.jhw-cache$', '\.pyc$', '\.egg-info$', '__pycache__', '\.vagrant$']
+
+"Plugin 'jistr/vim-nerdtree-tabs'
+map <silent> <Leader>n <plug>NERDTreeTabsToggle<CR>
+
+map <leader>a :Ack!<Space>
+
 " These prevent accidentally loading files while focused on NERDTree
 autocmd FileType nerdtree noremap <buffer> <c-left> <nop>
 autocmd FileType nerdtree noremap <buffer> <c-h> <nop>
@@ -509,6 +553,12 @@ au FileType go nmap <Leader>d <Plug>(go-doc)
 au FileType go nmap <Leader>f :GoImports<CR>
 
 map <leader>g :YcmCompleter GoToDefinitionElseDeclaration<CR>
+map <leader>a :Ack!<Space>
+if executable("ag")
+  let g:ackprg = 'ag --nogroup --nocolor --column'
+else
+  let g:ackprg = 'git grep -H --line-number --no-color --untracked'
+endif
 
 " <TAB>: completion.
 inoremap <expr><TAB>  pumvisible() ? "\<C-n>" : "\<TAB>"
@@ -516,9 +566,9 @@ inoremap <expr><TAB>  pumvisible() ? "\<C-n>" : "\<TAB>"
 let g:airline_theme='powerlineish'
 let g:airline_powerline_fonts = 1
 
-let jshint2_read = 1
-let jshint2_save = 1
-let jshint2_min_height = 3
+"let jshint2_read = 1
+"let jshint2_save = 1
+"let jshint2_min_height = 3
 
 " ==================== FZF =========================
 nnoremap <Leader>f :FZF<CR>
