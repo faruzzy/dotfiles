@@ -6,11 +6,11 @@
 	name = Roland Pangu
 	email = faruzzy@gmail.com
 [core]
-    whitespace=fix,-indent-with-non-tab,trailing-space,cr-at-eol
+	whitespace=fix,-indent-with-non-tab,trailing-space,cr-at-eol
     editor = vim
-    quotepath = false
-	excludesfile = ~/.gitignore_global
-    attributesfile = ~/.gitattributes
+	quotepath = false
+	excludesfile = /Users/szd0qs/.gitignore_global
+	#attributesfile = ~/.gitattributes
 [difftool "sourcetree"]
 	cmd = opendiff \"$LOCAL\" \"$REMOTE\"
 	path = 
@@ -48,6 +48,7 @@
     discard = checkout -- 
     rlc = !git reset --hard HEAD~1                  # Remove last commit
     ulc = reset --soft HEAD~1                       # Undo last commit
+	up = push -f origin HEAD^:master
 	update = !git fetch upstream && git rebase upstream/`git rev-parse --abbrev-ref HEAD`
 
     # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

@@ -386,6 +386,10 @@ function gitexport(){
 	git archive master | tar -x -C "$1"
 }
 
+function md() {
+	mkdir -p "$@" && cd $_;
+}
+
 # get gzipped size
 function gz() {
 	echo "orig size    (bytes): "

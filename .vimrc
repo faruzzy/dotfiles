@@ -53,6 +53,7 @@ endfunction
 Plug 'morhetz/gruvbox'
 Plug 'Valloric/YouCompleteMe', { 'do': function('BuildYCM') }
 Plug 'Shougo/neocomplete.vim'
+Plug 'benmills/vimux'
 
 " Lang "
 " ==== Go ==== "
@@ -404,7 +405,7 @@ set noerrorbells
 set number      
 set numberwidth=2
 " Make it obvious where 80 characters is
-set textwidth=80
+"set textwidth=80
 
 set relativenumber
 set cmdheight=2
