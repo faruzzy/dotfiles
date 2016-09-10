@@ -250,8 +250,10 @@ nnoremap <C-H> <C-W><C-H>
 autocmd filetype c nnoremap <Leader>c :w <CR>:!gcc % -o %:r && ./%:r<CR>
 " java compile files
 autocmd filetype java nnoremap <Leader>c :w <CR>:!javac % && java %:r<CR>
-" node run files
+" run node files
 autocmd filetype javascript nnoremap <Leader>c :w <CR>:!node %<CR>
+" run python files
+autocmd filetype python nnoremap <Leader>c :exec '!python' shellescape(@%, 1)<CR>
 
 set autoindent      "alwasy set autoindenting on
 set smartindent
@@ -293,7 +295,7 @@ vnoremap <tab> %
 let g:html_indent_tags = 'li\|p'
 
 " Quickly close windows
-nnoremap <leader>x :x<cr>
+nnoremap <leader>x :qa!<cr>
 nnoremap <leader>X :q!<cr>
 
 augroup vimrcEx
