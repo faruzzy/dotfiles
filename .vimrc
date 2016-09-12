@@ -120,6 +120,7 @@ Plug 'junegunn/vim-pseudocl'
 Plug 'junegunn/vim-oblique'
 Plug 'majutsushi/tagbar'
 Plug 'scrooloose/nerdtree', { 'on': 'NERDTreeToggle' }
+Plug 'ryanoasis/vim-devicons'
 Plug 'plasticboy/vim-markdown'
 Plug 'sickill/vim-pasta'
 
@@ -635,4 +636,4 @@ command! -bang Wa wa<bang>
 command! -bang WA wa<bang>
 command! -bang Wq wq<bang>
 command! -bang WQ wq<bang>
-command W w !sudo tee %
+"command W w !sudo tee %<bang>
