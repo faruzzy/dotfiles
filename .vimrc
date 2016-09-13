@@ -255,6 +255,8 @@ autocmd filetype java nnoremap <Leader>c :w <CR>:!javac % && java %:r<CR>
 autocmd filetype javascript nnoremap <Leader>c :w <CR>:!node %<CR>
 " run python files
 autocmd filetype python nnoremap <Leader>c :exec '!python' shellescape(@%, 1)<CR>
+" run bash files
+autocmd filetype sh nnoremap <Leader>c :w <CR>:!bash %<CR>
 
 set autoindent      "alwasy set autoindenting on
 set smartindent
