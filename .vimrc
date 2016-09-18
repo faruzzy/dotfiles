@@ -298,8 +298,11 @@ vnoremap <tab> %
 let g:html_indent_tags = 'li\|p'
 
 " Quickly close windows
-nnoremap <leader>x :qa!<cr>
-nnoremap <leader>X :q!<cr>
+" close all buffer
+nnoremap <leader>X :qa!<cr>
+
+" close current buffer
+nnoremap <leader>x :q!<cr>
 
 augroup vimrcEx
   autocmd!
