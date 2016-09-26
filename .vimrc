@@ -304,6 +304,9 @@ nnoremap <leader>X :wqa!<cr>
 " close current buffer
 nnoremap <leader>x :wq!<cr>
 
+" Quickly save current buffer
+nnoremap <leader>w :w<cr>
+
 augroup vimrcEx
   autocmd!
 
@@ -503,7 +506,6 @@ let NERDTreeChDirMode=2
 
 " For toggling
 "noremap <Leader>n :<C-u>call g:NerdTreeFindToggle()<cr>
-map <C-z> :NERDTree<CR>
 map <C-c> :NERDTreeToggle<CR>
 
 "nmap <silent> <leader>n :NERDTreeToggle<CR>
@@ -514,7 +516,7 @@ let NERDTreeShowHidden = 1
 let NERDTreeIgnore = ['\~$', '^\.git$', '^\.hg$', '^\.bundle$', '^\.jhw-cache$', '\.pyc$', '\.egg-info$', '__pycache__', '\.vagrant$']
 
 "Plugin 'jistr/vim-nerdtree-tabs'
-map <silent> <Leader>n <plug>NERDTreeTabsToggle<CR>
+"map <silent> <Leader>n <plug>NERDTreeTabsToggle<CR>
 
 map <leader>a :Ack!<Space>
 
