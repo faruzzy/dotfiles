@@ -288,6 +288,12 @@ nnoremap <C-k> <C-w>k
 nnoremap <C-h> <C-w>h
 nnoremap <C-l> <C-w>l
 
+" Quicker tab movement
+nnoremap tf :tabfirst<CR>
+nnoremap tl :tablast<CR>
+nnoremap tn :tabnext<CR>
+nnoremap tp :tabprev<CR>
+
 nnoremap <F12> :exec ':silent !open -a /Applications/Google\ Chrome.app %'<CR>
 
 " Use tab to jump between blocks, because it's easier
@@ -297,15 +303,17 @@ vnoremap <tab> %
 " Treat <li> and <p> tags like the block tags they are
 let g:html_indent_tags = 'li\|p'
 
-" Quickly close windows
-" close all buffer
+" Save and close all buffer
 nnoremap <leader>X :wqa!<cr>
-
-" close current buffer
+" Close all buffer without saving
+nnoremap <leader>Q :qa!<cr>
+" Save and close current buffer
 nnoremap <leader>x :wq!<cr>
-
+" Close current buffer without saving
+nnoremap <leader>q :q<cr>
 " Quickly save current buffer
 nnoremap <leader>w :w<cr>
+
 
 augroup vimrcEx
   autocmd!
