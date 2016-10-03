@@ -314,6 +314,11 @@ nnoremap <leader>q :q<cr>
 " Quickly save current buffer
 nnoremap <leader>w :w<cr>
 
+" Quickly open .vimrc file in the current buffer 
+nnoremap <leader>v :e ~/Github/dotfiles/.vimrc<CR>
+
+" Quickly open .vimrc file in a new vertical buffer
+nnoremap <leader>V :vs ~/Github/dotfiles/.vimrc<CR>
 
 augroup vimrcEx
   autocmd!
