@@ -18,6 +18,7 @@ colorscheme hybrid
 
 " Change leader to ','
 let mapleader=","
+let s:darwin = has('mac')
 
 syntax on
 
@@ -127,6 +128,67 @@ Plug 'sickill/vim-pasta'
 call plug#end()
 
 set formatoptions+=1
+" ============================================================================
+" FZF {{{
+" ============================================================================
+
+" https://github.com/junegunn/fzf
+set rtp+=~/.fzf
+
+nnoremap <Leader>f :FZF<CR>
+if has('nvim')
+  let $FZF_DEFAULT_OPTS .= ' --inline-info'
+  " let $NVIM_TUI_ENABLE_TRUE_COLOR = 1
+endif
+
+let g:fzf_files_options =
+  \ '--preview "(highlight -O ansi {} || cat {}) 2> /dev/null | head -'.&lines.'"'
+
+inoremap <expr> <c-x><c-t> fzf#complete('tmuxwords.rb --all-but-current --scroll 500 --min 5')
+imap <c-x><c-k> <plug>(fzf-complete-word)
+imap <c-x><c-f> <plug>(fzf-complete-path)
+imap <c-x><c-j> <plug>(fzf-complete-file-ag)
+imap <c-x><c-l> <plug>(fzf-complete-line)
+
+nmap <leader><tab> <plug>(fzf-maps-n)
+xmap <leader><tab> <plug>(fzf-maps-x)
+omap <leader><tab> <plug>(fzf-maps-o)
+
+command! Plugs call fzf#run({
+  \ 'source':  map(sort(keys(g:plugs)), 'g:plug_home."/".v:val'),
+  \ 'options': '--delimiter / --nth -1',
+  \ 'down':    '~40%',
+  \ 'sink':    'Explore'})
+
+command! FZFTag if !empty(tagfiles()) | call fzf#run({
+\   'source': "sed '/^\\!/d;s/\t.*//' " . join(tagfiles()) . ' | uniq',
+\   'sink':   'tag',
+\ }) | else | echo 'No tags' | endif
+
+command! -bar FZFTags if !empty(tagfiles()) | 
+			\ call fzf#run({
+			\   'source': 'sed ''/^\\!/ d; s/^\([^\t]*\)\t.*\t\(\w\)\(\t.*\)\?/\2\t\1/; /^l/ d'' ' . join(tagfiles()) . ' | uniq',
+			\   'sink': function('<SID>tag_line_handler'),
+			\ }) | else | call MakeTags() | FZFTags | endif
+
+command! FZFTagsBuffer call fzf#run({
+			\   'source': 'ctags -f - --sort=no ' . bufname("") . ' | sed ''s/^\([^\t]*\)\t.*\t\(\w\)\(\t.*\)\?/\2\t\1/'' | sort -k 1.1,1.1 -s',
+			\   'sink': function('<SID>tag_line_handler'),
+			\   'options': '--tac',
+			\ })
+
+" }}}
+
+
+" nnoremap <silent> <Leader><Leader> :Files<CR>
+nnoremap <silent> <expr> <Leader><Leader> (expand('%') =~ 'NERD_tree' ? "\<c-w>\<c-w>" : '').":Files\<cr>"
+nnoremap <silent> <Leader>C        :Colors<CR>
+nnoremap <silent> <Leader><Enter>  :Buffers<CR>
+nnoremap <silent> <Leader>ag       :Ag <C-R><C-W><CR>
+nnoremap <silent> <Leader>AG       :Ag <C-R><C-A><CR>
+nnoremap <silent> <Leader>`        :Marks<CR>
+" nnoremap <silent> q: :History:<CR>
+" nnoremap <silent> q/ :History/<CR>
 
 if has('patch-7.3.541')
 	set formatoptions+=j
@@ -288,11 +350,53 @@ nnoremap <C-k> <C-w>k
 nnoremap <C-h> <C-w>h
 nnoremap <C-l> <C-w>l
 
-" Quicker tab movement
+" ------------------------------------------------------------------
+" Quick tab movement
+" ------------------------------------------------------------------
 nnoremap tf :tabfirst<CR>
 nnoremap tl :tablast<CR>
-nnoremap tn :tabnext<CR>
-nnoremap tp :tabprev<CR>
+nnoremap ]t :tabnext<CR>
+nnoremap [t :tabprev<CR>
+
+"------------------------------------------------------------------
+" Quick Buffers movement
+"------------------------------------------------------------------
+nnoremap ]b :bnext<cr>
+nnoremap [b :bprev<cr>
+
+" ----------------------------------------------------------------------------
+" <Leader>?/! | Google it / Feeling lucky
+" ----------------------------------------------------------------------------
+function! s:goog(pat, lucky)
+  let q = '"'.substitute(a:pat, '["\n]', ' ', 'g').'"'
+  let q = substitute(q, '[[:punct:] ]',
+       \ '\=printf("%%%02X", char2nr(submatch(0)))', 'g')
+  call system(printf('open "https://www.google.com/search?%sq=%s"',
+                   \ a:lucky ? 'btnI&' : '', q))
+endfunction
+
+nnoremap <leader>? :call <SID>goog(expand("<cWORD>"), 0)<cr>
+nnoremap <leader>! :call <SID>goog(expand("<cWORD>"), 1)<cr>
+xnoremap <leader>? "gy:call <SID>goog(@g, 0)<cr>gv
+xnoremap <leader>! "gy:call <SID>goog(@g, 1)<cr>gv
+
+" }}}
+
+" ----------------------------------------------------------------------------
+" :Root | Change directory to the root of the Git repository
+" ----------------------------------------------------------------------------
+function! s:root()
+  let root = systemlist('git rev-parse --show-toplevel')[0]
+  if v:shell_error
+    echo 'Not in git repo'
+  else
+    execute 'lcd' root
+    echo 'Changed directory to: '.root
+  endif
+endfunction
+command! Root call s:root()
+
+" }}}
 
 nnoremap <F12> :exec ':silent !open -a /Applications/Google\ Chrome.app %'<CR>
 
@@ -489,9 +593,6 @@ set wildignore+=*.orig                           " Merge resolution files
 set ofu=syntaxcomplete#Complete                  "Set omni-completion method.
 set report=0    "Show all changes
 
-" https://github.com/junegunn/fzf
-set rtp+=~/.fzf
-
 " Enabling neocomplete at startup
 let g:neocomplete#enable_at_startup = 1
 
@@ -534,10 +635,10 @@ let NERDTreeIgnore = ['\~$', '^\.git$', '^\.hg$', '^\.bundle$', '^\.jhw-cache$',
 map <leader>a :Ack!<Space>
 
 " These prevent accidentally loading files while focused on NERDTree
-autocmd FileType nerdtree noremap <buffer> <c-left> <nop>
-autocmd FileType nerdtree noremap <buffer> <c-h> <nop>
-autocmd FileType nerdtree noremap <buffer> <c-right> <nop>
-autocmd FileType nerdtree noremap <buffer> <c-l> <nop>
+"autocmd FileType nerdtree noremap <buffer> <c-left> <nop>
+"autocmd FileType nerdtree noremap <buffer> <c-h> <nop>
+"autocmd FileType nerdtree noremap <buffer> <c-right> <nop>
+"autocmd FileType nerdtree noremap <buffer> <c-l> <nop>
 
 " Open NERDTree if we're executing vim without specifying a file to open
 autocmd vimenter * if !argc() | NERDTree | endif
@@ -587,6 +688,13 @@ endif
 " <TAB>: completion.
 inoremap <expr><TAB>  pumvisible() ? "\<C-n>" : "\<TAB>"
 
+" Movement in insert mode
+inoremap <C-h> <C-o>h
+inoremap <C-l> <C-o>a
+inoremap <C-j> <C-o>j
+inoremap <C-k> <C-o>k
+inoremap <C-^> <C-o><C-^>
+
 let g:airline_theme='powerlineish'
 let g:airline_powerline_fonts = 1
 
@@ -594,34 +702,18 @@ let g:airline_powerline_fonts = 1
 "let jshint2_save = 1
 "let jshint2_min_height = 3
 
-" ==================== FZF =========================
-nnoremap <Leader>f :FZF<CR>
-
 " ==================== Fugitive ====================
 nnoremap <leader>ga :Git add %:p<CR><CR>
+nnoremap <leader>gw :Gwrite<CR>
+nnoremap <leader>gr :Gread<CR>
+nnoremap <leader>gm :Gmove<CR>
+nnoremap <leader>gx :Gremove<CR>
 nnoremap <leader>gs :Gstatus<CR>
-nnoremap <leader>pp :Git push origin master<CR>
 nnoremap <leader>gp :Gpush<CR>
 nnoremap <leader>gc :Gcommit<CR>
 nnoremap <leader>gd :Gdiff<CR>
-vnoremap <leader>gb :Gblame<CR>
-
-command! FZFTag if !empty(tagfiles()) | call fzf#run({
-\   'source': "sed '/^\\!/d;s/\t.*//' " . join(tagfiles()) . ' | uniq',
-\   'sink':   'tag',
-\ }) | else | echo 'No tags' | endif
-
-command! -bar FZFTags if !empty(tagfiles()) | 
-            \ call fzf#run({
-            \   'source': 'sed ''/^\\!/ d; s/^\([^\t]*\)\t.*\t\(\w\)\(\t.*\)\?/\2\t\1/; /^l/ d'' ' . join(tagfiles()) . ' | uniq',
-            \   'sink': function('<SID>tag_line_handler'),
-            \ }) | else | call MakeTags() | FZFTags | endif
-
-command! FZFTagsBuffer call fzf#run({
-            \   'source': 'ctags -f - --sort=no ' . bufname("") . ' | sed ''s/^\([^\t]*\)\t.*\t\(\w\)\(\t.*\)\?/\2\t\1/'' | sort -k 1.1,1.1 -s',
-            \   'sink': function('<SID>tag_line_handler'),
-            \   'options': '--tac',
-            \ })
+nnoremap <leader>gb :Gblame<CR>
+nnoremap <leader>pp :Git push origin master<CR>
 
 function! s:tag_line_handler(l)
     let keys = split(a:l, '\t')
