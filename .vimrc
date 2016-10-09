@@ -274,8 +274,25 @@ autocmd filetype python nnoremap <Leader>c :exec '!python' shellescape(@%, 1)<CR
 " run bash files
 autocmd filetype sh nnoremap <Leader>c :w <CR>:!bash %<CR>
 
-set autoindent      "alwasy set autoindenting on
+" Tab Basic Settings {{{
+
+set autoindent					" Alwasy set autoindenting on
+set expandtab					" Use the appropriate number of spaces to insert a <Tab>b
 set smartindent
+set shiftround					" Round indent to multiple of 'shiftwidth
+set shiftwidth=4				" Number of spaces to use for each step of (auto)indent
+set softtabstop=4				" Number of spaces that a <Tab> in the file counts for
+
+" }}}
+
+" Search Basic Settings {{{
+
+set incsearch					" Display search resultings as you type
+set hlsearch | nohlsearch		" Highlight search, support reloading
+set ignorecase					" Ignore case in search patterns
+set smartcase					" Override the ignorecase option if the pattern contains upper case
+
+" }}}
 
 " HTML Editing
 set matchpairs+=<:>
@@ -371,9 +388,6 @@ set t_Co=16
 " Note that these vary from language to language
 set tabstop=4   "Set space width of tabs
 set smarttab    "At start of line, <Tab> inserts shiftwidth spaces, <Bs> deletes shifwidth spaces.
-set shiftwidth=4 "And again, relate
-set softtabstop=4
-set expandtab
 set sw=4
 
 set splitright  "By default, split to the right
@@ -397,16 +411,11 @@ set titleold=   "Prevent the "Thanks for flying Vim"
 "set list
 
 
-" Search options
-set incsearch   "Display search resultings as you type
-set hlsearch    "Highlight search
-set ignorecase
-set smartcase
 " Optimize for fast terminal connections
 set ttyfast
 set ttymouse=xterm2
 set ttyscroll=3
-set lazyredraw          	    " Wait to redraw "
+set lazyredraw          	    " Wait to redraw, do not redraw while executing macros
 set linebreak
 
 " ------------------
@@ -422,14 +431,15 @@ set path=$PWD/**
 set wildmenu
 
 set backspace=indent,eol,start
-set history=100
+set history=1024				" Amount of Command history
 
 "No beeps
 set noerrorbells	
 
 "Add line numbers
-set number      
+set number						" Print the line number in front of each line
 set numberwidth=2
+set spelllang=en,fr				" Spell checking language
 " Make it obvious where 80 characters is
 "set textwidth=80
 
@@ -444,11 +454,10 @@ set noshowmode
 
 set noswapfile                  " No beeps
 set nobackup                    " Don't create annoying backup files
-set encoding=utf-8              " Set default encoding to UTF-8
 set autowrite                   " Automatically save before :next, :make etc.
-set autoread                    " Automatically reread changed files without asking me anything
+set autoread                    " Automatically reread changed files (outside of vim) without asking me anything
 set laststatus=2				" Always show status line
-set hidden
+set hidden						" Display another buffer when current buffer isn't saved
 
 syntax sync minlines=256
 set synmaxcol=300
@@ -459,7 +468,15 @@ set foldlevel=99
 
 set statusline=%<[%n]\ %F\ %m%r%y\ %{exists('g:loaded_fugitive')?fugitive#statusline():''}\ %=%-14.(%l,%c%V%)\ %P
 
+" Encoding {{{
+
+set encoding=utf-8   
+set termencoding=utf-8
+set fileencoding=utf-8
+set fileencodings=utf-8,cp932,euc-jp "A list of character encodings, set default encoding to UTF-8
 set fileformats=unix,dos,mac    " Prefer Unix over Windows over OS 9 formats
+
+" }}}
 
 "http://stackoverflow.com/questions/20186975/vim-mac-how-to-copy-to-clipboard-without-pbcopy
 set clipboard=unnamed
@@ -470,23 +487,29 @@ set complete=.,w,b,u,t
 set completeopt=longest,menuone
 
 " Wildmeu completion {{{
-set wildmenu
-set wildmode=list:full
 
-set wildignore+=.hg,.git,.svn                    " Version control
-set wildignore+=*.aux,*.out,*.toc                " LaTeX intermediate files
-set wildignore+=*.jpg,*.bmp,*.gif,*.png,*.jpeg   " binary images
-set wildignore+=*.o,*.obj,*.exe,*.dll,*.manifest " compiled object files
-set wildignore+=*.spl                            " compiled spelling word lists
-set wildignore+=*.sw?                            " Vim swap files
-set wildignore+=*.DS_Store                       " OSX bullshit
-set wildignore+=*.luac                           " Lua byte code
-set wildignore+=migrations                       " Django migrations
-set wildignore+=go/pkg                           " Go static files
-set wildignore+=go/bin                           " Go bin files
-set wildignore+=go/bin-vagrant                   " Go bin-vagrant files
-set wildignore+=*.pyc                            " Python byte code
-set wildignore+=*.orig                           " Merge resolution files
+set wildmenu										" Command line autocompletion
+set wildmode=list:full								" Shows all the options
+
+set wildignore+=.hg,.git,.svn						" Version control
+set wildignore+=*.aux,*.out,*.toc					" LaTeX intermediate files
+set wildignore+=*.jpg,*.bmp,*.gif,*.png,*.jpeg		" binary images
+set wildignore+=*.o,*.obj,*.exe,*.dll,*.manifest	" compiled object files
+set wildignore+=*.spl								" compiled spelling word lists
+set wildignore+=*.sw?								" Vim swap files
+set wildignore+=*.bak,*.?~,*.??~,*.???~,*.~			" Backup files
+set wildignore+=*.DS_Store							" OSX bullshit
+set wildignore+=*.luac								" Lua byte code
+set wildignore+=migrations							" Django migrations
+set wildignore+=go/pkg								" Go static files
+set wildignore+=go/bin								" Go bin files
+set wildignore+=go/bin-vagrant						" Go bin-vagrant files
+set wildignore+=*.pyc								" Python byte code
+set wildignore+=*.jar								" Java archives
+set wildignore+=*.orig								" Merge resolution files
+set wildignore+=*.stats								" Merge resolution files
+
+" }}}
 
 set ofu=syntaxcomplete#Complete                  "Set omni-completion method.
 set report=0    "Show all changes
