@@ -224,11 +224,7 @@ endif
 au BufNewFile,Bufread *.vim setlocal noet ts=4 sw=4 sts=4
 au BufNewFile,Bufread *.txt setlocal noet ts=4 sw=4
 au BufNewFile,Bufread *.md setlocal noet ts=4 sw=4
-
-" Go settings
 au BufNewFile,Bufread *.go setlocal noet ts=4 sw=4 sts=4
-
-" coffeescript settings
 autocmd BufNewFile,BufreadPost *.coffee setl shiftwidth=2 expandtab
 
 " python with virtualenv support
@@ -248,8 +244,6 @@ noremap <leader>W :w !sudo tee % > /dev/null<CR>
 
 " Enable folding with the spacebar
 nnoremap <space> za" Run python code by pressing F9
-
-nnoremap <buffer> <F9> :exec '!python' shellescape(@%, 1)<cr>
 
 " tagbar installation, see:
 " https://thomashunter.name/blog/installing-vim-tagbar-with-macvim-in-os-x://thomashunter.name/blog/installing-vim-tagbar-with-macvim-in-os-x/ 
