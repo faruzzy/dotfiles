@@ -33,24 +33,6 @@ elseif
 	Plug 'airblade/vim-gitgutter'
 endif
 
-" Handy function to switch between current
-" and previous buffer
-function! SwitchBuffer()
-	b#
-endfunction
-nmap b<Tab> :call SwitchBuffer()<CR>
-
-" Auto Completion
-function! BuildYCM(info)
-	" info is a dictionary with 3 fields
-	" - name:   name of the plugin
-	" - status: 'installed', 'updated', or 'unchanged'
-	" - force:  set on PlugInstall! or PlugUpdate!
-	if a:info.status == 'installed' || a:info.force
-		!./install.py --clang-completer --omnisharp-completer 
-	endif
-endfunction
-
 Plug 'morhetz/gruvbox'
 Plug 'Valloric/YouCompleteMe', { 'do': function('BuildYCM') }
 Plug 'Shougo/neocomplete.vim'
@@ -259,29 +241,7 @@ if 'VIRTUAL_ENV' in os.environ:
   execfile(activate_this, dict(__file__=activate_this))
 EOF
 
-" Sets python options 
-function! SetPythonOptions()
-	setlocal tabstop=4
-	setlocal softtabstop=4
-	setlocal shiftwidth=4
-	setlocal textwidth=80
-	setlocal smarttab
-	setlocal expandtab
-	setlocal autoindent
-	set fileformat=unix
-endfunction
-
 let python_highlight_all=1
-
-" Strip trailing whitespace (,ss)
-function! StripWhitespace()
-    let save_cursor = getpos(".")
-    let old_query = getreg('/')
-    :%s/\s\+$//e
-    call setpos('.', save_cursor)
-    call setreg('/', old_query)
-endfunction
-noremap <leader>ss :call StripWhitespace()<CR>
 
 " Save a file as root (,W)
 noremap <leader>W :w !sudo tee % > /dev/null<CR>
@@ -329,16 +289,6 @@ set matchpairs+=<:>
 "Toggle relative numbering, and set to absolute on loss of focus or insert mode
 set rnu
 
-function! ToggleNumbersOn()
-    set nu!
-    set rnu
-endfunction
-
-function! ToggleRelativeOn()
-    set rnu!
-    set nu
-endfunction
-
 autocmd FocusLost * call ToggleRelativeOn()
 autocmd FocusGained * call ToggleRelativeOn()
 autocmd InsertEnter * call ToggleRelativeOn()
@@ -363,40 +313,6 @@ nnoremap [t :tabprev<CR>
 "------------------------------------------------------------------
 nnoremap ]b :bnext<cr>
 nnoremap [b :bprev<cr>
-
-" ----------------------------------------------------------------------------
-" <Leader>?/! | Google it / Feeling lucky
-" ----------------------------------------------------------------------------
-function! s:goog(pat, lucky)
-  let q = '"'.substitute(a:pat, '["\n]', ' ', 'g').'"'
-  let q = substitute(q, '[[:punct:] ]',
-       \ '\=printf("%%%02X", char2nr(submatch(0)))', 'g')
-  call system(printf('open "https://www.google.com/search?%sq=%s"',
-                   \ a:lucky ? 'btnI&' : '', q))
-endfunction
-
-nnoremap <leader>? :call <SID>goog(expand("<cWORD>"), 0)<cr>
-nnoremap <leader>! :call <SID>goog(expand("<cWORD>"), 1)<cr>
-xnoremap <leader>? "gy:call <SID>goog(@g, 0)<cr>gv
-xnoremap <leader>! "gy:call <SID>goog(@g, 1)<cr>gv
-
-" }}}
-
-" ----------------------------------------------------------------------------
-" :Root | Change directory to the root of the Git repository
-" ----------------------------------------------------------------------------
-function! s:root()
-  let root = systemlist('git rev-parse --show-toplevel')[0]
-  if v:shell_error
-    echo 'Not in git repo'
-  else
-    execute 'lcd' root
-    echo 'Changed directory to: '.root
-  endif
-endfunction
-command! Root call s:root()
-
-" }}}
 
 nnoremap <F12> :exec ':silent !open -a /Applications/Google\ Chrome.app %'<CR>
 
@@ -455,18 +371,6 @@ augroup vimrcEx
   " Allow stylesheets to autocomplete hyphenated words
   autocmd FileType css,scss,sass,less setlocal iskeyword+=-
 augroup END
-
-" Tab completion
-" will insert tab at beginning of line,
-" will use completion if not at beginning
-function! InsertTabWrapper()
-    let col = col('.') - 1
-    if !col || getline('.')[col - 1] !~ '\k'
-        return "\<tab>"
-    else
-        return "\<c-p>"
-    endif
-endfunction
 
 set t_Co=16
 
@@ -715,17 +619,6 @@ nnoremap <leader>gd :Gdiff<CR>
 nnoremap <leader>gb :Gblame<CR>
 nnoremap <leader>pp :Git push origin master<CR>
 
-function! s:tag_line_handler(l)
-    let keys = split(a:l, '\t')
-    exec 'tag' keys[1]
-endfunction
-
-function! MakeTags()
-    echo 'Preparing tags...'
-    call system('ctags -R')
-    echo 'Tags done'
-endfunction
-
 let php_sql_query=1
 let php_htmlInStrings=1
 let g:rooter_use_lcd=1
@@ -748,4 +641,113 @@ command! -bang Wa wa<bang>
 command! -bang WA wa<bang>
 command! -bang Wq wq<bang>
 command! -bang WQ wq<bang>
-"command W w !sudo tee %<bang>
+
+"--------------------------------------------------------
+" Custom functions
+"--------------------------------------------------------
+function! s:tag_line_handler(l)
+	let keys = split(a:l, '\t')
+	exec 'tag' keys[1]
+endfunction
+
+function! MakeTags()
+	echo 'Preparing tags...'
+	call system('ctags -R')
+	echo 'Tags done'
+endfunction
+
+" Handy function to switch between current
+" and previous buffer
+function! SwitchBuffer()
+	b#
+endfunction
+nmap b<Tab> :call SwitchBuffer()<CR>
+
+" Auto Completion
+function! BuildYCM(info)
+	" info is a dictionary with 3 fields
+	" - name:   name of the plugin
+	" - status: 'installed', 'updated', or 'unchanged'
+	" - force:  set on PlugInstall! or PlugUpdate!
+	if a:info.status == 'installed' || a:info.force
+		!./install.py --clang-completer --omnisharp-completer 
+	endif
+endfunction
+
+" Sets python options 
+function! SetPythonOptions()
+	setlocal tabstop=4
+	setlocal softtabstop=4
+	setlocal shiftwidth=4
+	setlocal textwidth=80
+	setlocal smarttab
+	setlocal expandtab
+	setlocal autoindent
+	set fileformat=unix
+endfunction
+
+" Strip trailing whitespace (,ss)
+function! StripWhitespace()
+	let save_cursor = getpos(".")
+	let old_query = getreg('/')
+	:%s/\s\+$//e
+	call setpos('.', save_cursor)
+	call setreg('/', old_query)
+endfunction
+noremap <leader>ss :call StripWhitespace()<CR>
+
+function! ToggleNumbersOn()
+	set nu!
+	set rnu
+endfunction
+
+function! ToggleRelativeOn()
+	set rnu!
+	set nu
+endfunction
+
+" ----------------------------------------------------------------------------
+" <Leader>?/! | Google it / Feeling lucky
+" ----------------------------------------------------------------------------
+function! s:goog(pat, lucky)
+  let q = '"'.substitute(a:pat, '["\n]', ' ', 'g').'"'
+  let q = substitute(q, '[[:punct:] ]',
+	   \ '\=printf("%%%02X", char2nr(submatch(0)))', 'g')
+  call system(printf('open "https://www.google.com/search?%sq=%s"',
+				   \ a:lucky ? 'btnI&' : '', q))
+endfunction
+
+nnoremap <leader>? :call <SID>goog(expand("<cWORD>"), 0)<cr>
+nnoremap <leader>! :call <SID>goog(expand("<cWORD>"), 1)<cr>
+xnoremap <leader>? "gy:call <SID>goog(@g, 0)<cr>gv
+xnoremap <leader>! "gy:call <SID>goog(@g, 1)<cr>gv
+
+" }}}
+
+" ----------------------------------------------------------------------------
+" :Root | Change directory to the root of the Git repository
+" ----------------------------------------------------------------------------
+function! s:root()
+  let root = systemlist('git rev-parse --show-toplevel')[0]
+  if v:shell_error
+	echo 'Not in git repo'
+  else
+	execute 'lcd' root
+	echo 'Changed directory to: '.root
+  endif
+endfunction
+command! Root call s:root()
+
+" }}}
+
+" Tab completion
+" will insert tab at beginning of line,
+" will use completion if not at beginning
+function! InsertTabWrapper()
+	let col = col('.') - 1
+	if !col || getline('.')[col - 1] !~ '\k'
+		return "\<tab>"
+	else
+		return "\<c-p>"
+	endif
+endfunction
