@@ -33,6 +33,17 @@ elseif
 	Plug 'airblade/vim-gitgutter'
 endif
 
+" Auto Completion
+function! BuildYCM(info)
+	" info is a dictionary with 3 fields
+	" - name:   name of the plugin
+	" - status: 'installed', 'updated', or 'unchanged'
+	" - force:  set on PlugInstall! or PlugUpdate!
+	if a:info.status == 'installed' || a:info.force
+		!./install.py --clang-completer --omnisharp-completer 
+	endif
+endfunction
+
 Plug 'morhetz/gruvbox'
 Plug 'Valloric/YouCompleteMe', { 'do': function('BuildYCM') }
 Plug 'Shougo/neocomplete.vim'
@@ -679,17 +690,6 @@ function! SwitchBuffer()
 	b#
 endfunction
 nmap b<Tab> :call SwitchBuffer()<CR>
-
-" Auto Completion
-function! BuildYCM(info)
-	" info is a dictionary with 3 fields
-	" - name:   name of the plugin
-	" - status: 'installed', 'updated', or 'unchanged'
-	" - force:  set on PlugInstall! or PlugUpdate!
-	if a:info.status == 'installed' || a:info.force
-		!./install.py --clang-completer --omnisharp-completer 
-	endif
-endfunction
 
 " Sets python options 
 function! SetPythonOptions()
