@@ -12,10 +12,6 @@
 set nocompatible    
 set background=dark
 
-colorscheme hybrid
-"colorscheme gruvbox
-
-
 " Change leader to ','
 let mapleader=","
 let s:darwin = has('mac')
@@ -44,9 +40,12 @@ function! BuildYCM(info)
 	endif
 endfunction
 
+"--------------------------------------------------------------------------------
+" Plug begins {{{
+"--------------------------------------------------------------------------------
+
 Plug 'crusoexia/vim-monokai'
-colorscheme monokai
-set t_Co=256
+Plug 'cdmedia/itg_flat_vim'
 Plug 'morhetz/gruvbox'
 Plug 'Valloric/YouCompleteMe', { 'do': function('BuildYCM') }
 Plug 'Shougo/neocomplete.vim'
@@ -124,6 +123,14 @@ Plug 'sickill/vim-pasta'
 
 call plug#end()
 
+" }}}
+
+colorscheme monokai
+"colorscheme hybrid
+"colorscheme gruvbox
+"colorscheme itg_flat
+
+set t_Co=256
 set formatoptions+=1
 " ============================================================================
 " FZF {{{
