@@ -44,6 +44,9 @@ function! BuildYCM(info)
 	endif
 endfunction
 
+Plug 'crusoexia/vim-monokai'
+colorscheme monokai
+set t_Co=256
 Plug 'morhetz/gruvbox'
 Plug 'Valloric/YouCompleteMe', { 'do': function('BuildYCM') }
 Plug 'Shougo/neocomplete.vim'
@@ -395,7 +398,7 @@ augroup vimrcEx
   autocmd FileType css,scss,sass,less setlocal iskeyword+=-
 augroup END
 
-set t_Co=16
+"set t_Co=16
 
 " Note that these vary from language to language
 set tabstop=4   "Set space width of tabs
