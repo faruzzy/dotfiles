@@ -98,6 +98,7 @@ Plug 'moll/vim-node'
 
 Plug 'skammer/vim-css-color', { 'for': 'css' }
 Plug 'groenewege/vim-less', { 'for': 'less' }
+Plug 'cakebaker/scss-syntax.vim', { 'for': 'scss' }
 
 " ==== JSON ==== "
 Plug 'elzr/vim-json', { 'for' : 'json' }
