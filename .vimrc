@@ -8,15 +8,29 @@
 " 
 " Type :so % to refresh .vimrc after making changes -> Thanks to https://github.com/colbycheeze/dotfiles/blob/master/vimrc
 "
-"Behave like vim and not like vi! (Much, much better)
-set nocompatible    
-set background=dark
+" ==========================================================
+" House keeping {{{
+" ==========================================================
 
-" Change leader to ','
-let mapleader=","
+syntax on				" Syntax highlighting
+let mapleader=","		" Change leader to ','
+" refresh current .vimrc file for change to take effect
+nnoremap <leader>s :source %<CR>		
+set nocompatible		" Behave like vim and not like vi! (Much, much better)
+set background=dark
+set number				" Print the line number in front of each line
+set ruler       "Display Cursor Position
+set title       "Display filename in titlebar
+set titleold=   "Prevent the 'Thanks for flying Vim'
+set relativenumber
+
+" }}}
+
 let s:darwin = has('mac')
 
-syntax on
+"--------------------------------------------------------------------------------
+" Plug begins {{{
+"--------------------------------------------------------------------------------
 
 call plug#begin('~/.vim/plugged')
 
@@ -28,7 +42,7 @@ if v:version >= 703
 elseif
 	Plug 'airblade/vim-gitgutter'
 endif
-
+Plug 'junegunn/gv.vim'
 " Auto Completion
 function! BuildYCM(info)
 	" info is a dictionary with 3 fields
@@ -39,10 +53,6 @@ function! BuildYCM(info)
 		!./install.py --clang-completer --omnisharp-completer 
 	endif
 endfunction
-
-"--------------------------------------------------------------------------------
-" Plug begins {{{
-"--------------------------------------------------------------------------------
 
 Plug 'crusoexia/vim-monokai'
 Plug 'cdmedia/itg_flat_vim'
@@ -415,8 +425,6 @@ set sw=4
 set splitright  "By default, split to the right
 set splitbelow
 
-set ruler       "Display Cursor Position
-
 " Don't add empty new lines at the end of files
 set binary
 set noeol
@@ -424,9 +432,6 @@ set noeol
 " Highlight current line
 set cursorline
 set nocursorcolumn
-
-set title       "Display filename in titlebar
-set titleold=   "Prevent the "Thanks for flying Vim"
 
 " Show "invisible" characters
 "set lcs=tab:▸\ ,trail:·,eol:¬,nbsp:_
@@ -458,14 +463,10 @@ set history=1024				" Amount of Command history
 "No beeps
 set noerrorbells	
 
-"Add line numbers
-set number						" Print the line number in front of each line
 set numberwidth=2
 set spelllang=en,fr				" Spell checking language
 " Make it obvious where 80 characters is
 "set textwidth=80
-
-set relativenumber
 set cmdheight=2
 
 "Show me what I'm typing
@@ -657,6 +658,14 @@ nnoremap <leader>gc :Gcommit<CR>
 nnoremap <leader>gd :Gdiff<CR>
 nnoremap <leader>gb :Gblame<CR>
 nnoremap <leader>pp :Git push origin master<CR>
+" ==================== Fugitive ====================
+
+" ==================== Plug ========================
+nnoremap <leader>pi :PlugInstall<CR>
+nnoremap <leader>pu :PlugUpdate<CR>
+nnoremap <leader>pU :PlugUpgrade<CR>
+nnoremap <leader>pc :PlugClean<CR>
+" ==================== Plug ========================
 
 let php_sql_query=1
 let php_htmlInStrings=1
