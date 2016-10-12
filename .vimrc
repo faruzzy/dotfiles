@@ -211,6 +211,12 @@ if has('patch-7.4.338')
 	set breakindent
 	set breakindentopt=sbr
 endif
+"
+" use 256 colors in terminal
+if !has("gui_running")
+    set t_Co=256
+    set term=screen-256color
+endif
 
 if has("gui_macvim")
   " No toolbars, menu or scrollbars in the GUI
