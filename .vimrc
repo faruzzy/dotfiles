@@ -12,17 +12,18 @@
 " House keeping {{{
 " ==========================================================
 
-syntax on				" Syntax highlighting
-let mapleader=","		" Change leader to ','
+syntax on							" Syntax highlighting
+let mapleader=","					" Change leader to ','
 " refresh current .vimrc file for change to take effect
-nnoremap <leader>s :source %<CR>		
-set nocompatible		" Behave like vim and not like vi! (Much, much better)
+nnoremap <leader>s :source %<CR>
+set nocompatible					" Behave like vim and not like vi! (Much, much better)
 set background=dark
-set number				" Print the line number in front of each line
-set ruler       "Display Cursor Position
-set title       "Display filename in titlebar
-set titleold=   "Prevent the 'Thanks for flying Vim'
+set number							" Print the line number in front of each line
+set ruler							" Display Cursor Position
+set title							" Display filename in titlebar
+set titleold=						" Prevent the 'Thanks for flying Vim'
 set relativenumber
+set diffopt+=vertical				" make :diffsplit default to vertical
 
 " }}}
 
