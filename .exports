@@ -1,6 +1,10 @@
+export EDITOR="vim"
 # Make vim the default editor export EDITOR="vim"
 # Don’t clear the screen after quitting a manual page
 export MANPAGER="less -X"
+export http_proxy="http://naproxy.gm.com"
+export https_proxy="https://naproxy.gm.com"
+export no_proxy=git.gm.com,$no_proxy
 
 # Larger bash history (allow 32³ entries; default is 500)
 export HISTSIZE=32768
@@ -15,18 +19,27 @@ export GOROOT=/usr/local/go
 export GOPATH=$HOME/go
 
 # Prefer US English and use UTF-8
-export LC_ALL="en_US.UTF-8"
-export LANG="en_US"
+export LC_ALL=en_US.UTF-8
+export LANG=en_US.UTF-8
+
+# fzf (https://github.com/junegunn/fzf)
+# --------------------------------------------------------------------
+export FZF_DEFAULT_COMMAND='ag --hidden --ignore .git -g ""'
+# export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND | with-dir"
+export FZF_CTRL_T_OPTS="--preview '(highlight -O ansi -l {} 2> /dev/null || cat {} || tree -C {}) 2> /dev/null | head -200'"
+export FZF_CTRL_R_OPTS="--preview 'echo {}' --preview-window down:3:hidden --bind '?:toggle-preview'"
+command -v blsd > /dev/null && export FZF_ALT_C_COMMAND='blsd'
+command -v tree > /dev/null && export FZF_ALT_C_OPTS="--preview 'tree -C {} | head -200'"
 
 # JAVA
 export M2_HOME=/Applications/apache-maven-3.2.5
-export JAVA_HOME=$(/usr/libexec/java_home -v 1.6)
-#export JAVA_OPTIONS=" -Xms2048m -Xmx2048m -XX:PermSize=2048m -XX:MaxPermSize=2048m -Dhttps.proxyHost=naproxy.gm.com -Dhttps.proxyPort=80 -Dhttp.proxyHost=naproxy.gm.com -Dhttp.proxyPort=80 -Dhttp.nonProxyHosts=localhost"
-export JAVA_OPTIONS=" -Xms2048m -Xmx2048m -XX:PermSize=2048m -XX:MaxPermSize=2048m"
+export JAVA_HOME=$(/usr/libexec/java_home -v 1.7)
+export JAVA_OPTIONS=" -Xms2048m -Xmx2048m -XX:PermSize=2048m -XX:MaxPermSize=2048m -Dhttps.proxyHost=naproxy.gm.com -Dhttps.proxyPort=80 -Dhttp.proxyHost=naproxy.gm.com -Dhttp.proxyPort=80 -Dhttp.nonProxyHosts=localhost"
+#export JAVA_OPTIONS=" -Xms2048m -Xmx2048m -XX:PermSize=2048m -XX:MaxPermSize=2048m"
 #export JAVA_HOME=$(/usr/libexec/java_home -v 1.7)
 #export JAVA_HOME=$(/usr/libexec/java_home) #1.8
 
-export PATH=/bin:/sbin:/usr/local/bin:/usr/bin:/usr/sbin:/usr/local/sbin:/usr/local/mysql/bin:$GOPATH/bin:$GOROOT/bin:$M2_HOME/bin
+export PATH=~/dev:/bin:/sbin:/usr/local/bin:/usr/local/Cellar:/usr/bin:/usr/sbin:/usr/local/sbin:/usr/local/mysql/bin:$GOPATH/bin:$GOROOT/bin:$M2_HOME/bin
 
 export FZF_DEFAULT_COMMAND='
   (git ls-tree -r --name-only HEAD ||
