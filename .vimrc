@@ -94,26 +94,23 @@ Plug 'othree/yajs.vim', { 'for': 'javascript' }
 Plug 'othree/jspc.vim', { 'for': 'javascript' }
 Plug 'nono/jquery.vim', { 'for': 'javascript' }
 
-" After syntax, ftplugin, indent for JSX
-Plug 'mxw/vim-jsx'
-
+Plug 'mxw/vim-jsx'									" After syntax, ftplugin, indent for JSX
 Plug 'bigfish/vim-js-context-coloring'
 Plug 'sheerun/vim-polyglot'
 Plug 'kchmck/vim-coffee-script'
-Plug 'leafgarland/typescript-vim'
 Plug 'HerringtonDarkholme/yats.vim'
-Plug 'Quramy/tsuquyomi'
+Plug 'leafgarland/typescript-vim'					" TypeScript Syntax support
+Plug 'Quramy/tsuquyomi'								" TypeScript Development
+Plug 'Shougo/vimproc.vim', {'do': 'make'}			" Interactive command execution in vim (dependency of 'Quramy/tsuquyomi')
+Plug 'moll/vim-node'								" Allows Node.js Development with vim
+Plug 'elzr/vim-json', { 'for' : 'json' }			" json support
+" ==== ECMAScript ==== "
 
-" detect extensionless node scripts (executables) via shebang
-" and add gf for going to node_modules files
-Plug 'moll/vim-node'
-
+" ==== CSS ==== "
 Plug 'skammer/vim-css-color', { 'for': 'css' }
 Plug 'groenewege/vim-less', { 'for': 'less' }
 Plug 'cakebaker/scss-syntax.vim', { 'for': 'scss' }
-
-" ==== JSON ==== "
-Plug 'elzr/vim-json', { 'for' : 'json' }
+" ==== CSS ==== "
 
 " Misc
 Plug 'easymotion/vim-easymotion'
