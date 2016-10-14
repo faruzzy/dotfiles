@@ -25,7 +25,7 @@ nnoremap ]c :action VcsShowNextChangeMarker<cr>
 
 nnoremap gcc :action CommentByLineComment<cr>
 
-nnoremap <leader>vs :source ~/.ideavimrc<CR>
+nnoremap <leader>s :source ~/.ideavimrc<CR>
 nnoremap <leader>fu :action FindUsages<cr>
 nnoremap <leader>su :action ShowUsages<cr>
 nnoremap <leader>cv :action ChangeView<cr>
