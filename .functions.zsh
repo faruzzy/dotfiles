@@ -22,7 +22,7 @@ extract () {
 
 
 # Define a word using collinsdictionary.com
-define() {
+function define() {
   curl -s "http://www.collinsdictionary.com/dictionary/english/$*" | sed -n '/class="def"/p' | awk '{gsub(/.*<span class="def">|<\/span>.*/,"");print}' | sed "s/<[^>]\+>//g";
 }
 
@@ -54,7 +54,7 @@ function _jump {
 }
 
 function _completemarks {
-	local curw=${COMP_WORDS[COMP_CWORD]} 
+	local curw=${COMP_WORDS[COMP_CWORD]}
 	local wordlist=$(find $MARKPATH -type l -printf "%f\n")
 	COMPREPLY=($(compgen -W '${wordlist[@]}' -- "$curw"))
 	return 0
@@ -63,7 +63,7 @@ function _completemarks {
 #complete -o default -o nospace -F _jump jump ## commented out because "complete command not found"
 
 # Epoch time conversion
-epoch() {
+function epoch() {
   TESTREG="[\d{10}]"
   if [[ "$1" =~ $TESTREG ]]; then
     # is epoch
@@ -80,7 +80,7 @@ epoch() {
 
 # fshow - git commit browser
 # thanks to http://junegunn.kr/2015/03/browsing-git-commits-with-fzf/
-fshow() {
+function fshow() {
   git log --graph --color=always \
 	  --format="%C(auto)%h%d %s %C(black)%C(bold)%cr" "$@" |
   fzf --ansi --no-sort --reverse --tiebreak=index --bind=ctrl-s:toggle-sort \
@@ -91,8 +91,129 @@ fshow() {
 FZF-EOF"
 }
 
+# fd - cd to selected directory
+function fd() {
+  DIR=`find ${1:-*} -path '*/\.*' -prune -o -type d -print 2> /dev/null | fzf-tmux` \
+	&& cd "$DIR"
+}
+
+# fda - including hidden directories
+function fda() {
+  DIR=`find ${1:-.} -type d 2> /dev/null | fzf-tmux` && cd "$DIR"
+}
+#
+# fco - checkout git branch/tag
+function fco() {
+  local tags branches target
+  tags=$(
+    git tag | awk '{print "\x1b[31;1mtag\x1b[m\t" $1}') || return
+  branches=$(
+    git branch --all | grep -v HEAD             |
+    sed "s/.* //"    | sed "s#remotes/[^/]*/##" |
+    sort -u          | awk '{print "\x1b[34;1mbranch\x1b[m\t" $1}') || return
+  target=$(
+    (echo "$tags"; echo "$branches") |
+    fzf-tmux -l40 -- --no-hscroll --ansi +m -d "\t" -n 2 -1 -q "$*") || return
+  git checkout $(echo "$target" | awk '{print $2}')
+}
+
+# ftags - search ctags
+function ftags() {
+  local line
+  [ -e tags ] &&
+  line=$(
+    awk 'BEGIN { FS="\t" } !/^!/ {print toupper($4)"\t"$1"\t"$2"\t"$3}' tags |
+    cut -c1-$COLUMNS | fzf --nth=2 --tiebreak=begin
+  ) && $EDITOR $(cut -f3 <<< "$line") -c "set nocst" \
+                                      -c "silent tag $(cut -f2 <<< "$line")"
+}
+
+# fe [FUZZY PATTERN] - Open the selected file with the default editor
+#   - Bypass fuzzy finder if there's only one match (--select-1)
+#   - Exit if there's no match (--exit-0)
+function fe() {
+  local file
+  file=$(fzf-tmux --query="$1" --select-1 --exit-0)
+  [ -n "$file" ] && ${EDITOR:-vim} "$file"
+}
+
+# Modified version where you can press
+#   - CTRL-O to open with `open` command,
+#   - CTRL-E or Enter key to open with the $EDITOR
+function fo() {
+  local out file key
+  IFS=$'\n' read -d '' -r -a out < <(fzf-tmux --query="$1" --exit-0 --expect=ctrl-o,ctrl-e)
+  key=${out[0]}
+  file=${out[1]}
+  if [ -n "$file" ]; then
+	if [ "$key" = ctrl-o ]; then
+	  open "$file"
+	else
+	  ${EDITOR:-vim} "$file"
+	fi
+  fi
+}
+
+
+if [ -n "$TMUX_PANE" ]; then
+function fzf_tmux_helper() {
+	local sz=$1;  shift
+	local cmd=$1; shift
+	tmux split-window $sz \
+	  "bash -c \"\$(tmux send-keys -t $TMUX_PANE \"\$(source ~/.fzf.bash; $cmd)\" $*)\""
+}
+
+# https://github.com/wellle/tmux-complete.vim
+function fzf_tmux_words() {
+	fzf_tmux_helper \
+	  '-p 40' \
+	  'tmuxwords.rb --all --scroll 500 --min 5 | fzf --multi | paste -sd" " -'
+}
+
+# ftpane - switch pane (@george-b)
+function ftpane() {
+	local panes current_window current_pane target target_window target_pane
+	panes=$(tmux list-panes -s -F '#I:#P - #{pane_current_path} #{pane_current_command}')
+	current_pane=$(tmux display-message -p '#I:#P')
+	current_window=$(tmux display-message -p '#I')
+
+	target=$(echo "$panes" | grep -v "$current_pane" | fzf +m --reverse) || return
+
+	target_window=$(echo $target | awk 'BEGIN{FS=":|-"} {print$1}')
+	target_pane=$(echo $target | awk 'BEGIN{FS=":|-"} {print$2}' | cut -c 1)
+
+	if [[ $current_window -eq $target_window ]]; then
+	  tmux select-pane -t ${target_window}.${target_pane}
+	else
+	  tmux select-pane -t ${target_window}.${target_pane} &&
+	  tmux select-window -t $target_window
+	fi
+}
+
+# Bind CTRL-X-CTRL-T to tmuxwords.sh
+#bindkey '"\C-x\C-t": "$(fzf_tmux_words)\e\C-e"'
+
+elif [ -d ~/github/iTerm2-Color-Schemes/ ]; then
+function ftheme() {
+	local base
+	base=~/github/iTerm2-Color-Schemes
+	$base/tools/preview.rb "$(
+	  ls {$base/schemes,~/.vim/plugged/seoul256.vim/iterm2}/*.itermcolors | fzf)"
+}
+fi
+
+# Switch tmux-sessions
+fs() {
+  local session
+  session=$(tmux list-sessions -F "#{session_name}" | \
+    fzf-tmux --query="$1" --select-1 --exit-0) &&
+  tmux switch-client -t "$session"
+}
+
+source ~/z.sh
+
 # fbr - checkout git branch
-fbr() {
+function fbr() {
   local branches branch
   branches=$(git branch) &&
   branch=$(echo "$branches" | fzf-tmux -d 15 +m) &&
@@ -104,7 +225,7 @@ fbr() {
 # enter shows you the contents of the stash
 # ctrl-d shows a diff of the stash against your current HEAD
 # ctrl-b checks the stash out as a branch, for easier merging
-fstash() {
+function fstash() {
   local out q k sha
     while out=$(
       git stash list --pretty="%C(yellow)%h %>(14)%Cgreen%cr %C(blue)%gs" |
@@ -128,12 +249,79 @@ fstash() {
 
 # fcs - get git commit sha
 # example usage: git rebase -i `fcs`
-fcs() {
+function fcs() {
   local commits commit
   commits=$(git log --color=always --pretty=oneline --abbrev-commit --reverse) &&
   commit=$(echo "$commits" | fzf --tac +s +m -e --ansi --reverse) &&
   echo -n $(echo "$commit" | sed "s/ .*//")
 }
+
+# GIT heart FZF
+# -------------
+
+function is_in_git_repo() {
+  git rev-parse HEAD > /dev/null 2>&1
+}
+
+function gf() {
+  is_in_git_repo || return
+  git -c color.status=always status --short |
+  fzf-tmux -m --ansi --nth 2..,.. \
+    --preview '(git diff --color=always -- {-1} | sed 1,4d; cat {-1}) | head -500' |
+  cut -c4- | sed 's/.* -> //'
+}
+
+function gb() {
+  is_in_git_repo || return
+  git branch -a --color=always | grep -v '/HEAD\s' | sort |
+  fzf-tmux --ansi --multi --tac --preview-window right:70% \
+    --preview 'git log --oneline --graph --date=short --pretty="format:%C(auto)%cd %h%d %s" $(sed s/^..// <<< {} | cut -d" " -f1) | head -200' |
+  sed 's/^..//' | cut -d' ' -f1 |
+  sed 's#^remotes/##'
+}
+
+function gt() {
+  is_in_git_repo || return
+  git tag --sort -version:refname |
+  fzf-tmux --multi --preview-window right:70% \
+    --preview 'git show --color=always {} | head -200'
+}
+
+function gh() {
+  is_in_git_repo || return
+  git log --date=short --format="%C(green)%C(bold)%cd %C(auto)%h%d %s (%an)" --graph |
+  fzf-tmux --ansi --no-sort --reverse --multi --bind 'ctrl-s:toggle-sort' \
+    --header 'Press CTRL-S to toggle sort' \
+    --preview 'grep -o "[a-f0-9]\{7,\}" <<< {} | xargs git show --color=always | head -200' |
+  grep -o "[a-f0-9]\{7,\}"
+}
+
+function gr() {
+  is_in_git_repo || return
+  git remote -v | awk '{print $1 "\t" $2}' | uniq |
+  fzf-tmux --tac \
+    --preview 'git log --oneline --graph --date=short --pretty="format:%C(auto)%cd %h%d %s" {1} | head -200' |
+  cut -d' ' -f1
+}
+
+# A helper function to join multi-line output from fzf
+function join-lines() {
+  local item
+  while read item; do
+    echo -n "${(q)item} "
+  done
+}
+
+fzf-gt-widget() LBUFFER+=$(gt | join-lines)
+zle -N fzf-gt-widget
+#bindkey '^g^t' fzf-gt-widget
+
+#bindkey '"\er": redraw-current-line'
+#bindkey '"\C-g\C-f": "$(gf)\e\C-e\er"'
+#bindkey '"\C-g\C-b": "$(gb)\e\C-e\er"'
+#bindkey '"\C-g\C-t": "$(gt)\e\C-e\er"'
+#bindkey '"\C-g\C-h": "$(gh)\e\C-e\er"'
+#bindkey '"\C-g\C-r": "$(gr)\e\C-e\er"'
 
 # Simple calculator
 function calc() {
@@ -193,7 +381,7 @@ function extract() {
 
 # animated gifs from any video
 # from alex sexton   gist.github.com/SlexAxton/4989674
-gifify() {
+function gifify() {
   if [[ -n "$1" ]]; then
     if [[ $2 == '--good' ]]; then
       ffmpeg -i $1 -r 10 -vcodec png out-static-%05d.png
@@ -209,11 +397,11 @@ gifify() {
 
 # turn that video into webm.
 # brew reinstall ffmpeg --with-libvpx
-webmify() {
+function webmify() {
   ffmpeg -i $1 -vcodec libvpx -acodec libvorbis -isync -copyts -aq 80 -threads 3 -qmax 30 -y $2 $1.webm
 }
 
-rule() {
+function rule() {
     printf "%$(tput cols)s\n"|tr " " "-"
 }
 
@@ -242,20 +430,6 @@ function ch() {
 	   from urls order by last_visit_time desc" |
 	awk -F $sep '{printf "%-'$cols's  \x1b[36m%s\x1b[m\n", $1, $2}' |
 	fzf --ansi --multi | sed 's#.*\(https*://\)#\1#' | xargs open
-}
-
-# fd - cd to selected directory
-fd() {
-  local dir
-  dir=$(find ${1:-*} -path '*/\.*' -prune \
-                  -o -type d -print 2> /dev/null | fzf +m) &&
-  cd "$dir"
-}
-
-# fda - including hidden directories
-fda() {
-  local dir
-  dir=$(find ${1:-.} -type d 2> /dev/null | fzf +m) && cd "$dir"
 }
 
 # Change working directory to the top-most Finder window location
@@ -296,7 +470,7 @@ function gitio() {
 # Based on https://github.com/stephenplusplus/dots/blob/master/.bash_profile#L68 by @stephenplusplus
 #
 # Note: subl is already setup as a shortcut to Sublime. Replace with your own editor if different
-# 
+#
 # - arg 1 - url|username|repo remote endpoint, username on github, or name of
 #           repository.
 # - arg 2 - (optional) name of repo
@@ -318,7 +492,7 @@ function gitio() {
 #     .. subl .
 
 function clone {
-	# customize username to your own 
+	# customize username to your own
 	local username="faruzzy"
 	local url=$1;
 	local repo=$2;
@@ -342,7 +516,7 @@ function clone {
 
 # open new cloned project with IntteliJ
 function clonei {
-	# customize username to your own 
+	# customize username to your own
 	local username="faruzzy"
 	local url=$1;
 	local repo=$2;
@@ -365,7 +539,7 @@ function clonei {
 }
 
 # Copy w/ progress
-cp_p () {
+function cp_p () {
   rsync -WavP --human-readable --progress $1 $2
 }
 
@@ -387,8 +561,8 @@ function json() {
 }
 
 # prune a set of empty directories
-function prunedir () { 
-   find $* -type d -empty -print0 | xargs -0r rmdir -p ; 
+function prunedir () {
+   find $* -type d -empty -print0 | xargs -0r rmdir -p ;
 }
 
 # take this repo and copy it to somewhere else minus the .git stuff.
@@ -501,7 +675,7 @@ function browsers(){
 	chrome $1
 	opera $1
 	firefox $1
-	safari $1	
+	safari $1
 }
 
 # Browserstack shortcuts, now with added hotness thanks to the Browserstack team.
@@ -511,7 +685,7 @@ function browsers(){
 # For local server running on port 3000, use like this
 # Usage: ipad3 "http://localhost:3000" "localhost,3000,0", win7ie8 "http://localhost:3000" "localhost,3000,0" etc.
 
-# For local server running on apache with ssl as staging.example.com and https://staging.example.com 
+# For local server running on apache with ssl as staging.example.com and https://staging.example.com
 # Usage: ipad3 "http://staging.example.com" "staging.example.com,80,0,staging.example.com,443,1", win7ie8 "http://staging.example.com" "staging.example.com,80,0,staging.example.com,443,1" etc.
 
 function openurl(){
