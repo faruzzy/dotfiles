@@ -57,6 +57,7 @@ endfunction
 
 Plug 'crusoexia/vim-monokai'
 Plug 'cdmedia/itg_flat_vim'
+Plug 'junegunn/seoul256.vim'
 Plug 'morhetz/gruvbox'
 Plug 'Valloric/YouCompleteMe', { 'do': function('BuildYCM') }
 Plug 'Shougo/neocomplete.vim'
@@ -69,6 +70,9 @@ Plug 'fatih/vim-go'
 Plug 'nsf/gocode'
 "Plug 'Shougo/vimproc.vim'
 Plug 'Shougo/unite.vim'
+
+" ====== Java ====== "
+Plug 'udalov/javap-vim'
 
 " ==== Python ==== "
 Plug 'scrooloose/syntastic'
@@ -133,7 +137,8 @@ call plug#end()
 
 " }}}
 
-colorscheme monokai
+colo seoul256
+"colorscheme monokai
 "colorscheme hybrid
 "colorscheme gruvbox
 "colorscheme itg_flat
