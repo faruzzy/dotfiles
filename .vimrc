@@ -73,6 +73,7 @@ Plug 'Shougo/unite.vim'
 
 " ====== Java ====== "
 Plug 'udalov/javap-vim'
+Plug 'udalov/kotlin-vim'
 
 " ==== Python ==== "
 Plug 'scrooloose/syntastic'
