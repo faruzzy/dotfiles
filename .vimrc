@@ -6,11 +6,17 @@
 " ██╗╚████╔╝  ██║ ██║ ╚═╝ ██║ ██║  ██║ ╚██████╗
 " ╚═╝ ╚═══╝   ╚═╝ ╚═╝     ╚═╝ ╚═╝  ╚═╝  ╚═════╝
 " 
-" Type :so % to refresh .vimrc after making changes -> Thanks to https://github.com/colbycheeze/dotfiles/blob/master/vimrc
 "
-" ==========================================================
+
+"--------------------------------------------------------------------------------
 " House keeping {{{
-" ==========================================================
+"--------------------------------------------------------------------------------
+
+set ttyfast							" Optimize for fast terminal connections
+set ttymouse=xterm2
+set ttyscroll=3
+set lazyredraw						" Wait to redraw, do not redraw while executing macros
+set linebreak
 
 syntax on							" Syntax highlighting
 let mapleader=","					" Change leader to ','
@@ -25,9 +31,9 @@ set titleold=						" Prevent the 'Thanks for flying Vim'
 set relativenumber
 set diffopt+=vertical				" make :diffsplit default to vertical
 
-" }}}
-
 let s:darwin = has('mac')
+
+" }}}
 
 "--------------------------------------------------------------------------------
 " Plug begins {{{
@@ -154,6 +160,8 @@ set formatoptions+=1
 set rtp+=~/.fzf
 
 nnoremap <Leader>f :FZF<CR>
+map <leader>a :Ack!<Space>
+
 if has('nvim')
   let $FZF_DEFAULT_OPTS .= ' --inline-info'
   " let $NVIM_TUI_ENABLE_TRUE_COLOR = 1
@@ -448,113 +456,96 @@ set nocursorcolumn
 "set list
 
 
-" Optimize for fast terminal connections
-set ttyfast
-set ttymouse=xterm2
-set ttyscroll=3
-set lazyredraw          	    " Wait to redraw, do not redraw while executing macros
-set linebreak
-
 " ------------------
 set mouse=a    "Enable mouse in all modes
 set mousemodel=popup
-
-" Option to aid in pasting text unmodified from other applications
-"set paste
-
-set path=$PWD/**				" You need this (trust me) to move around
-
+"set paste																	" Option to aid in pasting text unmodified from other applications
+set path=$PWD/**															" You need this (trust me) to move around
 set wildmenu
-
 set backspace=indent,eol,start
-set history=1024				" Amount of Command history
-
-set noerrorbells				"No beeps
-
+set history=1024															" Amount of Command history
+set noerrorbells															" No beeps
 set numberwidth=2
-set spelllang=en,fr				" Spell checking language
-
-"set textwidth=80				" Make it obvious where 80 characters is
+set spelllang=en,fr															" Spell checking language
+"set textwidth=80															" Make it obvious where 80 characters is
 set cmdheight=2
-
-"Show me what I'm typing
-set showcmd	    
-
-"Don't Show the current mode Since we're using airline
-set noshowmode    
-
-set noswapfile                  " No beeps
-set nobackup                    " Don't create annoying backup files
-set autowrite                   " Automatically save before :next, :make etc.
-set autoread                    " Automatically reread changed files (outside of vim) without asking me anything
-set laststatus=2				" Always show status line
-set hidden						" Display another buffer when current buffer isn't saved
+set showcmd																	" Show me what I'm typing
+set noshowmode																" Don't Show the current mode Since we're using airline
+set noswapfile																" No beeps
+set nobackup																" Don't create annoying backup files
+set autowrite																" Automatically save before :next, :make etc.
+set autoread																" Automatically reread changed files (outside of vim) without asking me anything
+set laststatus=2															" Always show status line
+set hidden																	" Display another buffer when current buffer isn't saved
 
 syntax sync minlines=256
 set synmaxcol=300
 
-" Enable folding
-set foldmethod=indent
+set foldmethod=indent														" Enable folding
 set foldlevel=99
 
 set statusline=%<[%n]\ %F\ %m%r%y\ %{exists('g:loaded_fugitive')?fugitive#statusline():''}\ %=%-14.(%l,%c%V%)\ %P
 
+" ----------------------------------------------------------------------------
 " Encoding {{{
+" ----------------------------------------------------------------------------
 
 set encoding=utf-8   
 set termencoding=utf-8
 set fileencoding=utf-8
-set fileencodings=utf-8,cp932,euc-jp "A list of character encodings, set default encoding to UTF-8
-set fileformats=unix,dos,mac    " Prefer Unix over Windows over OS 9 formats
+set fileencodings=utf-8,cp932,euc-jp										" A list of character encodings, set default encoding to UTF-8
+set fileformats=unix,dos,mac												" Prefer Unix over Windows over OS 9 formats
 
 " }}}
 
 "http://stackoverflow.com/questions/20186975/vim-mac-how-to-copy-to-clipboard-without-pbcopy
 set clipboard=unnamed
-
-" Better Completion
-" set complete-=i
-set complete=.,w,b,u,t
+set complete=.,w,b,u,t														" Better Completion
 set completeopt=longest,menuone
+set ofu=syntaxcomplete#Complete												" Set omni-completion method.
+set report=0																" Show all changes
 
+
+" ----------------------------------------------------------------------------
 " Wildmeu completion {{{
+" ----------------------------------------------------------------------------
 
-set wildmenu										" Command line autocompletion
-set wildmode=list:full								" Shows all the options
-
-set wildignore+=.hg,.git,.svn						" Version control
-set wildignore+=*.aux,*.out,*.toc					" LaTeX intermediate files
-set wildignore+=*.jpg,*.bmp,*.gif,*.png,*.jpeg		" binary images
-set wildignore+=*.o,*.obj,*.exe,*.dll,*.manifest	" compiled object files
-set wildignore+=*.spl								" compiled spelling word lists
-set wildignore+=*.sw?								" Vim swap files
-set wildignore+=*.bak,*.?~,*.??~,*.???~,*.~			" Backup files
-set wildignore+=*.DS_Store							" OSX bullshit
-set wildignore+=*.luac								" Lua byte code
-set wildignore+=migrations							" Django migrations
-set wildignore+=go/pkg								" Go static files
-set wildignore+=go/bin								" Go bin files
-set wildignore+=go/bin-vagrant						" Go bin-vagrant files
-set wildignore+=*.pyc								" Python byte code
-set wildignore+=*.jar								" Java archives
-set wildignore+=*.orig								" Merge resolution files
-set wildignore+=*.stats								" Merge resolution files
+set wildmenu																" Command line autocompletion
+set wildmode=list:full														" Shows all the options
+set wildignore+=.hg,.git,.svn												" Version control
+set wildignore+=*.aux,*.out,*.toc											" LaTeX intermediate files
+set wildignore+=*.jpg,*.bmp,*.gif,*.png,*.jpeg								" binary images
+set wildignore+=*.o,*.obj,*.exe,*.dll,*.manifest							" compiled object files
+set wildignore+=*.spl														" compiled spelling word lists
+set wildignore+=*.sw?														" Vim swap files
+set wildignore+=*.bak,*.?~,*.??~,*.???~,*.~									" Backup files
+set wildignore+=*.DS_Store													" OSX bullshit
+set wildignore+=*.luac														" Lua byte code
+set wildignore+=migrations													" Django migrations
+set wildignore+=go/pkg														" Go static files
+set wildignore+=go/bin														" Go bin files
+set wildignore+=go/bin-vagrant												" Go bin-vagrant files
+set wildignore+=*.pyc														" Python byte code
+set wildignore+=*.jar														" Java archives
+set wildignore+=*.orig														" Merge resolution files
+set wildignore+=*.stats														" Merge resolution files
 
 " }}}
 
-set ofu=syntaxcomplete#Complete                  "Set omni-completion method.
-set report=0    "Show all changes
+" ----------------------------------------------------------------------------
+"  NeoComplete {{{
+" ----------------------------------------------------------------------------
 
-" Enabling neocomplete at startup
-let g:neocomplete#enable_at_startup = 1
+let g:neocomplete#enable_at_startup = 1										" Enabling neocomplete at startup
+let g:neocomplete#enable_smart_case = 1										" Use smartcase
+let g:neocomplete#sources#syntax#min_keyword_length = 3						" Set minimum syntax keyword length.
 
-" Use smartcase
-let g:neocomplete#enable_smart_case = 1
+" }}}
 
-" Set minimum syntax keyword length.
-let g:neocomplete#sources#syntax#min_keyword_length = 3
+" ----------------------------------------------------------------------------
+"  YouCompleteMe {{{
+" ----------------------------------------------------------------------------
 
-" ==================== YouCompleteMe ====================
 let g:ycm_autoclose_preview_window_after_completion = 1
 let g:ycm_min_num_of_chars_for_completion = 1
 
@@ -564,27 +555,23 @@ if !exists("g:ycm_semantic_triggers")
 endif
 let g:ycm_semantic_triggers['typescript'] = ['.']
 
-" ==================== NERDTree Options =================
+" }}}
+
+" ----------------------------------------------------------------------------
+" NERDTree Options {{{
+" ----------------------------------------------------------------------------
+
 let NERDTreeIgnore=['CVS','\.dSYM$', '.git', '.DS_Store', '*.swp', '*.swo', '*.swo']
+let NERDTreeChDirMode=2														" setting root dir in NT also sets VIM's cd
 
-" setting root dir in NT also sets VIM's cd
-let NERDTreeChDirMode=2
-
-" For toggling
-"noremap <Leader>n :<C-u>call g:NerdTreeFindToggle()<cr>
+"noremap <Leader>n :<C-u>call g:NerdTreeFindToggle()<cr>					" For toggling
 map <C-c> :NERDTreeToggle<CR>
-
 "nmap <silent> <leader>n :NERDTreeToggle<CR>
 let NERDTreeMapOpenSplit = "s"
 let NERDTreeMapOpenVSplit = "v"
 let NERDTreeMinimalUI = 1
 let NERDTreeShowHidden = 1
 let NERDTreeIgnore = ['\~$', '^\.git$', '^\.hg$', '^\.bundle$', '^\.jhw-cache$', '\.pyc$', '\.egg-info$', '__pycache__', '\.vagrant$']
-
-"Plugin 'jistr/vim-nerdtree-tabs'
-"map <silent> <Leader>n <plug>NERDTreeTabsToggle<CR>
-
-map <leader>a :Ack!<Space>
 
 " These prevent accidentally loading files while focused on NERDTree
 "autocmd FileType nerdtree noremap <buffer> <c-left> <nop>
@@ -597,11 +584,18 @@ autocmd vimenter * if !argc() | NERDTree | endif
 
 " Hides "Press ? for help"
 let NERDTreeMinimalUI=1
+let g:NERDTreeShowHidden=1													" Shows invisibles
+let g:netrw_liststyle=3														" Explore with NerdTree Style by default
 
-" Shows invisibles
-let g:NERDTreeShowHidden=1
+"Plugin 'jistr/vim-nerdtree-tabs'
+"map <silent> <Leader>n <plug>NERDTreeTabsToggle<CR>
 
-" ==================== Vim-go ====================
+" }}}
+
+" ----------------------------------------------------------------------------
+" Vim-go {{{
+" ----------------------------------------------------------------------------
+
 let g:go_fmt_fail_silently = 0
 let g:go_fmt_command = "goimports"
 let g:go_autodetect_gopath = 1
@@ -621,7 +615,6 @@ au FileType go nmap <Leader>s <Plug>(go-def-split)
 au FileType go nmap <Leader>v <Plug>(go-def-vertical)
 au FileType go nmap <Leader>in <Plug>(go-info)
 au FileType go nmap <Leader>i <Plug>(go-implements)
-
 au FileType go nmap <leader>r  <Plug>(go-run)
 au FileType go nmap <leader>b  <Plug>(go-build)
 au FileType go nmap <leader>g  <Plug>(go-gbbuild)
@@ -629,23 +622,28 @@ au FileType go nmap <leader>t  <Plug>(go-test-compile)
 au FileType go nmap <Leader>d <Plug>(go-doc)
 au FileType go nmap <Leader>f :GoImports<CR>
 
+" }}}
+
 map <leader>g :YcmCompleter GoToDefinitionElseDeclaration<CR>
-map <leader>a :Ack!<Space>
 if executable("ag")
   let g:ackprg = 'ag --nogroup --nocolor --column'
 else
   let g:ackprg = 'git grep -H --line-number --no-color --untracked'
 endif
 
-" <TAB>: completion.
 inoremap <expr><TAB>  pumvisible() ? "\<C-n>" : "\<TAB>"
 
-" Movement in insert mode
+" ----------------------------------------------------------------------------
+" Movement in insert mode {{{
+" ----------------------------------------------------------------------------
+
 inoremap <C-h> <C-o>h
 inoremap <C-l> <C-o>a
 inoremap <C-j> <C-o>j
 inoremap <C-k> <C-o>k
 inoremap <C-^> <C-o><C-^>
+
+" }}}
 
 let g:airline_theme='powerlineish'
 let g:airline_powerline_fonts = 1
@@ -654,7 +652,10 @@ let g:airline_powerline_fonts = 1
 "let jshint2_save = 1
 "let jshint2_min_height = 3
 
-" ==================== Fugitive ====================
+" ----------------------------------------------------------------------------
+" Fugitive {{{
+" ----------------------------------------------------------------------------
+
 nnoremap <leader>ga :Git add %:p<CR><CR>
 nnoremap <leader>gw :Gwrite<CR>
 nnoremap <leader>gr :Gread<CR>
@@ -666,27 +667,26 @@ nnoremap <leader>gc :Gcommit<CR>
 nnoremap <leader>gd :Gdiff<CR>
 nnoremap <leader>gb :Gblame<CR>
 nnoremap <leader>pp :Git push origin master<CR>
-" ==================== Fugitive ====================
 
-" ==================== Plug ========================
+" }}}
+
+" ----------------------------------------------------------------------------
+" Plug {{{
+" ----------------------------------------------------------------------------
+
 nnoremap <leader>pi :PlugInstall<CR>
 nnoremap <leader>pu :PlugUpdate<CR>
 nnoremap <leader>pU :PlugUpgrade<CR>
 nnoremap <leader>pc :PlugClean<CR>
-" ==================== Plug ========================
+
+" }}}
 
 let php_sql_query=1
 let php_htmlInStrings=1
 let g:rooter_use_lcd=1
 
-" Explore with NerdTree Style by default
-let g:netrw_liststyle=3
-
-" Resize splits when the window is resized
-au VimResized * :wincmd =
-
-" update dir to current file
-autocmd BufEnter * silent! cd %:p:h
+au VimResized * :wincmd =											" Resize splits when the window is resized
+autocmd BufEnter * silent! cd %:p:h									" update dir to current file
 
 " Typos since I suck @ typing
 command! -bang E e<bang>
@@ -699,8 +699,9 @@ command! -bang Wq wq<bang>
 command! -bang WQ wq<bang>
 
 "--------------------------------------------------------
-" Custom functions
+" Custom functions {{{
 "--------------------------------------------------------
+
 function! s:tag_line_handler(l)
 	let keys = split(a:l, '\t')
 	exec 'tag' keys[1]
@@ -752,7 +753,7 @@ function! ToggleRelativeOn()
 endfunction
 
 " ----------------------------------------------------------------------------
-" <Leader>?/! | Google it / Feeling lucky
+" <Leader>?/! | Google it / Feeling lucky {{{
 " ----------------------------------------------------------------------------
 function! s:goog(pat, lucky)
   let q = '"'.substitute(a:pat, '["\n]', ' ', 'g').'"'
@@ -770,7 +771,7 @@ xnoremap <leader>! "gy:call <SID>goog(@g, 1)<cr>gv
 " }}}
 
 " ----------------------------------------------------------------------------
-" :Root | Change directory to the root of the Git repository
+" :Root | Change directory to the root of the Git repository {{{
 " ----------------------------------------------------------------------------
 function! s:root()
   let root = systemlist('git rev-parse --show-toplevel')[0]
@@ -796,3 +797,5 @@ function! InsertTabWrapper()
 		return "\<c-p>"
 	endif
 endfunction
+
+" }}}
