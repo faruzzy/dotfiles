@@ -462,21 +462,19 @@ set mousemodel=popup
 " Option to aid in pasting text unmodified from other applications
 "set paste
 
-" You need this (trust me) to move around
-set path=$PWD/**
+set path=$PWD/**				" You need this (trust me) to move around
 
 set wildmenu
 
 set backspace=indent,eol,start
 set history=1024				" Amount of Command history
 
-"No beeps
-set noerrorbells	
+set noerrorbells				"No beeps
 
 set numberwidth=2
 set spelllang=en,fr				" Spell checking language
-" Make it obvious where 80 characters is
-"set textwidth=80
+
+"set textwidth=80				" Make it obvious where 80 characters is
 set cmdheight=2
 
 "Show me what I'm typing
