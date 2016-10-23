@@ -70,10 +70,15 @@ Plug 'Shougo/neocomplete.vim'
 Plug 'benmills/vimux'
 
 " Lang "
-" ==== Go ==== "
+" ----------------------------------------
+" Go {{{
+" ----------------------------------------
+
 Plug 'garyburd/go-explorer'
 Plug 'fatih/vim-go'
 Plug 'nsf/gocode'
+
+" }}}
 "Plug 'Shougo/vimproc.vim'
 Plug 'Shougo/unite.vim'
 
