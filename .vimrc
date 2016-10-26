@@ -50,6 +50,7 @@ elseif
 	Plug 'airblade/vim-gitgutter'
 endif
 Plug 'junegunn/gv.vim'
+
 " Auto Completion
 function! BuildYCM(info)
 	" info is a dictionary with 3 fields
@@ -137,8 +138,6 @@ Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': 'yes \| ./install --all' }
 Plug 'junegunn/fzf.vim'
 Plug 'tpope/vim-surround'
 Plug 'mileszs/ack.vim'
-Plug 'junegunn/vim-pseudocl'
-Plug 'junegunn/vim-oblique'
 Plug 'majutsushi/tagbar'
 Plug 'scrooloose/nerdtree', { 'on': 'NERDTreeToggle' }
 Plug 'ryanoasis/vim-devicons'
