@@ -312,16 +312,17 @@ function join-lines() {
   done
 }
 
-fzf-gt-widget() LBUFFER+=$(gt | join-lines)
-zle -N fzf-gt-widget
-#bindkey '^g^t' fzf-gt-widget
+function bind-git-helper() {
+  local char
+  for c in $@; do
+    eval "fzf-g$c-widget() LBUFFER+=\$(g$c | join-lines)"
+    eval "zle -N fzf-g$c-widget"
+    eval "bindkey '^g^$c' fzf-g$c-widget"
+  done
+}
 
-#bindkey '"\er": redraw-current-line'
-#bindkey '"\C-g\C-f": "$(gf)\e\C-e\er"'
-#bindkey '"\C-g\C-b": "$(gb)\e\C-e\er"'
-#bindkey '"\C-g\C-t": "$(gt)\e\C-e\er"'
-#bindkey '"\C-g\C-h": "$(gh)\e\C-e\er"'
-#bindkey '"\C-g\C-r": "$(gr)\e\C-e\er"'
+bind-git-helper f b t r h
+unset -f bind-git-helper
 
 # Simple calculator
 function calc() {
