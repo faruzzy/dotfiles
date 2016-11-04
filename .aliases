@@ -185,7 +185,7 @@ alias c='pygmentize -O style=monokai -f console256 -g'
 alias gg="cd ~/Github"
 alias g="git"
 # general shortcuts
-alias gh="open -a google\ chrome 'http://github.com/faruzzy'"
+#alias gh="open -a google\ chrome 'http://github.com/faruzzy'"
 
 # git root
 alias gr='[ ! -z `git rev-parse --show-cdup` ] && cd `git rev-parse --show-cdup || pwd`'
