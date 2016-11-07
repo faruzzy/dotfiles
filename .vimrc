@@ -12,24 +12,168 @@
 " House keeping {{{
 "--------------------------------------------------------------------------------
 
-set ttyfast							" Optimize for fast terminal connections
+filetype plugin indent on													" Enable file type detection
+syntax on																	" Syntax highlighting
+syntax sync minlines=256
+let mapleader=","															" Change leader to ','
+
+" Encoding {{{
+
+set encoding=utf-8 nobomb													" BOM often causes trouble
+set termencoding=utf-8
+set fileencoding=utf-8
+set fileencodings=utf-8,cp932,euc-jp										" A list of character encodings, set default encoding to UTF-8
+set fileformats=unix,dos,mac												" Prefer Unix over Windows over OS 9 formats
+
+" }}}
+
+set ttyfast																	" Optimize for fast terminal connections
 set ttymouse=xterm2
 set ttyscroll=3
-set lazyredraw						" Wait to redraw, do not redraw while executing macros
+set lazyredraw																" Wait to redraw, do not redraw while executing macros
 set linebreak
 
-syntax on							" Syntax highlighting
-let mapleader=","					" Change leader to ','
 " refresh current .vimrc file for change to take effect
 nnoremap <leader>s :source %<CR>
-set nocompatible					" Behave like vim and not like vi! (Much, much better)
+set nocompatible															" Behave like vim and not like vi! (Much, much better)
 set background=dark
-set number							" Print the line number in front of each line
-set ruler							" Display Cursor Position
-set title							" Display filename in titlebar
-set titleold=						" Prevent the 'Thanks for flying Vim'
+set number																	" Print the line number in front of each line
+set ruler																	" Display Cursor Position
+set title																	" Display filename in titlebar
+set titleold=																" Prevent the 'Thanks for flying Vim'
 set relativenumber
-set diffopt+=vertical				" make :diffsplit default to vertical
+set diffopt+=vertical														" make :diffsplit default to vertical
+set diffopt=filler															" Add vertical spaces to keep right and left aligned
+set diffopt+=iwhite															" Ignore whitespace changes (focus on code changes)
+set shell=/bin/sh															" Use /bin/sh for executing shell commands
+set t_Co=256
+set formatoptions+=1
+
+" Tab Basic Settings {{{
+
+set autoindent																" Always set autoindenting on
+set expandtab																" Use the appropriate number of spaces to insert a <Tab>b
+set smartindent
+set shiftround																" Round indent to multiple of 'shiftwidth
+set shiftwidth=4															" Number of spaces to use for each step of (auto)indent
+set softtabstop=4															" Number of spaces that a <Tab> in the file counts for
+
+" }}}
+
+" Search Basic Settings {{{
+
+set incsearch																" Display search resultings as you type
+set hlsearch | nohlsearch													" Highlight search, support reloading
+set ignorecase																" Ignore case in search patterns
+set smartcase																" Override the ignorecase option if the pattern contains upper case
+set gdefault																" By default add g flag to search/replace. Add g to toggle
+
+" }}}
+
+set matchpairs+=<:>															" for HTML Editing
+set rnu																		"Toggle relative numbering, and set to absolute on loss of focus or insert mode
+
+if has('patch-7.3.541')
+	set formatoptions+=j
+endif
+
+if has('patch-7.4.338')
+	let &showbreak = '↳ '
+	set breakindent
+	set breakindentopt=sbr
+endif
+"
+" use 256 colors in terminal
+if !has("gui_running")
+	set t_Co=256
+	set term=screen-256color
+endif
+
+if has("gui_macvim")
+  " No toolbars, menu or scrollbars in the GUI
+  set guifont=Source\ Code\ Pro\ Light:h12
+  set clipboard+=unnamed
+  set vb t_vb=
+  set guioptions-=m  "no menu
+  set guioptions-=T  "no toolbar
+  set guioptions-=l
+  set guioptions-=L
+  set guioptions-=r  "no scrollbar
+  set guioptions-=R
+
+  let macvim_skip_colorscheme=1
+  let g:molokai_original=1
+  highlight SignColumn guibg=#272822
+endif
+
+" Note that these vary from language to language
+set tabstop=4																"Set space width of tabs
+set smarttab																"At start of line, <Tab> inserts shiftwidth spaces, <Bs> deletes shifwidth spaces.
+set sw=4
+set splitright																"By default, split to the right
+set splitbelow																"By default, split below
+set binary																	" Don't add empty new lines at the end of files
+set noeol
+set cursorline																" Highlight current line
+set nocursorcolumn
+
+" Show "invisible" characters
+"set lcs=tab:▸\ ,trail:·,eol:¬,nbsp:_
+"set list
+
+set mouse=a																	" Enable mouse in all modes
+set mousemodel=popup
+set path=$PWD/**															" You need this (trust me) to move around
+set wildmenu
+set backspace=indent,eol,start
+set history=1024															" Amount of Command history increased from default 20 to 1024
+set noerrorbells															" No beeps
+set numberwidth=2
+set spelllang=en_us,fr															" Spell checking language
+"set textwidth=80															" Make it obvious where 80 characters is
+set cmdheight=2
+set showcmd																	" Show me what I'm typing
+set noswapfile																" No beeps
+set nobackup																" Don't create annoying backup files
+set autowrite																" Automatically save before :next, :make etc.
+set autoread																" Automatically reread changed files (outside of vim) without asking me anything
+set laststatus=2															" Always show status line
+set hidden																	" Display another buffer when current buffer isn't saved
+set synmaxcol=300
+set foldmethod=indent														" Enable folding
+set foldlevel=99
+set statusline=%<[%n]\ %F\ %m%r%y\ %{exists('g:loaded_fugitive')?fugitive#statusline():''}\ %=%-14.(%l,%c%V%)\ %P
+
+"http://stackoverflow.com/questions/20186975/vim-mac-how-to-copy-to-clipboard-without-pbcopy
+set clipboard=unnamed
+set complete=.,w,b,u,t														" Better Completion
+set completeopt=longest,menuone
+set ofu=syntaxcomplete#Complete												" Set omni-completion method.
+set report=0																" Show all changes
+
+" Wildmenu completion {{{
+
+set wildmenu																" Command line autocompletion
+set wildmode=list:full														" Shows all the options
+set wildignore+=.hg,.git,.svn												" Version control
+set wildignore+=*.aux,*.out,*.toc											" LaTeX intermediate files
+set wildignore+=*.jpg,*.bmp,*.gif,*.png,*.jpeg								" binary images
+set wildignore+=*.o,*.obj,*.exe,*.dll,*.manifest							" compiled object files
+set wildignore+=*.spl														" compiled spelling word lists
+set wildignore+=*.sw?														" Vim swap files
+set wildignore+=*.bak,*.?~,*.??~,*.???~,*.~									" Backup files
+set wildignore+=*.DS_Store													" OSX bullshit
+set wildignore+=*.luac														" Lua byte code
+set wildignore+=migrations													" Django migrations
+set wildignore+=go/pkg														" Go static files
+set wildignore+=go/bin														" Go bin files
+set wildignore+=go/bin-vagrant												" Go bin-vagrant files
+set wildignore+=*.pyc														" Python byte code
+set wildignore+=*.jar														" Java archives
+set wildignore+=*.orig														" Merge resolution files
+set wildignore+=*.stats														" Merge resolution files
+
+" }}}
 
 let s:darwin = has('mac')
 
@@ -48,7 +192,7 @@ if v:version >= 703
 	Plug 'mhinz/vim-signify'
 elseif
 	Plug 'airblade/vim-gitgutter'
-endif
+endi
 Plug 'junegunn/gv.vim'
 
 " Auto Completion
@@ -70,33 +214,38 @@ Plug 'Valloric/YouCompleteMe', { 'do': function('BuildYCM') }
 Plug 'Shougo/neocomplete.vim'
 Plug 'benmills/vimux'
 
-" Lang "
-" ----------------------------------------
 " Go {{{
-" ----------------------------------------
 
 Plug 'garyburd/go-explorer'
 Plug 'fatih/vim-go'
 Plug 'nsf/gocode'
 
 " }}}
-"Plug 'Shougo/vimproc.vim'
+
 Plug 'Shougo/unite.vim'
 
-" ====== Java ====== "
+" Java {{{
+
 Plug 'udalov/javap-vim'
 Plug 'udalov/kotlin-vim'
 
-" ==== Python ==== "
+" }}}
+
+" Python {{{
+
 Plug 'scrooloose/syntastic'
 Plug 'nvie/vim-flake8'
 
-" Web Development "
-" ==== HTML ==== "
+" }}}
+
+" HTML {{{
+
 Plug 'othree/html5.vim', { 'for': 'html' }
 Plug 'othree/html5-syntax.vim', { 'for': 'html' }
 Plug 'mattn/emmet-vim', { 'for' : ['html', 'css'] }
 Plug 'digitaltoad/vim-jade', { 'for': 'jade' }
+
+" }}}
 
 " highlight matching html tag
 Plug 'gregsexton/MatchTag'
@@ -104,16 +253,17 @@ Plug 'gregsexton/MatchTag'
 " Syntax
 Plug 'StanAngeloff/php.vim', { 'for': 'php' }
 
-" ==== ECMAScript ==== "
+" ECMAScript {{{
+
 "Plug 'Shutnik/jshint2.vim'
 Plug 'pangloss/vim-javascript', {'for': 'javascript'}
 Plug 'jelera/vim-javascript-syntax', { 'for': 'javascript' }
 Plug 'othree/yajs.vim', { 'for': 'javascript' }
 Plug 'othree/jspc.vim', { 'for': 'javascript' }
 Plug 'nono/jquery.vim', { 'for': 'javascript' }
-
 Plug 'mxw/vim-jsx'									" After syntax, ftplugin, indent for JSX
-Plug 'bigfish/vim-js-context-coloring'
+Plug 'jordwalke/VimJSXHint'
+Plug 'bigfish/vim-js-context-coloring', { 'for': 'javascript' }
 Plug 'sheerun/vim-polyglot'
 Plug 'kchmck/vim-coffee-script'
 Plug 'HerringtonDarkholme/yats.vim'
@@ -122,15 +272,19 @@ Plug 'Quramy/tsuquyomi'								" TypeScript Development
 Plug 'Shougo/vimproc.vim', {'do': 'make'}			" Interactive command execution in vim (dependency of 'Quramy/tsuquyomi')
 Plug 'moll/vim-node'								" Allows Node.js Development with vim
 Plug 'elzr/vim-json', { 'for' : 'json' }			" json support
-" ==== ECMAScript ==== "
 
-" ==== CSS ==== "
+" }}}
+
+" CSS {{{
+
 Plug 'skammer/vim-css-color', { 'for': 'css' }
 Plug 'groenewege/vim-less', { 'for': 'less' }
 Plug 'cakebaker/scss-syntax.vim', { 'for': 'scss' }
-" ==== CSS ==== "
 
-" Misc
+" }}}
+
+" Misc {{{
+
 Plug 'easymotion/vim-easymotion'
 Plug 'vim-airline/vim-airline'
 Plug 'vim-airline/vim-airline-themes'
@@ -141,8 +295,11 @@ Plug 'mileszs/ack.vim'
 Plug 'majutsushi/tagbar'
 Plug 'scrooloose/nerdtree', { 'on': 'NERDTreeToggle' }
 Plug 'ryanoasis/vim-devicons'
-Plug 'plasticboy/vim-markdown'
+Plug 'plasticboy/vim-markdown', { 'for': 'markdown' }
 Plug 'sickill/vim-pasta'
+Plug 'jordwalke/VimSplitBalancer'
+
+" }}}
 
 call plug#end()
 
@@ -154,8 +311,6 @@ colo seoul256
 "colorscheme gruvbox
 "colorscheme itg_flat
 
-set t_Co=256
-set formatoptions+=1
 " ============================================================================
 " FZF {{{
 " ============================================================================
@@ -220,44 +375,8 @@ nnoremap <silent> <Leader>`        :Marks<CR>
 " nnoremap <silent> q: :History:<CR>
 " nnoremap <silent> q/ :History/<CR>
 
-if has('patch-7.3.541')
-	set formatoptions+=j
-endif
-
-if has('patch-7.4.338')
-	let &showbreak = '↳ '
-	set breakindent
-	set breakindentopt=sbr
-endif
-"
-" use 256 colors in terminal
-if !has("gui_running")
-    set t_Co=256
-    set term=screen-256color
-endif
-
-if has("gui_macvim")
-  " No toolbars, menu or scrollbars in the GUI
-  set guifont=Source\ Code\ Pro\ Light:h12
-  set clipboard+=unnamed
-  set vb t_vb=
-  set guioptions-=m  "no menu
-  set guioptions-=T  "no toolbar
-  set guioptions-=l
-  set guioptions-=L
-  set guioptions-=r  "no scrollbar
-  set guioptions-=R
-
-  let macvim_skip_colorscheme=1
-  let g:molokai_original=1
-  highlight SignColumn guibg=#272822
-endif
 
 if has("autocmd")
-    " Enable file type detection
-    filetype on                  
-    filetype plugin indent on    
-
     " Treat .json files as .js
     autocmd BufNewFile,Bufread *.json setfiletype json syntax=javascript
 
@@ -307,14 +426,35 @@ nmap <F8> :TagbarToggle<CR>
 
 " Split navigation "
 
-" Ctrl-j move to the split below
+" Better split switching (Ctrl-j, Ctrl-k, Ctrl-h, Ctrl-l) {{{
+
 nnoremap <C-J> <C-W><C-J>
-" Ctrl-k move to the split above
 nnoremap <C-K> <C-W><C-K>
-" Ctrl-l move to the split to the right
 nnoremap <C-L> <C-W><C-L>
-" Ctrl-h move to the split to the left
 nnoremap <C-H> <C-W><C-H>
+
+" }}}
+
+" Hard to type things {{{
+
+  iabbrev >> →
+  iabbrev << ←
+  iabbrev ^^ ↑
+  iabbrev VV ↓
+  iabbrev aa λ
+
+" }}}
+
+
+
+" Clear last search (,qs) {{{
+	map <silent> <leader>qs <Esc>:noh<CR>
+" }}}
+
+" Search and replace word under cursor (,*) {{{
+    nnoremap <leader>* :%s/\<<C-r><C-w>\>//<Left>
+    vnoremap <leader>* "hy:%s/\V<C-r>h//<left>
+" }}}
 
 " Convenient mappings for compiling and running quick, used mostly for school
 " gcc compile C files
@@ -327,32 +467,6 @@ autocmd filetype javascript nnoremap <Leader>c :w <CR>:!node %<CR>
 autocmd filetype python nnoremap <Leader>c :exec '!python' shellescape(@%, 1)<CR>
 " run bash files
 autocmd filetype sh nnoremap <Leader>c :w <CR>:!bash %<CR>
-
-" Tab Basic Settings {{{
-
-set autoindent					" Alwasy set autoindenting on
-set expandtab					" Use the appropriate number of spaces to insert a <Tab>b
-set smartindent
-set shiftround					" Round indent to multiple of 'shiftwidth
-set shiftwidth=4				" Number of spaces to use for each step of (auto)indent
-set softtabstop=4				" Number of spaces that a <Tab> in the file counts for
-
-" }}}
-
-" Search Basic Settings {{{
-
-set incsearch					" Display search resultings as you type
-set hlsearch | nohlsearch		" Highlight search, support reloading
-set ignorecase					" Ignore case in search patterns
-set smartcase					" Override the ignorecase option if the pattern contains upper case
-
-" }}}
-
-" HTML Editing
-set matchpairs+=<:>
-
-"Toggle relative numbering, and set to absolute on loss of focus or insert mode
-set rnu
 
 autocmd FocusLost * call ToggleRelativeOn()
 autocmd FocusGained * call ToggleRelativeOn()
@@ -437,105 +551,6 @@ augroup vimrcEx
   autocmd FileType css,scss,sass,less setlocal iskeyword+=-
 augroup END
 
-"set t_Co=16
-
-" Note that these vary from language to language
-set tabstop=4   "Set space width of tabs
-set smarttab    "At start of line, <Tab> inserts shiftwidth spaces, <Bs> deletes shifwidth spaces.
-set sw=4
-
-set splitright  "By default, split to the right
-set splitbelow
-
-" Don't add empty new lines at the end of files
-set binary
-set noeol
-
-" Highlight current line
-set cursorline
-set nocursorcolumn
-
-" Show "invisible" characters
-"set lcs=tab:▸\ ,trail:·,eol:¬,nbsp:_
-"set list
-
-
-" ------------------
-set mouse=a    "Enable mouse in all modes
-set mousemodel=popup
-"set paste																	" Option to aid in pasting text unmodified from other applications
-set path=$PWD/**															" You need this (trust me) to move around
-set wildmenu
-set backspace=indent,eol,start
-set history=1024															" Amount of Command history
-set noerrorbells															" No beeps
-set numberwidth=2
-set spelllang=en,fr															" Spell checking language
-"set textwidth=80															" Make it obvious where 80 characters is
-set cmdheight=2
-set showcmd																	" Show me what I'm typing
-set noshowmode																" Don't Show the current mode Since we're using airline
-set noswapfile																" No beeps
-set nobackup																" Don't create annoying backup files
-set autowrite																" Automatically save before :next, :make etc.
-set autoread																" Automatically reread changed files (outside of vim) without asking me anything
-set laststatus=2															" Always show status line
-set hidden																	" Display another buffer when current buffer isn't saved
-
-syntax sync minlines=256
-set synmaxcol=300
-
-set foldmethod=indent														" Enable folding
-set foldlevel=99
-
-set statusline=%<[%n]\ %F\ %m%r%y\ %{exists('g:loaded_fugitive')?fugitive#statusline():''}\ %=%-14.(%l,%c%V%)\ %P
-
-" ----------------------------------------------------------------------------
-" Encoding {{{
-" ----------------------------------------------------------------------------
-
-set encoding=utf-8   
-set termencoding=utf-8
-set fileencoding=utf-8
-set fileencodings=utf-8,cp932,euc-jp										" A list of character encodings, set default encoding to UTF-8
-set fileformats=unix,dos,mac												" Prefer Unix over Windows over OS 9 formats
-
-" }}}
-
-"http://stackoverflow.com/questions/20186975/vim-mac-how-to-copy-to-clipboard-without-pbcopy
-set clipboard=unnamed
-set complete=.,w,b,u,t														" Better Completion
-set completeopt=longest,menuone
-set ofu=syntaxcomplete#Complete												" Set omni-completion method.
-set report=0																" Show all changes
-
-
-" ----------------------------------------------------------------------------
-" Wildmeu completion {{{
-" ----------------------------------------------------------------------------
-
-set wildmenu																" Command line autocompletion
-set wildmode=list:full														" Shows all the options
-set wildignore+=.hg,.git,.svn												" Version control
-set wildignore+=*.aux,*.out,*.toc											" LaTeX intermediate files
-set wildignore+=*.jpg,*.bmp,*.gif,*.png,*.jpeg								" binary images
-set wildignore+=*.o,*.obj,*.exe,*.dll,*.manifest							" compiled object files
-set wildignore+=*.spl														" compiled spelling word lists
-set wildignore+=*.sw?														" Vim swap files
-set wildignore+=*.bak,*.?~,*.??~,*.???~,*.~									" Backup files
-set wildignore+=*.DS_Store													" OSX bullshit
-set wildignore+=*.luac														" Lua byte code
-set wildignore+=migrations													" Django migrations
-set wildignore+=go/pkg														" Go static files
-set wildignore+=go/bin														" Go bin files
-set wildignore+=go/bin-vagrant												" Go bin-vagrant files
-set wildignore+=*.pyc														" Python byte code
-set wildignore+=*.jar														" Java archives
-set wildignore+=*.orig														" Merge resolution files
-set wildignore+=*.stats														" Merge resolution files
-
-" }}}
-
 " ----------------------------------------------------------------------------
 "  NeoComplete {{{
 " ----------------------------------------------------------------------------
@@ -603,7 +618,6 @@ let g:netrw_liststyle=3														" Explore with NerdTree Style by default
 let g:go_fmt_fail_silently = 0
 let g:go_fmt_command = "goimports"
 let g:go_autodetect_gopath = 1
-
 let g:go_highlight_space_tab_error = 0
 let g:go_highlight_array_whitespace_error = 0
 let g:go_highlight_trailing_whitespace_error = 0
@@ -635,6 +649,29 @@ else
   let g:ackprg = 'git grep -H --line-number --no-color --untracked'
 endif
 
+" Silver Searcher {{{
+augroup ag_config
+  autocmd!
+
+  if executable("ag")
+    " Note we extract the column as well as the file and line number
+    set grepprg=ag\ --nogroup\ --nocolor\ --column
+    set grepformat=%f:%l:%c%m
+
+    " Have the silver searcher ignore all the same things as wilgignore
+    let b:ag_command = 'ag %s -i --nocolor --nogroup'
+
+    for i in split(&wildignore, ",")
+      let i = substitute(i, '\*/\(.*\)/\*', '\1', 'g')
+      let b:ag_command = b:ag_command . ' --ignore "' . substitute(i, '\*/\(.*\)/\*', '\1', 'g') . '"'
+    endfor
+
+    let b:ag_command = b:ag_command . ' --hidden -g ""'
+    let g:ctrlp_user_command = b:ag_command
+  endif
+augroup END
+" }}}
+
 inoremap <expr><TAB>  pumvisible() ? "\<C-n>" : "\<TAB>"
 
 " ----------------------------------------------------------------------------
@@ -651,6 +688,31 @@ inoremap <C-^> <C-o><C-^>
 
 let g:airline_theme='powerlineish'
 let g:airline_powerline_fonts = 1
+set noshowmode																" Don't Show the current mode Since we're using airline
+
+" for VimJSXHint
+let g:jsCommand='node'
+" Airline.vim {{{
+augroup airline_config
+  autocmd!
+  let g:airline_powerline_fonts = 1
+  let g:airline_enable_syntastic = 1
+  let g:airline#extensions#tabline#buffer_nr_format = '%s '
+  let g:airline#extensions#tabline#buffer_nr_show = 1
+  let g:airline#extensions#tabline#enabled = 1
+  let g:airline#extensions#tabline#fnamecollapse = 0
+  let g:airline#extensions#tabline#fnamemod = ':t'
+augroup END
+" }}}
+
+" Syntastic.vim {{{
+augroup syntastic_config
+  autocmd!
+  let g:syntastic_error_symbol = '✗'
+  let g:syntastic_warning_symbol = '⚠'
+  let g:syntastic_ruby_checkers = ['mri', 'rubocop']
+augroup END
+" }}}
 
 "let jshint2_read = 1
 "let jshint2_save = 1
