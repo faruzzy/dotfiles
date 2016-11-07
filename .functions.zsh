@@ -1,26 +1,3 @@
-# Easily extract all compressed file types
-extract () {
-   if [ -f "$1" ] ; then
-       case $1 in
-           *.tar.bz2)   tar xvjf -- "$1"    ;;
-           *.tar.gz)    tar xvzf -- "$1"    ;;
-           *.bz2)       bunzip2 -- "$1"     ;;
-           *.rar)       unrar x -- "$1"     ;;
-           *.gz)        gunzip -- "$1"      ;;
-           *.tar)       tar xvf -- "$1"     ;;
-           *.tbz2)      tar xvjf -- "$1"    ;;
-           *.tgz)       tar xvzf -- "$1"    ;;
-           *.zip)       unzip -- "$1"       ;;
-           *.Z)         uncompress -- "$1"  ;;
-           *.7z)        7z x -- "$1"        ;;
-           *)           echo "don't know how to extract '$1'..." ;;
-       esac
-   else
-       echo "'$1' is not a valid file"
-   fi
-}
-
-
 # Define a word using collinsdictionary.com
 function define() {
   curl -s "http://www.collinsdictionary.com/dictionary/english/$*" | sed -n '/class="def"/p' | awk '{gsub(/.*<span class="def">|<\/span>.*/,"");print}' | sed "s/<[^>]\+>//g";
@@ -342,6 +319,11 @@ function calc() {
 	printf "\n"
 }
 
+function camerausedby() {
+	echo "Checking to see who is using the iSight camera… 📷"
+	usedby=$(lsof | grep -w "AppleCamera\|USBVDC\|iSight" | awk '{printf $2"\n"}' | xargs ps)
+	echo -e "Recent camera uses:\n$usedby"
+}
 
 # Extract archives - use: extract <file>
 # Based on http://dotfiles.org/~pseup/.bashrc
@@ -576,6 +558,11 @@ function md() {
 	mkdir -p "$@" && cd $_;
 }
 
+function z() {
+  [ $# -gt 0 ] && _z "$*" && return
+  cd "$(_z -l 2>&1 | fzf-tmux +s --tac --query "$*" | sed 's/^[0-9,.]* *//')"
+}
+
 # get gzipped size
 function gz() {
 	echo "orig size    (bytes): "
@@ -664,9 +651,9 @@ function yi() {
 # location
 function o() {
 	if [ $# -eq 0 ]; then
-			open .
+		open .
 	else
-			open "$@"
+		open "$@"
 	fi
 }
 
@@ -674,87 +661,8 @@ function o() {
 # Usage: browsers "http://www.google.com"
 function browsers(){
 	chrome $1
-	opera $1
 	firefox $1
 	safari $1
-}
-
-# Browserstack shortcuts, now with added hotness thanks to the Browserstack team.
-# Note, a trial or paid for account is needed for this to work
-# Usage: ipad3 "http://www.google.com", win7ie8 "http://www.google.com" etc.
-
-# For local server running on port 3000, use like this
-# Usage: ipad3 "http://localhost:3000" "localhost,3000,0", win7ie8 "http://localhost:3000" "localhost,3000,0" etc.
-
-# For local server running on apache with ssl as staging.example.com and https://staging.example.com
-# Usage: ipad3 "http://staging.example.com" "staging.example.com,80,0,staging.example.com,443,1", win7ie8 "http://staging.example.com" "staging.example.com,80,0,staging.example.com,443,1" etc.
-
-function openurl(){
-	if [ $2 ]
-	then
-	  url=$1"&host_ports=$2"
-	fi
-	open -a google\ chrome ${url}
-}
-
-function androidnexus(){
-	local url="http://www.browserstack.com/start#os=android&os_version=4.0.3&device=Samsung+Galaxy+Nexus&zoom_to_fit=true&url=$1&start=true"
-	openurl $url $2
-}
-
-function ipad3(){
-	local url="http://www.browserstack.com/start#os=ios&os_version=5.1&device=iPad+3rd&zoom_to_fit=true&resolution=1024x768&speed=1&url=$1&start=true"
-	openurl $url $2
-}
-
-function ipad3ios6(){
-	local url="http://www.browserstack.com/start#os=ios&os_version=6.1&device=iPad+3rd&zoom_to_fit=true&resolution=1024x768&speed=1&url=$1&start=true"
-	openurl $url $2
-}
-
-function ipad2(){
-	local url="http://www.browserstack.com/start#os=ios&os_version=5.1&device=iPad+2nd&zoom_to_fit=true&resolution=1024x768&speed=1&url=$1&start=true"
-	openurl $url $2
-}
-
-function win7ie8(){
-	local url="http://www.browserstack.com/start#os=Windows&os_version=7&browser=IE&browser_version=8.0&zoom_to_fit=true&resolution=1024x768&speed=1&url=$1&start=true"
-	openurl $url $2
-}
-
-function win7ie9(){
-	local url="http://www.browserstack.com/start#os=Windows&os_version=7&browser=IE&browser_version=9.0&zoom_to_fit=true&resolution=1024x768&speed=1&url=$1&start=true"
-	openurl $url $2
-}
-
-function win8ie10(){
-	local url="http://www.browserstack.com/start#os=Windows&os_version=8&browser=IE&browser_version=10.0&zoom_to_fit=true&resolution=1024x768&speed=1&url=$1&start=true"
-	openurl $url $2
-}
-
-function winxpie8(){
-	local url="http://www.browserstack.com/start#os=Windows&os_version=XP&browser=IE&browser_version=8.0&zoom_to_fit=true&resolution=1024x768&speed=1&url=$1&start=true"
-	openurl $url $2
-}
-
-function winxpie7(){
-	local url="http://www.browserstack.com/start#os=Windows&os_version=XP&browser=IE&browser_version=7.0&zoom_to_fit=true&resolution=1024x768&speed=1&url=$1&start=true"
-	openurl $url $2
-}
-
-function winxpie6(){
-	local url="http://www.browserstack.com/start#os=Windows&os_version=XP&browser=IE&browser_version=6.0&zoom_to_fit=true&resolution=1024x768&speed=1&url=$1&start=true"
-	openurl $url $2
-}
-
-function win7chrome(){
-	local url="http://www.browserstack.com/start#os=Windows&os_version=7&browser=Chrome&browser_version=21.0&zoom_to_fit=true&resolution=1024x768&speed=1&url=$1&start=true"
-	openurl $url $2
-}
-
-function win7ff(){
-	local url="http://www.browserstack.com/start#os=Windows&os_version=7&browser=Firefox&browser_version=16.0&zoom_to_fit=true&resolution=1024x768&speed=1&url=$1&start=true"
-	openurl $url $2
 }
 
 # open all changed files (that still actually exist) in the editor
