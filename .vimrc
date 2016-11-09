@@ -47,6 +47,7 @@ set diffopt=filler															" Add vertical spaces to keep right and left al
 set diffopt+=iwhite															" Ignore whitespace changes (focus on code changes)
 set shell=/bin/sh															" Use /bin/sh for executing shell commands
 set t_Co=256
+set term=screen-256color
 set formatoptions+=1
 
 " Tab Basic Settings {{{
@@ -81,12 +82,6 @@ if has('patch-7.4.338')
 	let &showbreak = '↳ '
 	set breakindent
 	set breakindentopt=sbr
-endif
-"
-" use 256 colors in terminal
-if !has("gui_running")
-	set t_Co=256
-	set term=screen-256color
 endif
 
 if has("gui_macvim")
@@ -629,15 +624,15 @@ let g:go_highlight_structs = 1
 let g:go_hightlight_operators = 1
 let g:go_hightlight_build_constraints = 1
 
-au FileType go nmap <Leader>s <Plug>(go-def-split)
-au FileType go nmap <Leader>v <Plug>(go-def-vertical)
+au FileType go nmap <Leader>s  <Plug>(go-def-split)
+au FileType go nmap <Leader>v  <Plug>(go-def-vertical)
 au FileType go nmap <Leader>in <Plug>(go-info)
-au FileType go nmap <Leader>i <Plug>(go-implements)
+au FileType go nmap <Leader>i  <Plug>(go-implements)
 au FileType go nmap <leader>r  <Plug>(go-run)
 au FileType go nmap <leader>b  <Plug>(go-build)
 au FileType go nmap <leader>g  <Plug>(go-gbbuild)
 au FileType go nmap <leader>t  <Plug>(go-test-compile)
-au FileType go nmap <Leader>d <Plug>(go-doc)
+au FileType go nmap <Leader>d  <Plug>(go-doc)
 au FileType go nmap <Leader>f :GoImports<CR>
 
 " }}}
