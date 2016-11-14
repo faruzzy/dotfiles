@@ -42,9 +42,9 @@ set ruler																	" Display Cursor Position
 set title																	" Display filename in titlebar
 set titleold=																" Prevent the 'Thanks for flying Vim'
 set relativenumber
-set diffopt+=vertical														" make :diffsplit default to vertical
 set diffopt=filler															" Add vertical spaces to keep right and left aligned
 set diffopt+=iwhite															" Ignore whitespace changes (focus on code changes)
+set diffopt+=vertical														" make :diffsplit default to vertical
 set shell=/bin/sh															" Use /bin/sh for executing shell commands
 set t_Co=256
 set term=screen-256color
