@@ -98,8 +98,8 @@ fi
 
 if [[ "$OSTYPE" =~ ^darwin ]]; then
 
-    # Hide/Show desktop icons
-    alias hide-desktop-icons='defaults write com.apple.finder CreateDesktop -bool false && killall Finder'
+# Hide/Show desktop icons
+alias hide-desktop-icons='defaults write com.apple.finder CreateDesktop -bool false && killall Finder'
     alias show-desktop-icons='defaults write com.apple.finder CreateDesktop -bool true && killall Finder'
 
     # Hide/Show hidden files in Finder
@@ -184,6 +184,8 @@ alias c='pygmentize -O style=monokai -f console256 -g'
 ##### GIT Stuff #####
 alias gg="cd ~/Github"
 alias g="git"
+alias gpom="git push origin master"
+
 # general shortcuts
 #alias gh="open -a google\ chrome 'http://github.com/faruzzy'"
 
