@@ -6,7 +6,7 @@
 	name = Roland Pangu
 	email = faruzzy@gmail.com
 [core]
-	whitespace = fix,-indent-with-non-tab,trailing-space,cr-at-eol
+	whitespace = trailing-space,space-before-tab,indent-with-non-tab
     editor = vim
 	quotepath = false
 	excludesfile = /Users/szd0qs/.gitignore_global
@@ -24,6 +24,10 @@
 	smudge = git lfs smudge %f
 	required = true
 [alias]
+	# thanks to http://stackoverflow.com/questions/11269256/how-to-name-and-retrieve-a-stash-by-name-in-git
+	sshow = "!f() { git stash show stash^{/$*} -p; }; f"
+	sapply = "!f() { git stash apply stash^{/$*}; }; f"
+
     st = status -sb
     c = commit
     all = commit -am
@@ -96,6 +100,10 @@
 	frag = magenta bold
 	old = red bold
 	new = green bold
+[fetch]
+	prune = true
+[diff]
+	compactionHeuristic = true
 [color "branch"]
     current = yellow reverse
     local = yellow
@@ -107,7 +115,7 @@
 [merge]
     log = true
 [github]
-    user = Roland Pangu
+    user = faruzzy
 	email = faruzzy@gmail.com
 	username = faruzzy
 [mergetool]
