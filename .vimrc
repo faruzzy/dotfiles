@@ -89,11 +89,11 @@ if has("gui_macvim")
   set guifont=Source\ Code\ Pro\ Light:h12
   set clipboard+=unnamed
   set vb t_vb=
-  set guioptions-=m  "no menu
-  set guioptions-=T  "no toolbar
+  set guioptions-=m															" no menu
+  set guioptions-=T														    " no toolbar
   set guioptions-=l
   set guioptions-=L
-  set guioptions-=r  "no scrollbar
+  set guioptions-=r														    " no scrollbar
   set guioptions-=R
 
   let macvim_skip_colorscheme=1
@@ -180,15 +180,17 @@ let s:darwin = has('mac')
 
 call plug#begin('~/.vim/plugged')
 
-" Git
-Plug 'gregsexton/gitv', { 'on': 'Gitv' }
+" Git {{{
+
 Plug 'tpope/vim-fugitive'
+Plug 'junegunn/gv.vim', { 'on': 'GV' }
 if v:version >= 703
 	Plug 'mhinz/vim-signify'
 elseif
 	Plug 'airblade/vim-gitgutter'
-endi
-Plug 'junegunn/gv.vim'
+endif
+
+" }}}
 
 " Auto Completion
 function! BuildYCM(info)
@@ -212,7 +214,7 @@ Plug 'benmills/vimux'
 " Go {{{
 
 Plug 'garyburd/go-explorer'
-Plug 'fatih/vim-go'
+Plug 'fatih/vim-go', { 'do': ':GoInstallBinaries' }
 Plug 'nsf/gocode'
 
 " }}}
@@ -245,13 +247,13 @@ Plug 'digitaltoad/vim-jade', { 'for': 'jade' }
 " highlight matching html tag
 Plug 'gregsexton/MatchTag'
 
-" Syntax
-Plug 'StanAngeloff/php.vim', { 'for': 'php' }
+Plug 'StanAngeloff/php.vim', { 'for': 'php' }										" Syntax
+
 
 " ECMAScript {{{
 
 "Plug 'Shutnik/jshint2.vim'
-Plug 'pangloss/vim-javascript', {'for': 'javascript'}
+Plug 'pangloss/vim-javascript', { 'for': 'javascript' }
 Plug 'jelera/vim-javascript-syntax', { 'for': 'javascript' }
 Plug 'othree/yajs.vim', { 'for': 'javascript' }
 Plug 'othree/jspc.vim', { 'for': 'javascript' }
@@ -259,7 +261,6 @@ Plug 'nono/jquery.vim', { 'for': 'javascript' }
 Plug 'mxw/vim-jsx'									" After syntax, ftplugin, indent for JSX
 Plug 'posva/vim-vue'
 Plug 'jordwalke/VimJSXHint'
-Plug 'bigfish/vim-js-context-coloring', { 'for': 'javascript' }
 Plug 'sheerun/vim-polyglot'
 Plug 'kchmck/vim-coffee-script'
 Plug 'HerringtonDarkholme/yats.vim'
