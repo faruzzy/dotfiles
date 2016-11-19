@@ -257,6 +257,7 @@ Plug 'othree/yajs.vim', { 'for': 'javascript' }
 Plug 'othree/jspc.vim', { 'for': 'javascript' }
 Plug 'nono/jquery.vim', { 'for': 'javascript' }
 Plug 'mxw/vim-jsx'									" After syntax, ftplugin, indent for JSX
+Plug 'posva/vim-vue'
 Plug 'jordwalke/VimJSXHint'
 Plug 'bigfish/vim-js-context-coloring', { 'for': 'javascript' }
 Plug 'sheerun/vim-polyglot'
