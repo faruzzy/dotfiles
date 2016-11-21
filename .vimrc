@@ -211,6 +211,7 @@ Plug 'Valloric/YouCompleteMe', { 'do': function('BuildYCM') }
 Plug 'Shougo/neocomplete.vim'
 Plug 'benmills/vimux'
 Plug 'scrooloose/syntastic', { 'for': ['python', 'java', 'javascript'] }
+Plug 'Shougo/unite.vim'
 
 " Go {{{
 
@@ -219,8 +220,6 @@ Plug 'fatih/vim-go', { 'do': ':GoInstallBinaries' }
 Plug 'nsf/gocode'
 
 " }}}
-
-Plug 'Shougo/unite.vim'
 
 " Java {{{
 
@@ -241,13 +240,15 @@ Plug 'othree/html5.vim', { 'for': 'html' }
 Plug 'othree/html5-syntax.vim', { 'for': 'html' }
 Plug 'mattn/emmet-vim', { 'for' : ['html', 'css'] }
 Plug 'digitaltoad/vim-jade', { 'for': 'jade' }
+Plug 'gregsexton/MatchTag'															" highlight matching html tag
 
 " }}}
 
-" highlight matching html tag
-Plug 'gregsexton/MatchTag'
+" PHP {{{
 
 Plug 'StanAngeloff/php.vim', { 'for': 'php' }										" Syntax
+
+" }}}
 
 
 " ECMAScript {{{
@@ -262,11 +263,11 @@ Plug 'posva/vim-vue'
 Plug 'sheerun/vim-polyglot'
 Plug 'kchmck/vim-coffee-script'
 Plug 'HerringtonDarkholme/yats.vim'
-Plug 'leafgarland/typescript-vim'					" TypeScript Syntax support
-Plug 'Quramy/tsuquyomi'								" TypeScript Development
-Plug 'Shougo/vimproc.vim', {'do': 'make'}			" Interactive command execution in vim (dependency of 'Quramy/tsuquyomi')
-Plug 'moll/vim-node'								" Allows Node.js Development with vim
-Plug 'elzr/vim-json', { 'for' : 'json' }			" json support
+Plug 'leafgarland/typescript-vim'													" TypeScript Syntax support
+Plug 'Quramy/tsuquyomi'																" TypeScript Development
+Plug 'Shougo/vimproc.vim', {'do': 'make'}											" Interactive command execution in vim (dependency of 'Quramy/tsuquyomi')
+Plug 'moll/vim-node'																" Allows Node.js Development with vim
+Plug 'elzr/vim-json', { 'for' : 'json' }											" json support
 
 " }}}
 
