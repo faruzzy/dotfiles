@@ -258,9 +258,7 @@ Plug 'jelera/vim-javascript-syntax', { 'for': 'javascript' }
 Plug 'othree/yajs.vim', { 'for': 'javascript' }
 Plug 'othree/jspc.vim', { 'for': 'javascript' }
 Plug 'nono/jquery.vim', { 'for': 'javascript' }
-Plug 'mxw/vim-jsx'									" After syntax, ftplugin, indent for JSX
 Plug 'posva/vim-vue'
-Plug 'jordwalke/VimJSXHint'
 Plug 'sheerun/vim-polyglot'
 Plug 'kchmck/vim-coffee-script'
 Plug 'HerringtonDarkholme/yats.vim'
@@ -531,9 +529,6 @@ augroup vimrcEx
   autocmd BufRead,BufNewFile Appraisals set filetype=ruby
   autocmd BufRead,BufNewFile *.md set filetype=markdown
 
-  " autocmd BufRead *.jsx set ft=jsx.html
-  " autocmd BufNewFile *.jsx set ft=jsx.html
-
   " Enable spellchecking for Markdown
   autocmd FileType markdown setlocal spell
 
@@ -687,8 +682,6 @@ let g:airline_theme='powerlineish'
 let g:airline_powerline_fonts = 1
 set noshowmode																" Don't Show the current mode Since we're using airline
 
-" for VimJSXHint
-let g:jsCommand='node'
 " Airline.vim {{{
 augroup airline_config
   autocmd!
