@@ -210,6 +210,7 @@ Plug 'morhetz/gruvbox'
 Plug 'Valloric/YouCompleteMe', { 'do': function('BuildYCM') }
 Plug 'Shougo/neocomplete.vim'
 Plug 'benmills/vimux'
+Plug 'scrooloose/syntastic', { 'for': ['python', 'java', 'javascript'] }
 
 " Go {{{
 
@@ -230,7 +231,6 @@ Plug 'udalov/kotlin-vim'
 
 " Python {{{
 
-Plug 'scrooloose/syntastic'
 Plug 'nvie/vim-flake8'
 
 " }}}
@@ -696,12 +696,18 @@ augroup END
 " }}}
 
 " Syntastic.vim {{{
+
 augroup syntastic_config
   autocmd!
   let g:syntastic_error_symbol = '✗'
   let g:syntastic_warning_symbol = '⚠'
   let g:syntastic_ruby_checkers = ['mri', 'rubocop']
+  let g:syntastic_always_populate_loc_list = 1
+  let g:syntastic_auto_loc_list = 1
+  let g:syntastic_check_on_open = 1
+  let g:syntastic_check_on_wq = 0
 augroup END
+
 " }}}
 
 "let jshint2_read = 1
