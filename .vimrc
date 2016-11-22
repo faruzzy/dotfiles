@@ -469,6 +469,9 @@ autocmd FocusGained * call ToggleRelativeOn()
 autocmd InsertEnter * call ToggleRelativeOn()
 autocmd InsertLeave * call ToggleRelativeOn()
 
+" reload when entering the buffer or gaining focus
+au FocusGained,BufEnter * :silent! !										
+
 " Quicker window movement
 nnoremap <C-j> <C-w>j
 nnoremap <C-k> <C-w>k
