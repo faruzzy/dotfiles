@@ -263,11 +263,11 @@ Plug 'posva/vim-vue'
 Plug 'sheerun/vim-polyglot'
 Plug 'kchmck/vim-coffee-script'
 Plug 'HerringtonDarkholme/yats.vim'
-Plug 'leafgarland/typescript-vim'													" TypeScript Syntax support
-Plug 'Quramy/tsuquyomi'																" TypeScript Development
-Plug 'Shougo/vimproc.vim', {'do': 'make'}											" Interactive command execution in vim (dependency of 'Quramy/tsuquyomi')
-Plug 'moll/vim-node'																" Allows Node.js Development with vim
-Plug 'elzr/vim-json', { 'for' : 'json' }											" json support
+Plug 'leafgarland/typescript-vim'					" TypeScript Syntax support
+Plug 'Quramy/tsuquyomi'								" TypeScript Development
+Plug 'Shougo/vimproc.vim', {'do': 'make'}			" Interactive command execution in vim (dependency of 'Quramy/tsuquyomi')
+Plug 'moll/vim-node'								" Allows Node.js Development with vim
+Plug 'elzr/vim-json', { 'for' : 'json' }			" json support
 
 " }}}
 
@@ -750,6 +750,9 @@ let g:rooter_use_lcd=1
 
 au VimResized * :wincmd =											" Resize splits when the window is resized
 autocmd BufEnter * silent! cd %:p:h									" update dir to current file
+au FocusGained,BufEnter * :silent! !									" reload when entering the buffer or gaining focus
+au FocusLost,WinLeave * :silent! w										" au FocusLost,WinLeave * :silent! w
+
 
 " Typos since I suck @ typing
 command! -bang E e<bang>
