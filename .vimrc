@@ -753,9 +753,6 @@ let g:rooter_use_lcd=1
 
 au VimResized * :wincmd =												" Resize splits when the window is resized
 autocmd BufEnter * silent! cd %:p:h										" update dir to current file
-au FocusGained,BufEnter * :silent! !									" reload when entering the buffer or gaining focus
-au FocusLost,WinLeave * :silent! w										" au FocusLost,WinLeave * :silent! w
-
 
 " Typos since I suck @ typing
 command! -bang E e<bang>
