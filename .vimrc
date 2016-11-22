@@ -17,16 +17,6 @@ syntax on																	" Syntax highlighting
 syntax sync minlines=256
 let mapleader=","															" Change leader to ','
 
-" Encoding {{{
-
-set encoding=utf-8 nobomb													" BOM often causes trouble
-set termencoding=utf-8
-set fileencoding=utf-8
-set fileencodings=utf-8,cp932,euc-jp										" A list of character encodings, set default encoding to UTF-8
-set fileformats=unix,dos,mac												" Prefer Unix over Windows over OS 9 formats
-
-" }}}
-
 set ttyfast																	" Optimize for fast terminal connections
 set ttymouse=xterm2
 set ttyscroll=3
@@ -49,6 +39,16 @@ set shell=/bin/sh															" Use /bin/sh for executing shell commands
 set t_Co=256
 set term=screen-256color
 set formatoptions+=1
+
+" Encoding {{{
+
+set encoding=utf-8 nobomb													" BOM often causes trouble
+set termencoding=utf-8
+set fileencoding=utf-8
+set fileencodings=utf-8,cp932,euc-jp										" A list of character encodings, set default encoding to UTF-8
+set fileformats=unix,dos,mac												" Prefer Unix over Windows over OS 9 formats
+
+" }}}
 
 " Tab Basic Settings {{{
 
@@ -124,7 +124,7 @@ set backspace=indent,eol,start
 set history=1024															" Amount of Command history increased from default 20 to 1024
 set noerrorbells															" No beeps
 set numberwidth=2
-set spelllang=en_us,fr															" Spell checking language
+set spelllang=en_us,fr														" Spell checking language
 "set textwidth=80															" Make it obvious where 80 characters is
 set cmdheight=2
 set showcmd																	" Show me what I'm typing
@@ -263,11 +263,11 @@ Plug 'posva/vim-vue'
 Plug 'sheerun/vim-polyglot'
 Plug 'kchmck/vim-coffee-script'
 Plug 'HerringtonDarkholme/yats.vim'
-Plug 'leafgarland/typescript-vim'					" TypeScript Syntax support
-Plug 'Quramy/tsuquyomi'								" TypeScript Development
-Plug 'Shougo/vimproc.vim', {'do': 'make'}			" Interactive command execution in vim (dependency of 'Quramy/tsuquyomi')
-Plug 'moll/vim-node'								" Allows Node.js Development with vim
-Plug 'elzr/vim-json', { 'for' : 'json' }			" json support
+Plug 'leafgarland/typescript-vim'													" TypeScript Syntax support
+Plug 'Quramy/tsuquyomi'																" TypeScript Development
+Plug 'Shougo/vimproc.vim', {'do': 'make'}											" Interactive command execution in vim (dependency of 'Quramy/tsuquyomi')
+Plug 'moll/vim-node'																" Allows Node.js Development with vim
+Plug 'elzr/vim-json', { 'for' : 'json' }											" json support
 
 " }}}
 
@@ -748,8 +748,8 @@ let php_sql_query=1
 let php_htmlInStrings=1
 let g:rooter_use_lcd=1
 
-au VimResized * :wincmd =											" Resize splits when the window is resized
-autocmd BufEnter * silent! cd %:p:h									" update dir to current file
+au VimResized * :wincmd =												" Resize splits when the window is resized
+autocmd BufEnter * silent! cd %:p:h										" update dir to current file
 au FocusGained,BufEnter * :silent! !									" reload when entering the buffer or gaining focus
 au FocusLost,WinLeave * :silent! w										" au FocusLost,WinLeave * :silent! w
 
