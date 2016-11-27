@@ -19,10 +19,8 @@ nnoremap <tab> <c-w>w
 
 nnoremap Y y$
 nnoremap Q @q
-
 nnoremap [c :action VcsShowPrevChangeMarker<cr>
 nnoremap ]c :action VcsShowNextChangeMarker<cr>
-
 nnoremap gcc :action CommentByLineComment<cr>
 
 nnoremap <leader>s :source ~/.ideavimrc<CR>
