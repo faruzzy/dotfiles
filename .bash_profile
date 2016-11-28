@@ -33,11 +33,12 @@ fi
 
 # Add bash completion for git.
 # See: https://github.com/bobthecow/git-flow-completion/wiki/Install-Bash-git-completion
-if [ "$OS" == 'osx' ]; then
+#if [ "$OS" == 'osx' ]; then
+if [[ "$OSTYPE" =~ ^darwin ]]; then
 	if [ -f `brew --prefix`/etc/bash_completion ]; then
 		. `brew --prefix`/etc/bash_completion
 	fi
-elif [ "$OS" == 'ubuntu' ]; then
+elif [[ "$OSTYPE" == 'ubuntu' ]]; then
 	# enable programmable completion features
 	if ! shopt -oq posix; then
 		if [ -f /usr/share/bash-completion/bash_completion ]; then
