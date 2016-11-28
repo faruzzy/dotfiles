@@ -1,6 +1,4 @@
 alias s="source ~/.zshrc"
-#alias mysql=/usr/local/mysql/bin/mysql
-#alias mysqladmin=/usr/local/mysql/bin/mysqladmin
 alias python="python3"
 
 # Easier navigation: .., ..., ~ and -
@@ -248,7 +246,6 @@ fi
 
 # Recursively delete `.DS_Store` files
 alias cleanup="find . -name '*.DS_Store' -type f -ls -delete"
-
 
 ####### Clean Up ########
 
