@@ -10,6 +10,7 @@ alias -- -="cd -"
 
 #tmux
 alias tmux="tmux -2"
+
 #proxy
 alias proxyon="export http_proxy='http://naproxy.gm.com';export https_proxy='https://naproxy.gm.com'"
 alias proxyoff="export http_proxy='';export https_proxy=''"
@@ -22,13 +23,10 @@ alias h="history"
 ##### Adobe CQ ######
 alias gotoauthor="cd ~/adobe/author"
 alias gotopublisher="cd ~/adobe/publisher"
-
 alias startauthor="gotoauthor; java -jar $JAVA_OPTIONS -Xdebug -Xnoagent cq-author-4502.jar -nofork -gui"
 alias startauthorDebug='gotoauthor; java $JAVA_OPTIONS -Xdebug -agentlib:jdwp=transport=dt_socket,address=30303,suspend=n,server=y -javaagent:/Users/hzbhyl/Library/Caches/IntelliJIdea2016.1/groovyHotSwap/gragent.jar -Dorg.apache.sling.commons.log.level=DEBUG -Xnoagent -jar cq-author-4502.jar -verbose | sed -e "s/Listening \(.*\)/`tput setaf 5` Listening \1`tput sgr0` /g"'
-
 alias startpublish="gotopublisher; java -jar $JAVA_OPTIONS -Xdebug -Xnoagent cq-publish-4503.jar -gui"
 alias startpublishDebug="gotopublisher; java $JAVA_OPTIONS -Xdebug -agentlib:jdwp=transport=dt_socket,address=30305,suspend=n,server=y -javaagent:/Users/hzbhyl/Library/Caches/IntelliJIdea2016.1/groovyHotSwap/gragent.jar -Xnoagent -jar cq-publish-4503.jar -verbose"
-##### Adobe CQ ######
 
 # programs
 alias st='open -a "Sublime Text"'
@@ -44,9 +42,6 @@ alias dashcode="open -a dashcode"
 alias f='open -a Finder'
 alias photoshop="open -a '/Applications/Adobe Photoshop CS6/Adobe Photoshop.app'"
 alias nom="rm -rf node_modules && npm cache clear && npm i"
-
-# be nice
-alias please=sudo
 
 # List ALL files (colorized() in long format, show permissions in octal
 alias la="ls -l | awk '
@@ -96,8 +91,8 @@ fi
 
 if [[ "$OSTYPE" =~ ^darwin ]]; then
 
-# Hide/Show desktop icons
-alias hide-desktop-icons='defaults write com.apple.finder CreateDesktop -bool false && killall Finder'
+	# Hide/Show desktop icons
+	alias hide-desktop-icons='defaults write com.apple.finder CreateDesktop -bool false && killall Finder'
     alias show-desktop-icons='defaults write com.apple.finder CreateDesktop -bool true && killall Finder'
 
     # Hide/Show hidden files in Finder
@@ -176,16 +171,13 @@ elif [ "$OS" = 'ubuntu' ]; then
 fi
 
 # `cat` with beautiful colors. requires Pygments installed.
-# 							   sudo easy_install Pygments
+# sudo easy_install Pygments
 alias c='pygmentize -O style=monokai -f console256 -g'
 
 ##### GIT Stuff #####
 alias gg="cd ~/Github"
 alias g="git"
 alias gpom="git push origin master"
-
-# general shortcuts
-#alias gh="open -a google\ chrome 'http://github.com/faruzzy'"
 
 # git root
 alias gr='[ ! -z `git rev-parse --show-cdup` ] && cd `git rev-parse --show-cdup || pwd`'
