@@ -1,4 +1,4 @@
-alias s="source ~/.zshrc"
+alias s="source ~/.bashrc"
 alias python="python3"
 
 # Easier navigation: .., ..., ~ and -
@@ -206,11 +206,12 @@ alias httpdump="sudo tcpdump -i en1 -n -s 0 -w - | grep -a -o -E \"Host\: .*|GET
 #type -t md5sum > /dev/null || alias md5sum="md5"
 
 ##### Vim ######
-alias vim="/usr/local/Cellar/vim/8.0.0101/bin/vim"
+alias vim="/usr/local/Cellar/vim/8.0.0172/bin/vim" 
 alias v="vim"
 alias mvim="open -a /Applications/MacVim.app/ $1"
 
 alias j="jump"
+alias ag="ag --path-to-ignore ~/.agignore"
 
 # File size
 alias fs="stat -f \"%z bytes\""
