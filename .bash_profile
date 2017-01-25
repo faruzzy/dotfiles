@@ -1,11 +1,8 @@
-[ -f ~/.fzf.bash ] && source ~/.fzf.bash
-
 # Set up git completions
 if [ -f ~/.git-completion ]; then
   . ~/.git-completion
 fi
 
-# Load ~/.extra, ~/.bash_prompt, ~/.exports, ~/.aliases and ~/.functions
 # ~/.extra can be used for settings you don't want to commit
 for file in ~/.{extra,bash_prompt,exports,aliases,functions,bash_options}; do
 	[ -r "$file" ] && source "$file"
@@ -33,30 +30,9 @@ fi
 
 # Add bash completion for git.
 # See: https://github.com/bobthecow/git-flow-completion/wiki/Install-Bash-git-completion
-#if [ "$OS" == 'osx' ]; then
-if [[ "$OSTYPE" =~ ^darwin ]]; then
-	if [ -f `brew --prefix`/etc/bash_completion ]; then
-		. `brew --prefix`/etc/bash_completion
-	fi
-elif [[ "$OSTYPE" == 'ubuntu' ]]; then
-	# enable programmable completion features
-	if ! shopt -oq posix; then
-		if [ -f /usr/share/bash-completion/bash_completion ]; then
-			. /usr/share/bash-completion/bash_completion
-		elif [ -f /etc/bash_completion ]; then
-			. /etc/bash_completion
-		fi
-	fi
-fi
+[  /usr/local/etc/bash_completion ] && . /usr/local/etc/bash_completion
 
-# Add tab completion for SSH hostnames based on ~/.ssh/config, ignoring wildcards
-#[ -e "$HOME/.ssh/config" ] && complete -o "default" -o "nospace" -W "$(grep "^Host" ~/.ssh/config | grep -v "[?*]" | cut -d " " -f2)" scp sftp ssh
+export PATH="$HOME/.jenv/bin:$PATH"
+eval "$(jenv init -)"
 
-# Add tab completion for `defaults read|write NSGlobalDomain`
-# You could just use `-g` instead, but I like being explicit
-#complete -W "NSGlobalDomain" defaults
-
-[ -s "~/.dnx/dnvm/dnvm.sh" ] && . "~/.dnx/dnvm/dnvm.sh" # Load dnvm
-
-#source kvm.sh
-
+[[ -s ~/.bashrc ]] && source ~/.bashrc
