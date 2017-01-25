@@ -31,11 +31,10 @@ command -v blsd > /dev/null && export FZF_ALT_C_COMMAND='blsd'
 command -v tree > /dev/null && export FZF_ALT_C_OPTS="--preview 'tree -C {} | head -200'"
 
 # JAVA
-export M2_HOME=/Applications/apache-maven-3.2.5
+export M2_HOME=~/dev/installs/apache-maven-3.2.5
 export JAVA_HOME=$(/usr/libexec/java_home -v 1.7)
+export MW_HOME=/Users/szd0qs/Oracle/wls1036_dev
 export JAVA_OPTIONS=" -Xms2048m -Xmx2048m -XX:PermSize=2048m -XX:MaxPermSize=2048m -Dhttps.proxyHost=naproxy.gm.com -Dhttps.proxyPort=80 -Dhttp.proxyHost=naproxy.gm.com -Dhttp.proxyPort=80 -Dhttp.nonProxyHosts=localhost"
-#export JAVA_HOME=$(/usr/libexec/java_home -v 1.7)
-#export JAVA_HOME=$(/usr/libexec/java_home) #1.8
 
 export PATH=~/dev:/bin:/sbin:/usr/local/bin:/usr/local/Cellar:/usr/bin:/usr/sbin:/usr/local/sbin:/usr/local/mysql/bin:$GOPATH/bin:$GOROOT/bin:$M2_HOME/bin
 
