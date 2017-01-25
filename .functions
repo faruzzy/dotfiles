@@ -167,9 +167,6 @@ function ftpane() {
 	fi
 }
 
-# Bind CTRL-X-CTRL-T to tmuxwords.sh
-#bindkey '"\C-x\C-t": "$(fzf_tmux_words)\e\C-e"'
-
 elif [ -d ~/github/iTerm2-Color-Schemes/ ]; then
 function ftheme() {
 	local base
@@ -180,12 +177,12 @@ function ftheme() {
 fi
 
 # Switch tmux-sessions
-fs() {
-  local session
-  session=$(tmux list-sessions -F "#{session_name}" | \
-    fzf-tmux --query="$1" --select-1 --exit-0) &&
-  tmux switch-client -t "$session"
-}
+#fs() {
+#  local session
+#  session=$(tmux list-sessions -F "#{session_name}" | \
+#    fzf-tmux --query="$1" --select-1 --exit-0) &&
+#  tmux switch-client -t "$session"
+#}
 
 source ~/z.sh
 
@@ -289,17 +286,17 @@ function join-lines() {
   done
 }
 
-function bind-git-helper() {
-  local char
-  for c in $@; do
-    eval "fzf-g$c-widget() LBUFFER+=\$(g$c | join-lines)"
-    eval "zle -N fzf-g$c-widget"
-    eval "bindkey '^g^$c' fzf-g$c-widget"
-  done
-}
+#function bind-git-helper() {
+#  local char
+#  for c in $@; do
+#    eval "fzf-g$c-widget() LBUFFER+=\$(g$c | join-lines)"
+#    eval "zle -N fzf-g$c-widget"
+#    eval "bindkey '^g^$c' fzf-g$c-widget"
+#  done
+#}
 
-bind-git-helper f b t r h
-unset -f bind-git-helper
+#bind-git-helper f b t r h
+#unset -f bind-git-helper
 
 # Simple calculator
 function calc() {
@@ -685,3 +682,11 @@ function gfu() {
   n=$((n-1))
   open $(git log -n 1 --skip=$n --pretty=oneline | awk "{printf \"$(gurl)/commit/%s\", substr(\$1,1,7)}")
 }
+
+bind '"\er": redraw-current-line'
+bind '"\C-g\C-f": "$(gf)\e\C-e\er"'
+bind '"\C-g\C-b": "$(gb)\e\C-e\er"'
+bind '"\C-g\C-t": "$(gt)\e\C-e\er"'
+bind '"\C-g\C-h": "$(gh)\e\C-e\er"'
+bind '"\C-g\C-r": "$(gr)\e\C-e\er"'
+
