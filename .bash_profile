@@ -30,7 +30,7 @@ fi
 
 # Add bash completion for git.
 # See: https://github.com/bobthecow/git-flow-completion/wiki/Install-Bash-git-completion
-[  /usr/local/etc/bash_completion ] && . /usr/local/etc/bash_completion
+[ -f  /usr/local/etc/bash_completion ] && . /usr/local/etc/bash_completion
 
 export PATH="$HOME/.jenv/bin:$PATH"
 eval "$(jenv init -)"
