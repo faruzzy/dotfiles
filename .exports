@@ -1,15 +1,13 @@
 export EDITOR="vim"												# Make vim the default editor
-
-# Don’t clear the screen after quitting a manual page
-export MANPAGER="less -X"
+export MANPAGER="less -X"										# Don’t clear the screen after quitting a manual page
 export http_proxy="http://naproxy.gm.com"
 export https_proxy="https://naproxy.gm.com"
 export no_proxy=git.gm.com,$no_proxy
 
 export HISTSIZE=32768											# Larger bash history (allow 32³ entries; default is 500)
 export HISTFILESIZE=$HISTSIZE
-export HISTCONTROL=ignoredups
-
+export HISTCONTROL=ignoredups									# Ignore duplicates in the history
+export HISTTIMEFORMAT="%Y/%m/%d %H:%M:%S:   "
 export HISTIGNORE="ls:ls *:cd:cd -:pwd;exit:date:* --help"		# Make some commands not show up in history
 
 # GoLang
@@ -24,9 +22,9 @@ export LANG=en_US.UTF-8
 # fzf (https://github.com/junegunn/fzf)
 # --------------------------------------------------------------------
 export FZF_DEFAULT_COMMAND='ag --hidden --ignore .git -g ""'
-# export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND | with-dir"
 export FZF_CTRL_T_OPTS="--preview '(highlight -O ansi -l {} 2> /dev/null || cat {} || tree -C {}) 2> /dev/null | head -200'"
 export FZF_CTRL_R_OPTS="--preview 'echo {}' --preview-window down:3:hidden --bind '?:toggle-preview'"
+
 command -v blsd > /dev/null && export FZF_ALT_C_COMMAND='blsd'
 command -v tree > /dev/null && export FZF_ALT_C_OPTS="--preview 'tree -C {} | head -200'"
 
