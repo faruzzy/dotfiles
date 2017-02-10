@@ -6,7 +6,6 @@ alias ..="cd .."
 alias ...="cd ../.."
 alias ....="cd ../../.."
 alias .....="cd ../../../.."
-alias -- -="cd -"
 
 #tmux
 alias tmux="tmux -2"
@@ -70,10 +69,12 @@ alias l="ls -l ${colorflag}"
 alias la="ls -la ${colorflag}"
 
 # List only directories
-alias lsd='ls -l | grep "^d"'
+# https://www.cyberciti.biz/faq/linux-list-just-directories-or-directory-names/
+alias lsd='ls -ld */'
 
-# List only hidden files
-alias lsh='ls -la | grep "^\."'
+# List only hidden files 
+# https://askubuntu.com/questions/468901/how-to-show-only-hidden-files-in-terminal
+alias lsh='ls -ld .?*'
 
 #https://www.reddit.com/r/webdev/comments/4ridy1/most_used_commands_on_your_shell/
 #alias mcmd ="cat ~/.zsh_history|cut -d \';\' -f 2- 2>/dev/null| awk \'{a[$1]++ } END{for(i in a){print a[i] " " i}}\'|sort -rn|head"
@@ -175,7 +176,6 @@ fi
 alias c='pygmentize -O style=monokai -f console256 -g'
 
 ##### GIT Stuff #####
-alias gg="cd ~/Github"
 alias g="git"
 alias gpom="git push origin master"
 
