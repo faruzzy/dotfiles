@@ -22,7 +22,7 @@ export HISTSIZE=32768											# Larger bash history (allow 32³ entries; defau
 export HISTFILESIZE=$HISTSIZE
 export HISTCONTROL=ignoredups									# Ignore duplicates in the history
 export HISTTIMEFORMAT="%Y/%m/%d %H:%M:%S:   "
-export HISTIGNORE="ls:ls *:cd:cd -:pwd;exit:date:* --help"		# Make some commands not show up in history
+export HISTIGNORE="cd:cd -:pwd;exit:date:* --help"		# Make some commands not show up in history
 
 # GoLang
 # --------------------------------------------------------------------
@@ -35,7 +35,8 @@ export LANG=en_US.UTF-8
 
 # fzf (https://github.com/junegunn/fzf)
 # --------------------------------------------------------------------
-export FZF_DEFAULT_COMMAND='ag --hidden --ignore .git -g ""'
+#export FZF_DEFAULT_COMMAND='ag --hidden --ignore .git -g ""'
+export FZF_DEFAULT_COMMAND='rg --files --no-ignore --hidden --follow --glob "!.git/*"'
 export FZF_CTRL_T_OPTS="--preview '(highlight -O ansi -l {} 2> /dev/null || cat {} || tree -C {}) 2> /dev/null | head -200'"
 export FZF_CTRL_R_OPTS="--preview 'echo {}' --preview-window down:3:hidden --bind '?:toggle-preview'"
 
@@ -50,7 +51,7 @@ export JAVA_OPTIONS=" -Xms2048m -Xmx2048m -XX:PermSize=2048m -XX:MaxPermSize=204
 
 export PATH=~/dev:/bin:/sbin:/usr/local/bin:/usr/local/Cellar:/usr/bin:/usr/sbin:/usr/local/sbin:/usr/local/mysql/bin:$GOPATH/bin:$GOROOT/bin:$M2_HOME/bin
 
-export FZF_DEFAULT_COMMAND='
-  (git ls-tree -r --name-only HEAD ||
-   find . -path "*/\.*" -prune -o -type f -print -o -type l -print |
-      sed s/^..//) 2> /dev/null'
+#export FZF_DEFAULT_COMMAND='
+#  (git ls-tree -r --name-only HEAD ||
+#   find . -path "*/\.*" -prune -o -type f -print -o -type l -print |
+#      sed s/^..//) 2> /dev/null'
