@@ -1,6 +1,10 @@
 # Set up git completions
-if [ -f ~/.git-completion ]; then
-  . ~/.git-completion
+if [[ -f ~/.git-completion ]]; then
+	. ~/.git-completion
+fi
+
+if [[ -f ~/z.sh ]]; then
+	. ~/z.sh
 fi
 
 # ~/.extra can be used for settings you don't want to commit
