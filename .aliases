@@ -1,4 +1,4 @@
-alias s="source ~/.bashrc"
+alias s="source ~/.bash_profile"
 alias python="python3"
 
 # Easier navigation: .., ..., ~ and -
