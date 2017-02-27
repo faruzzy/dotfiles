@@ -198,6 +198,13 @@ alias mvim="open -a /Applications/MacVim.app/ $1"
 alias j="jump"
 alias ag="ag --path-to-ignore ~/.agignore"
 
+alias mv='mv -v'
+alias cp='cp -v'
+alias rm='rm -v'
+alias curl='curl -v'
+alias chown='chown -v'
+alias chmod='chmod -v'
+
 # File size
 alias fs="stat -f \"%z bytes\""
 
