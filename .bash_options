@@ -1,13 +1,18 @@
-# !/bin/bash
+#!/bin/bash
 
 # Autocorrect typos in path names when using `cd`
 shopt -s cdspell
+
+# turn on recursive globbing
+shopt -s globstar
 
 # Case-insensitive globbing (used in pathname expansion)
 shopt -s nocaseglob
 
 # Append to the Bash histroy file, rather than overwritting it
 shopt -s histappend
+
+shopt -s histverify
 
 # Do not attempt to search the PATH for possible completions when 
 # completion is attempted on an empty line
