@@ -6,7 +6,9 @@
 " ██╗╚████╔╝  ██║ ██║ ╚═╝ ██║ ██║  ██║ ╚██████╗
 " ╚═╝ ╚═══╝   ╚═╝ ╚═╝     ╚═╝ ╚═╝  ╚═╝  ╚═════╝
 " 
-"
+" Author: Roland Pangu
+" 
+
 
 "--------------------------------------------------------------------------------
 " House keeping {{{
@@ -140,7 +142,7 @@ set foldlevel=99
 set statusline=%<[%n]\ %F\ %m%r%y\ %{exists('g:loaded_fugitive')?fugitive#statusline():''}\ %=%-14.(%l,%c%V%)\ %P
 
 "http://stackoverflow.com/questions/20186975/vim-mac-how-to-copy-to-clipboard-without-pbcopy
-set clipboard=unnamed
+"set clipboard+=unnamed
 set complete=.,w,b,u,t														" Better Completion
 set completeopt=longest,menuone
 set ofu=syntaxcomplete#Complete												" Set omni-completion method.
@@ -563,6 +565,7 @@ let g:neocomplete#sources#syntax#min_keyword_length = 3						" Set minimum synta
 
 let g:ycm_autoclose_preview_window_after_completion = 1
 let g:ycm_min_num_of_chars_for_completion = 1
+let g:ycm_python_binary_path = 'python'
 
 " for TypeScript
 if !exists("g:ycm_semantic_triggers")
