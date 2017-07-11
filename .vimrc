@@ -29,6 +29,8 @@ set linebreak
 nnoremap <leader>s :source %<CR>
 set nocompatible															" Behave like vim and not like vi! (Much, much better)
 set background=dark
+set dictionary+=/usr/share/dict/words
+set display=lastline
 set number																	" Print the line number in front of each line
 set ruler																	" Display Cursor Position
 set title																	" Display filename in titlebar
