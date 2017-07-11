@@ -257,7 +257,8 @@ Plug 'StanAngeloff/php.vim', { 'for': 'php' }										" Syntax
 
 "Plug 'Shutnik/jshint2.vim'
 Plug 'pangloss/vim-javascript', { 'for': 'javascript' }
-Plug 'jelera/vim-javascript-syntax', { 'for': 'javascript' }
+Plug 'mxw/vim-jsx'
+"Plug 'jelera/vim-javascript-syntax', { 'for': 'javascript' }
 Plug 'othree/yajs.vim', { 'for': 'javascript' }
 Plug 'othree/jspc.vim', { 'for': 'javascript' }
 Plug 'nono/jquery.vim', { 'for': 'javascript' }
@@ -409,6 +410,7 @@ if 'VIRTUAL_ENV' in os.environ:
 EOF
 
 let python_highlight_all=1
+let syntastic_mode_map = {'passive_filetypes': ['html']}
 
 " Save a file as root (,W)
 noremap <leader>W :w !sudo tee % > /dev/null<CR>
@@ -575,6 +577,7 @@ let g:ycm_semantic_triggers['typescript'] = ['.']
 
 " }}}
 
+let g:jsx_ext_required = 0
 " ----------------------------------------------------------------------------
 " NERDTree Options {{{
 " ----------------------------------------------------------------------------
