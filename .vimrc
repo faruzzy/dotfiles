@@ -293,8 +293,10 @@ Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': 'yes \| ./install --all' }
 Plug 'junegunn/fzf.vim'
 Plug 'tpope/vim-surround'
 Plug 'mileszs/ack.vim'
+Plug 'jremmen/vim-ripgrep'
 Plug 'majutsushi/tagbar'
 Plug 'scrooloose/nerdtree', { 'on': 'NERDTreeToggle' }
+Plug 'tpope/vim-vinegar'
 Plug 'ryanoasis/vim-devicons'
 Plug 'plasticboy/vim-markdown', { 'for': 'markdown' }
 Plug 'sickill/vim-pasta'
@@ -659,7 +661,8 @@ augroup ag_config
 
   if executable("ag")
     " Note we extract the column as well as the file and line number
-    set grepprg=ag\ --nogroup\ --nocolor\ --column
+    "set grepprg=ag\ --nogroup\ --nocolor\ --column
+	set grepprg=rg\ --vimgrep
     set grepformat=%f:%l:%c%m
 
     " Have the silver searcher ignore all the same things as wilgignore
@@ -740,6 +743,8 @@ nnoremap <leader>gp :Gpush<CR>
 nnoremap <leader>gc :Gcommit<CR>
 nnoremap <leader>gd :Gdiff<CR>
 nnoremap <leader>gb :Gblame<CR>
+nnoremap <leader>gg :Gmerge<CR>
+nnoremap <leader>gv :GV<CR>
 nnoremap <leader>pp :Git push origin master<CR>
 
 " }}}
