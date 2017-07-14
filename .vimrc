@@ -321,7 +321,7 @@ colo seoul256
 " https://github.com/junegunn/fzf
 set rtp+=~/.fzf
 
-nnoremap <Leader>f :FZF<CR>
+nnoremap <Leader>f :Root<CR>:FZF<CR>
 map <leader>a :Ack!<Space>
 
 if has('nvim')
