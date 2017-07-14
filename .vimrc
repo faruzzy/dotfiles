@@ -187,6 +187,7 @@ call plug#begin('~/.vim/plugged')
 " Git {{{
 
 Plug 'tpope/vim-fugitive'
+Plug 'tpope/vim-rhubarb'
 Plug 'junegunn/gv.vim', { 'on': 'GV' }
 if v:version >= 703
 	Plug 'mhinz/vim-signify'
