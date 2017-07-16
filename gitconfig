@@ -44,11 +44,10 @@
 	logr3 = log --stat -M -3
 	logit = log --stat -M
 	l = log --stat -C
-	logsimple = log --graph --abbrev-commit --pretty=oneline --all --decorate
     lol = log --color --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit --all
     lola = log --graph --decorate --pretty=oneline --abbrev-commit --all
     ls = ls-files
-    ign = ls-files -o -i --exclude-standard #Show files ignored by git:
+    ign = ls-files -o -i --exclude-standard			#Show files ignored by git:
     p = push
     shoot = push origin --delete
     up = pull
@@ -113,10 +112,15 @@
     current = yellow reverse
     local = yellow
     remote = green
+	upstream = bold cyan
 [color "status"]
+	# staged changes
     added = yellow
+	updated = bold white green
+	# un-staged changes
     changed = green
     untracked = cyan
+	nobranch = bold red white
 [merge]
     log = true
 [github]
