@@ -106,11 +106,11 @@ if has("gui_macvim")
 endif
 
 " Note that these vary from language to language
-set tabstop=4																"Set space width of tabs
-set smarttab																"At start of line, <Tab> inserts shiftwidth spaces, <Bs> deletes shifwidth spaces.
+set tabstop=4																" Set space width of tabs
+set smarttab																" At start of line, <Tab> inserts shiftwidth spaces, <Bs> deletes shifwidth spaces.
 set sw=4
-set splitright																"By default, split to the right
-set splitbelow																"By default, split below
+set splitright																" By default, split to the right
+set splitbelow																" By default, split below
 set binary																	" Don't add empty new lines at the end of files
 set noeol
 set cursorline																" Highlight current line
