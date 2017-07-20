@@ -78,16 +78,6 @@ set gdefault																" By default add g flag to search/replace. Add g to 
 set matchpairs+=<:>															" for HTML Editing
 set rnu																		"Toggle relative numbering, and set to absolute on loss of focus or insert mode
 
-if has('patch-7.3.541')
-	set formatoptions+=j
-endif
-
-if has('patch-7.4.338')
-	let &showbreak = '↳ '
-	set breakindent
-	set breakindentopt=sbr
-endif
-
 if has("gui_macvim")
   " No toolbars, menu or scrollbars in the GUI
   set guifont=Source\ Code\ Pro\ Light:h12
