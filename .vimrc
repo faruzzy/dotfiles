@@ -244,7 +244,6 @@ Plug 'nvie/vim-flake8'
 Plug 'othree/html5.vim', { 'for': 'html' }
 Plug 'othree/html5-syntax.vim', { 'for': 'html' }
 Plug 'mattn/emmet-vim', { 'for' : ['html', 'css'] }
-Plug 'digitaltoad/vim-jade', { 'for': 'jade' }
 Plug 'gregsexton/MatchTag'															" highlight matching html tag
 
 " }}}
@@ -267,7 +266,6 @@ Plug 'othree/jspc.vim', { 'for': 'javascript' }
 Plug 'nono/jquery.vim', { 'for': 'javascript' }
 Plug 'posva/vim-vue'
 Plug 'sheerun/vim-polyglot'
-Plug 'kchmck/vim-coffee-script'
 Plug 'HerringtonDarkholme/yats.vim'
 Plug 'leafgarland/typescript-vim'													" TypeScript Syntax support
 Plug 'Quramy/tsuquyomi'																" TypeScript Development
