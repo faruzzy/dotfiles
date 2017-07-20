@@ -478,8 +478,10 @@ autocmd FocusGained * call ToggleRelativeOn()
 autocmd InsertEnter * call ToggleRelativeOn()
 autocmd InsertLeave * call ToggleRelativeOn()
 
-" reload when entering the buffer or gaining focus
-au FocusGained,BufEnter * :silent! !										
+au VimResized * :wincmd =																	" Resize splits when the window is resized
+autocmd BufEnter * silent! cd %:p:h															" update dir to current file
+autocmd FocusGained,BufEnter * :silent! w													" reload when entering the buffer or gaining focus
+autocmd FocusLost,WinLeave * :silent! w														" reload when leving the buffer or losing focus
 
 " Quicker window movement
 nnoremap <C-j> <C-w>j
@@ -764,9 +766,6 @@ nnoremap <leader>pc :PlugClean<CR>
 let php_sql_query=1
 let php_htmlInStrings=1
 let g:rooter_use_lcd=1
-
-au VimResized * :wincmd =												" Resize splits when the window is resized
-autocmd BufEnter * silent! cd %:p:h										" update dir to current file
 
 " Typos since I suck @ typing
 command! -bang E e<bang>
