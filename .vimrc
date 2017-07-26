@@ -204,7 +204,6 @@ Plug 'junegunn/seoul256.vim'
 Plug 'morhetz/gruvbox'
 Plug 'Valloric/YouCompleteMe', { 'do': function('BuildYCM') }
 Plug 'Shougo/neocomplete.vim'
-Plug 'benmills/vimux'
 Plug 'scrooloose/syntastic', { 'for': ['python', 'java', 'javascript'] }
 Plug 'Shougo/unite.vim'
 
@@ -262,6 +261,8 @@ Plug 'Quramy/tsuquyomi'																" TypeScript Development
 Plug 'Shougo/vimproc.vim', {'do': 'make'}											" Interactive command execution in vim (dependency of 'Quramy/tsuquyomi')
 Plug 'moll/vim-node'																" Allows Node.js Development with vim
 Plug 'elzr/vim-json', { 'for' : 'json' }											" json support
+Plug 'christoomey/vim-tmux-navigator'												" moving through tmux pane with ease
+Plug 'benmills/vimux'																" Easily interact with tmux from vim
 
 " }}}
 
