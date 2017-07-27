@@ -574,30 +574,16 @@ let g:jsx_ext_required = 0
 " NERDTree Options {{{
 " ----------------------------------------------------------------------------
 
-let NERDTreeIgnore=['CVS','\.dSYM$', '.git', '.DS_Store', '*.swp', '*.swo', '*.swo']
-let NERDTreeChDirMode=2														" setting root dir in NT also sets VIM's cd
-
-"noremap <Leader>n :<C-u>call g:NerdTreeFindToggle()<cr>					" For toggling
 map <C-c> :NERDTreeToggle<CR>
-"nmap <silent> <leader>n :NERDTreeToggle<CR>
+let NERDTreeChDirMode=2														" setting root dir in NT also sets VIM's cd
 let NERDTreeMapOpenSplit = "s"
 let NERDTreeMapOpenVSplit = "v"
 let NERDTreeMinimalUI = 1
 let NERDTreeShowHidden = 1
-let NERDTreeIgnore = ['\~$', '^\.git$', '^\.hg$', '^\.bundle$', '^\.jhw-cache$', '\.pyc$', '\.egg-info$', '__pycache__', '\.vagrant$']
+let NERDTreeIgnore = ['\~$', '^\.git$', '^\.hg$', '^\.bundle$', '^\.jhw-cache$', '\.pyc$', '\.egg-info$', '__pycache__', '\.vagrant$', '\.dSYM$', '.DS_Store', '*.swp', '*.swo']
 
-" These prevent accidentally loading files while focused on NERDTree
-"autocmd FileType nerdtree noremap <buffer> <c-left> <nop>
-"autocmd FileType nerdtree noremap <buffer> <c-h> <nop>
-"autocmd FileType nerdtree noremap <buffer> <c-right> <nop>
-"autocmd FileType nerdtree noremap <buffer> <c-l> <nop>
+autocmd vimenter * if !argc() | NERDTree | endif							" Open NERDTree if we're executing vim without specifying a file to open
 
-" Open NERDTree if we're executing vim without specifying a file to open
-autocmd vimenter * if !argc() | NERDTree | endif
-
-" Hides "Press ? for help"
-let NERDTreeMinimalUI=1
-let g:NERDTreeShowHidden=1													" Shows invisibles
 let g:netrw_liststyle=3														" Explore with NerdTree Style by default
 
 "Plugin 'jistr/vim-nerdtree-tabs'
