@@ -313,7 +313,7 @@ colo seoul256
 set rtp+=~/.fzf
 
 nnoremap <Leader>f :Root<CR>:FZF<CR>
-map <leader>a :Ack!<Space>
+map <Leader>a :Ack!<Space>
 
 if has('nvim')
   let $FZF_DEFAULT_OPTS .= ' --inline-info'
@@ -371,15 +371,13 @@ nnoremap <silent> <Leader>`        :Marks<CR>
 
 
 if has("autocmd")
-    " Treat .json files as .js
-    autocmd BufNewFile,Bufread *.json setfiletype json syntax=javascript
+    autocmd BufNewFile,Bufread *.json setfiletype json syntax=javascript				" Treat .json files as .js
 
 	autocmd BufNewFile,BufRead *.less set filetype=less
 	autocmd FileType less set omnifunc=csscomplete#CompleteCSS
 	autocmd FileType javascript setlocal omnifunc=javascriptcomplete#CompleteJS
 
-    " Treat .md files as Markdown
-    autocmd BufNewFile,Bufread *.md setlocal filetype=markdown
+    autocmd BufNewFile,Bufread *.md setlocal filetype=markdown							" Treat .md files as Markdown
 
 	autocmd StdinReadPre * let s:std_in=1
 	"autocmd VimEnter * if argc() == 0 && !exists("s:std_in") | NERDTree | endif
@@ -406,9 +404,6 @@ EOF
 
 let python_highlight_all=1
 let syntastic_mode_map = {'passive_filetypes': ['html']}
-
-" Save a file as root (,W)
-noremap <leader>W :w !sudo tee % > /dev/null<CR>
 
 " Enable folding with the spacebar
 nnoremap <space> za" Run python code by pressing F9
@@ -439,8 +434,6 @@ nnoremap <C-H> <C-W><C-H>
   iabbrev aa λ
 
 " }}}
-
-
 
 " Clear last search (,qs) {{{
 	map <silent> <leader>qs <Esc>:noh<CR>
@@ -512,6 +505,8 @@ nnoremap <leader>x :wq!<cr>
 nnoremap <leader>q :q<cr>
 " Quickly save current buffer
 nnoremap <leader>w :w<cr>
+" Save a file as root (,W)
+noremap <leader>W :w !sudo tee % > /dev/null<CR>
 
 " Quickly open .vimrc file in the current buffer 
 nnoremap <leader>v :e ~/Github/dotfiles/.vimrc<CR>
