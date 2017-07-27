@@ -291,6 +291,7 @@ Plug 'ryanoasis/vim-devicons'
 Plug 'plasticboy/vim-markdown', { 'for': 'markdown' }
 Plug 'sickill/vim-pasta'
 Plug 'jordwalke/VimSplitBalancer'
+Plug 'dhruvasagar/vim-zoom'
 
 " }}}
 
