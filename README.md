@@ -13,3 +13,26 @@ Everything here revolves around `vim` and its movement.
 # Vim
 
 ## Customizations
+
+* Line numbers
+* Ruler
+* Make searching highlighted, incremental, and case insensitive unless a capital letter is used
+* Always show a Status line
+* Allow backspacing over everything (indentations, eol, and start characters) in insert mode
+* Automatically resize splits when resizing the Vim window (GUI only)
+* Write a privileged file with `<leader>W` it will prompt for sudo password when writting
+
+## Syntax
+
+* [php.vim](https://github.com/StanAngeloff/php.vim)
+* [kotlin.vim](https://github.com/udalov/kotlin-vim)
+* [vim-go](https://github.com/fatih/vim-go)
+
+## Plugins
+
+## [Ack.vim](http://github.com/mileszs/ack.vim)
+
+Ack.vim uses ack to search inside the current directory for a pattern.
+You can learn more about it with :help Ack.
+
+
