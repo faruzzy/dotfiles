@@ -77,6 +77,8 @@ Session.vim
 .gitignore
 # Compiled Python files
 *.pyc
+generated-sources/
+out/
 
 # ----------------------------------------------------------------------
 # | InteliJ files													   |
