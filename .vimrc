@@ -177,9 +177,9 @@ call plug#begin('~/.vim/plugged')
 
 " Git {{{
 
-Plug 'tpope/vim-fugitive'
-Plug 'tpope/vim-rhubarb'
-Plug 'junegunn/gv.vim', { 'on': 'GV' }
+Plug 'tpope/vim-fugitive'													" Git wrapper
+Plug 'tpope/vim-rhubarb'													" GitHub extension for fugitive
+Plug 'junegunn/gv.vim', { 'on': 'GV' }										" A git commint browser
 if v:version >= 703
 	Plug 'mhinz/vim-signify'
 elseif
@@ -240,7 +240,7 @@ Plug 'gregsexton/MatchTag'															" highlight matching html tag
 
 " PHP {{{
 
-Plug 'StanAngeloff/php.vim', { 'for': 'php' }										" Syntax
+Plug 'StanAngeloff/php.vim', { 'for': 'php' }										" PHP Syntax
 
 " }}}
 
