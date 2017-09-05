@@ -57,8 +57,9 @@ set fileformats=unix,dos,mac												" Prefer Unix over Windows over OS 9 for
 " Tab Basic Settings {{{
 
 set autoindent																" Always set autoindenting on
-set expandtab																" Use the appropriate number of spaces to insert a <Tab>b
 set smartindent
+set cindent
+set expandtab																" Use the appropriate number of spaces to insert a <Tab>b
 set shiftround																" Round indent to multiple of 'shiftwidth
 set shiftwidth=4															" Number of spaces to use for each step of (auto)indent
 set softtabstop=4															" Number of spaces that a <Tab> in the file counts for
@@ -276,6 +277,7 @@ Plug 'cakebaker/scss-syntax.vim', { 'for': 'scss' }
 
 " Misc {{{
 
+Plug 'jiangmiao/auto-pairs'																" provides insert mode auto-completion for quotes, parens, brackets, etc
 Plug 'easymotion/vim-easymotion'
 Plug 'vim-airline/vim-airline'
 Plug 'vim-airline/vim-airline-themes'
