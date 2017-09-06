@@ -178,6 +178,7 @@ call plug#begin('~/.vim/plugged')
 " Git {{{
 
 Plug 'tpope/vim-fugitive'													" Git wrapper
+Plug 'arkwright/vim-radar'													" Fugitive enhancer which provides a diff of changes between two commits
 Plug 'tpope/vim-rhubarb'													" GitHub extension for fugitive
 Plug 'junegunn/gv.vim', { 'on': 'GV' }										" A git commint browser
 if v:version >= 703
