@@ -588,6 +588,26 @@ autocmd vimenter * if !argc() | NERDTree | endif							" Open NERDTree if we're 
 
 let g:netrw_liststyle=3														" Explore with NerdTree Style by default
 
+" Close vim tmux runner opened by VimuxRunCommand
+map <Leader>vc :call VimuxCloseRunner()<CR>
+
+" Run last command executed by VimuxRunCommand
+map <Leader>vl :VimuxRunLastCommand<CR>
+
+" Interrupt any command that is running inside the runner pane
+map <Leader>vi :VimuxInterruptRunner<CR>
+
+" Zoom the tmux runner page
+map <Leader>vz :VimuxZoomRunner<CR>
+
+" Run gulp inside runner Pane
+map <Leader>gu :VimuxPromptCommand("gulp")<CR>
+
+" Prompt for a command and run it in a small horizontal split bellow the current pane
+map <Leader>vr :VimuxPromptCommand<CR>
+
+let g:VimuxHeight = "35"
+
 "Plugin 'jistr/vim-nerdtree-tabs'
 "map <silent> <Leader>n <plug>NERDTreeTabsToggle<CR>
 
@@ -733,12 +753,14 @@ nnoremap <leader>pp :Git push origin master<CR>
 " Plug {{{
 " ----------------------------------------------------------------------------
 
-nnoremap <leader>pi :PlugInstall<CR>
-nnoremap <leader>pu :PlugUpdate<CR>
-nnoremap <leader>pU :PlugUpgrade<CR>
-nnoremap <leader>pc :PlugClean<CR>
+nnoremap <leader>pi :source %<CR>:PlugInstall<CR>
+nnoremap <leader>pu :source %<CR>:PlugUpdate<CR>
+nnoremap <leader>pU :source %<CR>:PlugUpgrade<CR>
+nnoremap <leader>pc :source %<CR>:PlugClean<CR>
 
+" ----------------------------------------------------------------------------
 " }}}
+" ----------------------------------------------------------------------------
 
 let php_sql_query=1
 let php_htmlInStrings=1
