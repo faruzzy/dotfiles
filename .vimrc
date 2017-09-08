@@ -82,7 +82,7 @@ set rnu																		"Toggle relative numbering, and set to absolute on loss
 if has("gui_macvim")
   " No toolbars, menu or scrollbars in the GUI
   set guifont=Source\ Code\ Pro\ Light:h12
-  set clipboard+=unnamed
+  set clipboard=unnamed
   set vb t_vb=
   set guioptions-=m															" no menu
   set guioptions-=T														    " no toolbar
@@ -136,6 +136,7 @@ set statusline=%<[%n]\ %F\ %m%r%y\ %{exists('g:loaded_fugitive')?fugitive#status
 
 "http://stackoverflow.com/questions/20186975/vim-mac-how-to-copy-to-clipboard-without-pbcopy
 "set clipboard+=unnamed
+set clipboard=unnamed														" Sets default register to be * register, which is the system clipboard. So Cmd+C and y are now the same thing; Cmd+V and p are now the same thing!"
 set complete=.,w,b,u,t														" Better Completion
 set completeopt=longest,menuone
 set ofu=syntaxcomplete#Complete												" Set omni-completion method.
@@ -203,18 +204,18 @@ Plug 'crusoexia/vim-monokai'
 Plug 'cdmedia/itg_flat_vim'
 Plug 'junegunn/seoul256.vim'
 Plug 'morhetz/gruvbox'
-Plug 'Valloric/YouCompleteMe', { 'do': function('BuildYCM') }
+"Plug 'Valloric/YouCompleteMe', { 'do': function('BuildYCM') }
 Plug 'Shougo/neocomplete.vim'
 Plug 'scrooloose/syntastic', { 'for': ['python', 'java', 'javascript'] }
 Plug 'Shougo/unite.vim'
+Plug 'tpope/vim-unimpaired'
 
 "--------------------------------------------------------------------------------
 " Go {{{
 "--------------------------------------------------------------------------------
 
-Plug 'garyburd/go-explorer'
 Plug 'fatih/vim-go', { 'do': ':GoInstallBinaries' }
-Plug 'nsf/gocode'
+"Plug 'nsf/gocode'
 
 "--------------------------------------------------------------------------------
 " }}}
@@ -289,6 +290,8 @@ Plug 'cakebaker/scss-syntax.vim', { 'for': 'scss' }
 
 " Misc {{{
 
+"Plug 'wincent/terminus'
+Plug 'wincent/loupe'
 Plug 'jiangmiao/auto-pairs'																" provides insert mode auto-completion for quotes, parens, brackets, etc
 Plug 'easymotion/vim-easymotion'
 Plug 'vim-airline/vim-airline'
@@ -296,16 +299,20 @@ Plug 'vim-airline/vim-airline-themes'
 Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': 'yes \| ./install --all' }
 Plug 'junegunn/fzf.vim'
 Plug 'tpope/vim-surround'
-Plug 'mileszs/ack.vim'
+"Plug 'mileszs/ack.vim'
+Plug 'wincent/ferret'
 Plug 'jremmen/vim-ripgrep'
 Plug 'majutsushi/tagbar'
 Plug 'scrooloose/nerdtree', { 'on': 'NERDTreeToggle' }
+Plug 'Xuyuanp/nerdtree-git-plugin'
 Plug 'tpope/vim-vinegar'
 Plug 'ryanoasis/vim-devicons'
 Plug 'plasticboy/vim-markdown', { 'for': 'markdown' }
 Plug 'sickill/vim-pasta'
 Plug 'jordwalke/VimSplitBalancer'
 Plug 'dhruvasagar/vim-zoom'
+Plug 'mhartington/oceanic-next'
+Plug 'rakr/vim-one'
 
 " }}}
 
@@ -313,11 +320,8 @@ call plug#end()
 
 " }}}
 
-colo seoul256
-"colorscheme monokai
-"colorscheme hybrid
-"colorscheme gruvbox
-"colorscheme itg_flat
+"colorscheme seoul256
+colorscheme monokai
 
 " ============================================================================
 " FZF {{{
@@ -327,7 +331,7 @@ colo seoul256
 set rtp+=~/.fzf
 
 nnoremap <Leader>f :Root<CR>:FZF<CR>
-map <Leader>a :Ack!<Space>
+"map <Leader>a :Ack!<Space>
 
 if has('nvim')
   let $FZF_DEFAULT_OPTS .= ' --inline-info'
@@ -354,42 +358,39 @@ command! Plugs call fzf#run({
   \ 'sink':    'Explore'})
 
 command! FZFTag if !empty(tagfiles()) | call fzf#run({
-\   'source': "sed '/^\\!/d;s/\t.*//' " . join(tagfiles()) . ' | uniq',
-\   'sink':   'tag',
-\ }) | else | echo 'No tags' | endif
+  \   'source': "sed '/^\\!/d;s/\t.*//' " . join(tagfiles()) . ' | uniq',
+  \   'sink':   'tag',
+  \ }) | else | echo 'No tags' | endif
 
 command! -bar FZFTags if !empty(tagfiles()) | 
-			\ call fzf#run({
-			\   'source': 'sed ''/^\\!/ d; s/^\([^\t]*\)\t.*\t\(\w\)\(\t.*\)\?/\2\t\1/; /^l/ d'' ' . join(tagfiles()) . ' | uniq',
-			\   'sink': function('<SID>tag_line_handler'),
-			\ }) | else | call MakeTags() | FZFTags | endif
+  \ call fzf#run({
+  \   'source': 'sed ''/^\\!/ d; s/^\([^\t]*\)\t.*\t\(\w\)\(\t.*\)\?/\2\t\1/; /^l/ d'' ' . join(tagfiles()) . ' | uniq',
+  \   'sink': function('<SID>tag_line_handler'),
+  \ }) | else | call MakeTags() | FZFTags | endif
 
 command! FZFTagsBuffer call fzf#run({
-			\   'source': 'ctags -f - --sort=no ' . bufname("") . ' | sed ''s/^\([^\t]*\)\t.*\t\(\w\)\(\t.*\)\?/\2\t\1/'' | sort -k 1.1,1.1 -s',
-			\   'sink': function('<SID>tag_line_handler'),
-			\   'options': '--tac',
-			\ })
+  \   'source': 'ctags -f - --sort=no ' . bufname("") . ' | sed ''s/^\([^\t]*\)\t.*\t\(\w\)\(\t.*\)\?/\2\t\1/'' | sort -k 1.1,1.1 -s',
+  \   'sink': function('<SID>tag_line_handler'),
+  \   'options': '--tac',
+  \ })
 
 " }}}
 
-
-" nnoremap <silent> <Leader><Leader> :Files<CR>
 nnoremap <silent> <expr> <Leader><Leader> (expand('%') =~ 'NERD_tree' ? "\<c-w>\<c-w>" : '').":Files\<cr>"
 nnoremap <silent> <Leader>C        :Colors<CR>
 nnoremap <silent> <Leader><Enter>  :Buffers<CR>
 nnoremap <silent> <Leader>ag       :Ag <C-R><C-W><CR>
 nnoremap <silent> <Leader>AG       :Ag <C-R><C-A><CR>
 nnoremap <silent> <Leader>`        :Marks<CR>
-" nnoremap <silent> q: :History:<CR>
-" nnoremap <silent> q/ :History/<CR>
 
-
+let g:tmuxcomplete#trigger = 'omnifunc'
 if has("autocmd")
     autocmd BufNewFile,Bufread *.json setfiletype json syntax=javascript				" Treat .json files as .js
 
-	autocmd BufNewFile,BufRead *.less set filetype=less
-	autocmd FileType less set omnifunc=csscomplete#CompleteCSS
+	autocmd FileType css,sass,less set omnifunc=csscomplete#CompleteCSS
 	autocmd FileType javascript setlocal omnifunc=javascriptcomplete#CompleteJS
+	autocmd FileType python setlocal omnifunc=pythoncomplete#CompleteTags
+	autocmd FileType xml setlocal omnifunc=xmlComplete#CompleteTags
 
     autocmd BufNewFile,Bufread *.md setlocal filetype=markdown							" Treat .md files as Markdown
 
@@ -415,6 +416,10 @@ if 'VIRTUAL_ENV' in os.environ:
   activate_this = os.path.join(project_base_dir, 'bin/activate_this.py')
   execfile(activate_this, dict(__file__=activate_this))
 EOF
+
+"augroup python3
+"	au! BufEnter *.py setlocal omnifunc=python3complete#Complete
+"augroup END
 
 let python_highlight_all=1
 let syntastic_mode_map = {'passive_filetypes': ['html']}
@@ -477,8 +482,8 @@ autocmd InsertLeave * call ToggleRelativeOn()
 
 au VimResized * :wincmd =																	" Resize splits when the window is resized
 autocmd BufEnter * silent! cd %:p:h															" update dir to current file
-autocmd FocusGained,BufEnter * :silent! w													" reload when entering the buffer or gaining focus
-autocmd FocusLost,WinLeave * :silent! w														" reload when leving the buffer or losing focus
+"autocmd FocusGained,BufEnter * :silent! w													" reload when entering the buffer or gaining focus
+"autocmd FocusLost,WinLeave * :silent! w													" reload when leaving the buffer or losing focus
 
 " Quicker window movement
 nnoremap <C-j> <C-w>j
@@ -565,7 +570,9 @@ let g:neocomplete#enable_at_startup = 1										" Enabling neocomplete at start
 let g:neocomplete#enable_smart_case = 1										" Use smartcase
 let g:neocomplete#sources#syntax#min_keyword_length = 3						" Set minimum syntax keyword length.
 
+" ----------------------------------------------------------------------------
 " }}}
+" ----------------------------------------------------------------------------
 
 " ----------------------------------------------------------------------------
 "  YouCompleteMe {{{
@@ -581,7 +588,9 @@ if !exists("g:ycm_semantic_triggers")
 endif
 let g:ycm_semantic_triggers['typescript'] = ['.']
 
+" ----------------------------------------------------------------------------
 " }}}
+" ----------------------------------------------------------------------------
 
 let g:jsx_ext_required = 0
 " ----------------------------------------------------------------------------
@@ -594,11 +603,25 @@ let NERDTreeMapOpenSplit = "s"
 let NERDTreeMapOpenVSplit = "v"
 let NERDTreeMinimalUI = 1
 let NERDTreeShowHidden = 1
+let NERDTreeChristmasTree=1													" Enable all colors for NERDTree
+let NERDTreeDirArrows=1
 let NERDTreeIgnore = ['\~$', '^\.git$', '^\.hg$', '^\.bundle$', '^\.jhw-cache$', '\.pyc$', '\.egg-info$', '__pycache__', '\.vagrant$', '\.dSYM$', '.DS_Store', '*.swp', '*.swo']
 
-autocmd vimenter * if !argc() | NERDTree | endif							" Open NERDTree if we're executing vim without specifying a file to open
+"autocmd vimenter * if !argc() | NERDTree | endif							" Open NERDTree if we're executing vim without specifying a file to open
 
 let g:netrw_liststyle=3														" Explore with NerdTree Style by default
+let g:NERDTreeIndicatorMapCustom = {
+    \ "Modified"  : "✹",
+    \ "Staged"    : "✚",
+    \ "Untracked" : "✭",
+    \ "Renamed"   : "➜",
+    \ "Unmerged"  : "═",
+    \ "Deleted"   : "✖",
+    \ "Dirty"     : "✗",
+    \ "Clean"     : "✔︎",
+    \ 'Ignored'   : '☒',
+    \ "Unknown"   : "?"
+    \ }
 
 " Close vim tmux runner opened by VimuxRunCommand
 map <Leader>vc :call VimuxCloseRunner()<CR>
@@ -620,10 +643,40 @@ map <Leader>vr :VimuxPromptCommand<CR>
 
 let g:VimuxHeight = "35"
 
-"Plugin 'jistr/vim-nerdtree-tabs'
-"map <silent> <Leader>n <plug>NERDTreeTabsToggle<CR>
+" ----------------------------------------------------------------------------
+"  }}}
+" ----------------------------------------------------------------------------
 
+" ----------------------------------------------------------------------------
+" tmux {{{
+" ----------------------------------------------------------------------------
+function! s:tmux_send(content, dest) range
+  let dest = empty(a:dest) ? input('To which pane? ') : a:dest
+  let tempfile = tempname()
+  call writefile(split(a:content, "\n", 1), tempfile, 'b')
+  call system(printf('tmux load-buffer -b vim-tmux %s \; paste-buffer -d -b vim-tmux -t %s',
+        \ shellescape(tempfile), shellescape(dest)))
+  call delete(tempfile)
+endfunction
+
+function! s:tmux_map(key, dest)
+  execute printf('nnoremap <silent> %s "tyy:call <SID>tmux_send(@t, "%s")<cr>', a:key, a:dest)
+  execute printf('xnoremap <silent> %s "ty:call <SID>tmux_send(@t, "%s")<cr>gv', a:key, a:dest)
+endfunction
+
+call s:tmux_map('<leader>tt', '') 
+call s:tmux_map('<leader>th', '.left')
+call s:tmux_map('<leader>tj', '.bottom')
+call s:tmux_map('<leader>tk', '.top')
+call s:tmux_map('<leader>tl', '.right')
+call s:tmux_map('<leader>ty', '.top-left')
+call s:tmux_map('<leader>to', '.top-right')
+call s:tmux_map('<leader>tn', '.bottom-left')
+call s:tmux_map('<leader>t.', '.bottom-right')  
+
+" ----------------------------------------------------------------------------
 " }}}
+" ----------------------------------------------------------------------------
 
 " ----------------------------------------------------------------------------
 " Vim-go {{{
@@ -722,6 +775,17 @@ augroup airline_config
 augroup END
 " }}}
 
+"augroup nerd_loader
+"	autocmd!
+"	autocmd VimEnter * silent! autocmd! FileExplorer
+"	autocmd BufEnter,BufNew *
+"			\  if isdirectory(expand('<amatch>'))
+"			\|   call plug#load('nerdtree')
+"			\|   execute 'autocmd! nerd_loader'
+"			\| endif
+"augroup END
+
+
 " Syntastic.vim {{{
 
 augroup syntastic_config
@@ -733,6 +797,9 @@ augroup syntastic_config
   let g:syntastic_auto_loc_list = 1
   let g:syntastic_check_on_open = 1
   let g:syntastic_check_on_wq = 0
+  let g:syntastic_javascript_checkers = ['eslint'] " npm install -g eslint; npm install -g babel-eslint; npm install -g eslint-plugin-react
+  let g:syntastic_javascript_eslint_exec = 'node_modules/eslint/bin/eslint.js' " For project-specific versions of eslint.
+  let g:syntastic_json_checkers = ['jsonlint']          " npm install -g jsonlint
 augroup END
 
 " }}}
@@ -788,9 +855,114 @@ command! -bang WA wa<bang>
 command! -bang Wq wq<bang>
 command! -bang WQ wq<bang>
 
+" Removes unnecessary whitespace from otherwise blank lines in the
+" current file. This is necessary to allow { and } commands to jump
+" intuitively to the beginning/end of paragraphs.
+" credit: https://github.com/arkwright/dotfiles/blob/master/vimrc
+command! -range=% Clearblank <line1>,<line2>:global/^\s*$/normal 0D
+
+" Copy current file name and file path to clipboard.
+" credit: https://github.com/arkwright/dotfiles/blob/master/vimrc
+command! CopyFilename         :let @* = expand('%:t') | echo 'Copied to clipboard: ' . @*
+command! CopyPath             :let @* = expand('%:h') | echo 'Copied to clipboard: ' . @*
+command! CopyAbsolutePath     :let @* = expand('%:p:h') | echo 'Copied to clipboard: ' . @*
+command! CopyFilepath         :let @* = expand('%') | echo 'Copied to clipboard: ' . @*
+command! CopyAbsoluteFilepath :let @* = expand('%:p') | echo 'Copied to clipboard: ' . @*
+
+" Copy filename and filepath quick shortcuts.
+nnoremap <leader>yfn :CopyFilename<CR>
+xnoremap <leader>yfn :CopyFilename<CR>
+nnoremap <leader>yp :CopyPath<CR>
+xnoremap <leader>yp :CopyPath<CR>
+nnoremap <leader>yap :CopyAbsolutePath<CR>
+xnoremap <leader>yap :CopyAbsolutePath<CR>
+nnoremap <leader>yfp :CopyFilepath<CR>
+xnoremap <leader>yfp :CopyFilepath<CR>
+nnoremap <leader>yafp :CopyAbsoluteFilepath<CR>
+xnoremap <leader>yafp :CopyAbsoluteFilepath<CR>
+
 "--------------------------------------------------------
 " Custom functions {{{
 "--------------------------------------------------------
+
+" Search for the contents of the current line within the current file.
+" Ignore leading/trailing punctuation (except underscore), whitespace.
+" Ignore internal punctuation (except underscore).
+function! FindALine()
+    let l:text = getline('.')
+    let l:text = substitute(l:text, "\\v^\\W+", "", "g")
+    let l:text = substitute(l:text, "\\v\\W+$", "", "g")
+    let l:text = substitute(l:text, "\\v\\/", "\\\\/", "g")
+
+    execute 'normal! $/\c' . l:text . ''
+endfun
+nnoremap g<CR> :call FindALine()<CR>
+
+" Easy creation of Github Pull Request for current branch against master.
+" credit: https://github.com/arkwright/dotfiles/blob/master/vimrc
+function! s:GithubPullRequest()
+  let l:placeholderRegex = '\v\C\{0\}'
+  let l:httpsDomainRegex = '\v\Chttps:\/\/\zs[^\/]+\ze\/.+'
+  let l:httpsRepoRegex   = '\v\Chttps:\/\/.+\/\zs.+\/.+\ze\.git'
+  let l:sshDomainRegex   = '\v\C^.+\@\zs[^:\/]+\ze'
+  let l:sshRepoRegex     = '\v\C^.+\@.[^:\/]+:\zs[^.]+\ze\.git'
+  let l:urlTemplate      = system('echo $VIM_GITHUB_PR_URL')
+  let l:remotes          = system('cd ' . expand('%:p:h') . '; git remote -v')
+  let l:branch           = substitute(system('cd ' . expand('%:p:h') . '; git symbolic-ref --short -q HEAD'), '\v[\r\n]', '', 'g')
+  let l:urlTemplate      = 'https://{domain}/{repo}/compare/{branch}?expand=1'
+
+  if match(l:remotes, 'https') !=# -1
+    let l:domain = matchstr(l:remotes, l:httpsDomainRegex)
+    let l:repo   = matchstr(l:remotes, l:httpsRepoRegex)
+  else
+    let l:domain = matchstr(l:remotes, l:sshDomainRegex)
+    let l:repo   = matchstr(l:remotes, l:sshRepoRegex)
+  endif
+
+  if l:domain ==# '' || l:repo ==# ''
+    echoe 'Could not determine Git repo name for current file!'
+  endif
+
+  let l:prUrl = l:urlTemplate
+  let l:prUrl = substitute(l:prUrl, '\v\C\{domain\}', l:domain, '')
+  let l:prUrl = substitute(l:prUrl, '\v\C\{repo\}', l:repo, '')
+  let l:prUrl = substitute(l:prUrl, '\v\C\{branch\}', l:branch, '')
+
+  silent exec "!open '" . shellescape(l:prUrl, 1) . "'"
+endfunction
+command! PR :call s:GithubPullRequest()function! s:tag_line_handler(l)
+
+" Find any URL on the current line, and open it in a web browser.
+" Adapted from: http://stackoverflow.com/questions/9458294/open-url-under-cursor-in-vim-with-browser
+" Add the following environment variable to your shell configuration to enable JIRA ticket support:
+" export VIM_JIRA_URL=https://your-jira-domain-goes-here.com/browse/{0}
+function! BrowserOpen()
+  let l:line = getline('.')
+  let l:urlRegex = '\v\C[a-z]*:\/\/[^ >,;)]*'
+
+  let l:uri = matchstr(l:line, l:urlRegex)
+
+  if l:uri != ""
+    silent exec "!open '" . shellescape(l:uri, 1) . "'"
+    return
+  endif
+
+  let l:jiraRegex = '\v\C[A-Z]+-\d+'
+  let l:jiraUrlPlaceholderRegex = '\v\C\{0\}'
+
+  let l:jiraTicket = matchstr(l:line, l:jiraRegex)
+
+  if l:jiraTicket != ""
+    let l:jiraUrl = system('echo $VIM_JIRA_URL')
+    let l:jiraUrl = substitute(l:jiraUrl, l:jiraUrlPlaceholderRegex, l:jiraTicket, 'g')
+    silent exec "!open '" . shellescape(l:jiraUrl, 1) . "'"
+    return
+  endif
+
+  echo "No URI or JIRA ticket number found in line."
+endfunction
+nnoremap gx :call BrowserOpen()<CR>
+xnoremap gx :call BrowserOpen()<CR>
 
 function! s:tag_line_handler(l)
 	let keys = split(a:l, '\t')
@@ -889,3 +1061,13 @@ function! InsertTabWrapper()
 endfunction
 
 " }}}
+
+function! PhpSyntaxOverride()
+	hi! def link phpDocTags  phpDefine
+	hi! def link phpDocParam phpType
+endfunction
+
+augroup phpSyntaxOverride
+	autocmd!
+	autocmd FileType php call PhpSyntaxOverride()
+augroup END
