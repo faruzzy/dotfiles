@@ -498,15 +498,15 @@ vnoremap <tab> %
 let g:html_indent_tags = 'li\|p'
 
 " Save and close all buffer
-nnoremap <leader>X :wqa!<cr>
+nnoremap <leader>X :wqa!<CR>
 " Close all buffer without saving
-nnoremap <leader>Q :qa!<cr>
+nnoremap <leader>Q :qa!<CR>
 " Save and close current buffer
-nnoremap <leader>x :wq!<cr>
+nnoremap <leader>x :wq!<CR>
 " Close current buffer without saving
-nnoremap <leader>q :q<cr>
+nnoremap <leader>q :q!<CR>
 " Quickly save current buffer
-nnoremap <leader>w :w<cr>
+nnoremap <leader>w :w<CR>
 " Save a file as root (,W)
 noremap <leader>W :w !sudo tee % > /dev/null<CR>
 
