@@ -313,6 +313,7 @@ Plug 'jordwalke/VimSplitBalancer'
 Plug 'dhruvasagar/vim-zoom'
 Plug 'mhartington/oceanic-next'
 Plug 'rakr/vim-one'
+Plug 'itspriddle/ZoomWin'																" Zoom in and out of windows/buffer
 
 " }}}
 
@@ -320,8 +321,8 @@ call plug#end()
 
 " }}}
 
-"colorscheme seoul256
-colorscheme monokai
+colorscheme seoul256
+"colorscheme monokai
 
 " ============================================================================
 " FZF {{{
