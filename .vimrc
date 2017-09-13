@@ -275,8 +275,6 @@ Plug 'Quramy/tsuquyomi'																" TypeScript Development
 Plug 'Shougo/vimproc.vim', {'do': 'make'}											" Interactive command execution in vim (dependency of 'Quramy/tsuquyomi')
 Plug 'moll/vim-node'																" Allows Node.js Development with vim
 Plug 'elzr/vim-json', { 'for' : 'json' }											" json support
-Plug 'christoomey/vim-tmux-navigator'												" moving through tmux pane with ease
-Plug 'benmills/vimux'																" Easily interact with tmux from vim
 
 " }}}
 
@@ -314,6 +312,9 @@ Plug 'dhruvasagar/vim-zoom'
 Plug 'mhartington/oceanic-next'
 Plug 'rakr/vim-one'
 Plug 'itspriddle/ZoomWin'																" Zoom in and out of windows/buffer
+Plug 'benmills/vimux'																" Easily interact with tmux from vim
+Plug 'christoomey/vim-tmux-navigator'												" moving through tmux pane with ease
+Plug 'tmux-plugins/vim-tmux-focus-events'											" This plugin restores `FocusGained` and `FocusLost` when using vim inside Tmux.
 
 " }}}
 
@@ -408,6 +409,10 @@ au BufNewFile,Bufread *.md setlocal noet ts=4 sw=4
 au BufNewFile,Bufread *.go setlocal noet ts=4 sw=4 sts=4
 autocmd BufNewFile,BufreadPost *.coffee setl shiftwidth=2 expandtab
 
+autocmd CursorHold,CursorHoldI,FocusGained,BufEnter * checktime
+autocmd FileChangedShellPost *
+	\ echohl WarningMsg | echo "File changed on disk. Buffer reloaded." | echohl None
+
 " python with virtualenv support
 py << EOF
 import os
@@ -483,8 +488,6 @@ autocmd InsertLeave * call ToggleRelativeOn()
 
 au VimResized * :wincmd =																	" Resize splits when the window is resized
 autocmd BufEnter * silent! cd %:p:h															" update dir to current file
-"autocmd FocusGained,BufEnter * :silent! w													" reload when entering the buffer or gaining focus
-"autocmd FocusLost,WinLeave * :silent! w													" reload when leaving the buffer or losing focus
 
 " Quicker window movement
 nnoremap <C-j> <C-w>j
