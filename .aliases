@@ -10,10 +10,6 @@ alias .....="cd ../../../.."
 #tmux
 alias tmux="tmux -2"
 
-#proxy
-alias proxyon="export http_proxy='http://naproxy.gm.com';export https_proxy='https://naproxy.gm.com'"
-alias proxyoff="export http_proxy='';export https_proxy=''"
-
 # Shortcuts
 alias dl="cd ~/Downloads"
 alias dt="cd ~/Desktop"
