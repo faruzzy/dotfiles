@@ -27,6 +27,10 @@ set linebreak
 
 " refresh current .vimrc file for change to take effect
 nnoremap <leader>s :source %<CR>
+
+" Open the current directory in finder
+nnoremap <leader>O :!open .<CR>
+
 set nocompatible															" Behave like vim and not like vi! (Much, much better)
 set background=dark
 set dictionary+=/usr/share/dict/words
