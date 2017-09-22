@@ -783,6 +783,16 @@ augroup airline_config
 augroup END
 " }}}
 
+" Cursorline {{{
+" Only show cursorline in the current window and in normal mode.
+
+augroup cline
+	au!
+	au WinLeave,InsertEnter * set nocursorline
+	au WinEnter,InsertLeave * set cursorline
+
+" }}}
+
 "augroup nerd_loader
 "	autocmd!
 "	autocmd VimEnter * silent! autocmd! FileExplorer
