@@ -725,6 +725,7 @@ else
 endif
 
 " Silver Searcher {{{
+
 augroup ag_config
   autocmd!
 
@@ -746,6 +747,7 @@ augroup ag_config
     let g:ctrlp_user_command = b:ag_command
   endif
 augroup END
+
 " }}}
 
 inoremap <expr><TAB>  pumvisible() ? "\<C-n>" : "\<TAB>"
@@ -790,6 +792,7 @@ augroup cline
 	au!
 	au WinLeave,InsertEnter * set nocursorline
 	au WinEnter,InsertLeave * set cursorline
+augroup END
 
 " }}}
 
