@@ -285,19 +285,18 @@ Plug 'StanAngeloff/php.vim', { 'for': 'php' }										" PHP Syntax
 " ECMAScript {{{
 
 "Plug 'Shutnik/jshint2.vim'
-Plug 'pangloss/vim-javascript', { 'for': 'javascript' }
 Plug 'mxw/vim-jsx'
-"Plug 'jelera/vim-javascript-syntax', { 'for': 'javascript' }
-Plug 'othree/yajs.vim', { 'for': 'javascript' }
-Plug 'othree/jspc.vim', { 'for': 'javascript' }
-Plug 'nono/jquery.vim', { 'for': 'javascript' }
+Plug 'jelera/vim-javascript-syntax', { 'for': 'javascript' }
 Plug 'posva/vim-vue'
 Plug 'sheerun/vim-polyglot'
 Plug 'HerringtonDarkholme/yats.vim'
-Plug 'leafgarland/typescript-vim'													" TypeScript Syntax support
-Plug 'Quramy/tsuquyomi'																" TypeScript Development
-Plug 'Shougo/vimproc.vim', {'do': 'make'}											" Interactive command execution in vim (dependency of 'Quramy/tsuquyomi')
-Plug 'moll/vim-node'																" Allows Node.js Development with vim
+Plug 'posva/vim-vue'
+Plug 'sheerun/vim-polyglot'
+Plug 'HerringtonDarkholme/yats.vim'
+"Plug 'leafgarland/typescript-vim'													" TypeScript Syntax support
+"Plug 'Quramy/tsuquyomi'															" TypeScript Development
+"Plug 'Shougo/vimproc.vim', {'do': 'make'}											" Interactive command execution in vim (dependency of 'Quramy/tsuquyomi')
+"Plug 'moll/vim-node'																" Allows Node.js Development with vim
 Plug 'elzr/vim-json', { 'for' : 'json' }											" json support
 
 " }}}
@@ -837,7 +836,7 @@ augroup END
 " Syntastic.vim {{{
 
 augroup syntastic_config
-  autocmd!
+autocmd!
   let g:syntastic_error_symbol = '✗'
   let g:syntastic_warning_symbol = '⚠'
   let g:syntastic_ruby_checkers = ['mri', 'rubocop']
@@ -847,14 +846,15 @@ augroup syntastic_config
   let g:syntastic_check_on_wq = 0
   let g:syntastic_javascript_checkers = ['eslint'] " npm install -g eslint; npm install -g babel-eslint; npm install -g eslint-plugin-react
   let g:syntastic_javascript_eslint_exec = 'node_modules/eslint/bin/eslint.js' " For project-specific versions of eslint.
+  let g:syntastic_javascript_eslint_exe = 'npm run eslint --'
   let g:syntastic_json_checkers = ['jsonlint']          " npm install -g jsonlint
 augroup END
 
 " }}}
 
-"let jshint2_read = 1
-"let jshint2_save = 1
-"let jshint2_min_height = 3
+let jshint2_read = 1
+let jshint2_save = 1
+let jshint2_min_height = 3
 
 " ----------------------------------------------------------------------------
 " Fugitive {{{
