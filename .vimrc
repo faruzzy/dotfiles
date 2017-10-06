@@ -51,6 +51,11 @@ set formatoptions+=1
 " Encoding {{{
 
 set encoding=utf-8 nobomb													" BOM often causes trouble
+if !has('nvim')
+	set term=xterm-256color
+endif
+
+set t_ut=																	" Disable background color erase, play nicely with tmux
 set termencoding=utf-8
 set fileencoding=utf-8
 set fileencodings=utf-8,cp932,euc-jp										" A list of character encodings, set default encoding to UTF-8
