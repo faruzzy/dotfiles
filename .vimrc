@@ -127,7 +127,10 @@ set path=$PWD/**															" You need this (trust me) to move around
 set wildmenu
 set backspace=indent,eol,start
 set history=1024															" Amount of Command history increased from default 20 to 1024
-set noerrorbells															" No beeps
+set noerrorbells visualbell t_vb=											" No beeps
+if has('autocmd')
+	autocmd GUIEnter * set visualbell t_vb=
+endif
 set numberwidth=2
 set spelllang=en_us,fr														" Spell checking language
 "set textwidth=80															" Make it obvious where 80 characters is
