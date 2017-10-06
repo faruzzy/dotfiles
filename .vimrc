@@ -190,6 +190,12 @@ let s:darwin = has('mac')
 "--------------------------------------------------------------------------------
 " Plug begins {{{
 "--------------------------------------------------------------------------------
+let s:first_time_launch = 0
+if empty(glob("~/.vim/autoload/plug.vim"))
+    silent execute '!mkdir -p ~/.vim/autoload'
+    silent execute '!curl -fLo ~/.vim/autoload/plug.vim https://raw.github.com/junegunn/vim-plug/master/plug.vim'
+    let s:first_time_launch = 1
+endif
 
 call plug#begin('~/.vim/plugged')
 
