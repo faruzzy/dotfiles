@@ -409,6 +409,16 @@ nnoremap <silent> <Leader>ag       :Ag <C-R><C-W><CR>
 nnoremap <silent> <Leader>AG       :Ag <C-R><C-A><CR>
 nnoremap <silent> <Leader>`        :Marks<CR>
 
+" npm install --save-dev word under cursor
+nnoremap <Leader>nd :execute ":!npm install --save-dev " . expand("<cword>")<CR>
+" npm install --save word under cursor
+nnoremap <Leader>n :execute ":!npm install --save " . expand("<cword>")<CR>
+
+" Search and replace the word under the cursor
+nnoremap <Leader>z :%s/\<<C-r><C-w>\>/
+" Kill current buffer without closing split
+nnoremap <silent> <Leader>q :bn \| bd #<CR>
+
 let g:tmuxcomplete#trigger = 'omnifunc'
 if has("autocmd")
     autocmd BufNewFile,Bufread *.json setfiletype json syntax=javascript				" Treat .json files as .js
@@ -418,7 +428,8 @@ if has("autocmd")
 	autocmd FileType python setlocal omnifunc=pythoncomplete#CompleteTags
 	autocmd FileType xml setlocal omnifunc=xmlComplete#CompleteTags
 
-    autocmd BufNewFile,Bufread *.md setlocal filetype=markdown							" Treat .md files as Markdown
+	autocmd BufNewFile,Bufread *.md setlocal filetype=markdown							" Treat .md files as Markdown
+	autocmd BufNewFile,Bufread *.js setlocal filetype=javascript
 
 	autocmd StdinReadPre * let s:std_in=1
 	"autocmd VimEnter * if argc() == 0 && !exists("s:std_in") | NERDTree | endif
