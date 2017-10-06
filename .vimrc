@@ -5,9 +5,9 @@
 "   ╚██╗ ██╔╝ ██║ ██║╚██╔╝██║ ██╔══██╗ ██║
 " ██╗╚████╔╝  ██║ ██║ ╚═╝ ██║ ██║  ██║ ╚██████╗
 " ╚═╝ ╚═══╝   ╚═╝ ╚═╝     ╚═╝ ╚═╝  ╚═╝  ╚═════╝
-" 
+"
 " Author: Roland Pangu
-" 
+"
 
 
 "--------------------------------------------------------------------------------
@@ -23,30 +23,41 @@ set ttyfast																	" Optimize for fast terminal connections
 set ttymouse=xterm2
 set ttyscroll=3
 set lazyredraw																" Wait to redraw, do not redraw while executing macros
+set nowrap
 set linebreak
 
 " refresh current .vimrc file for change to take effect
 nnoremap <leader>s :source %<CR>
+
+" Open the current directory in finder
+nnoremap <leader>O :!open .<CR>
+
 set nocompatible															" Behave like vim and not like vi! (Much, much better)
 set background=dark
 set dictionary+=/usr/share/dict/words
 set display=lastline
 set number																	" Print the line number in front of each line
+set relativenumber
 set ruler																	" Display Cursor Position
 set title																	" Display filename in titlebar
 set titleold=																" Prevent the 'Thanks for flying Vim'
-set relativenumber
 set diffopt=filler															" Add vertical spaces to keep right and left aligned
 set diffopt+=iwhite															" Ignore whitespace changes (focus on code changes)
 set diffopt+=vertical														" make :diffsplit default to vertical
 set shell=/bin/sh															" Use /bin/sh for executing shell commands
-set t_Co=256
+set t_Co=256																" 256 colors terminal
+set ttimeoutlen=50															" Reduce annoying delay for key codes, especially <Esc>...
 set term=screen-256color
 set formatoptions+=1
 
 " Encoding {{{
 
 set encoding=utf-8 nobomb													" BOM often causes trouble
+if !has('nvim')
+	set term=xterm-256color
+endif
+
+set t_ut=																	" Disable background color erase, play nicely with tmux
 set termencoding=utf-8
 set fileencoding=utf-8
 set fileencodings=utf-8,cp932,euc-jp										" A list of character encodings, set default encoding to UTF-8
@@ -117,14 +128,20 @@ set path=$PWD/**															" You need this (trust me) to move around
 set wildmenu
 set backspace=indent,eol,start
 set history=1024															" Amount of Command history increased from default 20 to 1024
-set noerrorbells															" No beeps
+set noerrorbells visualbell t_vb=											" No beeps
+if has('autocmd')
+	autocmd GUIEnter * set visualbell t_vb=
+endif
 set numberwidth=2
 set spelllang=en_us,fr														" Spell checking language
 "set textwidth=80															" Make it obvious where 80 characters is
 set cmdheight=2
 set showcmd																	" Show me what I'm typing
+" ================ Turn Off Swap Files ======================
 set noswapfile																" No beeps
 set nobackup																" Don't create annoying backup files
+set nowb
+
 set autowrite																" Automatically save before :next, :make etc.
 set autoread																" Automatically reread changed files (outside of vim) without asking me anything
 set laststatus=2															" Always show status line
@@ -136,6 +153,7 @@ set statusline=%<[%n]\ %F\ %m%r%y\ %{exists('g:loaded_fugitive')?fugitive#status
 
 "http://stackoverflow.com/questions/20186975/vim-mac-how-to-copy-to-clipboard-without-pbcopy
 "set clipboard+=unnamed
+set clipboard=unnamed
 set complete=.,w,b,u,t														" Better Completion
 set completeopt=longest,menuone
 set ofu=syntaxcomplete#Complete												" Set omni-completion method.
@@ -172,12 +190,19 @@ let s:darwin = has('mac')
 "--------------------------------------------------------------------------------
 " Plug begins {{{
 "--------------------------------------------------------------------------------
+let s:first_time_launch = 0
+if empty(glob("~/.vim/autoload/plug.vim"))
+    silent execute '!mkdir -p ~/.vim/autoload'
+    silent execute '!curl -fLo ~/.vim/autoload/plug.vim https://raw.github.com/junegunn/vim-plug/master/plug.vim'
+    let s:first_time_launch = 1
+endif
 
 call plug#begin('~/.vim/plugged')
 
 " Git {{{
 
 Plug 'tpope/vim-fugitive'													" Git wrapper
+Plug 'tpope/vim-git'														" Vim Git runtime files
 Plug 'tpope/vim-rhubarb'													" GitHub extension for fugitive
 Plug 'junegunn/gv.vim', { 'on': 'GV' }										" A git commint browser
 if v:version >= 703
@@ -195,7 +220,7 @@ function! BuildYCM(info)
 	" - status: 'installed', 'updated', or 'unchanged'
 	" - force:  set on PlugInstall! or PlugUpdate!
 	if a:info.status == 'installed' || a:info.force
-		!./install.py --clang-completer --omnisharp-completer 
+		!./install.py --clang-completer --omnisharp-completer
 	endif
 endfunction
 
@@ -203,16 +228,16 @@ Plug 'crusoexia/vim-monokai'
 Plug 'cdmedia/itg_flat_vim'
 Plug 'junegunn/seoul256.vim'
 Plug 'morhetz/gruvbox'
-Plug 'Valloric/YouCompleteMe', { 'do': function('BuildYCM') }
+"Plug 'Valloric/YouCompleteMe', { 'do': function('BuildYCM') }
 Plug 'Shougo/neocomplete.vim'
 Plug 'scrooloose/syntastic', { 'for': ['python', 'java', 'javascript'] }
 Plug 'Shougo/unite.vim'
+Plug 'tpope/vim-unimpaired'
 
 "--------------------------------------------------------------------------------
 " Go {{{
 "--------------------------------------------------------------------------------
 
-Plug 'garyburd/go-explorer'
 Plug 'fatih/vim-go', { 'do': ':GoInstallBinaries' }
 Plug 'nsf/gocode'
 
@@ -260,19 +285,15 @@ Plug 'StanAngeloff/php.vim', { 'for': 'php' }										" PHP Syntax
 " ECMAScript {{{
 
 "Plug 'Shutnik/jshint2.vim'
-Plug 'pangloss/vim-javascript', { 'for': 'javascript' }
 Plug 'mxw/vim-jsx'
-"Plug 'jelera/vim-javascript-syntax', { 'for': 'javascript' }
-Plug 'othree/yajs.vim', { 'for': 'javascript' }
-Plug 'othree/jspc.vim', { 'for': 'javascript' }
-Plug 'nono/jquery.vim', { 'for': 'javascript' }
+Plug 'jelera/vim-javascript-syntax', { 'for': 'javascript' }
 Plug 'posva/vim-vue'
 Plug 'sheerun/vim-polyglot'
 Plug 'HerringtonDarkholme/yats.vim'
-Plug 'leafgarland/typescript-vim'													" TypeScript Syntax support
-Plug 'Quramy/tsuquyomi'																" TypeScript Development
-Plug 'Shougo/vimproc.vim', {'do': 'make'}											" Interactive command execution in vim (dependency of 'Quramy/tsuquyomi')
-Plug 'moll/vim-node'																" Allows Node.js Development with vim
+"Plug 'leafgarland/typescript-vim'													" TypeScript Syntax support
+"Plug 'Quramy/tsuquyomi'															" TypeScript Development
+"Plug 'Shougo/vimproc.vim', {'do': 'make'}											" Interactive command execution in vim (dependency of 'Quramy/tsuquyomi')
+"Plug 'moll/vim-node'																" Allows Node.js Development with vim
 Plug 'elzr/vim-json', { 'for' : 'json' }											" json support
 Plug 'christoomey/vim-tmux-navigator'												" moving through tmux pane with ease
 Plug 'benmills/vimux'																" Easily interact with tmux from vim
@@ -358,7 +379,7 @@ command! FZFTag if !empty(tagfiles()) | call fzf#run({
 \   'sink':   'tag',
 \ }) | else | echo 'No tags' | endif
 
-command! -bar FZFTags if !empty(tagfiles()) | 
+command! -bar FZFTags if !empty(tagfiles()) |
 			\ call fzf#run({
 			\   'source': 'sed ''/^\\!/ d; s/^\([^\t]*\)\t.*\t\(\w\)\(\t.*\)\?/\2\t\1/; /^l/ d'' ' . join(tagfiles()) . ' | uniq',
 			\   'sink': function('<SID>tag_line_handler'),
@@ -372,26 +393,34 @@ command! FZFTagsBuffer call fzf#run({
 
 " }}}
 
-
-" nnoremap <silent> <Leader><Leader> :Files<CR>
 nnoremap <silent> <expr> <Leader><Leader> (expand('%') =~ 'NERD_tree' ? "\<c-w>\<c-w>" : '').":Files\<cr>"
 nnoremap <silent> <Leader>C        :Colors<CR>
 nnoremap <silent> <Leader><Enter>  :Buffers<CR>
 nnoremap <silent> <Leader>ag       :Ag <C-R><C-W><CR>
 nnoremap <silent> <Leader>AG       :Ag <C-R><C-A><CR>
 nnoremap <silent> <Leader>`        :Marks<CR>
-" nnoremap <silent> q: :History:<CR>
-" nnoremap <silent> q/ :History/<CR>
 
+
+" npm install --save-dev word under cursor
+nnoremap <Leader>nd :execute ":!npm install --save-dev " . expand("<cword>")<CR>
+" npm install --save word under cursor
+nnoremap <Leader>n :execute ":!npm install --save " . expand("<cword>")<CR>
+
+" Search and replace the word under the cursor
+nnoremap <Leader>z :%s/\<<C-r><C-w>\>/
+" Kill current buffer without closing split
+nnoremap <silent> <Leader>q :bn \| bd #<CR>
+
+let g:tmuxcomplete#trigger = 'omnifunc'
 
 if has("autocmd")
     autocmd BufNewFile,Bufread *.json setfiletype json syntax=javascript				" Treat .json files as .js
 
-	autocmd BufNewFile,BufRead *.less set filetype=less
-	autocmd FileType less set omnifunc=csscomplete#CompleteCSS
+	autocmd FileType css,sass,less set omnifunc=csscomplete#CompleteCSS
 	autocmd FileType javascript setlocal omnifunc=javascriptcomplete#CompleteJS
 
-    autocmd BufNewFile,Bufread *.md setlocal filetype=markdown							" Treat .md files as Markdown
+	autocmd BufNewFile,Bufread *.md setlocal filetype=markdown							" Treat .md files as Markdown
+	autocmd BufNewFile,Bufread *.js setlocal filetype=javascript
 
 	autocmd StdinReadPre * let s:std_in=1
 	"autocmd VimEnter * if argc() == 0 && !exists("s:std_in") | NERDTree | endif
@@ -406,6 +435,10 @@ au BufNewFile,Bufread *.md setlocal noet ts=4 sw=4
 au BufNewFile,Bufread *.go setlocal noet ts=4 sw=4 sts=4
 autocmd BufNewFile,BufreadPost *.coffee setl shiftwidth=2 expandtab
 
+autocmd CursorHold,CursorHoldI,FocusGained,BufEnter * checktime
+autocmd FileChangedShellPost *
+	\ echohl WarningMsg | echo "File changed on disk. Buffer reloaded." | echohl None
+
 " python with virtualenv support
 py << EOF
 import os
@@ -416,6 +449,10 @@ if 'VIRTUAL_ENV' in os.environ:
   execfile(activate_this, dict(__file__=activate_this))
 EOF
 
+"augroup python3
+"	au! BufEnter *.py setlocal omnifunc=python3complete#Complete
+"augroup END
+
 let python_highlight_all=1
 let syntastic_mode_map = {'passive_filetypes': ['html']}
 
@@ -423,7 +460,7 @@ let syntastic_mode_map = {'passive_filetypes': ['html']}
 nnoremap <space> za" Run python code by pressing F9
 
 " tagbar installation, see:
-" https://thomashunter.name/blog/installing-vim-tagbar-with-macvim-in-os-x://thomashunter.name/blog/installing-vim-tagbar-with-macvim-in-os-x/ 
+" https://thomashunter.name/blog/installing-vim-tagbar-with-macvim-in-os-x://thomashunter.name/blog/installing-vim-tagbar-with-macvim-in-os-x/
 let g:tagbar_ctags_bin='/usr/local/bin/ctags' " Proper Ctags locations
 let g:tagbar_width=26	" Default is 40, seems too wide
 nmap <F8> :TagbarToggle<CR>
@@ -477,8 +514,6 @@ autocmd InsertLeave * call ToggleRelativeOn()
 
 au VimResized * :wincmd =																	" Resize splits when the window is resized
 autocmd BufEnter * silent! cd %:p:h															" update dir to current file
-autocmd FocusGained,BufEnter * :silent! w													" reload when entering the buffer or gaining focus
-autocmd FocusLost,WinLeave * :silent! w														" reload when leving the buffer or losing focus
 
 " Quicker window movement
 nnoremap <C-j> <C-w>j
@@ -517,12 +552,8 @@ nnoremap <leader>Q :qa!<CR>
 nnoremap <leader>x :wq!<CR>
 " Close current buffer without saving
 nnoremap <leader>q :q!<CR>
-" Quickly save current buffer
-nnoremap <leader>w :w<CR>
-" Save a file as root (,W)
-noremap <leader>W :w !sudo tee % > /dev/null<CR>
 
-" Quickly open .vimrc file in the current buffer 
+" Quickly open .vimrc file in the current buffer
 nnoremap <leader>v :e ~/Github/dotfiles/.vimrc<CR>
 
 " Quickly open .vimrc file in a new vertical buffer
@@ -594,11 +625,25 @@ let NERDTreeMapOpenSplit = "s"
 let NERDTreeMapOpenVSplit = "v"
 let NERDTreeMinimalUI = 1
 let NERDTreeShowHidden = 1
+let NERDTreeChristmasTree=1													" Enable all colors for NERDTree
+let NERDTreeDirArrows=1
 let NERDTreeIgnore = ['\~$', '^\.git$', '^\.hg$', '^\.bundle$', '^\.jhw-cache$', '\.pyc$', '\.egg-info$', '__pycache__', '\.vagrant$', '\.dSYM$', '.DS_Store', '*.swp', '*.swo']
 
 autocmd vimenter * if !argc() | NERDTree | endif							" Open NERDTree if we're executing vim without specifying a file to open
 
 let g:netrw_liststyle=3														" Explore with NerdTree Style by default
+let g:NERDTreeIndicatorMapCustom = {
+    \ "Modified"  : "✹",
+    \ "Staged"    : "✚",
+    \ "Untracked" : "✭",
+    \ "Renamed"   : "➜",
+    \ "Unmerged"  : "═",
+    \ "Deleted"   : "✖",
+    \ "Dirty"     : "✗",
+    \ "Clean"     : "✔︎",
+    \ 'Ignored'   : '☒',
+    \ "Unknown"   : "?"
+    \ }
 
 " Close vim tmux runner opened by VimuxRunCommand
 map <Leader>vc :call VimuxCloseRunner()<CR>
@@ -622,8 +667,37 @@ let g:VimuxHeight = "35"
 
 "Plugin 'jistr/vim-nerdtree-tabs'
 "map <silent> <Leader>n <plug>NERDTreeTabsToggle<CR>
+" ----------------------------------------------------------------------------
+" tmux {{{
+" ----------------------------------------------------------------------------
+function! s:tmux_send(content, dest) range
+  let dest = empty(a:dest) ? input('To which pane? ') : a:dest
+  let tempfile = tempname()
+  call writefile(split(a:content, "\n", 1), tempfile, 'b')
+  call system(printf('tmux load-buffer -b vim-tmux %s \; paste-buffer -d -b vim-tmux -t %s',
+        \ shellescape(tempfile), shellescape(dest)))
+  call delete(tempfile)
+endfunction
 
+function! s:tmux_map(key, dest)
+  execute printf('nnoremap <silent> %s "tyy:call <SID>tmux_send(@t, "%s")<cr>', a:key, a:dest)
+  execute printf('xnoremap <silent> %s "ty:call <SID>tmux_send(@t, "%s")<cr>gv', a:key, a:dest)
+endfunction
+
+call s:tmux_map('<leader>tt', '')
+call s:tmux_map('<leader>th', '.left')
+call s:tmux_map('<leader>tj', '.bottom')
+call s:tmux_map('<leader>tk', '.top')
+call s:tmux_map('<leader>tl', '.right')
+call s:tmux_map('<leader>ty', '.top-left')
+call s:tmux_map('<leader>to', '.top-right')
+call s:tmux_map('<leader>tn', '.bottom-left')
+call s:tmux_map('<leader>t.', '.bottom-right')
+
+
+" ----------------------------------------------------------------------------
 " }}}
+" ----------------------------------------------------------------------------
 
 " ----------------------------------------------------------------------------
 " Vim-go {{{
@@ -664,6 +738,7 @@ else
 endif
 
 " Silver Searcher {{{
+
 augroup ag_config
   autocmd!
 
@@ -685,6 +760,7 @@ augroup ag_config
     let g:ctrlp_user_command = b:ag_command
   endif
 augroup END
+
 " }}}
 
 inoremap <expr><TAB>  pumvisible() ? "\<C-n>" : "\<TAB>"
@@ -722,10 +798,32 @@ augroup airline_config
 augroup END
 " }}}
 
+" Cursorline {{{
+" Only show cursorline in the current window and in normal mode.
+
+augroup cline
+	au!
+	au WinLeave,InsertEnter * set nocursorline
+	au WinEnter,InsertLeave * set cursorline
+augroup END
+
+" }}}
+
+"augroup nerd_loader
+"	autocmd!
+"	autocmd VimEnter * silent! autocmd! FileExplorer
+"	autocmd BufEnter,BufNew *
+"			\  if isdirectory(expand('<amatch>'))
+"			\|   call plug#load('nerdtree')
+"			\|   execute 'autocmd! nerd_loader'
+"			\| endif
+"augroup END
+
+
 " Syntastic.vim {{{
 
 augroup syntastic_config
-  autocmd!
+autocmd!
   let g:syntastic_error_symbol = '✗'
   let g:syntastic_warning_symbol = '⚠'
   let g:syntastic_ruby_checkers = ['mri', 'rubocop']
@@ -733,13 +831,17 @@ augroup syntastic_config
   let g:syntastic_auto_loc_list = 1
   let g:syntastic_check_on_open = 1
   let g:syntastic_check_on_wq = 0
+  let g:syntastic_javascript_checkers = ['eslint'] " npm install -g eslint; npm install -g babel-eslint; npm install -g eslint-plugin-react
+  let g:syntastic_javascript_eslint_exec = 'node_modules/eslint/bin/eslint.js' " For project-specific versions of eslint.
+  let g:syntastic_javascript_eslint_exe = 'npm run eslint --'
+  let g:syntastic_json_checkers = ['jsonlint']          " npm install -g jsonlint
 augroup END
 
 " }}}
 
-"let jshint2_read = 1
-"let jshint2_save = 1
-"let jshint2_min_height = 3
+let jshint2_read = 1
+let jshint2_save = 1
+let jshint2_min_height = 3
 
 " ----------------------------------------------------------------------------
 " Fugitive {{{
@@ -792,6 +894,126 @@ command! -bang WQ wq<bang>
 " Custom functions {{{
 "--------------------------------------------------------
 
+" Search for the contents of the current line within the current file.
+" Ignore leading/trailing punctuation (except underscore), whitespace.
+" Ignore internal punctuation (except underscore).
+function! FindALine()
+    let l:text = getline('.')
+    let l:text = substitute(l:text, "\\v^\\W+", "", "g")
+    let l:text = substitute(l:text, "\\v\\W+$", "", "g")
+    let l:text = substitute(l:text, "\\v\\/", "\\\\/", "g")
+
+    execute 'normal! $/\c' . l:text . ''
+endfun
+nnoremap g<CR> :call FindALine()<CR>
+
+" Use Q to intelligently close a window
+function! CloseWindowOrKillBuffer()
+  let number_of_windows_to_this_buffer = len(filter(range(1, winnr('$')), "winbufnr(v:val) == bufnr('%')"))
+
+  " We should never bdelete a nerd tree
+  if matchstr(expand("%"), 'NERD') == 'NERD'
+    wincmd c
+    return
+  endif
+
+  if number_of_windows_to_this_buffer > 1
+    wincmd c
+  else
+    bdelete
+  endif
+endfunction
+nnoremap <silent> Q :call CloseWindowOrKillBuffer()<CR>
+
+" via: http://rails-bestpractices.com/posts/60-remove-trailing-whitespace
+function! <SID>StripTrailingWhitespaces()
+    " Preparation: save last search, and cursor position.
+    let _s=@/
+    let l = line(".")
+    let c = col(".")
+    " Do the business:
+    %s/\s\+$//e
+    " Clean up: restore previous search history, and cursor position
+    let @/=_s
+    call cursor(l, c)
+endfunction
+
+command! -nargs=1 S
+      \ | execute ':silent !git checkout '.<q-args>
+      \ | execute ':redraw!'
+
+command! StripTrailingWhitespaces call <SID>StripTrailingWhitespaces()
+" Save a file and strip trailing white spaces
+nmap <Leader>w :StripTrailingWhitespaces<CR>:w<CR>
+" Save a file as root (,W) and strip trailing white spaces
+noremap <leader>W :StripTrailingWhitespaces<CR>:w !sudo tee % > /dev/null<CR>
+
+" Easy creation of Github Pull Request for current branch against master.
+" credit: https://github.com/arkwright/dotfiles/blob/master/vimrc
+function! s:GithubPullRequest()
+  let l:placeholderRegex = '\v\C\{0\}'
+  let l:httpsDomainRegex = '\v\Chttps:\/\/\zs[^\/]+\ze\/.+'
+  let l:httpsRepoRegex   = '\v\Chttps:\/\/.+\/\zs.+\/.+\ze\.git'
+  let l:sshDomainRegex   = '\v\C^.+\@\zs[^:\/]+\ze'
+  let l:sshRepoRegex     = '\v\C^.+\@.[^:\/]+:\zs[^.]+\ze\.git'
+  let l:urlTemplate      = system('echo $VIM_GITHUB_PR_URL')
+  let l:remotes          = system('cd ' . expand('%:p:h') . '; git remote -v')
+  let l:branch           = substitute(system('cd ' . expand('%:p:h') . '; git symbolic-ref --short -q HEAD'), '\v[\r\n]', '', 'g')
+  let l:urlTemplate      = 'https://{domain}/{repo}/compare/{branch}?expand=1'
+
+  if match(l:remotes, 'https') !=# -1
+    let l:domain = matchstr(l:remotes, l:httpsDomainRegex)
+    let l:repo   = matchstr(l:remotes, l:httpsRepoRegex)
+  else
+    let l:domain = matchstr(l:remotes, l:sshDomainRegex)
+    let l:repo   = matchstr(l:remotes, l:sshRepoRegex)
+  endif
+
+  if l:domain ==# '' || l:repo ==# ''
+    echoe 'Could not determine Git repo name for current file!'
+  endif
+
+  let l:prUrl = l:urlTemplate
+  let l:prUrl = substitute(l:prUrl, '\v\C\{domain\}', l:domain, '')
+  let l:prUrl = substitute(l:prUrl, '\v\C\{repo\}', l:repo, '')
+  let l:prUrl = substitute(l:prUrl, '\v\C\{branch\}', l:branch, '')
+
+  silent exec "!open '" . shellescape(l:prUrl, 1) . "'"
+endfunction
+command! PR :call s:GithubPullRequest()function! s:tag_line_handler(l)
+
+" Find any URL on the current line, and open it in a web browser.
+" Adapted from: http://stackoverflow.com/questions/9458294/open-url-under-cursor-in-vim-with-browser
+" Add the following environment variable to your shell configuration to enable JIRA ticket support:
+" export VIM_JIRA_URL=https://your-jira-domain-goes-here.com/browse/{0}
+function! BrowserOpen()
+  let l:line = getline('.')
+  let l:urlRegex = '\v\C[a-z]*:\/\/[^ >,;)]*'
+
+  let l:uri = matchstr(l:line, l:urlRegex)
+
+  if l:uri != ""
+    silent exec "!open '" . shellescape(l:uri, 1) . "'"
+    return
+  endif
+
+  let l:jiraRegex = '\v\C[A-Z]+-\d+'
+  let l:jiraUrlPlaceholderRegex = '\v\C\{0\}'
+
+  let l:jiraTicket = matchstr(l:line, l:jiraRegex)
+
+  if l:jiraTicket != ""
+    let l:jiraUrl = system('echo $VIM_JIRA_URL')
+    let l:jiraUrl = substitute(l:jiraUrl, l:jiraUrlPlaceholderRegex, l:jiraTicket, 'g')
+    silent exec "!open '" . shellescape(l:jiraUrl, 1) . "'"
+    return
+  endif
+
+  echo "No URI or JIRA ticket number found in line."
+endfunction
+nnoremap gx :call BrowserOpen()<CR>
+xnoremap gx :call BrowserOpen()<CR>
+
 function! s:tag_line_handler(l)
 	let keys = split(a:l, '\t')
 	exec 'tag' keys[1]
@@ -810,7 +1032,7 @@ function! SwitchBuffer()
 endfunction
 nmap b<Tab> :call SwitchBuffer()<CR>
 
-" Sets python options 
+" Sets python options
 function! SetPythonOptions()
 	setlocal tabstop=4
 	setlocal softtabstop=4
@@ -821,16 +1043,6 @@ function! SetPythonOptions()
 	setlocal autoindent
 	set fileformat=unix
 endfunction
-
-" Strip trailing whitespace (,ss)
-function! StripWhitespace()
-	let save_cursor = getpos(".")
-	let old_query = getreg('/')
-	:%s/\s\+$//e
-	call setpos('.', save_cursor)
-	call setreg('/', old_query)
-endfunction
-noremap <leader>ss :call StripWhitespace()<CR>
 
 function! ToggleNumbersOn()
 	set nu!
