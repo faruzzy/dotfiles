@@ -561,10 +561,6 @@ nnoremap <leader>Q :qa!<CR>
 nnoremap <leader>x :wq!<CR>
 " Close current buffer without saving
 nnoremap <leader>q :q!<CR>
-" Quickly save current buffer
-nnoremap <leader>w :w<CR>
-" Save a file as root (,W)
-noremap <leader>W :w !sudo tee % > /dev/null<CR>
 
 " Quickly open .vimrc file in the current buffer
 nnoremap <leader>v :e ~/Github/dotfiles/.vimrc<CR>
@@ -950,6 +946,47 @@ function! FindALine()
 endfun
 nnoremap g<CR> :call FindALine()<CR>
 
+" Use Q to intelligently close a window
+function! CloseWindowOrKillBuffer()
+  let number_of_windows_to_this_buffer = len(filter(range(1, winnr('$')), "winbufnr(v:val) == bufnr('%')"))
+
+  " We should never bdelete a nerd tree
+  if matchstr(expand("%"), 'NERD') == 'NERD'
+    wincmd c
+    return
+  endif
+
+  if number_of_windows_to_this_buffer > 1
+    wincmd c
+  else
+    bdelete
+  endif
+endfunction
+nnoremap <silent> Q :call CloseWindowOrKillBuffer()<CR>
+
+" via: http://rails-bestpractices.com/posts/60-remove-trailing-whitespace
+function! <SID>StripTrailingWhitespaces()
+    " Preparation: save last search, and cursor position.
+    let _s=@/
+    let l = line(".")
+    let c = col(".")
+    " Do the business:
+    %s/\s\+$//e
+    " Clean up: restore previous search history, and cursor position
+    let @/=_s
+    call cursor(l, c)
+endfunction
+
+command! -nargs=1 S
+      \ | execute ':silent !git checkout '.<q-args>
+      \ | execute ':redraw!'
+
+command! StripTrailingWhitespaces call <SID>StripTrailingWhitespaces()
+" Save a file and strip trailing white spaces
+nmap <Leader>w :StripTrailingWhitespaces<CR>:w<CR>
+" Save a file as root (,W) and strip trailing white spaces
+noremap <leader>W :StripTrailingWhitespaces<CR>:w !sudo tee % > /dev/null<CR>
+
 " Easy creation of Github Pull Request for current branch against master.
 " credit: https://github.com/arkwright/dotfiles/blob/master/vimrc
 function! s:GithubPullRequest()
@@ -1045,16 +1082,6 @@ function! SetPythonOptions()
 	setlocal autoindent
 	set fileformat=unix
 endfunction
-
-" Strip trailing whitespace (,ss)
-function! StripWhitespace()
-	let save_cursor = getpos(".")
-	let old_query = getreg('/')
-	:%s/\s\+$//e
-	call setpos('.', save_cursor)
-	call setreg('/', old_query)
-endfunction
-noremap <leader>ss :call StripWhitespace()<CR>
 
 function! ToggleNumbersOn()
 	set nu!
