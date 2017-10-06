@@ -37,15 +37,16 @@ set background=dark
 set dictionary+=/usr/share/dict/words
 set display=lastline
 set number																	" Print the line number in front of each line
+set relativenumber
 set ruler																	" Display Cursor Position
 set title																	" Display filename in titlebar
 set titleold=																" Prevent the 'Thanks for flying Vim'
-set relativenumber
 set diffopt=filler															" Add vertical spaces to keep right and left aligned
 set diffopt+=iwhite															" Ignore whitespace changes (focus on code changes)
 set diffopt+=vertical														" make :diffsplit default to vertical
 set shell=/bin/sh															" Use /bin/sh for executing shell commands
-set t_Co=256
+set t_Co=256																" 256 colors terminal
+set ttimeoutlen=50															" Reduce annoying delay for key codes, especially <Esc>...
 set term=screen-256color
 set formatoptions+=1
 
@@ -136,8 +137,11 @@ set spelllang=en_us,fr														" Spell checking language
 "set textwidth=80															" Make it obvious where 80 characters is
 set cmdheight=2
 set showcmd																	" Show me what I'm typing
+" ================ Turn Off Swap Files ======================
 set noswapfile																" No beeps
 set nobackup																" Don't create annoying backup files
+set nowb
+
 set autowrite																" Automatically save before :next, :make etc.
 set autoread																" Automatically reread changed files (outside of vim) without asking me anything
 set laststatus=2															" Always show status line
