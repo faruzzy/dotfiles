@@ -5,9 +5,9 @@
 "   ╚██╗ ██╔╝ ██║ ██║╚██╔╝██║ ██╔══██╗ ██║
 " ██╗╚████╔╝  ██║ ██║ ╚═╝ ██║ ██║  ██║ ╚██████╗
 " ╚═╝ ╚═══╝   ╚═╝ ╚═╝     ╚═╝ ╚═╝  ╚═╝  ╚═════╝
-" 
+"
 " Author: Roland Pangu
-" 
+"
 
 
 "--------------------------------------------------------------------------------
@@ -23,6 +23,7 @@ set ttyfast																	" Optimize for fast terminal connections
 set ttymouse=xterm2
 set ttyscroll=3
 set lazyredraw																" Wait to redraw, do not redraw while executing macros
+set nowrap
 set linebreak
 
 " refresh current .vimrc file for change to take effect
@@ -206,7 +207,7 @@ function! BuildYCM(info)
 	" - status: 'installed', 'updated', or 'unchanged'
 	" - force:  set on PlugInstall! or PlugUpdate!
 	if a:info.status == 'installed' || a:info.force
-		!./install.py --clang-completer --omnisharp-completer 
+		!./install.py --clang-completer --omnisharp-completer
 	endif
 endfunction
 
@@ -374,7 +375,7 @@ command! FZFTag if !empty(tagfiles()) | call fzf#run({
   \   'sink':   'tag',
   \ }) | else | echo 'No tags' | endif
 
-command! -bar FZFTags if !empty(tagfiles()) | 
+command! -bar FZFTags if !empty(tagfiles()) |
   \ call fzf#run({
   \   'source': 'sed ''/^\\!/ d; s/^\([^\t]*\)\t.*\t\(\w\)\(\t.*\)\?/\2\t\1/; /^l/ d'' ' . join(tagfiles()) . ' | uniq',
   \   'sink': function('<SID>tag_line_handler'),
@@ -444,7 +445,7 @@ let syntastic_mode_map = {'passive_filetypes': ['html']}
 nnoremap <space> za" Run python code by pressing F9
 
 " tagbar installation, see:
-" https://thomashunter.name/blog/installing-vim-tagbar-with-macvim-in-os-x://thomashunter.name/blog/installing-vim-tagbar-with-macvim-in-os-x/ 
+" https://thomashunter.name/blog/installing-vim-tagbar-with-macvim-in-os-x://thomashunter.name/blog/installing-vim-tagbar-with-macvim-in-os-x/
 let g:tagbar_ctags_bin='/usr/local/bin/ctags' " Proper Ctags locations
 let g:tagbar_width=26	" Default is 40, seems too wide
 nmap <F8> :TagbarToggle<CR>
@@ -541,7 +542,7 @@ nnoremap <leader>w :w<CR>
 " Save a file as root (,W)
 noremap <leader>W :w !sudo tee % > /dev/null<CR>
 
-" Quickly open .vimrc file in the current buffer 
+" Quickly open .vimrc file in the current buffer
 nnoremap <leader>v :e ~/Github/dotfiles/.vimrc<CR>
 
 " Quickly open .vimrc file in a new vertical buffer
@@ -678,7 +679,7 @@ function! s:tmux_map(key, dest)
   execute printf('xnoremap <silent> %s "ty:call <SID>tmux_send(@t, "%s")<cr>gv', a:key, a:dest)
 endfunction
 
-call s:tmux_map('<leader>tt', '') 
+call s:tmux_map('<leader>tt', '')
 call s:tmux_map('<leader>th', '.left')
 call s:tmux_map('<leader>tj', '.bottom')
 call s:tmux_map('<leader>tk', '.top')
@@ -686,7 +687,7 @@ call s:tmux_map('<leader>tl', '.right')
 call s:tmux_map('<leader>ty', '.top-left')
 call s:tmux_map('<leader>to', '.top-right')
 call s:tmux_map('<leader>tn', '.bottom-left')
-call s:tmux_map('<leader>t.', '.bottom-right')  
+call s:tmux_map('<leader>t.', '.bottom-right')
 
 " ----------------------------------------------------------------------------
 " }}}
@@ -1009,7 +1010,7 @@ function! SwitchBuffer()
 endfunction
 nmap b<Tab> :call SwitchBuffer()<CR>
 
-" Sets python options 
+" Sets python options
 function! SetPythonOptions()
 	setlocal tabstop=4
 	setlocal softtabstop=4
