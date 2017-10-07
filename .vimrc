@@ -401,7 +401,7 @@ command! FZFTagsBuffer call fzf#run({
 nnoremap <silent> <expr> <Leader><Leader> (expand('%') =~ 'NERD_tree' ? "\<c-w>\<c-w>" : '').":Files\<cr>"
 nnoremap <silent> <Leader>C        :Colors<CR>
 nnoremap <silent> <Leader><Enter>  :Buffers<CR>
-nnoremap <silent> <Leader>ag       :Ag <C-R><C-W><CR>
+nnoremap <silent> <Leader>ag       :Root<CR>:Ag <C-R><C-W><CR>
 nnoremap <silent> <Leader>AG       :Ag <C-R><C-A><CR>
 nnoremap <silent> <Leader>`        :Marks<CR>
 
@@ -741,7 +741,9 @@ au FileType go nmap <Leader>f :GoImports<CR>
 " }}}
 
 map <leader>g :YcmCompleter GoToDefinitionElseDeclaration<CR>
-if executable("ag")
+if executable("rg")
+	let g:ackprg = 'rg --hidden -i'
+elseif executable("ag")
   let g:ackprg = 'ag --nogroup --nocolor --column'
 else
   let g:ackprg = 'git grep -H --line-number --no-color --untracked'
@@ -759,14 +761,15 @@ augroup ag_config
     set grepformat=%f:%l:%c%m
 
     " Have the silver searcher ignore all the same things as wilgignore
-    let b:ag_command = 'ag %s -i --nocolor --nogroup'
+    "let b:ag_command = 'ag %s -i --nocolor --nogroup'
+	let b:ag_command = 'rg --hidden -i'
 
     for i in split(&wildignore, ",")
       let i = substitute(i, '\*/\(.*\)/\*', '\1', 'g')
       let b:ag_command = b:ag_command . ' --ignore "' . substitute(i, '\*/\(.*\)/\*', '\1', 'g') . '"'
     endfor
 
-    let b:ag_command = b:ag_command . ' --hidden -g ""'
+    "let b:ag_command = b:ag_command . ' --hidden -g ""'
     let g:ctrlp_user_command = b:ag_command
   endif
 augroup END
