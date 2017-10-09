@@ -308,9 +308,9 @@ Plug 'cakebaker/scss-syntax.vim', { 'for': 'scss' }
 
 " Misc {{{
 
-"Plug 'wincent/terminus'
-Plug 'wincent/loupe'
-Plug 'jiangmiao/auto-pairs'																" provides insert mode auto-completion for quotes, parens, brackets, etc
+Plug 'wellle/visual-split.vim'
+Plug 'wincent/loupe'																" Enhanced in-file search for Vim
+Plug 'jiangmiao/auto-pairs'															" provides insert mode auto-completion for quotes, parens, brackets, etc
 Plug 'easymotion/vim-easymotion'
 Plug 'vim-airline/vim-airline'
 Plug 'vim-airline/vim-airline-themes'
@@ -328,10 +328,10 @@ Plug 'ryanoasis/vim-devicons'
 Plug 'plasticboy/vim-markdown', { 'for': 'markdown' }
 Plug 'sickill/vim-pasta'
 Plug 'jordwalke/VimSplitBalancer'
-Plug 'dhruvasagar/vim-zoom'
+"Plug 'dhruvasagar/vim-zoom'
 Plug 'mhartington/oceanic-next'
 Plug 'rakr/vim-one'
-Plug 'itspriddle/ZoomWin'																" Zoom in and out of windows/buffer
+Plug 'itspriddle/ZoomWin'															" Zoom in and out of windows/buffer
 Plug 'benmills/vimux'																" Easily interact with tmux from vim
 Plug 'christoomey/vim-tmux-navigator'												" moving through tmux pane with ease
 Plug 'tmux-plugins/vim-tmux-focus-events'											" This plugin restores `FocusGained` and `FocusLost` when using vim inside Tmux.
@@ -353,7 +353,7 @@ colorscheme seoul256
 set rtp+=~/.fzf
 
 nnoremap <Leader>f :Root<CR>:FZF<CR>
-"map <Leader>a :Ack!<Space>
+nnoremap <Leader>a :Root<CR>:Ack!<Space>
 
 if has('nvim')
   let $FZF_DEFAULT_OPTS .= ' --inline-info'
