@@ -19,12 +19,6 @@ syntax on																	" Syntax highlighting
 syntax sync minlines=256
 let mapleader=","															" Change leader to ','
 
-set ttyfast																	" Optimize for fast terminal connections
-set ttymouse=xterm2
-set ttyscroll=3
-set lazyredraw																" Wait to redraw, do not redraw while executing macros
-set nowrap
-set linebreak
 
 " refresh current .vimrc file for change to take effect
 nnoremap <leader>s :source %<CR>
@@ -32,12 +26,16 @@ nnoremap <leader>s :source %<CR>
 " Open the current directory in finder
 nnoremap <leader>O :!open .<CR>
 
+set ttyfast																	" Optimize for fast terminal connections
+set ttymouse=xterm2
+set ttyscroll=3
+set lazyredraw																" Wait to redraw, do not redraw while executing macros
+set nowrap
+set linebreak
 set nocompatible															" Behave like vim and not like vi! (Much, much better)
 set background=dark
 set dictionary+=/usr/share/dict/words
 set display=lastline
-set number																	" Print the line number in front of each line
-set relativenumber
 set ruler																	" Display Cursor Position
 set title																	" Display filename in titlebar
 set titleold=																" Prevent the 'Thanks for flying Vim'
@@ -88,7 +86,6 @@ set gdefault																" By default add g flag to search/replace. Add g to 
 " }}}
 
 set matchpairs+=<:>															" for HTML Editing
-set rnu																		"Toggle relative numbering, and set to absolute on loss of focus or insert mode
 
 if has("gui_macvim")
   " No toolbars, menu or scrollbars in the GUI
@@ -180,6 +177,12 @@ set wildignore+=*.pyc														" Python byte code
 set wildignore+=*.jar														" Java archives
 set wildignore+=*.orig														" Merge resolution files
 set wildignore+=*.stats														" Merge resolution files
+set wildignore+=**/node_modules/**
+set wildignore+=**/cache/**
+set wildignore+=**/logs/**
+set wildignore+=**/cov/**
+set wildignore+=**/vendor/**
+set wildignore+=**/bower_components/**
 
 " }}}
 
@@ -295,8 +298,6 @@ Plug 'HerringtonDarkholme/yats.vim'
 "Plug 'Shougo/vimproc.vim', {'do': 'make'}											" Interactive command execution in vim (dependency of 'Quramy/tsuquyomi')
 "Plug 'moll/vim-node'																" Allows Node.js Development with vim
 Plug 'elzr/vim-json', { 'for' : 'json' }											" json support
-Plug 'christoomey/vim-tmux-navigator'												" moving through tmux pane with ease
-Plug 'benmills/vimux'																" Easily interact with tmux from vim
 
 " }}}
 
@@ -310,23 +311,31 @@ Plug 'cakebaker/scss-syntax.vim', { 'for': 'scss' }
 
 " Misc {{{
 
-Plug 'jiangmiao/auto-pairs'																" provides insert mode auto-completion for quotes, parens, brackets, etc
+Plug 'wellle/visual-split.vim'
+Plug 'wincent/loupe'																" Enhanced in-file search for Vim
+Plug 'jiangmiao/auto-pairs'															" provides insert mode auto-completion for quotes, parens, brackets, etc
 Plug 'easymotion/vim-easymotion'
 Plug 'vim-airline/vim-airline'
 Plug 'vim-airline/vim-airline-themes'
 Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': 'yes \| ./install --all' }
 Plug 'junegunn/fzf.vim'
 Plug 'tpope/vim-surround'
-Plug 'mileszs/ack.vim'
+"Plug 'mileszs/ack.vim'
+Plug 'wincent/ferret'
 Plug 'jremmen/vim-ripgrep'
 Plug 'majutsushi/tagbar'
 Plug 'scrooloose/nerdtree', { 'on': 'NERDTreeToggle' }
+Plug 'Xuyuanp/nerdtree-git-plugin'
 Plug 'tpope/vim-vinegar'
 Plug 'ryanoasis/vim-devicons'
 Plug 'plasticboy/vim-markdown', { 'for': 'markdown' }
 Plug 'sickill/vim-pasta'
 Plug 'jordwalke/VimSplitBalancer'
-Plug 'dhruvasagar/vim-zoom'
+"Plug 'dhruvasagar/vim-zoom'
+Plug 'mhartington/oceanic-next'
+Plug 'rakr/vim-one'
+Plug 'itspriddle/ZoomWin'															" Zoom in and out of windows/buffer
+Plug 'tmux-plugins/vim-tmux-focus-events'											" This plugin restores `FocusGained` and `FocusLost` when using vim inside Tmux.
 
 " }}}
 
@@ -348,7 +357,7 @@ colo seoul256
 set rtp+=~/.fzf
 
 nnoremap <Leader>f :Root<CR>:FZF<CR>
-map <Leader>a :Ack!<Space>
+nnoremap <Leader>a :Root<CR>:Ack!<Space>
 
 if has('nvim')
   let $FZF_DEFAULT_OPTS .= ' --inline-info'
@@ -375,9 +384,9 @@ command! Plugs call fzf#run({
   \ 'sink':    'Explore'})
 
 command! FZFTag if !empty(tagfiles()) | call fzf#run({
-\   'source': "sed '/^\\!/d;s/\t.*//' " . join(tagfiles()) . ' | uniq',
-\   'sink':   'tag',
-\ }) | else | echo 'No tags' | endif
+  \   'source': "sed '/^\\!/d;s/\t.*//' " . join(tagfiles()) . ' | uniq',
+  \   'sink':   'tag',
+  \ }) | else | echo 'No tags' | endif
 
 command! -bar FZFTags if !empty(tagfiles()) |
 			\ call fzf#run({
@@ -396,28 +405,26 @@ command! FZFTagsBuffer call fzf#run({
 nnoremap <silent> <expr> <Leader><Leader> (expand('%') =~ 'NERD_tree' ? "\<c-w>\<c-w>" : '').":Files\<cr>"
 nnoremap <silent> <Leader>C        :Colors<CR>
 nnoremap <silent> <Leader><Enter>  :Buffers<CR>
-nnoremap <silent> <Leader>ag       :Ag <C-R><C-W><CR>
+nnoremap <silent> <Leader>ag       :Root<CR>:Ag <C-R><C-W><CR>
 nnoremap <silent> <Leader>AG       :Ag <C-R><C-A><CR>
 nnoremap <silent> <Leader>`        :Marks<CR>
 
-
 " npm install --save-dev word under cursor
-nnoremap <Leader>nd :execute ":!npm install --save-dev " . expand("<cword>")<CR>
+nnoremap <Leader>md :execute ":!npm install --save-dev " . expand("<cword>")<CR>
 " npm install --save word under cursor
-nnoremap <Leader>n :execute ":!npm install --save " . expand("<cword>")<CR>
+nnoremap <Leader>m :execute ":!npm install --save " . expand("<cword>")<CR>
 
 " Search and replace the word under the cursor
 nnoremap <Leader>z :%s/\<<C-r><C-w>\>/
-" Kill current buffer without closing split
-nnoremap <silent> <Leader>q :bn \| bd #<CR>
 
 let g:tmuxcomplete#trigger = 'omnifunc'
-
 if has("autocmd")
     autocmd BufNewFile,Bufread *.json setfiletype json syntax=javascript				" Treat .json files as .js
 
 	autocmd FileType css,sass,less set omnifunc=csscomplete#CompleteCSS
 	autocmd FileType javascript setlocal omnifunc=javascriptcomplete#CompleteJS
+	autocmd FileType python setlocal omnifunc=pythoncomplete#CompleteTags
+	autocmd FileType xml setlocal omnifunc=xmlComplete#CompleteTags
 
 	autocmd BufNewFile,Bufread *.md setlocal filetype=markdown							" Treat .md files as Markdown
 	autocmd BufNewFile,Bufread *.js setlocal filetype=javascript
@@ -484,10 +491,6 @@ nnoremap <C-H> <C-W><C-H>
   iabbrev VV ↓
   iabbrev aa λ
 
-" }}}
-
-" Clear last search (,qs) {{{
-	map <silent> <leader>qs <Esc>:noh<CR>
 " }}}
 
 " Search and replace word under cursor (,*) {{{
@@ -596,6 +599,8 @@ let g:neocomplete#enable_at_startup = 1										" Enabling neocomplete at start
 let g:neocomplete#enable_smart_case = 1										" Use smartcase
 let g:neocomplete#sources#syntax#min_keyword_length = 3						" Set minimum syntax keyword length.
 
+" ----------------------------------------------------------------------------
+" }}}
 " }}}
 
 " ----------------------------------------------------------------------------
@@ -612,6 +617,8 @@ if !exists("g:ycm_semantic_triggers")
 endif
 let g:ycm_semantic_triggers['typescript'] = ['.']
 
+" ----------------------------------------------------------------------------
+" }}}
 " }}}
 
 let g:jsx_ext_required = 0
@@ -629,7 +636,7 @@ let NERDTreeChristmasTree=1													" Enable all colors for NERDTree
 let NERDTreeDirArrows=1
 let NERDTreeIgnore = ['\~$', '^\.git$', '^\.hg$', '^\.bundle$', '^\.jhw-cache$', '\.pyc$', '\.egg-info$', '__pycache__', '\.vagrant$', '\.dSYM$', '.DS_Store', '*.swp', '*.swo']
 
-autocmd vimenter * if !argc() | NERDTree | endif							" Open NERDTree if we're executing vim without specifying a file to open
+"autocmd vimenter * if !argc() | NERDTree | endif							" Open NERDTree if we're executing vim without specifying a file to open
 
 let g:netrw_liststyle=3														" Explore with NerdTree Style by default
 let g:NERDTreeIndicatorMapCustom = {
@@ -665,8 +672,10 @@ map <Leader>vr :VimuxPromptCommand<CR>
 
 let g:VimuxHeight = "35"
 
-"Plugin 'jistr/vim-nerdtree-tabs'
-"map <silent> <Leader>n <plug>NERDTreeTabsToggle<CR>
+" ----------------------------------------------------------------------------
+"  }}}
+" ----------------------------------------------------------------------------
+
 " ----------------------------------------------------------------------------
 " tmux {{{
 " ----------------------------------------------------------------------------
@@ -693,7 +702,6 @@ call s:tmux_map('<leader>ty', '.top-left')
 call s:tmux_map('<leader>to', '.top-right')
 call s:tmux_map('<leader>tn', '.bottom-left')
 call s:tmux_map('<leader>t.', '.bottom-right')
-
 
 " ----------------------------------------------------------------------------
 " }}}
@@ -731,7 +739,9 @@ au FileType go nmap <Leader>f :GoImports<CR>
 " }}}
 
 map <leader>g :YcmCompleter GoToDefinitionElseDeclaration<CR>
-if executable("ag")
+if executable("rg")
+	let g:ackprg = 'rg --hidden -i'
+elseif executable("ag")
   let g:ackprg = 'ag --nogroup --nocolor --column'
 else
   let g:ackprg = 'git grep -H --line-number --no-color --untracked'
@@ -749,14 +759,15 @@ augroup ag_config
     set grepformat=%f:%l:%c%m
 
     " Have the silver searcher ignore all the same things as wilgignore
-    let b:ag_command = 'ag %s -i --nocolor --nogroup'
+    "let b:ag_command = 'ag %s -i --nocolor --nogroup'
+	let b:ag_command = 'rg --hidden -i'
 
     for i in split(&wildignore, ",")
       let i = substitute(i, '\*/\(.*\)/\*', '\1', 'g')
       let b:ag_command = b:ag_command . ' --ignore "' . substitute(i, '\*/\(.*\)/\*', '\1', 'g') . '"'
     endfor
 
-    let b:ag_command = b:ag_command . ' --hidden -g ""'
+    "let b:ag_command = b:ag_command . ' --hidden -g ""'
     let g:ctrlp_user_command = b:ag_command
   endif
 augroup END
@@ -889,6 +900,32 @@ command! -bang Wa wa<bang>
 command! -bang WA wa<bang>
 command! -bang Wq wq<bang>
 command! -bang WQ wq<bang>
+
+" Removes unnecessary whitespace from otherwise blank lines in the
+" current file. This is necessary to allow { and } commands to jump
+" intuitively to the beginning/end of paragraphs.
+" credit: https://github.com/arkwright/dotfiles/blob/master/vimrc
+command! -range=% Clearblank <line1>,<line2>:global/^\s*$/normal 0D
+
+" Copy current file name and file path to clipboard.
+" credit: https://github.com/arkwright/dotfiles/blob/master/vimrc
+command! CopyFilename         :let @* = expand('%:t') | echo 'Copied to clipboard: ' . @*
+command! CopyPath             :let @* = expand('%:h') | echo 'Copied to clipboard: ' . @*
+command! CopyAbsolutePath     :let @* = expand('%:p:h') | echo 'Copied to clipboard: ' . @*
+command! CopyFilepath         :let @* = expand('%') | echo 'Copied to clipboard: ' . @*
+command! CopyAbsoluteFilepath :let @* = expand('%:p') | echo 'Copied to clipboard: ' . @*
+
+" Copy filename and filepath quick shortcuts.
+nnoremap <leader>yfn :CopyFilename<CR>
+xnoremap <leader>yfn :CopyFilename<CR>
+nnoremap <leader>yp :CopyPath<CR>
+xnoremap <leader>yp :CopyPath<CR>
+nnoremap <leader>yap :CopyAbsolutePath<CR>
+xnoremap <leader>yap :CopyAbsolutePath<CR>
+nnoremap <leader>yfp :CopyFilepath<CR>
+xnoremap <leader>yfp :CopyFilepath<CR>
+nnoremap <leader>yafp :CopyAbsoluteFilepath<CR>
+xnoremap <leader>yafp :CopyAbsoluteFilepath<CR>
 
 "--------------------------------------------------------
 " Custom functions {{{
