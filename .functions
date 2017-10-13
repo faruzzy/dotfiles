@@ -21,6 +21,25 @@ function epoch() {
   fi
 }
 
+ghpr() {
+  local sed_cmd=$( [ "$(uname)" = Darwin ] && echo 'sed -E' || echo 'sed -r' )
+  local PR=${1}
+  local REPO_SLUG="$(git config --get remote.upstream.url \
+    | sed 's/^.*github.com[\/:]\(.*\)\.git/\1/')"
+  local req_url="https://api.github.com/repos/${REPO_SLUG}/pulls/${PR}"
+  local PR_TITLE="$(curl -Ss "$req_url" \
+    | grep '"title"' \
+    | $sed_cmd 's/.*(\[(RFC|RDY)\]) *(.*)../\3/')"
+  #                                         ^ Trailing ", in JSON response.
+
+  [ -z "$PR_TITLE" ] && { printf "error. request: $req_url\n       response: $(curl -Ss $req_url)\n"; return 1; }
+
+  git fetch --all --prune \
+    && git checkout master \
+    && git stash save autosave-$(date +%Y%m%d_%H%M%S) \
+    && git reset --hard upstream/master \
+    && git merge --no-commit --no-ff -m "Merge #${PR} '${PR_TITLE}'" refs/pull/upstream/${PR}
+}
 # fshow - git commit browser
 # thanks to http://junegunn.kr/2015/03/browsing-git-commits-with-fzf/
 function fshow() {
