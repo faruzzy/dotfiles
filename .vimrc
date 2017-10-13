@@ -36,8 +36,6 @@ set nocompatible															" Behave like vim and not like vi! (Much, much be
 set background=dark
 set dictionary+=/usr/share/dict/words
 set display=lastline
-set number																	" Print the line number in front of each line
-set relativenumber
 set ruler																	" Display Cursor Position
 set title																	" Display filename in titlebar
 set titleold=																" Prevent the 'Thanks for flying Vim'
@@ -88,7 +86,6 @@ set gdefault																" By default add g flag to search/replace. Add g to 
 " }}}
 
 set matchpairs+=<:>															" for HTML Editing
-set rnu																		"Toggle relative numbering, and set to absolute on loss of focus or insert mode
 
 if has("gui_macvim")
   " No toolbars, menu or scrollbars in the GUI
