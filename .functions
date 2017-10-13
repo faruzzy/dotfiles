@@ -40,6 +40,24 @@ ghpr() {
     && git reset --hard upstream/master \
     && git merge --no-commit --no-ff -m "Merge #${PR} '${PR_TITLE}'" refs/pull/upstream/${PR}
 }
+
+ghrebase1() {
+  local PR=${1}
+  local sed_cmd=$( [ "$(uname)" = Darwin ] && echo 'sed -E' || echo 'sed -r' )
+
+  #FOO=bar nvim -c 'au VimEnter * Gcommit --amend' -s <(echo 'Afoo')
+  git fetch --all --prune \
+    && git checkout --quiet refs/pull/upstream/${PR} \
+    && git rebase upstream/master \
+    && git checkout master \
+    && git stash save autosave-$(date +%Y%m%d_%H%M%S) \
+    && git reset --hard upstream/master \
+    && git merge --ff-only - \
+    && git commit --amend -m "$(git log -1 --pretty=format:"%B" \
+      | $sed_cmd "1 s/^(.*)\$/\\1 #${PR}/g")" \
+    && git log --oneline --graph --decorate -n 5
+}
+
 # fshow - git commit browser
 # thanks to http://junegunn.kr/2015/03/browsing-git-commits-with-fzf/
 function fshow() {
