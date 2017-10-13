@@ -177,6 +177,12 @@ set wildignore+=*.pyc														" Python byte code
 set wildignore+=*.jar														" Java archives
 set wildignore+=*.orig														" Merge resolution files
 set wildignore+=*.stats														" Merge resolution files
+set wildignore+=**/node_modules/**
+set wildignore+=**/cache/**
+set wildignore+=**/logs/**
+set wildignore+=**/cov/**
+set wildignore+=**/vendor/**
+set wildignore+=**/bower_components/**
 
 " }}}
 
