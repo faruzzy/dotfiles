@@ -409,9 +409,9 @@ nnoremap <silent> <Leader>AG       :Ag <C-R><C-A><CR>
 nnoremap <silent> <Leader>`        :Marks<CR>
 
 " npm install --save-dev word under cursor
-nnoremap <Leader>nd :execute ":!npm install --save-dev " . expand("<cword>")<CR>
+nnoremap <Leader>md :execute ":!npm install --save-dev " . expand("<cword>")<CR>
 " npm install --save word under cursor
-nnoremap <Leader>n :execute ":!npm install --save " . expand("<cword>")<CR>
+nnoremap <Leader>m :execute ":!npm install --save " . expand("<cword>")<CR>
 
 " Search and replace the word under the cursor
 nnoremap <Leader>z :%s/\<<C-r><C-w>\>/
@@ -492,10 +492,6 @@ nnoremap <C-H> <C-W><C-H>
   iabbrev VV ↓
   iabbrev aa λ
 
-" }}}
-
-" Clear last search (,qs) {{{
-	map <silent> <leader>qs <Esc>:noh<CR>
 " }}}
 
 " Search and replace word under cursor (,*) {{{
