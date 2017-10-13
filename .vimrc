@@ -415,8 +415,6 @@ nnoremap <Leader>m :execute ":!npm install --save " . expand("<cword>")<CR>
 
 " Search and replace the word under the cursor
 nnoremap <Leader>z :%s/\<<C-r><C-w>\>/
-" Kill current buffer without closing split
-nnoremap <silent> <Leader>q :bn \| bd #<CR>
 
 let g:tmuxcomplete#trigger = 'omnifunc'
 if has("autocmd")
