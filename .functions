@@ -81,7 +81,7 @@ function fd() {
 function fda() {
   DIR=`find ${1:-.} -type d 2> /dev/null | fzf-tmux` && cd "$DIR"
 }
-#
+
 # fco - checkout git branch/tag
 function fco() {
   local tags branches target
