@@ -38,7 +38,6 @@ export LANG=en_US.UTF-8
 
 # fzf (https://github.com/junegunn/fzf)
 # --------------------------------------------------------------------
-#export FZF_DEFAULT_COMMAND='ag --hidden --ignore .git -g ""'
 export FZF_DEFAULT_COMMAND='rg --files --no-ignore --hidden --follow --glob "!{.git,node_modules}/*" 2> /dev/null'
 export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
 
