@@ -39,7 +39,9 @@ export LANG=en_US.UTF-8
 # fzf (https://github.com/junegunn/fzf)
 # --------------------------------------------------------------------
 #export FZF_DEFAULT_COMMAND='ag --hidden --ignore .git -g ""'
-export FZF_DEFAULT_COMMAND='rg --files --no-ignore --hidden --follow --glob "!.git/*"'
+export FZF_DEFAULT_COMMAND='rg --files --no-ignore --hidden --follow --glob "!{.git,node_modules}/*" 2> /dev/null'
+export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
+
 if [[ -x ~/.vim/plugged/fzf.vim/bin/preview.rb ]]; then
 	export FZF_CTRL_T_OPTS="--preview '~/.vim/plugged/fzf.vim/bin/preview.rb {} | head -200'"
 else
