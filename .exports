@@ -38,7 +38,7 @@ export LANG=en_US.UTF-8
 
 # fzf (https://github.com/junegunn/fzf)
 # --------------------------------------------------------------------
-export FZF_DEFAULT_COMMAND='rg --files --no-ignore --hidden --follow --glob "!{.git,node_modules}/*" 2> /dev/null'
+export FZF_DEFAULT_COMMAND='rg --files --no-ignore --hidden --follow --glob "!{.git}/*" 2> /dev/null'
 export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
 
 if [[ -x ~/.vim/plugged/fzf.vim/bin/preview.rb ]]; then
@@ -58,7 +58,7 @@ export JAVA_HOME=$(/usr/libexec/java_home -v 1.7)
 export MW_HOME=/Users/szd0qs/Oracle/wls1036_dev
 export JAVA_OPTIONS=" -Xms2048m -Xmx2048m -XX:PermSize=2048m -XX:MaxPermSize=2048m -Dhttps.proxyHost=naproxy.gm.com -Dhttps.proxyPort=80 -Dhttp.proxyHost=naproxy.gm.com -Dhttp.proxyPort=80 -Dhttp.nonProxyHosts=localhost"
 
-export PATH=~/dev:/bin:/bin/depot_tools:/sbin:/usr/local/bin:/usr/local/Cellar:/usr/bin:/usr/sbin:/usr/local/sbin:/usr/local/mysql/bin:$GOPATH/bin:$GOROOT/bin:$M2_HOME/bin
+export PATH=~/dev:/bin:/bin/depot_tools:/sbin:/usr/local/bin:/usr/local/Cellar:/usr/bin:/usr/sbin:/usr/local/sbin:/usr/local/mysql/bin:$GOPATH/bin:$GOROOT/bin:$M2_HOME/bin:$HOME/.composer/vendor/bin:$PATH
 
 #export FZF_DEFAULT_COMMAND='
 #  (git ls-tree -r --name-only HEAD ||
