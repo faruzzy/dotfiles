@@ -7,7 +7,7 @@
 " ╚═╝ ╚═══╝   ╚═╝ ╚═╝     ╚═╝ ╚═╝  ╚═╝  ╚═════╝
 "
 " Author: Roland Pangu
-"
+""
 
 
 "--------------------------------------------------------------------------------
@@ -19,7 +19,6 @@ syntax on																	" Syntax highlighting
 syntax sync minlines=256
 let mapleader=","															" Change leader to ','
 
-
 " refresh current .vimrc file for change to take effect
 nnoremap <leader>s :source %<CR>
 
@@ -30,13 +29,18 @@ set ttyfast																	" Optimize for fast terminal connections
 set ttymouse=xterm2
 set ttyscroll=3
 set lazyredraw																" Wait to redraw, do not redraw while executing macros
+
 set nowrap
+set fo+=o																	" Automatically insert the current comment leader after hitting 'o' or 'O' in Normal mode.
+set fo-=r																	" Do not automatically insert a comment leader after an enter
+set fo-=t																	" Do not auto-wrap text using textwidth (does not apply to comments)
+
 set linebreak
 set nocompatible															" Behave like vim and not like vi! (Much, much better)
 set background=dark
 set dictionary+=/usr/share/dict/words
 set display=lastline
-set ruler																	" Display Cursor Position
+
 set title																	" Display filename in titlebar
 set titleold=																" Prevent the 'Thanks for flying Vim'
 set diffopt=filler															" Add vertical spaces to keep right and left aligned
@@ -44,13 +48,14 @@ set diffopt+=iwhite															" Ignore whitespace changes (focus on code cha
 set diffopt+=vertical														" make :diffsplit default to vertical
 set shell=/bin/sh															" Use /bin/sh for executing shell commands
 set t_Co=256																" 256 colors terminal
-set ttimeoutlen=50															" Reduce annoying delay for key codes, especially <Esc>...
+set timeoutlen=50															" Reduce annoying delay for key codes, especially <Esc>...
 set term=screen-256color
 set formatoptions+=1
 
 " Encoding {{{
 
 set encoding=utf-8 nobomb													" BOM often causes trouble
+scriptencoding utf-8														" utf-8 all the way
 if !has('nvim')
 	set term=xterm-256color
 endif
@@ -63,15 +68,21 @@ set fileformats=unix,dos,mac												" Prefer Unix over Windows over OS 9 for
 
 " }}}
 
-" Tab Basic Settings {{{
+" Identation Settings {{{
 
 set autoindent																" Always set autoindenting on
 set smartindent
 set cindent
+set indentkeys-=0#															" Do not break indent on #
+set cinkeys-=0#
 set expandtab																" Use the appropriate number of spaces to insert a <Tab>b
 set shiftround																" Round indent to multiple of 'shiftwidth
 set shiftwidth=4															" Number of spaces to use for each step of (auto)indent
 set softtabstop=4															" Number of spaces that a <Tab> in the file counts for
+set tabstop=4																" Set space width of tabs
+set smarttab																" At start of line, <Tab> inserts shiftwidth spaces, <Bs> deletes shifwidth spaces.
+set sw=4
+set backspace=indent,eol,start
 
 " }}}
 
@@ -85,7 +96,8 @@ set gdefault																" By default add g flag to search/replace. Add g to 
 
 " }}}
 
-set matchpairs+=<:>															" for HTML Editing
+set matchpairs+=<:>															" For HTML Editing
+set matchtime=2																" Bracket blinking
 
 if has("gui_macvim")
   " No toolbars, menu or scrollbars in the GUI
@@ -105,9 +117,6 @@ if has("gui_macvim")
 endif
 
 " Note that these vary from language to language
-set tabstop=4																" Set space width of tabs
-set smarttab																" At start of line, <Tab> inserts shiftwidth spaces, <Bs> deletes shifwidth spaces.
-set sw=4
 set splitright																" By default, split to the right
 set splitbelow																" By default, split below
 set binary																	" Don't add empty new lines at the end of files
@@ -123,7 +132,6 @@ set mouse=a																	" Enable mouse in all modes
 set mousemodel=popup
 set path=$PWD/**															" You need this (trust me) to move around
 set wildmenu
-set backspace=indent,eol,start
 set history=1024															" Amount of Command history increased from default 20 to 1024
 set noerrorbells visualbell t_vb=											" No beeps
 if has('autocmd')
@@ -133,15 +141,17 @@ set numberwidth=2
 set spelllang=en_us,fr														" Spell checking language
 "set textwidth=80															" Make it obvious where 80 characters is
 set cmdheight=2
-set showcmd																	" Show me what I'm typing
 " ================ Turn Off Swap Files ======================
 set noswapfile																" No beeps
 set nobackup																" Don't create annoying backup files
+set nowritebackup
 set nowb
 
 set autowrite																" Automatically save before :next, :make etc.
 set autoread																" Automatically reread changed files (outside of vim) without asking me anything
 set laststatus=2															" Always show status line
+set shortmess=atI															" shortens messages
+set showcmd																	" Show me what I'm typing
 set hidden																	" Display another buffer when current buffer isn't saved
 set synmaxcol=300
 set foldmethod=indent														" Enable folding
@@ -230,6 +240,7 @@ endfunction
 Plug 'crusoexia/vim-monokai'
 Plug 'cdmedia/itg_flat_vim'
 Plug 'junegunn/seoul256.vim'
+Plug 'chriskempson/base16-vim'
 Plug 'morhetz/gruvbox'
 "Plug 'Valloric/YouCompleteMe', { 'do': function('BuildYCM') }
 Plug 'Shougo/neocomplete.vim'
@@ -320,7 +331,7 @@ Plug 'vim-airline/vim-airline-themes'
 Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': 'yes \| ./install --all' }
 Plug 'junegunn/fzf.vim'
 Plug 'tpope/vim-surround'
-"Plug 'mileszs/ack.vim'
+"Plug 'mileszs/ack.vim'  TODO
 Plug 'wincent/ferret'
 Plug 'jremmen/vim-ripgrep'
 Plug 'majutsushi/tagbar'
@@ -346,6 +357,7 @@ call plug#end()
 " }}}
 
 colorscheme seoul256
+"colo base16-oceanicnext
 "colorscheme monokai
 
 " ============================================================================
@@ -815,6 +827,8 @@ augroup cline
 	au!
 	au WinLeave,InsertEnter * set nocursorline
 	au WinEnter,InsertLeave * set cursorline
+	"hi CursorLine   cterm=NONE ctermbg=darkred ctermfg=white guibg=darkred guifg=white
+	"hi CursorColumn cterm=NONE ctermbg=darkred ctermfg=white guibg=darkred guifg=white
 augroup END
 
 " }}}

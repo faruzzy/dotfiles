@@ -24,7 +24,7 @@ function epoch() {
 ghpr() {
   local sed_cmd=$( [ "$(uname)" = Darwin ] && echo 'sed -E' || echo 'sed -r' )
   local PR=${1}
-  local REPO_SLUG="$(git config --get remote.upstream.url \
+  local REPO_SLUG="$(git config --get remote.origin.url \
     | sed 's/^.*github.com[\/:]\(.*\)\.git/\1/')"
   local req_url="https://api.github.com/repos/${REPO_SLUG}/pulls/${PR}"
   local PR_TITLE="$(curl -Ss "$req_url" \
