@@ -2,136 +2,134 @@
 
 # Define a word using collinsdictionary.com
 function define() {
-  curl -s "http://www.collinsdictionary.com/dictionary/english/$*" | sed -n '/class="def"/p' | awk '{gsub(/.*<span class="def">|<\/span>.*/,"");print}' | sed "s/<[^>]\+>//g";
+	curl -s "http://www.collinsdictionary.com/dictionary/english/$*" | sed -n '/class="def"/p' | awk '{gsub(/.*<span class="def">|<\/span>.*/,"");print}' | sed "s/<[^>]\+>//g";
 }
 
 # Epoch time conversion
 function epoch() {
-  TESTREG="[\d{10}]"
-  if [[ "$1" =~ $TESTREG ]]; then
-    # is epoch
-    date -d @$*
-  else
-    # is date
-    if [ $# -gt 0 ]; then
-      date +%s --date="$*"
-    else
-      date +%s
-    fi
-  fi
+	TESTREG="[\d{10}]"
+	if [[ "$1" =~ $TESTREG ]]; then
+		# is epoch
+		date -d @$*
+	else
+		# is date
+		if [ $# -gt 0 ]; then
+		date +%s --date="$*"
+		else
+		date +%s
+		fi
+	fi
 }
 
-ghpr() {
-  local sed_cmd=$( [ "$(uname)" = Darwin ] && echo 'sed -E' || echo 'sed -r' )
-  local PR=${1}
-  local REPO_SLUG="$(git config --get remote.upstream.url \
-    | sed 's/^.*github.com[\/:]\(.*\)\.git/\1/')"
-  local req_url="https://api.github.com/repos/${REPO_SLUG}/pulls/${PR}"
-  local PR_TITLE="$(curl -Ss "$req_url" \
-    | grep '"title"' \
-    | $sed_cmd 's/.*(\[(RFC|RDY)\]) *(.*)../\3/')"
-  #                                         ^ Trailing ", in JSON response.
+function ghpr() {
+	local sed_cmd=$( [ "$(uname)" = Darwin ] && echo 'sed -E' || echo 'sed -r' )
+	local PR=${1}
+	local REPO_SLUG="$(git config --get remote.upstream.url \
+		| sed 's/^.*github.com[\/:]\(.*\)\.git/\1/')"
+	local req_url="https://api.github.com/repos/${REPO_SLUG}/pulls/${PR}"
+	local PR_TITLE="$(curl -Ss "$req_url" \
+		| grep '"title"' \
+		| $sed_cmd 's/.*(\[(RFC|RDY)\]) *(.*)../\3/')"
 
-  [ -z "$PR_TITLE" ] && { printf "error. request: $req_url\n       response: $(curl -Ss $req_url)\n"; return 1; }
+	[ -z "$PR_TITLE" ] && { printf "error. request: $req_url\n       response: $(curl -Ss $req_url)\n"; return 1; }
 
-  git fetch --all --prune \
-    && git checkout master \
-    && git stash save autosave-$(date +%Y%m%d_%H%M%S) \
-    && git reset --hard upstream/master \
-    && git merge --no-commit --no-ff -m "Merge #${PR} '${PR_TITLE}'" refs/pull/upstream/${PR}
+	git fetch --all --prune \
+		&& git checkout master \
+		&& git stash save autosave-$(date +%Y%m%d_%H%M%S) \
+		&& git reset --hard upstream/master \
+		&& git merge --no-commit --no-ff -m "Merge #${PR} '${PR_TITLE}'" refs/pull/upstream/${PR}
 }
 
-ghrebase1() {
-  local PR=${1}
-  local sed_cmd=$( [ "$(uname)" = Darwin ] && echo 'sed -E' || echo 'sed -r' )
+function ghrebase1() {
+	local PR=${1}
+	local sed_cmd=$( [ "$(uname)" = Darwin ] && echo 'sed -E' || echo 'sed -r' )
 
-  #FOO=bar nvim -c 'au VimEnter * Gcommit --amend' -s <(echo 'Afoo')
-  git fetch --all --prune \
-    && git checkout --quiet refs/pull/upstream/${PR} \
-    && git rebase upstream/master \
-    && git checkout master \
-    && git stash save autosave-$(date +%Y%m%d_%H%M%S) \
-    && git reset --hard upstream/master \
-    && git merge --ff-only - \
-    && git commit --amend -m "$(git log -1 --pretty=format:"%B" \
-      | $sed_cmd "1 s/^(.*)\$/\\1 #${PR}/g")" \
-    && git log --oneline --graph --decorate -n 5
+	#FOO=bar nvim -c 'au VimEnter * Gcommit --amend' -s <(echo 'Afoo')
+	git fetch --all --prune \
+		&& git checkout --quiet refs/pull/upstream/${PR} \
+		&& git rebase upstream/master \
+		&& git checkout master \
+		&& git stash save autosave-$(date +%Y%m%d_%H%M%S) \
+		&& git reset --hard upstream/master \
+		&& git merge --ff-only - \
+		&& git commit --amend -m "$(git log -1 --pretty=format:"%B" \
+			| $sed_cmd "1 s/^(.*)\$/\\1 #${PR}/g")" \
+		&& git log --oneline --graph --decorate -n 5
 }
 
 # fshow - git commit browser
 # thanks to http://junegunn.kr/2015/03/browsing-git-commits-with-fzf/
 function fshow() {
-  git log --graph --color=always \
-	  --format="%C(auto)%h%d %s %C(black)%C(bold)%cr" "$@" |
-  fzf --ansi --no-sort --reverse --tiebreak=index --bind=ctrl-s:toggle-sort \
-	  --bind "ctrl-m:execute:
+	git log --graph --color=always \
+		--format="%C(auto)%h%d %s %C(black)%C(bold)%cr" "$@" |
+	fzf --ansi --no-sort --reverse --tiebreak=index --bind=ctrl-s:toggle-sort \
+		--bind "ctrl-m:execute:
 				(grep -o '[a-f0-9]\{7\}' | head -1 |
 				xargs -I % sh -c 'git show --color=always % | less -R') << 'FZF-EOF'
 				{}
-FZF-EOF"
+				FZF-EOF"
 }
 
 # fd - cd to selected directory
 function fd() {
-  DIR=`find ${1:-*} -path '*/\.*' -prune -o -type d -print 2> /dev/null | fzf-tmux` \
-	&& cd "$DIR"
+	DIR=`find ${1:-*} -path '*/\.*' -prune -o -type d -print 2> /dev/null | fzf-tmux` \
+		&& cd "$DIR"
 }
 
 # fda - including hidden directories
 function fda() {
-  DIR=`find ${1:-.} -type d 2> /dev/null | fzf-tmux` && cd "$DIR"
+	DIR=`find ${1:-.} -type d 2> /dev/null | fzf-tmux` && cd "$DIR"
 }
 
 # fco - checkout git branch/tag
 function fco() {
-  local tags branches target
-  tags=$(
-    git tag | awk '{print "\x1b[31;1mtag\x1b[m\t" $1}') || return
-  branches=$(
-    git branch --all | grep -v HEAD             |
-    sed "s/.* //"    | sed "s#remotes/[^/]*/##" |
-    sort -u          | awk '{print "\x1b[34;1mbranch\x1b[m\t" $1}') || return
-  target=$(
-    (echo "$tags"; echo "$branches") |
-    fzf-tmux -l40 -- --no-hscroll --ansi +m -d "\t" -n 2 -1 -q "$*") || return
-  git checkout $(echo "$target" | awk '{print $2}')
+	local tags branches target
+	tags=$(git tag | awk '{print "\x1b[31;1mtag\x1b[m\t" $1}') || return
+	branches=$(
+		git branch --all | grep -v HEAD             |
+		sed "s/.* //"    | sed "s#remotes/[^/]*/##" |
+		sort -u          | awk '{print "\x1b[34;1mbranch\x1b[m\t" $1}') || return
+	target=$(
+		(echo "$tags"; echo "$branches") |
+		fzf-tmux -l40 -- --no-hscroll --ansi +m -d "\t" -n 2 -1 -q "$*") || return
+	git checkout $(echo "$target" | awk '{print $2}')
 }
 
 # ftags - search ctags
 function ftags() {
-  local line
-  [ -e tags ] &&
-  line=$(
-    awk 'BEGIN { FS="\t" } !/^!/ {print toupper($4)"\t"$1"\t"$2"\t"$3}' tags |
-    cut -c1-$COLUMNS | fzf --nth=2 --tiebreak=begin
-  ) && $EDITOR $(cut -f3 <<< "$line") -c "set nocst" \
-                                      -c "silent tag $(cut -f2 <<< "$line")"
+	local line
+	[ -e tags ] &&
+	line=$(
+		awk 'BEGIN { FS="\t" } !/^!/ {print toupper($4)"\t"$1"\t"$2"\t"$3}' tags |
+		cut -c1-$COLUMNS | fzf --nth=2 --tiebreak=begin
+	) && $EDITOR $(cut -f3 <<< "$line") -c "set nocst" \
+										-c "silent tag $(cut -f2 <<< "$line")"
 }
 
 # fe [FUZZY PATTERN] - Open the selected file with the default editor
 #   - Bypass fuzzy finder if there's only one match (--select-1)
 #   - Exit if there's no match (--exit-0)
 function fe() {
-  local file
-  file=$(fzf-tmux --query="$1" --select-1 --exit-0)
-  [ -n "$file" ] && ${EDITOR:-vim} "$file"
+	local file
+	file=$(fzf-tmux --query="$1" --select-1 --exit-0)
+	[ -n "$file" ] && ${EDITOR:-vim} "$file"
 }
 
 # Modified version where you can press
 #   - CTRL-O to open with `open` command,
 #   - CTRL-E or Enter key to open with the $EDITOR
 function fo() {
-  local out file key
-  IFS=$'\n' read -d '' -r -a out < <(fzf-tmux --query="$1" --exit-0 --expect=ctrl-o,ctrl-e)
-  key=${out[0]}
-  file=${out[1]}
-  if [ -n "$file" ]; then
-	if [ "$key" = ctrl-o ]; then
-	  open "$file"
-	else
-	  ${EDITOR:-vim} "$file"
+	local out file key
+	IFS=$'\n' read -d '' -r -a out < <(fzf-tmux --query="$1" --exit-0 --expect=ctrl-o,ctrl-e)
+	key=${out[0]}
+	file=${out[1]}
+	if [ -n "$file" ]; then
+		if [ "$key" = ctrl-o ]; then
+		open "$file"
+		else
+		${EDITOR:-vim} "$file"
+		fi
 	fi
-  fi
 }
 
 
@@ -181,18 +179,18 @@ fi
 
 # Switch tmux-sessions
 function fs() {
-  local session
-  session=$(tmux list-sessions -F "#{session_name}" | \
-    fzf-tmux --query="$1" --select-1 --exit-0) &&
-  tmux switch-client -t "$session"
+	local session
+	session=$(tmux list-sessions -F "#{session_name}" | \
+		fzf-tmux --query="$1" --select-1 --exit-0) &&
+	tmux switch-client -t "$session"
 }
 
 # fbr - checkout git branch
 function fbr() {
-  local branches branch
-  branches=$(git branch) &&
-  branch=$(echo "$branches" | fzf-tmux -d 15 +m) &&
-  git checkout $(echo "$branch" | sed "s/.* //")
+	local branches branch
+	branches=$(git branch) &&
+	branch=$(echo "$branches" | fzf-tmux -d 15 +m) &&
+	git checkout $(echo "$branch" | sed "s/.* //")
 }
 
 # fstash - easier way to deal with stashes
@@ -201,90 +199,90 @@ function fbr() {
 # ctrl-d shows a diff of the stash against your current HEAD
 # ctrl-b checks the stash out as a branch, for easier merging
 function fstash() {
-  local out q k sha
+	local out q k sha
     while out=$(
       git stash list --pretty="%C(yellow)%h %>(14)%Cgreen%cr %C(blue)%gs" |
       fzf --ansi --no-sort --query="$q" --print-query \
           --expect=ctrl-d,ctrl-b);
     do
-      q=$(head -1 <<< "$out")
-      k=$(head -2 <<< "$out" | tail -1)
-      sha=$(tail -1 <<< "$out" | cut -d' ' -f1)
-      [ -z "$sha" ] && continue
-      if [ "$k" = 'ctrl-d' ]; then
-        git diff $sha
-      elif [ "$k" = 'ctrl-b' ]; then
-        git stash branch "stash-$sha" $sha
-        break;
-      else
-        git stash show -p $sha
-      fi
+		q=$(head -1 <<< "$out")
+		k=$(head -2 <<< "$out" | tail -1)
+		sha=$(tail -1 <<< "$out" | cut -d' ' -f1)
+		[ -z "$sha" ] && continue
+		if [ "$k" = 'ctrl-d' ]; then
+			git diff $sha
+		elif [ "$k" = 'ctrl-b' ]; then
+			git stash branch "stash-$sha" $sha
+			break;
+		else
+			git stash show -p $sha
+		fi
     done
 }
 
 # fcs - get git commit sha
 # example usage: git rebase -i `fcs`
 function fcs() {
-  local commits commit
-  commits=$(git log --color=always --pretty=oneline --abbrev-commit --reverse) &&
-  commit=$(echo "$commits" | fzf --tac +s +m -e --ansi --reverse) &&
-  echo -n $(echo "$commit" | sed "s/ .*//")
+	local commits commit
+	commits=$(git log --color=always --pretty=oneline --abbrev-commit --reverse) &&
+	commit=$(echo "$commits" | fzf --tac +s +m -e --ansi --reverse) &&
+	echo -n $(echo "$commit" | sed "s/ .*//")
 }
 
 # GIT heart FZF
 # -------------
 
 function is_in_git_repo() {
-  git rev-parse HEAD > /dev/null 2>&1
+	git rev-parse HEAD > /dev/null 2>&1
 }
 
 function gf() {
-  is_in_git_repo || return
-  git -c color.status=always status --short |
-  fzf-tmux -m --ansi --nth 2..,.. \
-    --preview '(git diff --color=always -- {-1} | sed 1,4d; cat {-1}) | head -500' |
-  cut -c4- | sed 's/.* -> //'
+	is_in_git_repo || return
+	git -c color.status=always status --short |
+	fzf-tmux -m --ansi --nth 2..,.. \
+		--preview '(git diff --color=always -- {-1} | sed 1,4d; cat {-1}) | head -500' |
+	cut -c4- | sed 's/.* -> //'
 }
 
 function gb() {
-  is_in_git_repo || return
-  git branch -a --color=always | grep -v '/HEAD\s' | sort |
-  fzf-tmux --ansi --multi --tac --preview-window right:70% \
-    --preview 'git log --oneline --graph --date=short --pretty="format:%C(auto)%cd %h%d %s" $(sed s/^..// <<< {} | cut -d" " -f1) | head -200' |
-  sed 's/^..//' | cut -d' ' -f1 |
-  sed 's#^remotes/##'
+	is_in_git_repo || return
+	git branch -a --color=always | grep -v '/HEAD\s' | sort |
+	fzf-tmux --ansi --multi --tac --preview-window right:70% \
+			--preview 'git log --oneline --graph --date=short --pretty="format:%C(auto)%cd %h%d %s" $(sed s/^..// <<< {} | cut -d" " -f1) | head -200' |
+	sed 's/^..//' | cut -d' ' -f1 |
+	sed 's#^remotes/##'
 }
 
 function gt() {
-  is_in_git_repo || return
-  git tag --sort -version:refname |
-  fzf-tmux --multi --preview-window right:70% \
-    --preview 'git show --color=always {} | head -200'
+	is_in_git_repo || return
+	git tag --sort -version:refname |
+	fzf-tmux --multi --preview-window right:70% \
+		--preview 'git show --color=always {} | head -200'
 }
 
 function gh() {
-  is_in_git_repo || return
-  git log --date=short --format="%C(green)%C(bold)%cd %C(auto)%h%d %s (%an)" --graph --color=always |
-  fzf-tmux --ansi --no-sort --reverse --multi --bind 'ctrl-s:toggle-sort' \
-    --header 'Press CTRL-S to toggle sort' \
-    --preview 'grep -o "[a-f0-9]\{7,\}" <<< {} | xargs git show --color=always | head -200' |
-  grep -o "[a-f0-9]\{7,\}"
+	is_in_git_repo || return
+	git log --date=short --format="%C(green)%C(bold)%cd %C(auto)%h%d %s (%an)" --graph --color=always |
+	fzf-tmux --ansi --no-sort --reverse --multi --bind 'ctrl-s:toggle-sort' \
+		--header 'Press CTRL-S to toggle sort' \
+		--preview 'grep -o "[a-f0-9]\{7,\}" <<< {} | xargs git show --color=always | head -200' |
+	grep -o "[a-f0-9]\{7,\}"
 }
 
 function gr() {
-  is_in_git_repo || return
-  git remote -v | awk '{print $1 "\t" $2}' | uniq |
-  fzf-tmux --tac \
-    --preview 'git log --oneline --graph --date=short --pretty="format:%C(auto)%cd %h%d %s" {1} | head -200' |
-  cut -d$'\t' -f1
+	is_in_git_repo || return
+	git remote -v | awk '{print $1 "\t" $2}' | uniq |
+	fzf-tmux --tac \
+		--preview 'git log --oneline --graph --date=short --pretty="format:%C(auto)%cd %h%d %s" {1} | head -200' |
+	cut -d$'\t' -f1
 }
 
 # A helper function to join multi-line output from fzf
 function join-lines() {
-  local item
-  while read item; do
-    echo -n "${(q)item} "
-  done
+	local item
+	while read item; do
+		echo -n "${(q)item} "
+	done
 }
 
 #function bind-git-helper() {
@@ -326,60 +324,60 @@ function camerausedby() {
 # Extract archives - use: extract <file>
 # Based on http://dotfiles.org/~pseup/.bashrc
 function extract() {
-  if [ -f "$1" ] ; then
-    local filename=$(basename "$1")
-    local foldername="${filename%%.*}"
-    local fullpath=`perl -e 'use Cwd "abs_path";print abs_path(shift)' "$1"`
-    local didfolderexist=false
-    if [ -d "$foldername" ]; then
-      didfolderexist=true
-      read -p "$foldername already exists, do you want to overwrite it? (y/n) " -n 1
-      echo
-      if [[ $REPLY =~ ^[Nn]$ ]]; then
-        return
-      fi
-    fi
-    mkdir -p "$foldername" && cd "$foldername"
-    case $1 in
-      *.tar.bz2) tar xjf "$fullpath" ;;
-      *.tar.gz) tar xzf "$fullpath" ;;
-      *.tar.xz) tar Jxvf "$fullpath" ;;
-      *.tar.Z) tar xzf "$fullpath" ;;
-      *.tar) tar xf "$fullpath" ;;
-      *.taz) tar xzf "$fullpath" ;;
-      *.tb2) tar xjf "$fullpath" ;;
-      *.tbz) tar xjf "$fullpath" ;;
-      *.tbz2) tar xjf "$fullpath" ;;
-      *.tgz) tar xzf "$fullpath" ;;
-      *.txz) tar Jxvf "$fullpath" ;;
-      *.zip) unzip "$fullpath" ;;
-      *) echo "'$1' cannot be extracted via extract()" && cd .. && ! $didfolderexist && rm -r "$foldername" ;;
-    esac
-  else
-    echo "'$1' is not a valid file"
-  fi
+	if [ -f "$1" ] ; then
+		local filename=$(basename "$1")
+		local foldername="${filename%%.*}"
+		local fullpath=`perl -e 'use Cwd "abs_path";print abs_path(shift)' "$1"`
+		local didfolderexist=false
+		if [ -d "$foldername" ]; then
+			didfolderexist=true
+			read -p "$foldername already exists, do you want to overwrite it? (y/n) " -n 1
+			echo
+			if [[ $REPLY =~ ^[Nn]$ ]]; then
+				return
+			fi
+		fi
+		mkdir -p "$foldername" && cd "$foldername"
+		case $1 in
+			*.tar.bz2) tar xjf "$fullpath" ;;
+			*.tar.gz) tar xzf "$fullpath" ;;
+			*.tar.xz) tar Jxvf "$fullpath" ;;
+			*.tar.Z) tar xzf "$fullpath" ;;
+			*.tar) tar xf "$fullpath" ;;
+			*.taz) tar xzf "$fullpath" ;;
+			*.tb2) tar xjf "$fullpath" ;;
+			*.tbz) tar xjf "$fullpath" ;;
+			*.tbz2) tar xjf "$fullpath" ;;
+			*.tgz) tar xzf "$fullpath" ;;
+			*.txz) tar Jxvf "$fullpath" ;;
+			*.zip) unzip "$fullpath" ;;
+			*) echo "'$1' cannot be extracted via extract()" && cd .. && ! $didfolderexist && rm -r "$foldername" ;;
+		esac
+	else
+		echo "'$1' is not a valid file"
+	fi
 }
 
 # animated gifs from any video
 # from alex sexton   gist.github.com/SlexAxton/4989674
 function gifify() {
-  if [[ -n "$1" ]]; then
-    if [[ $2 == '--good' ]]; then
-      ffmpeg -i $1 -r 10 -vcodec png out-static-%05d.png
-      time convert -verbose +dither -layers Optimize -resize 900x900\> out-static*.png  GIF:- | gifsicle --colors 128 --delay=5 --loop --optimize=3 --multifile - > $1.gif
-      rm out-static*.png
-    else
-      ffmpeg -i $1 -s 600x400 -pix_fmt rgb24 -r 10 -f gif - | gifsicle --optimize=3 --delay=3 > $1.gif
-    fi
-  else
-    echo "proper usage: gifify <input_movie.mov>. You DO need to include extension."
-  fi
+	if [[ -n "$1" ]]; then
+		if [[ $2 == '--good' ]]; then
+		ffmpeg -i $1 -r 10 -vcodec png out-static-%05d.png
+		time convert -verbose +dither -layers Optimize -resize 900x900\> out-static*.png  GIF:- | gifsicle --colors 128 --delay=5 --loop --optimize=3 --multifile - > $1.gif
+		rm out-static*.png
+		else
+		ffmpeg -i $1 -s 600x400 -pix_fmt rgb24 -r 10 -f gif - | gifsicle --optimize=3 --delay=3 > $1.gif
+		fi
+	else
+		echo "proper usage: gifify <input_movie.mov>. You DO need to include extension."
+	fi
 }
 
 # turn that video into webm.
 # brew reinstall ffmpeg --with-libvpx
 function webmify() {
-  ffmpeg -i $1 -vcodec libvpx -acodec libvorbis -isync -copyts -aq 80 -threads 3 -qmax 30 -y $2 $1.webm
+	ffmpeg -i $1 -vcodec libvpx -acodec libvorbis -isync -copyts -aq 80 -threads 3 -qmax 30 -y $2 $1.webm
 }
 
 function rule() {
@@ -521,7 +519,7 @@ function clonei {
 
 # Copy w/ progress
 function cp_p () {
-  rsync -WavP --human-readable --progress $1 $2
+	rsync -WavP --human-readable --progress $1 $2
 }
 
 # Test if HTTP compression (RFC 2616 + SDCH) is enabled for a given URL.
@@ -599,13 +597,13 @@ function note() {
 			title=$(cat)
 	fi
 	osascript >/dev/null <<EOF
-tell application "Notes"
-        tell account "iCloud"
-                tell folder "Notes"
-                        make new note with properties {name:"$title", body:"$title" & "<br><br>" & "$body"}
-                end tell
-        end tell
-end tell
+		tell application "Notes"
+				tell account "iCloud"
+						tell folder "Notes"
+								make new note with properties {name:"$title", body:"$title" & "<br><br>" & "$body"}
+						end tell
+				end tell
+		end tell
 EOF
 }
 
@@ -619,11 +617,11 @@ function remind() {
                 text=$(cat) # pipe
         fi
         osascript >/dev/null <<EOF
-tell application "Reminders"
-        tell the default list
-                make new reminder with properties {name:"$text"}
-        end tell
-end tell
+			tell application "Reminders"
+					tell the default list
+							make new reminder with properties {name:"$text"}
+					end tell
+			end tell
 EOF
 }
 
