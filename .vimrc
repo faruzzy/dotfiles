@@ -29,12 +29,10 @@ set ttyfast																	" Optimize for fast terminal connections
 set ttymouse=xterm2
 set ttyscroll=3
 set lazyredraw																" Wait to redraw, do not redraw while executing macros
-
 set nowrap
 set fo+=o																	" Automatically insert the current comment leader after hitting 'o' or 'O' in Normal mode.
 set fo-=r																	" Do not automatically insert a comment leader after an enter
 set fo-=t																	" Do not auto-wrap text using textwidth (does not apply to comments)
-
 set linebreak
 set nocompatible															" Behave like vim and not like vi! (Much, much better)
 set background=dark
@@ -48,7 +46,7 @@ set diffopt+=iwhite															" Ignore whitespace changes (focus on code cha
 set diffopt+=vertical														" make :diffsplit default to vertical
 set shell=/bin/sh															" Use /bin/sh for executing shell commands
 set t_Co=256																" 256 colors terminal
-set timeoutlen=50															" Reduce annoying delay for key codes, especially <Esc>...
+set timeoutlen=1250															" Reduce annoying delay for key codes, especially <Esc>...
 set term=screen-256color
 set formatoptions+=1
 
@@ -102,7 +100,7 @@ set matchtime=2																" Bracket blinking
 if has("gui_macvim")
   " No toolbars, menu or scrollbars in the GUI
   set guifont=Source\ Code\ Pro\ Light:h12
-  set clipboard=unnamed
+  set clipboard+=unnamed
   set vb t_vb=
   set guioptions-=m															" no menu
   set guioptions-=T														    " no toolbar
@@ -116,7 +114,6 @@ if has("gui_macvim")
   highlight SignColumn guibg=#272822
 endif
 
-" Note that these vary from language to language
 set splitright																" By default, split to the right
 set splitbelow																" By default, split below
 set binary																	" Don't add empty new lines at the end of files
@@ -160,7 +157,7 @@ set statusline=%<[%n]\ %F\ %m%r%y\ %{exists('g:loaded_fugitive')?fugitive#status
 
 "http://stackoverflow.com/questions/20186975/vim-mac-how-to-copy-to-clipboard-without-pbcopy
 "set clipboard+=unnamed
-set clipboard=unnamed														" Sets default register to be * register, which is the system clipboard. So Cmd+C and y are now the same thing; Cmd+V and p are now the same thing!"
+set clipboard=unnamed
 set complete=.,w,b,u,t														" Better Completion
 set completeopt=longest,menuone
 set ofu=syntaxcomplete#Complete												" Set omni-completion method.
@@ -253,7 +250,7 @@ Plug 'tpope/vim-unimpaired'
 "--------------------------------------------------------------------------------
 
 Plug 'fatih/vim-go', { 'do': ':GoInstallBinaries' }
-"Plug 'nsf/gocode'
+Plug 'nsf/gocode'
 
 "--------------------------------------------------------------------------------
 " }}}
@@ -347,7 +344,7 @@ Plug 'mhartington/oceanic-next'
 Plug 'rakr/vim-one'
 Plug 'itspriddle/ZoomWin'															" Zoom in and out of windows/buffer
 Plug 'benmills/vimux'																" Easily interact with tmux from vim
-Plug 'christoomey/vim-tmux-navigator'												" moving through tmux pane with ease
+Plug 'christoomey/vim-tmux-navigator'												" Seamless navigation between tmux panes and vim splits
 Plug 'tmux-plugins/vim-tmux-focus-events'											" This plugin restores `FocusGained` and `FocusLost` when using vim inside Tmux.
 
 " }}}
@@ -356,9 +353,12 @@ call plug#end()
 
 " }}}
 
-colorscheme seoul256
+colo seoul256
 "colo base16-oceanicnext
 "colorscheme monokai
+"colorscheme hybrid
+"colorscheme gruvbox
+"colorscheme itg_flat
 
 " ============================================================================
 " FZF {{{
@@ -400,16 +400,16 @@ command! FZFTag if !empty(tagfiles()) | call fzf#run({
   \ }) | else | echo 'No tags' | endif
 
 command! -bar FZFTags if !empty(tagfiles()) |
-  \ call fzf#run({
-  \   'source': 'sed ''/^\\!/ d; s/^\([^\t]*\)\t.*\t\(\w\)\(\t.*\)\?/\2\t\1/; /^l/ d'' ' . join(tagfiles()) . ' | uniq',
-  \   'sink': function('<SID>tag_line_handler'),
-  \ }) | else | call MakeTags() | FZFTags | endif
+			\ call fzf#run({
+			\   'source': 'sed ''/^\\!/ d; s/^\([^\t]*\)\t.*\t\(\w\)\(\t.*\)\?/\2\t\1/; /^l/ d'' ' . join(tagfiles()) . ' | uniq',
+			\   'sink': function('<SID>tag_line_handler'),
+			\ }) | else | call MakeTags() | FZFTags | endif
 
 command! FZFTagsBuffer call fzf#run({
-  \   'source': 'ctags -f - --sort=no ' . bufname("") . ' | sed ''s/^\([^\t]*\)\t.*\t\(\w\)\(\t.*\)\?/\2\t\1/'' | sort -k 1.1,1.1 -s',
-  \   'sink': function('<SID>tag_line_handler'),
-  \   'options': '--tac',
-  \ })
+			\   'source': 'ctags -f - --sort=no ' . bufname("") . ' | sed ''s/^\([^\t]*\)\t.*\t\(\w\)\(\t.*\)\?/\2\t\1/'' | sort -k 1.1,1.1 -s',
+			\   'sink': function('<SID>tag_line_handler'),
+			\   'options': '--tac',
+			\ })
 
 " }}}
 
@@ -612,7 +612,7 @@ let g:neocomplete#sources#syntax#min_keyword_length = 3						" Set minimum synta
 
 " ----------------------------------------------------------------------------
 " }}}
-" ----------------------------------------------------------------------------
+" }}}
 
 " ----------------------------------------------------------------------------
 "  YouCompleteMe {{{
@@ -630,7 +630,7 @@ let g:ycm_semantic_triggers['typescript'] = ['.']
 
 " ----------------------------------------------------------------------------
 " }}}
-" ----------------------------------------------------------------------------
+" }}}
 
 let g:jsx_ext_required = 0
 " ----------------------------------------------------------------------------
@@ -827,8 +827,6 @@ augroup cline
 	au!
 	au WinLeave,InsertEnter * set nocursorline
 	au WinEnter,InsertLeave * set cursorline
-	"hi CursorLine   cterm=NONE ctermbg=darkred ctermfg=white guibg=darkred guifg=white
-	"hi CursorColumn cterm=NONE ctermbg=darkred ctermfg=white guibg=darkred guifg=white
 augroup END
 
 " }}}
@@ -1151,13 +1149,3 @@ function! InsertTabWrapper()
 endfunction
 
 " }}}
-
-function! PhpSyntaxOverride()
-	hi! def link phpDocTags  phpDefine
-	hi! def link phpDocParam phpType
-endfunction
-
-augroup phpSyntaxOverride
-	autocmd!
-	autocmd FileType php call PhpSyntaxOverride()
-augroup END
