@@ -37,6 +37,7 @@ alias dashcode="open -a dashcode"
 alias f='open -a Finder'
 alias photoshop="open -a '/Applications/Adobe Photoshop CS6/Adobe Photoshop.app'"
 alias nom="rm -rf node_modules && npm cache clear && npm i"
+alias rg='rg --hidden --ignore-case'
 
 alias k5="kill -9 %%"
 
