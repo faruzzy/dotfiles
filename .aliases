@@ -1,19 +1,19 @@
-alias s="source ~/.bash_profile"
-alias python="python3"
+alias s='source ~/.bash_profile'
+alias python='python3'
 
 # Easier navigation: .., ..., ~ and -
-alias ..="cd .."
-alias ...="cd ../.."
-alias ....="cd ../../.."
-alias .....="cd ../../../.."
+alias ..='cd ..'
+alias ...='cd ../..'
+alias ....='cd ../../..'
+alias .....='cd ../../../..'
 
 #tmux
-alias tmux="tmux -2"
+alias tmux='tmux -2'
 
 # Shortcuts
-alias dl="cd ~/Downloads"
-alias dt="cd ~/Desktop"
-alias h="history"
+alias dl='cd ~/Downloads'
+alias dt='cd ~/Desktop'
+alias h='history'
 
 ##### Adobe CQ ######
 alias gotoauthor="cd ~/adobe/author"
@@ -25,20 +25,15 @@ alias startpublishDebug="gotopublisher; java $JAVA_OPTIONS -Xdebug -agentlib:jdw
 
 # programs
 alias st='open -a "Sublime Text"'
-alias preview="open -a '$PREVIEW'"
-alias xcode="open -a '/Developer/Applications/Xcode.app'"
-alias filemerge="open -a '/Developer/Applications/Utilities/FileMerge.app'"
-alias safari="open -a safari"
-alias firefox="open -a firefox"
-alias opera="open -a opera"
-alias chrome="open -a google\ chrome"
-alias chromium="open -a chromium"
-alias dashcode="open -a dashcode"
+alias xcode='open -a Xcode'
+alias safari='open -a safari'
+alias firefox='open -a firefoxDeveloperEdition'
+alias chrome='open -a google\ chrome'
+alias chromium='open -a google\ chrome\ canary'
 alias f='open -a Finder'
-alias photoshop="open -a '/Applications/Adobe Photoshop CS6/Adobe Photoshop.app'"
-alias nom="rm -rf node_modules && npm cache clear && npm i"
+alias nom='rm -rf node_modules && npm cache clear && npm i'
 alias rg='rg --hidden --ignore-case'
-
+alias ag="ag --path-to-ignore ~/.agignore"
 alias k5="kill -9 %%"
 
 # Detect which `ls` flavor is in use
@@ -55,7 +50,7 @@ alias la="ls -laF ${colorflag}"
 # https://www.cyberciti.biz/faq/linux-list-just-directories-or-directory-names/
 alias lsd='ls -ld */'
 
-# List only hidden files 
+# List only hidden files
 # https://askubuntu.com/questions/468901/how-to-show-only-hidden-files-in-terminal
 alias lsh='ls -ld .?*'
 
@@ -91,18 +86,18 @@ elif [ "$OS" = 'ubuntu' ]; then
 fi
 
 ##### npm #####
-alias npmp="sudo npm publish"
-alias npma="sudo npm adduser"
-alias npmi="sudo npm install"
-alias npmg="sudo npm install -g"
-alias npmu="sudo npm update"
-alias npmr="sudo npm uninstall"
-alias npmrg="sudo npm uninstall -g"
+alias npmp='sudo npm publish'
+alias npma='sudo npm adduser'
+alias npmi='sudo npm install'
+alias npmg='sudo npm install -g'
+alias npmu='sudo npm update'
+alias npmr='sudo npm uninstall'
+alias npmrg='sudo npm uninstall -g'
 
 # npm offline
 # install npm dependencies from cache
 # https://github.com/npm/npm/issues/2568#issuecomment-30626394
-alias npmo="sudo npm install --cache-min 999999999"
+alias npmo='sudo npm install --cache-min 999999999'
 
 # Update
 
@@ -158,6 +153,7 @@ fi
 alias c='pygmentize -O style=monokai -f console256 -g'
 
 ##### GIT Stuff #####
+
 alias g="git"
 alias gpom="git push origin master"
 
@@ -188,12 +184,12 @@ alias httpdump="sudo tcpdump -i en1 -n -s 0 -w - | grep -a -o -E \"Host\: .*|GET
 #type -t md5sum > /dev/null || alias md5sum="md5"
 
 ##### Vim ######
-alias vim="/usr/local/Cellar/vim/8.0.0596/bin/vim" 
-alias v="vim"
-alias mvim="open -a /Applications/MacVim.app/ $1"
 
-alias j="jump"
-alias ag="ag --path-to-ignore ~/.agignore"
+alias vim='/usr/local/Cellar/vim/8.0.0596/bin/vim'
+alias v='vim'
+alias mvim='open -a /Applications/MacVim.app/ $1'
+
+##### Vim ######
 
 alias mv='mv -v'
 alias cp='cp -v'
@@ -209,10 +205,6 @@ alias fs="stat -f \"%z bytes\""
 alias rot13='tr a-zA-Z n-za-mN-ZA-M'
 
 ####### Clean Up ########
-
-# Empty the Trash on all mounted volumes and the main HDD
-# Also, clear Apple’s System Logs to improve shell startup speed
-#alias emptytrash="sudo rm -rfv /Volumes/*/.Trashes; sudo rm -rfv ~/.Trash; sudo rm -rfv /private/var/log/asl/*.asl"
 
 if [[ "$OSTYPE" =~ ^darwin ]]; then
 
@@ -235,10 +227,6 @@ alias rmf="rm -rf"
 
 # Trim new lines and copy to clipboard
 alias tt="tr -d '\n' | pbcopy"
-
-# Hide/show all desktop icons (useful when presenting)
-alias hidedesktop="defaults write com.apple.finder CreateDesktop -bool false && killall Finder"
-alias showdesktop="defaults write com.apple.finder CreateDesktop -bool true && killall Finder"
 
 # Merge PDF files
 # Usage: `mergepdf -o output.pdf input{1,2,3}.pdf`
