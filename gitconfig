@@ -2,9 +2,11 @@
 	clean = git hawser clean %f
 	smudge = git hawser smudge %f
 	required = true
+
 [user]
 	name = Roland Pangu
 	email = faruzzy@gmail.com
+
 [core]
 	whitespace = trailing-space,space-before-tab,indent-with-non-tab
     editor = vim
@@ -12,19 +14,28 @@
 	excludesfile = /Users/szd0qs/.gitignore_global
 	autocrlf = input
 	#attributesfile = ~/.gitattributes
+
 [mergetool "sourcetree"]
 	cmd = /Applications/SourceTree.app/Contents/Resources/opendiff-w.sh \"$LOCAL\" \"$REMOTE\" -ancestor \"$BASE\" -merge \"$MERGED\"
 	trustExitCode = true
+
 [difftool "Kaleidoscope"]
 	cmd = ksdiff --partial-changeset --relative-path \"$MERGED\" -- \"$LOCAL\" \"$REMOTE\"
+
 [mergetool "Kaleidoscope"]
 	cmd = ksdiff --merge --output \"$MERGED\" --base \"$BASE\" -- \"$LOCAL\" --snapshot \"$REMOTE\" --snapshot
 	trustexitcode = true
+
+[pager]
+	# insanely beautiful diffs => npm install -g diff-so-fancy
+	diff = diff-so-fancy | less --tabs=4 -RFX
+	show = diff-so-fancy | less --tabs=4 -RFX
 
 [filter "lfs"]
 	clean = git lfs clean %f
 	smudge = git lfs smudge %f
 	required = true
+
 [alias]
 	# thanks to http://stackoverflow.com/questions/11269256/how-to-name-and-retrieve-a-stash-by-name-in-git
 	sshow = "!f() { git stash show stash^{/$*} -p; }; f"
@@ -92,24 +103,30 @@
     }; f"
 [help]
 	autocorrect = 10
+
 [color]
     ui = auto
 	grep = auto
 	interactive = auto
+
 [color "diff"]
 	meta = yellow bold
 	frag = magenta bold
 	old = red bold
 	new = green bold
+
 [fetch]
 	prune = true
+
 [diff]
 	compactionHeuristic = true
+
 [color "branch"]
     current = yellow reverse
     local = yellow
     remote = green
 	upstream = bold cyan
+
 [color "status"]
 	# staged changes
     added = yellow
@@ -118,17 +135,25 @@
     changed = green
     untracked = cyan
 	nobranch = bold red white
+
 [merge]
     log = true
+
 [github]
     user = faruzzy
 	email = faruzzy@gmail.com
 	username = faruzzy
+
 [mergetool]
     keepBackup = true
+
+# https://stackoverflow.com/questions/23918062/simple-vs-current-push-default-in-git-for-decentralized-workflow/23918418#23918418
 [push]
     default = simple
+	followTags = true
+
 [web]
 	browser = open
+
 [browser "ch"]
 	cmd = open -a \"/Applications/Google\\ Chrome.app\"
