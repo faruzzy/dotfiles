@@ -706,8 +706,6 @@ autocmd!
 	let g:syntastic_check_on_open = 1
 	let g:syntastic_check_on_wq = 0
 	let g:syntastic_javascript_checkers = ['eslint']											" npm install -g eslint; npm install -g babel-eslint; npm install -g eslint-plugin-react
-	let g:syntastic_javascript_eslint_exec = 'node_modules/eslint/bin/eslint.js'				" For project-specific versions of eslint.
-	let g:syntastic_javascript_eslint_exe = 'npm run eslint --'
 	let g:syntastic_json_checkers = ['jsonlint']												" npm install -g jsonlint
 augroup END
 " }}}
