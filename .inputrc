@@ -1,3 +1,7 @@
+# vi mode
+set editing-mode vi
+set keymap vi-command
+
 # Perform file completion in a case insensitive faSHION
 set completion-ignore-case on
 
