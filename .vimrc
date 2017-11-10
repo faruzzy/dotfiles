@@ -213,6 +213,7 @@ Plug 'crusoexia/vim-monokai'
 Plug 'cdmedia/itg_flat_vim'
 Plug 'junegunn/seoul256.vim'
 Plug 'romainl/Apprentice'
+Plug 'joshdick/onedark.vim'
 Plug 'chriskempson/base16-vim'
 Plug 'morhetz/gruvbox'
 
@@ -333,6 +334,7 @@ call plug#end()
 " ----------------------------------------------------------------------------
 
 colorscheme apprentice
+colorscheme onedark
 "colorscheme seoul256
 "colo base16-oceanicnext
 "colorscheme monokai
