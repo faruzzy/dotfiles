@@ -216,6 +216,8 @@ Plug 'romainl/Apprentice'
 Plug 'joshdick/onedark.vim'
 Plug 'chriskempson/base16-vim'
 Plug 'morhetz/gruvbox'
+Plug 'mhartington/oceanic-next'
+Plug 'rakr/vim-one'
 
 " }}}
 
@@ -318,8 +320,6 @@ Plug 'plasticboy/vim-markdown', { 'for': 'markdown' }
 Plug 'sickill/vim-pasta'
 Plug 'jordwalke/VimSplitBalancer'
 "Plug 'dhruvasagar/vim-zoom'
-Plug 'mhartington/oceanic-next'
-Plug 'rakr/vim-one'
 Plug 'itspriddle/ZoomWin'															" Zoom in and out of windows/buffer
 Plug 'benmills/vimux'																" Easily interact with tmux from vim
 Plug 'christoomey/vim-tmux-navigator'												" Seamless navigation between tmux panes and vim splits
@@ -332,15 +332,7 @@ call plug#end()
 " ----------------------------------------------------------------------------
 " }}}
 " ----------------------------------------------------------------------------
-
-colorscheme apprentice
 colorscheme onedark
-"colorscheme seoul256
-"colo base16-oceanicnext
-"colorscheme monokai
-"colorscheme hybrid
-"colorscheme gruvbox
-"colorscheme itg_flat
 
 " ----------------------------------------------------------------------------
 " FZF {{{
