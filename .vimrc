@@ -284,6 +284,7 @@ Plug 'StanAngeloff/php.vim', { 'for': 'php' }										" PHP Syntax
 "Plug 'Quramy/tsuquyomi'															" TypeScript Development
 "Plug 'Shougo/vimproc.vim', {'do': 'make'}											" Interactive command execution in vim (dependency of 'Quramy/tsuquyomi')
 "Plug 'moll/vim-node'																" Allows Node.js Development with vim
+Plug 'jelera/vim-javascript-syntax', { 'for': 'javascript' }
 Plug 'elzr/vim-json', { 'for' : 'json' }											" json support
 
 " }}}
@@ -310,15 +311,15 @@ Plug 'tpope/vim-surround'
 "Plug 'mileszs/ack.vim'  TODO
 Plug 'wincent/ferret'
 Plug 'jremmen/vim-ripgrep'
-Plug 'majutsushi/tagbar'
-Plug 'scrooloose/nerdtree', { 'on': 'NERDTreeToggle' }
-Plug 'Xuyuanp/nerdtree-git-plugin'
-Plug 'tpope/vim-vinegar'
-Plug 'ryanoasis/vim-devicons'
-Plug 'plasticboy/vim-markdown', { 'for': 'markdown' }
-Plug 'sickill/vim-pasta'
-Plug 'jordwalke/VimSplitBalancer'
-"Plug 'dhruvasagar/vim-zoom'
+Plug 'majutsushi/tagbar'															" Vim plugin that displays tags in a window, ordered by scope
+Plug 'scrooloose/nerdtree', { 'on': 'NERDTreeToggle' }								" A tree explorer plugin for vim.
+Plug 'Xuyuanp/nerdtree-git-plugin'													" A plugin of NERDTree showing git status
+Plug 'tpope/vim-vinegar'															" netrw enhanced / alternative to NERDTree
+Plug 'ryanoasis/vim-devicons'														" Adds file type glyphs/icons to popular Vim plugins: NERDTree, vim-airline, Powerline, Unite, vim-startify and more
+Plug 'plasticboy/vim-markdown', { 'for': 'markdown' }								" Markdown Vim Mode
+Plug 'sickill/vim-pasta'															" Pasting in Vim with indentation adjusted to destination context TODO: check if I still need this
+Plug 'jordwalke/VimSplitBalancer'													" Distributes available space among vertical splits, and plays nice with NERDTree
+"Plug 'dhruvasagar/vim-zoom' TODO: check if I still need this
 Plug 'itspriddle/ZoomWin'															" Zoom in and out of windows/buffer
 Plug 'benmills/vimux'																" Easily interact with tmux from vim
 Plug 'christoomey/vim-tmux-navigator'												" Seamless navigation between tmux panes and vim splits
@@ -425,8 +426,8 @@ nnoremap <C-H> <C-W><C-H>
 
 " Search and replace word under cursor (,*) {{{
 
-	nnoremap <leader>* :%s/\<<C-r><C-w>\>//<Left>
-	vnoremap <leader>* "hy:%s/\V<C-r>h//<left>
+nnoremap <leader>* :%s/\<<C-r><C-w>\>//<Left>
+vnoremap <leader>* "hy:%s/\V<C-r>h//<left>
 
 " }}}
 
@@ -851,11 +852,11 @@ endif
 
 " Hard to type things {{{
 
-  iabbrev >> →
-  iabbrev << ←
-  iabbrev ^^ ↑
-  iabbrev VV ↓
-  iabbrev aa λ
+iabbrev >> →
+iabbrev << ←
+iabbrev ^^ ↑
+iabbrev VV ↓
+iabbrev aa λ
 
 " }}}
 
