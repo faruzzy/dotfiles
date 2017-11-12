@@ -382,6 +382,14 @@ command! FZFTagsBuffer call fzf#run({
 			\   'options': '--tac',
 			\ })
 
+nnoremap <C-p> :Files<CR>
+nnoremap <C-b> :Buffers<CR>
+nnoremap <silent> <Leader>C			:Colors<CR>
+nnoremap <silent> <Leader>l			:Lines<CR>
+nnoremap <silent> <Leader>ag		:Root<CR>:Ag <C-R><C-W><CR>
+nnoremap <silent> <Leader>AG		:Root<CR>:Ag <C-R><C-A><CR>
+nnoremap <silent> <Leader>`			:Marks<CR>
+
 " ----------------------------------------------------------------------------
 " }}}
 " ----------------------------------------------------------------------------
@@ -395,16 +403,10 @@ nnoremap <leader>s :source %<CR>
 
 " Open the current directory in finder
 nnoremap <leader>O :!open .<CR>
-nnoremap <Leader>f :Root<CR>:FZF<CR>
+
 nnoremap <Leader>a :Root<CR>:Ack!<Space>
 
 nnoremap <silent> <expr> <Leader><Leader> (expand('%') =~ 'NERD_tree' ? "\<c-w>\<c-w>" : '').":Files\<cr>"
-nnoremap <silent> <Leader>C			:Colors<CR>
-nnoremap <silent> <Leader><Enter>	:Buffers<CR>
-nnoremap <silent> <Leader>l			:Lines<CR>
-nnoremap <silent> <Leader>ag		:Root<CR>:Ag <C-R><C-W><CR>
-nnoremap <silent> <Leader>AG		:Root<CR>:Ag <C-R><C-A><CR>
-nnoremap <silent> <Leader>`			:Marks<CR>
 
 " npm install --save-dev word under cursor
 nnoremap <Leader>md :execute ":!npm install --save-dev " . expand("<cword>")<CR>
