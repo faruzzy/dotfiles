@@ -2,7 +2,7 @@
 set editing-mode vi
 set keymap vi-command
 
-# Perform file completion in a case insensitive faSHION
+# Perform file completion in a case insensitive fashion
 set completion-ignore-case on
 
 # Treat hyphens and underscores as equivalent
