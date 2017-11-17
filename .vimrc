@@ -384,11 +384,11 @@ command! FZFTagsBuffer call fzf#run({
 
 nnoremap <C-p> :Files<CR>
 nnoremap <C-b> :Buffers<CR>
-nnoremap <silent> <Leader>C			:Colors<CR>
-nnoremap <silent> <Leader>l			:Lines<CR>
-nnoremap <silent> <Leader>ag		:Root<CR>:Ag <C-R><C-W><CR>
-nnoremap <silent> <Leader>AG		:Root<CR>:Ag <C-R><C-A><CR>
-nnoremap <silent> <Leader>`			:Marks<CR>
+nnoremap <silent> <leader>C			:Colors<CR>
+nnoremap <silent> <leader>l			:Lines<CR>
+nnoremap <silent> <leader>ag		:Root<CR>:Ag <C-R><C-W><CR>
+nnoremap <silent> <leader>AG		:Root<CR>:Ag <C-R><C-A><CR>
+nnoremap <silent> <leader>`			:Marks<CR>
 
 " ----------------------------------------------------------------------------
 " }}}
@@ -401,18 +401,24 @@ nnoremap <silent> <Leader>`			:Marks<CR>
 " refresh current .vimrc file for change to take effect
 nnoremap <leader>s :source %<CR>
 
+nnoremap <leader>dg :diffget<CR>
+vnoremap <leader>dg :diffget<CR>
+
+nnoremap <leader>dp :diffput<CR>
+vnoremap <leader>dp :diffput<CR>
+
 " Open the current directory in finder
 nnoremap <leader>O :!open .<CR>
 
-nnoremap <Leader>a :Root<CR>:Ack!<Space>
+nnoremap <leader>a :Root<CR>:Ack!<Space>
 
-nnoremap <silent> <expr> <Leader><Leader> (expand('%') =~ 'NERD_tree' ? "\<c-w>\<c-w>" : '').":Files\<cr>"
+nnoremap <silent> <expr> <leader><leader> (expand('%') =~ 'NERD_tree' ? "\<c-w>\<c-w>" : '').":Files\<cr>"
 
 " npm install --save-dev word under cursor
-nnoremap <Leader>md :execute ":!npm install --save-dev " . expand("<cword>")<CR>
+nnoremap <leader>md :execute ":!npm install --save-dev " . expand("<cword>")<CR>
 
 " npm install --save word under cursor
-nnoremap <Leader>m :execute ":!npm install --save " . expand("<cword>")<CR>
+nnoremap <leader>m :execute ":!npm install --save " . expand("<cword>")<CR>
 
 " Enable folding with the spacebar
 nnoremap <space> za" Run python code by pressing F9
@@ -546,15 +552,15 @@ if has("autocmd")
 
 	" Convenient mappings for compiling and running quick, used mostly for school
 	" gcc compile C files
-	autocmd filetype c nnoremap <Leader>c :w <CR>:!gcc % -o %:r && ./%:r<CR>
+	autocmd filetype c nnoremap <leader>c :w <CR>:!gcc % -o %:r && ./%:r<CR>
 	" java compile files
-	autocmd filetype java nnoremap <Leader>c :w <CR>:!javac % && java %:r<CR>
+	autocmd filetype java nnoremap <leader>c :w <CR>:!javac % && java %:r<CR>
 	" run node files
-	autocmd filetype javascript nnoremap <Leader>c :w <CR>:!node %<CR>
+	autocmd filetype javascript nnoremap <leader>c :w <CR>:!node %<CR>
 	" run python files
-	autocmd filetype python nnoremap <Leader>c :exec '!python' shellescape(@%, 1)<CR>
+	autocmd filetype python nnoremap <leader>c :exec '!python' shellescape(@%, 1)<CR>
 	" run bash files
-	autocmd filetype sh nnoremap <Leader>c :w <CR>:!bash %<CR>
+	autocmd filetype sh nnoremap <leader>c :w <CR>:!bash %<CR>
 
 	autocmd FocusLost * call ToggleRelativeOn()
 	autocmd FocusGained * call ToggleRelativeOn()
@@ -564,17 +570,16 @@ if has("autocmd")
 	autocmd VimResized * :wincmd =																	" Resize splits when the window is resized
 	autocmd BufEnter * silent! cd %:p:h															" update dir to current file
 
-	autocmd FileType go nmap <Leader>s  <Plug>(go-def-split)
-	autocmd FileType go nmap <Leader>v  <Plug>(go-def-vertical)
-	autocmd FileType go nmap <Leader>in <Plug>(go-info)
-	autocmd FileType go nmap <Leader>i  <Plug>(go-implements)
+	autocmd FileType go nmap <leader>s  <Plug>(go-def-split)
+	autocmd FileType go nmap <leader>v  <Plug>(go-def-vertical)
+	autocmd FileType go nmap <leader>in <Plug>(go-info)
+	autocmd FileType go nmap <leader>i  <Plug>(go-implements)
 	autocmd FileType go nmap <leader>r  <Plug>(go-run)
 	autocmd FileType go nmap <leader>b  <Plug>(go-build)
 	autocmd FileType go nmap <leader>g  <Plug>(go-gbbuild)
 	autocmd FileType go nmap <leader>t  <Plug>(go-test-compile)
-	autocmd FileType go nmap <Leader>d  <Plug>(go-doc)
-	autocmd FileType go nmap <Leader>f :GoImports<CR>
-
+	autocmd FileType go nmap <leader>d  <Plug>(go-doc)
+	autocmd FileType go nmap <leader>f :GoImports<CR>
 endif
 
 " ----------------------------------------------------------------------------
@@ -776,23 +781,22 @@ let g:NERDTreeIndicatorMapCustom = {
 let g:VimuxHeight = "35"
 
 " Close vim tmux runner opened by VimuxRunCommand
-map <Leader>vc :call VimuxCloseRunner()<CR>
+nnoremap <leader>vc :call VimuxCloseRunner()<CR>
 
 " Run last command executed by VimuxRunCommand
-map <Leader>vl :VimuxRunLastCommand<CR>
+nnoremap <leader>vl :VimuxRunLastCommand<CR>
 
 " Interrupt any command that is running inside the runner pane
-map <Leader>vi :VimuxInterruptRunner<CR>
+nnoremap <leader>vi :VimuxInterruptRunner<CR>
 
 " Zoom the tmux runner page
-map <Leader>vz :VimuxZoomRunner<CR>
+nnoremap <leader>vz :VimuxZoomRunner<CR>
 
 " Run gulp inside runner Pane
-map <Leader>gu :VimuxPromptCommand("gulp")<CR>
+nnoremap <leader>gu :VimuxPromptCommand("gulp")<CR>
 
 " Prompt for a command and run it in a small horizontal split bellow the current pane
-map <Leader>vr :VimuxPromptCommand<CR>
-
+nnoremap <leader>vr :VimuxPromptCommand<CR>
 "  }}}
 
 " tmux {{{
@@ -982,7 +986,7 @@ command! -nargs=1 S
 command! StripTrailingWhitespaces call <SID>StripTrailingWhitespaces()
 
 " Save a file and strip trailing white spaces
-nmap <Leader>w :StripTrailingWhitespaces<CR>:w<CR>
+nmap <leader>w :StripTrailingWhitespaces<CR>:update<CR>
 
 " Save a file as root (,W) and strip trailing white spaces
 noremap <leader>W :StripTrailingWhitespaces<CR>:w !sudo tee % > /dev/null<CR>
@@ -1089,7 +1093,7 @@ function! ToggleRelativeOn()
 	set number
 endfunction
 
-" <Leader>?/! | Google it / Feeling lucky
+" <leader>?/! | Google it / Feeling lucky
 function! s:goog(pat, lucky)
 	let q = '"'.substitute(a:pat, '["\n]', ' ', 'g').'"'
 	let q = substitute(q, '[[:punct:] ]',
