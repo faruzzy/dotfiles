@@ -595,10 +595,10 @@ function note() {
 	local title
 	local body
 	if [ -t 0 ]; then
-			title="$1"
-			body="$2"
+		title="$1"
+		body="$2"
 	else
-			title=$(cat)
+		title=$(cat)
 	fi
 	osascript >/dev/null <<EOF
 		tell application "Notes"
@@ -616,9 +616,9 @@ EOF
 function remind() {
         local text
         if [ -t 0 ]; then
-                text="$1" # argument
+			text="$1" # argument
         else
-                text=$(cat) # pipe
+			text=$(cat) # pipe
         fi
         osascript >/dev/null <<EOF
 			tell application "Reminders"
@@ -653,9 +653,9 @@ function ged() {
 # open last commit in GitHub, in the browser.
 # credit: @cowboy
 function gfu() {
-  local n="${@:-1}"
-  n=$((n-1))
-  open $(git log -n 1 --skip=$n --pretty=oneline | awk "{printf \"$(gurl)/commit/%s\", substr(\$1,1,7)}")
+	local n="${@:-1}"
+	n=$((n-1))
+	open $(git log -n 1 --skip=$n --pretty=oneline | awk "{printf \"$(gurl)/commit/%s\", substr(\$1,1,7)}")
 }
 
 bind '"\er": redraw-current-line'
