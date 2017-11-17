@@ -98,9 +98,7 @@ set path=$PWD/**															" You need this (trust me) to move around
 set wildmenu
 set history=1024															" Amount of Command history increased from default 20 to 1024
 set noerrorbells visualbell t_vb=											" No beeps
-set numberwidth=2
-"set textwidth=80															" Make it obvious where 80 characters is
-set cmdheight=2
+set numberwidth=4															" Minimal number of columns to use for the line number
 
 " Turn Off Swap Files {{{
 
@@ -399,22 +397,6 @@ nnoremap <C-H> <C-W><C-H>
 
 " }}}
 
-" Search and replace word under cursor (,*) {{{
-
-nnoremap <leader>* :%s/\<<C-r><C-w>\>//<Left>
-vnoremap <leader>* "hy:%s/\V<C-r>h//<left>
-
-" }}}
-
-" Quicker window movement {{{
-
-nnoremap <C-j> <C-w>j
-nnoremap <C-k> <C-w>k
-nnoremap <C-h> <C-w>h
-nnoremap <C-l> <C-w>l
-
-" }}}
-
 " Quick tab movement {{{
 
 nnoremap tf :tabfirst<CR>
@@ -428,6 +410,13 @@ nnoremap [t :tabprev<CR>
 
 nnoremap ]b :bnext<cr>
 nnoremap [b :bprev<cr>
+
+" }}}
+
+" Search and replace word under cursor (,*) {{{
+
+nnoremap <leader>* :%s/\<<C-r><C-w>\>//<Left>
+vnoremap <leader>* "hy:%s/\V<C-r>h//<left>
 
 " }}}
 
@@ -714,7 +703,7 @@ let g:jsx_ext_required = 0
 
 " NERDTree Options {{{
 
-map <C-c> :NERDTreeToggle<CR>
+nnoremap <C-c> :NERDTreeToggle<CR>
 let NERDTreeChDirMode=2																			" setting root dir in NT also sets VIM's cd
 let NERDTreeMapOpenSplit = "s"
 let NERDTreeMapOpenVSplit = "v"
@@ -808,7 +797,7 @@ let g:go_hightlight_operators = 1
 let g:go_hightlight_build_constraints = 1
 " }}}
 
-map <leader>g :YcmCompleter GoToDefinitionElseDeclaration<CR>
+nnoremap <leader>g :YcmCompleter GoToDefinitionElseDeclaration<CR>
 if executable("rg")
 	let g:ackprg = 'rg --hidden -i'
 elseif executable("ag")
@@ -817,28 +806,25 @@ else
   let g:ackprg = 'git grep -H --line-number --no-color --untracked'
 endif
 
-" ----------------------------------------------------------------------------
 " Movement in insert mode {{{
-" ----------------------------------------------------------------------------
+inoremap <C-h> <C-o>h
+inoremap <C-l> <C-o>a
+inoremap <C-j> <C-o>j
+inoremap <C-k> <C-o>k
+" }}}
 
 " Hard to type things {{{
-
 iabbrev >> →
 iabbrev << ←
 iabbrev ^^ ↑
 iabbrev VV ↓
 iabbrev aa λ
-
+iabbrev @@ faruzzy@gmail.com
+iabbrev ccopy Copyright 2018  Pangu, all rights reserved
 " }}}
 
-
-inoremap <C-h> <C-o>h
-inoremap <C-l> <C-o>a
-inoremap <C-j> <C-o>j
-inoremap <C-k> <C-o>k
 "
 inoremap <C-^> <C-o><C-^>
-
 inoremap <expr><TAB>  pumvisible() ? "\<C-n>" : "\<TAB>"
 " move through complete suggestions with j/k/<tab>
 "inoremap <expr> j ((pumvisible())?("\<C-n>"):("j"))
@@ -1045,7 +1031,6 @@ function! SetPythonOptions()
 	setlocal tabstop=4
 	setlocal softtabstop=4
 	setlocal shiftwidth=4
-	setlocal textwidth=80
 	setlocal smarttab
 	setlocal expandtab
 	setlocal autoindent
@@ -1082,18 +1067,6 @@ function! s:root()
 	endif
 endfunction
 command! Root call s:root()
-
-" Tab completion
-" will insert tab at beginning of line,
-" will use completion if not at beginning
-function! InsertTabWrapper()
-	let col = col('.') - 1
-	if !col || getline('.')[col - 1] !~ '\k'
-		return "\<tab>"
-	else
-		return "\<c-p>"
-	endif
-endfunction
 
 " ----------------------------------------------------------------------------
 " }}}
