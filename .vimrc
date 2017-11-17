@@ -468,10 +468,10 @@ nnoremap <leader>pp :Git push origin master<CR>
 
 " Plug {{{
 
-nnoremap <leader>pi :source %<CR>:PlugInstall<CR>
-nnoremap <leader>pu :source %<CR>:PlugUpdate<CR>
-nnoremap <leader>pU :source %<CR>:PlugUpgrade<CR>
-nnoremap <leader>pc :source %<CR>:PlugClean<CR>
+nnoremap <leader>pi :PlugInstall<CR>
+nnoremap <leader>pu :PlugUpdate<CR>
+nnoremap <leader>pU :PlugUpgrade<CR>
+nnoremap <leader>pc :PlugClean<CR>
 
 " }}}
 
