@@ -335,7 +335,7 @@ call plug#end()
 colorscheme onedark
 
 " ----------------------------------------------------------------------------
-" FZF {{{
+" fzf.vim {{{
 " ----------------------------------------------------------------------------
 
 " https://github.com/junegunn/fzf
@@ -349,40 +349,7 @@ endif
 let g:fzf_files_options =
   \ '--preview "(highlight -O ansi {} || cat {}) 2> /dev/null | head -'.&lines.'"'
 
-inoremap <expr> <c-x><c-t> fzf#complete('tmuxwords.rb --all-but-current --scroll 500 --min 5')
-imap <c-x><c-k> <plug>(fzf-complete-word)
-imap <c-x><c-f> <plug>(fzf-complete-path)
-imap <c-x><c-j> <plug>(fzf-complete-file-ag)
-imap <c-x><c-l> <plug>(fzf-complete-line)
-
-nmap <leader><tab> <plug>(fzf-maps-n)
-xmap <leader><tab> <plug>(fzf-maps-x)
-omap <leader><tab> <plug>(fzf-maps-o)
-
-command! Plugs call fzf#run({
-  \ 'source':  map(sort(keys(g:plugs)), 'g:plug_home."/".v:val'),
-  \ 'options': '--delimiter / --nth -1',
-  \ 'down':    '~40%',
-  \ 'sink':    'Explore'})
-
-command! FZFTag if !empty(tagfiles()) | call fzf#run({
-  \   'source': "sed '/^\\!/d;s/\t.*//' " . join(tagfiles()) . ' | uniq',
-  \   'sink':   'tag',
-  \ }) | else | echo 'No tags' | endif
-
-command! -bar FZFTags if !empty(tagfiles()) |
-			\ call fzf#run({
-			\   'source': 'sed ''/^\\!/ d; s/^\([^\t]*\)\t.*\t\(\w\)\(\t.*\)\?/\2\t\1/; /^l/ d'' ' . join(tagfiles()) . ' | uniq',
-			\   'sink': function('<SID>tag_line_handler'),
-			\ }) | else | call MakeTags() | FZFTags | endif
-
-command! FZFTagsBuffer call fzf#run({
-			\   'source': 'ctags -f - --sort=no ' . bufname("") . ' | sed ''s/^\([^\t]*\)\t.*\t\(\w\)\(\t.*\)\?/\2\t\1/'' | sort -k 1.1,1.1 -s',
-			\   'sink': function('<SID>tag_line_handler'),
-			\   'options': '--tac',
-			\ })
-
-nnoremap <C-p> :Files<CR>
+nnoremap <C-p> :Root<CR>:Files<CR>
 nnoremap <C-b> :Buffers<CR>
 nnoremap <silent> <leader>C			:Colors<CR>
 nnoremap <silent> <leader>l			:Lines<CR>
