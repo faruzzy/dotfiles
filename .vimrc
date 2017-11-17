@@ -472,11 +472,11 @@ nnoremap <leader>gd :Gdiff<CR>
 nnoremap <leader>gb :Gblame<CR>
 nnoremap <leader>gg :Gmerge<CR>
 nnoremap <leader>gv :GV<CR>
+nnoremap <leader>GV :GV!<CR>
 nnoremap <leader>pp :Git push origin master<CR>
 
 " }}}
 
-" roland
 " Plug {{{
 
 nnoremap <leader>pi :source %<CR>:PlugInstall<CR>
@@ -597,7 +597,7 @@ autocmd!
 	" Automatically wrap at 80 characters for Markdown
 	autocmd BufRead,BufNewFile *.md setlocal textwidth=80
 
-	" Automatically wrap at 72 characters and spell check git commit messages
+	" Automatically wrap at 80 characters and spell check git commit messages
 	autocmd FileType gitcommit setlocal textwidth=80
 	autocmd FileType gitcommit setlocal spell
 
@@ -608,7 +608,6 @@ augroup END
 " Silver Searcher {{{
 augroup ag_config
 autocmd!
-
   if executable("ag")
 	" Note we extract the column as well as the file and line number
 	"set grepprg=ag\ --nogroup\ --nocolor\ --column
@@ -650,7 +649,6 @@ augroup cline
 	autocmd WinLeave,InsertEnter * set nocursorline
 	autocmd  WinEnter,InsertLeave * set cursorline
 augroup END
-
 " }}}
 
 "augroup nerd_loader
@@ -991,7 +989,6 @@ function! s:GithubPullRequest()
 	silent exec "!open '" . shellescape(l:prUrl, 1) . "'"
 endfunction
 command! PR :call s:GithubPullRequest()function! s:tag_line_handler(l)
-" Faruzzy
 
 " Find any URL on the current line, and open it in a web browser.
 " Adapted from: http://stackoverflow.com/questions/9458294/open-url-under-cursor-in-vim-with-browser
