@@ -86,13 +86,13 @@ elif [ "$OS" = 'ubuntu' ]; then
 fi
 
 ##### npm #####
-alias npmp='sudo npm publish'
-alias npma='sudo npm adduser'
-alias npmi='sudo npm install'
-alias npmg='sudo npm install -g'
-alias npmu='sudo npm update'
-alias npmr='sudo npm uninstall'
-alias npmrg='sudo npm uninstall -g'
+alias npmp='npm publish'
+alias npma='npm adduser'
+alias npmi='npm install'
+alias npmg='npm install -g'
+alias npmu='npm update'
+alias npmr='npm uninstall'
+alias npmrg='npm uninstall -g'
 
 # npm offline
 # install npm dependencies from cache
