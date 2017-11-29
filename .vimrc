@@ -231,7 +231,7 @@ function! BuildYCM(info)
 endfunction
 "Plug 'Valloric/YouCompleteMe', { 'do': function('BuildYCM') }
 Plug 'Shougo/neocomplete.vim'
-Plug 'scrooloose/syntastic', { 'for': ['python', 'java', 'javascript'] }
+Plug 'w0rp/ale'
 Plug 'Shougo/unite.vim'
 Plug 'tpope/vim-unimpaired'
 
@@ -480,6 +480,12 @@ nnoremap <leader>pc :PlugClean<CR>
 " ----------------------------------------------------------------------------
 
 let g:tmuxcomplete#trigger = 'omnifunc'
+
+let g:ale_fixers = {
+\   'javascript': ['eslint'],
+\}
+
+let g:ale_fix_on_save = 1
 
 " ----------------------------------------------------------------------------
 " autocmd {{{
