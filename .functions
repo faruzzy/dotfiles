@@ -14,9 +14,9 @@ function epoch() {
 	else
 		# is date
 		if [ $# -gt 0 ]; then
-		date +%s --date="$*"
+			date +%s --date="$*"
 		else
-		date +%s
+			date +%s
 		fi
 	fi
 }
@@ -125,9 +125,9 @@ function fo() {
 	file=${out[1]}
 	if [ -n "$file" ]; then
 		if [ "$key" = ctrl-o ]; then
-		open "$file"
+			open "$file"
 		else
-		${EDITOR:-vim} "$file"
+			${EDITOR:-vim} "$file"
 		fi
 	fi
 }
@@ -161,10 +161,10 @@ function ftpane() {
 	target_pane=$(echo $target | awk 'BEGIN{FS=":|-"} {print$2}' | cut -c 1)
 
 	if [[ $current_window -eq $target_window ]]; then
-	  tmux select-pane -t ${target_window}.${target_pane}
+		tmux select-pane -t ${target_window}.${target_pane}
 	else
-	  tmux select-pane -t ${target_window}.${target_pane} &&
-	  tmux select-window -t $target_window
+		tmux select-pane -t ${target_window}.${target_pane} &&
+		tmux select-window -t $target_window
 	fi
 }
 
@@ -252,7 +252,7 @@ function gb() {
 	is_in_git_repo || return
 	git branch -a --color=always | grep -v '/HEAD\s' | sort |
 	fzf-down --ansi --multi --tac --preview-window right:70% \
-			--preview 'git log --oneline --graph --date=short --pretty="format:%C(auto)%cd %h%d %s" $(sed s/^..// <<< {} | cut -d" " -f1) | head -200' |
+		--preview 'git log --oneline --graph --date=short --pretty="format:%C(auto)%cd %h%d %s" $(sed s/^..// <<< {} | cut -d" " -f1) | head -200' |
 	sed 's/^..//' | cut -d' ' -f1 |
 	sed 's#^remotes/##'
 }
@@ -308,13 +308,13 @@ function calc() {
 	#                       └─ default (when `--mathlib` is used) is 20
 	#
 	if [[ "$result" == *.* ]]; then
-			# improve the output for decimal numbers
-			printf "$result" |
-			sed -e 's/^\./0./'        `# add "0" for cases like ".5"` \
-				-e 's/^-\./-0./'      `# add "0" for cases like "-.5"`\
-				-e 's/0*$//;s/\.$//'   # remove trailing zeros
+		# improve the output for decimal numbers
+		printf "$result" |
+		sed -e 's/^\./0./'        `# add "0" for cases like ".5"` \
+			-e 's/^-\./-0./'      `# add "0" for cases like "-.5"`\
+			-e 's/0*$//;s/\.$//'   # remove trailing zeros
 	else
-			printf "$result"
+		printf "$result"
 	fi
 	printf "\n"
 }
@@ -367,11 +367,11 @@ function extract() {
 function gifify() {
 	if [[ -n "$1" ]]; then
 		if [[ $2 == '--good' ]]; then
-		ffmpeg -i $1 -r 10 -vcodec png out-static-%05d.png
-		time convert -verbose +dither -layers Optimize -resize 900x900\> out-static*.png  GIF:- | gifsicle --colors 128 --delay=5 --loop --optimize=3 --multifile - > $1.gif
-		rm out-static*.png
+			ffmpeg -i $1 -r 10 -vcodec png out-static-%05d.png
+			time convert -verbose +dither -layers Optimize -resize 900x900\> out-static*.png  GIF:- | gifsicle --colors 128 --delay=5 --loop --optimize=3 --multifile - > $1.gif
+			rm out-static*.png
 		else
-		ffmpeg -i $1 -s 600x400 -pix_fmt rgb24 -r 10 -f gif - | gifsicle --optimize=3 --delay=3 > $1.gif
+			ffmpeg -i $1 -s 600x400 -pix_fmt rgb24 -r 10 -f gif - | gifsicle --optimize=3 --delay=3 > $1.gif
 		fi
 	else
 		echo "proper usage: gifify <input_movie.mov>. You DO need to include extension."
@@ -433,7 +433,7 @@ function server() {
 function dataurl() {
 	local mimeType=$(file -b --mime-type "$1")
 	if [[ $mimeType == text/* ]]; then
-			mimeType="${mimeType};charset=utf-8"
+		mimeType="${mimeType};charset=utf-8"
 	fi
 	echo "data:${mimeType};base64,$(openssl base64 -in "$1" | tr -d '\n')"
 }
@@ -614,18 +614,18 @@ EOF
 # Add reminder to Reminders.app (OS X 10.8)
 # Usage: `remind 'foo'` or `echo 'foo' | remind`
 function remind() {
-        local text
-        if [ -t 0 ]; then
+	local text
+	if [ -t 0 ]; then
 			text="$1" # argument
-        else
+	else
 			text=$(cat) # pipe
-        fi
-        osascript >/dev/null <<EOF
-			tell application "Reminders"
-					tell the default list
-							make new reminder with properties {name:"$text"}
-					end tell
-			end tell
+	fi
+	osascript >/dev/null <<EOF
+		tell application "Reminders"
+				tell the default list
+						make new reminder with properties {name:"$text"}
+				end tell
+		end tell
 EOF
 }
 
@@ -642,7 +642,7 @@ function browsers(){
 function ged() {
 	local files=()
 	for f in $(git diff --name-only "$@"); do
-	[[ -e "$f" ]] && files=("${files[@]}" "$f")
+		[[ -e "$f" ]] && files=("${files[@]}" "$f")
 	done
 	local n=${#files[@]}
 	echo "Opening $n $([[ "$@" ]] || echo "modified ")file$([[ $n != 1 ]] && \
@@ -662,6 +662,6 @@ bind '"\er": redraw-current-line'
 bind '"\C-g\C-f": "$(gf)\e\C-e\er"'
 bind '"\C-g\C-b": "$(gb)\e\C-e\er"'
 bind '"\C-g\C-t": "$(gt)\e\C-e\er"'
-bind '"\C-g\C-h": "$(gh)\e\C-e\er"'
+bind '"\C-g\C-y": "$(gh)\e\C-e\er"'
 bind '"\C-g\C-r": "$(gr)\e\C-e\er"'
-
+bind -x '"\C-p": fe'
