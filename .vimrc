@@ -46,6 +46,10 @@ if !has('nvim')
 	set term=xterm-256color
 endif
 
+if has('nvim') || has('termguicolors')
+	"set termguicolors
+endif
+
 set t_ut=																	" Disable background color erase, play nicely with tmux
 set fileencodings=utf-8,cp932,euc-jp										" A list of character encodings, set default encoding to UTF-8
 set fileformats=unix,dos,mac												" Prefer Unix over Windows over OS 9 formats
@@ -92,13 +96,17 @@ set nocursorcolumn
 set lcs=tab:▸\ ,trail:·,eol:¬,nbsp:_
 set list
 
-set mouse=a																	" Enable mouse in all modes
+if has('mouse')
+	set mouse=a																	" Enable mouse in all modes
+endif
+
 set mousemodel=popup
 set path=$PWD/**															" You need this (trust me) to move around
 set wildmenu
 set history=1024															" Amount of Command history increased from default 20 to 1024
 set noerrorbells visualbell t_vb=											" No beeps
 set numberwidth=4															" Minimal number of columns to use for the line number
+set scrolloff=5
 
 " Turn Off Swap Files {{{
 
@@ -118,7 +126,19 @@ set hidden																	" Display another buffer when current buffer isn't sa
 set synmaxcol=300
 set foldmethod=indent														" Enable folding
 set foldlevel=99
-set statusline=%<[%n]\ %F\ %m%r%y\ %{exists('g:loaded_fugitive')?fugitive#statusline():''}\ %=%-14.(%l,%c%V%)\ %P
+"set statusline=%<[%n]\ %F\ %m%r%y\ %{exists('g:loaded_fugitive')?fugitive#statusline():''}\ %=%-14.(%l,%c%V%)\ %P
+function! s:statusline_expr()
+  let mod = "%{&modified ? '[+] ' : !&modifiable ? '[x] ' : ''}"
+  let ro  = "%{&readonly ? '[RO] ' : ''}"
+  let ft  = "%{len(&filetype) ? '['.&filetype.'] ' : ''}"
+  let fug = "%{exists('g:loaded_fugitive') ? fugitive#statusline() : ''}"
+  let sep = ' %= '
+  let pos = ' %-12(%l : %c%V%) '
+  let pct = ' %P'
+
+  return '[%n] %F %<'.mod.ro.ft.fug.sep.pos.'%*'.pct
+endfunction
+"let &statusline = s:statusline_expr()
 
 "http://stackoverflow.com/questions/20186975/vim-mac-how-to-copy-to-clipboard-without-pbcopy
 set clipboard^=unnamed
@@ -210,6 +230,7 @@ endif
 Plug 'crusoexia/vim-monokai'
 Plug 'cdmedia/itg_flat_vim'
 Plug 'junegunn/seoul256.vim'
+Plug 'challenger-deep-theme/vim', { 'as': 'challenger-deep' }
 Plug 'romainl/Apprentice'
 Plug 'joshdick/onedark.vim'
 Plug 'chriskempson/base16-vim'
@@ -289,8 +310,6 @@ Plug 'elzr/vim-json', { 'for' : 'json' }											" json support
 
 " CSS {{{
 
-Plug 'skammer/vim-css-color', { 'for': 'css' }
-Plug 'groenewege/vim-less', { 'for': 'less' }
 Plug 'cakebaker/scss-syntax.vim', { 'for': 'scss' }
 
 " }}}
@@ -330,7 +349,7 @@ call plug#end()
 " ----------------------------------------------------------------------------
 " }}}
 " ----------------------------------------------------------------------------
-colorscheme onedark
+colorscheme seoul256
 
 " ----------------------------------------------------------------------------
 " fzf.vim {{{
@@ -429,17 +448,19 @@ vnoremap <tab> %
 " Treat <li> and <p> tags like the block tags they are
 let g:html_indent_tags = 'li\|p'
 
-" Save and close all buffer
-nnoremap <leader>X :wqa!<CR>
-
-" Close all buffer without saving
-nnoremap <leader>Q :qa!<CR>
+"nnoremap <leader>vc :call VimuxCloseRunner()<CR>
 
 " Save and close current buffer
 nnoremap <leader>x :wq!<CR>
 
+" Save and close all buffer
+nnoremap <leader>X :wqa!<CR>
+
 " Close current buffer without saving
-nnoremap <leader>q :q!<CR>
+nnoremap <leader>q :q!<bR>
+
+" Close all buffer without saving
+nnoremap <leader>Q :qa!<CR> :VimuxCloseRunner()<CR>
 
 " Quickly open .vimrc file in the current buffer
 nnoremap <leader>v :e ~/Github/dotfiles/.vimrc<CR>
@@ -492,14 +513,14 @@ let g:ale_fix_on_save = 1
 " ----------------------------------------------------------------------------
 
 if has("autocmd")
-    autocmd BufNewFile,Bufread *.json setfiletype json syntax=javascript				" Treat .json files as .js
+    autocmd BufNewFile,Bufread *.json setfiletype json syntax=javascript								" Treat .json files as .js
 
 	autocmd FileType css,sass,less set omnifunc=csscomplete#CompleteCSS
 	autocmd FileType javascript setlocal omnifunc=javascriptcomplete#CompleteJS
 	autocmd FileType python setlocal omnifunc=pythoncomplete#CompleteTags
 	autocmd FileType xml setlocal omnifunc=xmlComplete#CompleteTags
 
-	autocmd BufNewFile,Bufread *.md setlocal filetype=markdown							" Treat .md files as Markdown
+	autocmd BufNewFile,Bufread *.md setlocal filetype=markdown											" Treat .md files as Markdown
 	autocmd BufNewFile,Bufread *.js setlocal filetype=javascript
 
 	autocmd StdinReadPre * let s:std_in=1
@@ -524,13 +545,13 @@ if has("autocmd")
 	" run bash files
 	autocmd filetype sh nnoremap <leader>c :w <CR>:!bash %<CR>
 
-	autocmd FocusLost * call ToggleRelativeOn()
+	autocmd FocusLost   * call ToggleRelativeOn()
 	autocmd FocusGained * call ToggleRelativeOn()
 	autocmd InsertEnter * call ToggleRelativeOn()
 	autocmd InsertLeave * call ToggleRelativeOn()
 
-	autocmd VimResized * :wincmd =																	" Resize splits when the window is resized
-	autocmd BufEnter * silent! cd %:p:h															" update dir to current file
+	autocmd VimResized  * :wincmd =																		" Resize splits when the window is resized
+	autocmd BufEnter    * silent! cd %:p:h																" update dir to current file
 
 	autocmd FileType go nmap <leader>s  <Plug>(go-def-split)
 	autocmd FileType go nmap <leader>v  <Plug>(go-def-vertical)
@@ -737,8 +758,6 @@ let g:NERDTreeIndicatorMapCustom = {
 
 " }}}
 
-" Vimux {{{
-let g:VimuxHeight = "35"
 
 " Close vim tmux runner opened by VimuxRunCommand
 nnoremap <leader>vc :call VimuxCloseRunner()<CR>
@@ -753,10 +772,10 @@ nnoremap <leader>vi :VimuxInterruptRunner<CR>
 nnoremap <leader>vz :VimuxZoomRunner<CR>
 
 " Run gulp inside runner Pane
-nnoremap <leader>gu :VimuxPromptCommand("gulp")<CR>
+nnoremap <leader>gu :Root<CR>:VimuxPromptCommand("gulp")<CR>
 
 " Prompt for a command and run it in a small horizontal split bellow the current pane
-nnoremap <leader>vr :VimuxPromptCommand<CR>
+nnoremap <leader>vr :Root<CR> :VimuxPromptCommand<CR>
 "  }}}
 
 " tmux {{{
@@ -807,9 +826,9 @@ nnoremap <leader>g :YcmCompleter GoToDefinitionElseDeclaration<CR>
 if executable("rg")
 	let g:ackprg = 'rg --hidden -i'
 elseif executable("ag")
-  let g:ackprg = 'ag --nogroup --nocolor --column'
+	let g:ackprg = 'ag --nogroup --nocolor --column'
 else
-  let g:ackprg = 'git grep -H --line-number --no-color --untracked'
+	let g:ackprg = 'git grep -H --line-number --no-color --untracked'
 endif
 
 " Movement in insert mode {{{
@@ -830,6 +849,8 @@ iabbrev ccopy Copyright 2018  Pangu, all rights reserved
 " }}}
 
 "
+"inoremap jk <esc>
+"inoremap <esc> <nop>
 inoremap <C-^> <C-o><C-^>
 inoremap <expr><TAB>  pumvisible() ? "\<C-n>" : "\<TAB>"
 " move through complete suggestions with j/k/<tab>
@@ -877,14 +898,14 @@ command! CopyFilepath         :let @* = expand('%') | echo 'Copied to clipboard:
 command! CopyAbsoluteFilepath :let @* = expand('%:p') | echo 'Copied to clipboard: ' . @*
 
 " Copy filename and filepath quick shortcuts.
-nnoremap <leader>yfn :CopyFilename<CR>
-xnoremap <leader>yfn :CopyFilename<CR>
-nnoremap <leader>yp :CopyPath<CR>
-xnoremap <leader>yp :CopyPath<CR>
-nnoremap <leader>yap :CopyAbsolutePath<CR>
-xnoremap <leader>yap :CopyAbsolutePath<CR>
-nnoremap <leader>yfp :CopyFilepath<CR>
-xnoremap <leader>yfp :CopyFilepath<CR>
+nnoremap <leader>yfn  :CopyFilename<CR>
+xnoremap <leader>yfn  :CopyFilename<CR>
+nnoremap <leader>yp   :CopyPath<CR>
+xnoremap <leader>yp   :CopyPath<CR>
+nnoremap <leader>yap  :CopyAbsolutePath<CR>
+xnoremap <leader>yap  :CopyAbsolutePath<CR>
+nnoremap <leader>yfp  :CopyFilepath<CR>
+xnoremap <leader>yfp  :CopyFilepath<CR>
 nnoremap <leader>yafp :CopyAbsoluteFilepath<CR>
 xnoremap <leader>yafp :CopyAbsoluteFilepath<CR>
 
