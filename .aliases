@@ -13,7 +13,7 @@ alias tmux='tmux -2'
 # Shortcuts
 alias dl='cd ~/Downloads'
 alias dt='cd ~/Desktop'
-alias h='history'
+#alias h='history'
 
 ##### Adobe CQ ######
 alias gotoauthor="cd ~/adobe/author"
@@ -32,7 +32,7 @@ alias chrome='open -a google\ chrome'
 alias chromium='open -a google\ chrome\ canary'
 alias f='open -a Finder'
 alias nom='rm -rf node_modules && npm cache clear && npm i'
-alias rg='rg --hidden --ignore-case'
+#alias rg='rg --hidden --ignore-case'
 alias ag="ag --path-to-ignore ~/.agignore"
 alias k5="kill -9 %%"
 
