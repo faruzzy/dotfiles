@@ -9,12 +9,13 @@ shopt -s globstar
 # Case-insensitive globbing (used in pathname expansion)
 shopt -s nocaseglob
 
-# Append to the Bash histroy file, rather than overwritting it
+# Append to the Bash history file, rather than overwritting it
 shopt -s histappend
 
+# will always have the opportunity to edit the result of history substitutions.
 shopt -s histverify
 
-# Do not attempt to search the PATH for possible completions when 
+# Do not attempt to search the PATH for possible completions when
 # completion is attempted on an empty line
 shopt -s no_empty_cmd_completion
 
