@@ -1,6 +1,6 @@
 # vi mode
-set editing-mode vi
-set keymap vi-command
+#set editing-mode vi
+#set keymap vi-command
 
 # Perform file completion in a case insensitive fashion
 set completion-ignore-case on
