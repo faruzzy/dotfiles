@@ -70,14 +70,14 @@ function fshow() {
 				FZF-EOF"
 }
 
-# fd - cd to selected directory
-function fd() {
+# dd - cd to selected directory
+function dd() {
 	DIR=`find ${1:-*} -path '*/\.*' -prune -o -type d -print 2> /dev/null | fzf-tmux` \
 		&& cd "$DIR"
 }
 
-# fda - including hidden directories
-function fda() {
+# dda - including hidden directories
+function dda() {
 	DIR=`find ${1:-.} -type d 2> /dev/null | fzf-tmux` && cd "$DIR"
 }
 
@@ -279,6 +279,12 @@ function gr() {
 	fzf-down --tac \
 		--preview 'git log --oneline --graph --date=short --pretty="format:%C(auto)%cd %h%d %s" {1} | head -200' |
 	cut -d$'\t' -f1
+}
+
+gs() {
+	is_in_git_repo || return
+	git stash list | fzf-down --reverse -d: --preview 'git show --color=always {1}' |
+	cut -d: -f1
 }
 
 # A helper function to join multi-line output from fzf
@@ -664,4 +670,5 @@ bind '"\C-g\C-b": "$(gb)\e\C-e\er"'
 bind '"\C-g\C-t": "$(gt)\e\C-e\er"'
 bind '"\C-g\C-y": "$(gh)\e\C-e\er"'
 bind '"\C-g\C-r": "$(gr)\e\C-e\er"'
+bind '"\C-g\C-s": "$(gs)\e\C-e\er"'
 bind -x '"\C-p": fe'
