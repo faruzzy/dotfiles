@@ -298,7 +298,7 @@ Plug 'StanAngeloff/php.vim', { 'for': 'php' }										" PHP Syntax
 "Plug 'mxw/vim-jsx'
 "Plug 'posva/vim-vue'
 "Plug 'sheerun/vim-polyglot'
-"Plug 'HerringtonDarkholme/yats.vim'												" Advanced TypeScript Syntax Highlighting
+Plug 'HerringtonDarkholme/yats.vim'												" Advanced TypeScript Syntax Highlighting
 "Plug 'leafgarland/typescript-vim'													" TypeScript Syntax support
 "Plug 'Quramy/tsuquyomi'															" TypeScript Development
 "Plug 'Shougo/vimproc.vim', {'do': 'make'}											" Interactive command execution in vim (dependency of 'Quramy/tsuquyomi')
