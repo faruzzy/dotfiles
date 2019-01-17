@@ -156,3 +156,6 @@
 
 [browser "ch"]
 	cmd = open -a \"/Applications/Google\\ Chrome.app\"
+[difftool "sourcetree"]
+	cmd = opendiff \"$LOCAL\" \"$REMOTE\"
+	path = 
