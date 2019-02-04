@@ -19,9 +19,9 @@ alias dt='cd ~/Desktop'
 alias gotoauthor="cd ~/adobe/author"
 alias gotopublisher="cd ~/adobe/publisher"
 alias startauthor="gotoauthor; java -jar $JAVA_OPTIONS -Xdebug -Xnoagent cq-author-4502.jar -nofork -gui"
-alias startauthorDebug='gotoauthor; java $JAVA_OPTIONS -Xdebug -agentlib:jdwp=transport=dt_socket,address=30303,suspend=n,server=y -javaagent:/Users/hzbhyl/Library/Caches/IntelliJIdea2016.1/groovyHotSwap/gragent.jar -Dorg.apache.sling.commons.log.level=DEBUG -Xnoagent -jar cq-author-4502.jar -verbose | sed -e "s/Listening \(.*\)/`tput setaf 5` Listening \1`tput sgr0` /g"'
+alias startauthorDebug='gotoauthor; java $JAVA_OPTIONS -Xdebug -agentlib:jdwp=transport=dt_socket,address=30303,suspend=n,server=y -javaagent:/Users/szd0qs/Library/Caches/IntelliJIdea2016.1/groovyHotSwap/gragent.jar -Dorg.apache.sling.commons.log.level=DEBUG -Xnoagent -jar cq-author-4502.jar -verbose | sed -e "s/Listening \(.*\)/`tput setaf 5` Listening \1`tput sgr0` /g"'
 alias startpublish="gotopublisher; java -jar $JAVA_OPTIONS -Xdebug -Xnoagent cq-publish-4503.jar -gui"
-alias startpublishDebug="gotopublisher; java $JAVA_OPTIONS -Xdebug -agentlib:jdwp=transport=dt_socket,address=30305,suspend=n,server=y -javaagent:/Users/hzbhyl/Library/Caches/IntelliJIdea2016.1/groovyHotSwap/gragent.jar -Xnoagent -jar cq-publish-4503.jar -verbose"
+alias startpublishDebug="gotopublisher; java $JAVA_OPTIONS -Xdebug -agentlib:jdwp=transport=dt_socket,address=30305,suspend=n,server=y -javaagent:/Users/szd0qs/Library/Caches/IntelliJIdea2016.1/groovyHotSwap/gragent.jar -Xnoagent -jar cq-publish-4503.jar -verbose"
 
 # programs
 alias st='open -a "Sublime Text"'
