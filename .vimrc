@@ -848,8 +848,7 @@ iabbrev @@ faruzzy@gmail.com
 iabbrev ccopy Copyright 2018  Pangu, all rights reserved
 " }}}
 
-"
-"inoremap jk <esc>
+inoremap jk <esc>
 "inoremap <esc> <nop>
 inoremap <C-^> <C-o><C-^>
 inoremap <expr><TAB>  pumvisible() ? "\<C-n>" : "\<TAB>"
