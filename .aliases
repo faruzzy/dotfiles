@@ -185,7 +185,7 @@ alias httpdump="sudo tcpdump -i en1 -n -s 0 -w - | grep -a -o -E \"Host\: .*|GET
 
 ##### Vim ######
 
-alias vim='/usr/local/Cellar/vim/8.0.0596/bin/vim'
+alias vim='/usr/local/Cellar/vim/8.1.1700/bin/vim'
 alias v='vim'
 alias mvim='open -a /Applications/MacVim.app/ $1'
 
