@@ -65,9 +65,9 @@ set indentkeys-=0#															" Do not break indent on #
 set cinkeys-=0#
 set expandtab																" Use the appropriate number of spaces to insert a <Tab>b
 set shiftround																" Round indent to multiple of 'shiftwidth
-set shiftwidth=4															" Number of spaces to use for each step of (auto)indent
-set softtabstop=4															" Number of spaces that a <Tab> in the file counts for
-set tabstop=4																" Set space width of tabs
+set shiftwidth=2															" Number of spaces to use for each step of (auto)indent
+set softtabstop=2															" Number of spaces that a <Tab> in the file counts for
+set tabstop=2																" Set space width of tabs
 set smarttab																" At start of line, <Tab> inserts shiftwidth spaces, <Bs> deletes shifwidth spaces.
 set backspace=indent,eol,start
 
