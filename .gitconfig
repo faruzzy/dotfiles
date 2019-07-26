@@ -11,7 +11,7 @@
 	whitespace = trailing-space,space-before-tab,indent-with-non-tab
     editor = vim
 	quotepath = false
-	excludesfile = /Users/szd0qs/.gitignore_global
+	excludesfile = ~/.gitignore_global
 	autocrlf = input
 	#attributesfile = ~/.gitattributes
 
@@ -158,4 +158,4 @@
 	cmd = open -a \"/Applications/Google\\ Chrome.app\"
 [difftool "sourcetree"]
 	cmd = opendiff \"$LOCAL\" \"$REMOTE\"
-	path = 
+	path =
