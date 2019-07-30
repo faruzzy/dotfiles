@@ -582,7 +582,6 @@ if 'VIRTUAL_ENV' in os.environ:
 EOF
 
 let python_highlight_all=1
-let syntastic_mode_map = {'passive_filetypes': ['html']}
 
 " tagbar installation, see:
 " https://thomashunter.name/blog/installing-vim-tagbar-with-macvim-in-os-x://thomashunter.name/blog/installing-vim-tagbar-with-macvim-in-os-x/
@@ -651,7 +650,6 @@ augroup END
 augroup airline_config
 autocmd!
 	let g:airline_powerline_fonts = 1
-	let g:airline_enable_syntastic = 1
 	let g:airline#extensions#tabline#buffer_nr_format = '%s '
 	let g:airline#extensions#tabline#buffer_nr_show = 1
 	let g:airline#extensions#tabline#enabled = 1
@@ -678,22 +676,6 @@ augroup END
 "			\|   execute 'autocmd! nerd_loader'
 "			\| endif
 "augroup END
-
-
-" Syntastic.vim {{{
-augroup syntastic_config
-autocmd!
-	let g:syntastic_error_symbol = '✗'
-	let g:syntastic_warning_symbol = '⚠'
-	let g:syntastic_ruby_checkers = ['mri', 'rubocop']
-	let g:syntastic_always_populate_loc_list = 1
-	let g:syntastic_auto_loc_list = 1
-	let g:syntastic_check_on_open = 1
-	let g:syntastic_check_on_wq = 0
-	let g:syntastic_javascript_checkers = ['eslint']											" npm install -g eslint; npm install -g babel-eslint; npm install -g eslint-plugin-react
-	let g:syntastic_json_checkers = ['jsonlint']												" npm install -g jsonlint
-augroup END
-" }}}
 
 augroup python3
 	au! BufEnter *.py setlocal omnifunc=python3complete#Complete
