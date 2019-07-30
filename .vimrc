@@ -280,7 +280,7 @@ Plug 'nvie/vim-flake8'
 
 Plug 'othree/html5.vim', { 'for': 'html' }
 Plug 'othree/html5-syntax.vim', { 'for': 'html' }
-Plug 'mattn/emmet-vim', { 'for' : ['html', 'css'] }
+Plug 'mattn/emmet-vim', { 'for' : ['html', 'css', 'javascript'] }
 Plug 'gregsexton/MatchTag'															" highlight matching html tag
 
 " }}}
