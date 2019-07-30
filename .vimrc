@@ -281,7 +281,9 @@ Plug 'nvie/vim-flake8'
 Plug 'othree/html5.vim', { 'for': 'html' }
 Plug 'othree/html5-syntax.vim', { 'for': 'html' }
 Plug 'mattn/emmet-vim', { 'for' : ['html', 'css', 'javascript'] }
-Plug 'gregsexton/MatchTag'															" highlight matching html tag
+Plug 'gregsexton/MatchTag', { 'for': 'html' }															" highlight matching html tag
+Plug 'tmhedberg/matchit', { 'for': 'html' }																" Extended % matching for HTML
+Plug 'othree/xml.vim', { 'for': 'html' }																	" Helps editing [x]hml like files
 
 " }}}
 
