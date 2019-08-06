@@ -316,6 +316,7 @@ Plug 'vim-airline/vim-airline-themes'
 Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': 'yes \| ./install --all' }
 Plug 'junegunn/fzf.vim'
 Plug 'tpope/vim-surround'
+Plug 'tpope/vim-repeat'
 "Plug 'mileszs/ack.vim'  TODO
 Plug 'wincent/ferret'
 Plug 'jremmen/vim-ripgrep'
