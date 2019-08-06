@@ -309,7 +309,7 @@ Plug 'cakebaker/scss-syntax.vim', { 'for': 'scss' }
 
 Plug 'wellle/visual-split.vim'
 Plug 'wincent/loupe'																" Enhanced in-file search for Vim
-Plug 'jiangmiao/auto-pairs'															" provides insert mode auto-completion for quotes, parens, brackets, etc
+Plug 'jiangmiao/auto-pairs'															" provides insert mode auto-completion for quotes, parenthesis, brackets, etc
 Plug 'easymotion/vim-easymotion'
 Plug 'vim-airline/vim-airline'
 Plug 'vim-airline/vim-airline-themes'
