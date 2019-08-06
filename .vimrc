@@ -240,17 +240,6 @@ Plug 'rakr/vim-one'
 
 " }}}
 
-" Auto Completion
-function! BuildYCM(info)
-	" info is a dictionary with 3 fields
-	" - name:   name of the plugin
-	" - status: 'installed', 'updated', or 'unchanged'
-	" - force:  set on PlugInstall! or PlugUpdate!
-	if a:info.status == 'installed' || a:info.force
-		!./install.py --clang-completer --omnisharp-completer
-	endif
-endfunction
-"Plug 'Valloric/YouCompleteMe', { 'do': function('BuildYCM') }
 Plug 'Shougo/neocomplete.vim'
 Plug 'w0rp/ale'
 Plug 'Shougo/unite.vim'
@@ -693,23 +682,6 @@ let g:neocomplete#sources#syntax#min_keyword_length = 3											" Set minimum 
 
 " }}}
 
-" YouCompleteMe {{{
-
-let g:ycm_autoclose_preview_window_after_completion = 1
-let g:ycm_min_num_of_chars_for_completion = 1
-let g:ycm_python_binary_path = 'python'
-
-" }}}
-
-" TypeScript {{{
-
-if !exists("g:ycm_semantic_triggers")
-	let g:ycm_semantic_triggers = {}
-endif
-let g:ycm_semantic_triggers['typescript'] = ['.']
-
-" }}}
-
 let g:jsx_ext_required = 0
 
 " NERDTree Options {{{
@@ -806,7 +778,6 @@ let g:go_hightlight_operators = 1
 let g:go_hightlight_build_constraints = 1
 " }}}
 
-nnoremap <leader>g :YcmCompleter GoToDefinitionElseDeclaration<CR>
 if executable("rg")
 	let g:ackprg = 'rg --hidden -i'
 elseif executable("ag")
