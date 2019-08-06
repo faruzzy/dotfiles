@@ -333,6 +333,7 @@ Plug 'itspriddle/ZoomWin'															" Zoom in and out of windows/buffer
 Plug 'benmills/vimux'																" Easily interact with tmux from vim
 Plug 'christoomey/vim-tmux-navigator'												" Seamless navigation between tmux panes and vim splits
 Plug 'tmux-plugins/vim-tmux-focus-events'											" This plugin restores `FocusGained` and `FocusLost` when using vim inside Tmux.
+Plug 'wellle/tmux-complete.vim'																" adds a completion function that puts all words visible in your Tmux panes right under your fingertips
 
 " }}}
 
