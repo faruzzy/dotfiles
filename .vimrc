@@ -240,17 +240,6 @@ Plug 'rakr/vim-one'
 
 " }}}
 
-" Auto Completion
-function! BuildYCM(info)
-	" info is a dictionary with 3 fields
-	" - name:   name of the plugin
-	" - status: 'installed', 'updated', or 'unchanged'
-	" - force:  set on PlugInstall! or PlugUpdate!
-	if a:info.status == 'installed' || a:info.force
-		!./install.py --clang-completer --omnisharp-completer
-	endif
-endfunction
-"Plug 'Valloric/YouCompleteMe', { 'do': function('BuildYCM') }
 Plug 'Shougo/neocomplete.vim'
 Plug 'w0rp/ale'
 Plug 'Shougo/unite.vim'
@@ -320,13 +309,14 @@ Plug 'cakebaker/scss-syntax.vim', { 'for': 'scss' }
 
 Plug 'wellle/visual-split.vim'
 Plug 'wincent/loupe'																" Enhanced in-file search for Vim
-Plug 'jiangmiao/auto-pairs'															" provides insert mode auto-completion for quotes, parens, brackets, etc
+Plug 'jiangmiao/auto-pairs'															" provides insert mode auto-completion for quotes, parenthesis, brackets, etc
 Plug 'easymotion/vim-easymotion'
 Plug 'vim-airline/vim-airline'
 Plug 'vim-airline/vim-airline-themes'
 Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': 'yes \| ./install --all' }
 Plug 'junegunn/fzf.vim'
 Plug 'tpope/vim-surround'
+Plug 'tpope/vim-repeat'
 "Plug 'mileszs/ack.vim'  TODO
 Plug 'wincent/ferret'
 Plug 'jremmen/vim-ripgrep'
@@ -343,6 +333,7 @@ Plug 'itspriddle/ZoomWin'															" Zoom in and out of windows/buffer
 Plug 'benmills/vimux'																" Easily interact with tmux from vim
 Plug 'christoomey/vim-tmux-navigator'												" Seamless navigation between tmux panes and vim splits
 Plug 'tmux-plugins/vim-tmux-focus-events'											" This plugin restores `FocusGained` and `FocusLost` when using vim inside Tmux.
+Plug 'wellle/tmux-complete.vim'																" adds a completion function that puts all words visible in your Tmux panes right under your fingertips
 
 " }}}
 
@@ -572,14 +563,14 @@ endif
 " ----------------------------------------------------------------------------
 
 " python with virtualenv support
-py << EOF
-import os
-import sys
-if 'VIRTUAL_ENV' in os.environ:
-  project_base_dir = os.environ['VIRTUAL_ENV']
-  activate_this = os.path.join(project_base_dir, 'bin/activate_this.py')
-  execfile(activate_this, dict(__file__=activate_this))
-EOF
+"py << EOF
+"import os
+"import sys
+"if 'VIRTUAL_ENV' in os.environ:
+"  project_base_dir = os.environ['VIRTUAL_ENV']
+"  activate_this = os.path.join(project_base_dir, 'bin/activate_this.py')
+"  execfile(activate_this, dict(__file__=activate_this))
+"EOF
 
 let python_highlight_all=1
 
@@ -693,23 +684,6 @@ let g:neocomplete#sources#syntax#min_keyword_length = 3											" Set minimum 
 
 " }}}
 
-" YouCompleteMe {{{
-
-let g:ycm_autoclose_preview_window_after_completion = 1
-let g:ycm_min_num_of_chars_for_completion = 1
-let g:ycm_python_binary_path = 'python'
-
-" }}}
-
-" TypeScript {{{
-
-if !exists("g:ycm_semantic_triggers")
-	let g:ycm_semantic_triggers = {}
-endif
-let g:ycm_semantic_triggers['typescript'] = ['.']
-
-" }}}
-
 let g:jsx_ext_required = 0
 
 " NERDTree Options {{{
@@ -806,7 +780,6 @@ let g:go_hightlight_operators = 1
 let g:go_hightlight_build_constraints = 1
 " }}}
 
-nnoremap <leader>g :YcmCompleter GoToDefinitionElseDeclaration<CR>
 if executable("rg")
 	let g:ackprg = 'rg --hidden -i'
 elseif executable("ag")
