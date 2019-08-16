@@ -92,10 +92,6 @@ set noeol
 set cursorline																" Highlight current line
 set nocursorcolumn
 
-" Show invisible characters
-set lcs=tab:▸\ ,trail:·,eol:¬,nbsp:_
-set list
-
 if has('mouse')
 	set mouse=a																	" Enable mouse in all modes
 endif
@@ -555,7 +551,7 @@ if has("autocmd")
 	autocmd FileType go nmap <leader>g  <Plug>(go-gbbuild)
 	autocmd FileType go nmap <leader>t  <Plug>(go-test-compile)
 	autocmd FileType go nmap <leader>d  <Plug>(go-doc)
-	autocmd FileType go nmap <leader>f :GoImports<CR>
+	"autocmd FileType go nmap <leader>f :GoImports<CR>
 endif
 
 " ----------------------------------------------------------------------------
