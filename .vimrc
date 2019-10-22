@@ -200,9 +200,9 @@ let s:darwin = has('mac')
 
 let s:first_time_launch = 0
 if empty(glob("~/.vim/autoload/plug.vim"))
-    silent execute '!mkdir -p ~/.vim/autoload'
-    silent execute '!curl -fLo ~/.vim/autoload/plug.vim https://raw.github.com/junegunn/vim-plug/master/plug.vim'
-    let s:first_time_launch = 1
+	silent execute '!mkdir -p ~/.vim/autoload'
+	silent execute '!curl -fLo ~/.vim/autoload/plug.vim https://raw.github.com/junegunn/vim-plug/master/plug.vim'
+	let s:first_time_launch = 1
 endif
 
 call plug#begin('~/.vim/plugged')
@@ -916,7 +916,7 @@ command! -nargs=1 S
 command! StripTrailingWhitespaces call <SID>StripTrailingWhitespaces()
 
 " Save a file and strip trailing white spaces
-nmap <leader>w :StripTrailingWhitespaces<CR>:update<CR>
+nmap <leader>w :StripTrailingWhitespaces<CR>:w<CR>
 
 " Save a file as root (,W) and strip trailing white spaces
 noremap <leader>W :StripTrailingWhitespaces<CR>:w !sudo tee % > /dev/null<CR>
