@@ -287,7 +287,6 @@ Plug 'MaxMEllon/vim-jsx-pretty'																						" Sets the value of ‘comm
 Plug 'suy/vim-context-commentstring'																			" JSX syntax pretty highlighting for vim.
 
 "Plug 'Shutnik/jshint2.vim'
-"Plug 'mxw/vim-jsx'
 "Plug 'posva/vim-vue'
 "Plug 'sheerun/vim-polyglot'
 Plug 'HerringtonDarkholme/yats.vim'												" Advanced TypeScript Syntax Highlighting
@@ -507,7 +506,7 @@ let g:ale_fix_on_save = 1
 " ----------------------------------------------------------------------------
 
 if has("autocmd")
-    autocmd BufNewFile,Bufread *.json setfiletype json syntax=javascript								" Treat .json files as .js
+  autocmd BufNewFile,Bufread *.json setfiletype json syntax=javascript								" Treat .json files as .js
 
 	autocmd FileType css,sass,less set omnifunc=csscomplete#CompleteCSS
 	autocmd FileType javascript setlocal omnifunc=javascriptcomplete#CompleteJS
