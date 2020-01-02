@@ -281,6 +281,11 @@ Plug 'StanAngeloff/php.vim', { 'for': 'php' }										" PHP Syntax
 
 " ECMAScript {{{
 
+Plug 'tpope/vim-commentary'																								" Comment stuff out
+" The next two plugins helps commenting react code out
+Plug 'MaxMEllon/vim-jsx-pretty'																						" Sets the value of ‘commentstring’ to a different value depending on the region of the file you are in.
+Plug 'suy/vim-context-commentstring'																			" JSX syntax pretty highlighting for vim.
+
 "Plug 'Shutnik/jshint2.vim'
 "Plug 'mxw/vim-jsx'
 "Plug 'posva/vim-vue'
