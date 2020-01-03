@@ -297,6 +297,9 @@ Plug 'HerringtonDarkholme/yats.vim'												" Advanced TypeScript Syntax High
 Plug 'jelera/vim-javascript-syntax', { 'for': 'javascript' }
 Plug 'elzr/vim-json', { 'for' : 'json' }											" json support
 
+Plug 'SirVer/ultisnips'
+Plug 'mlaursen/vim-react-snippets'
+let g:UltiSnipsExpandTrigger="<tab>"
 " }}}
 
 " CSS {{{
