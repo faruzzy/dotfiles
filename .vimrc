@@ -499,11 +499,27 @@ nnoremap <leader>pc :PlugClean<CR>
 
 let g:tmuxcomplete#trigger = 'omnifunc'
 
+let g:ale_linters = {
+\   'python': ['flake8', 'pylint'],
+\   'javascript': ['eslint'],
+\		'vue': ['eslint']
+\}
+
 let g:ale_fixers = {
 \   'javascript': ['eslint'],
+\   'typescript': ['prettier', 'tslint', 'eslint'],
+\   'graphql': ['prettier', 'eslint'],
+\   'json': ['prettier', 'eslint'],
+\		'vue': ['eslint'],
+\		'scss': ['prettier'],
+\		'html': ['prettier'],
+\		'reason': ['refmt'],
 \}
 
 let g:ale_fix_on_save = 1
+
+nnoremap ]r :ALENextWrap<CR>     " move to the next ALE warning / error
+nnoremap [r :ALEPreviousWrap<CR> " move to the previous ALE warning / error
 
 " ----------------------------------------------------------------------------
 " autocmd {{{
