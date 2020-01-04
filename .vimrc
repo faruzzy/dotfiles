@@ -294,7 +294,8 @@ Plug 'HerringtonDarkholme/yats.vim'												" Advanced TypeScript Syntax High
 "Plug 'Quramy/tsuquyomi'															" TypeScript Development
 "Plug 'Shougo/vimproc.vim', {'do': 'make'}											" Interactive command execution in vim (dependency of 'Quramy/tsuquyomi')
 "Plug 'moll/vim-node'																" Allows Node.js Development with vim
-Plug 'jelera/vim-javascript-syntax', { 'for': 'javascript' }
+"Plug 'jelera/vim-javascript-syntax', { 'for': 'javascript' }
+Plug 'othree/yajs', { 'for': 'javascript' }																" Yet Another JavaScript Syntax for Vim
 Plug 'elzr/vim-json', { 'for' : 'json' }											" json support
 
 Plug 'SirVer/ultisnips'
@@ -830,7 +831,6 @@ inoremap jk <esc>
 "inoremap <esc> <nop>
 inoremap <C-^> <C-o><C-^>
 inoremap <expr><TAB>  pumvisible() ? "\<C-n>" : "\<TAB>"
-
 " ----------------------------------------------------------------------------
 " }}}
 " ----------------------------------------------------------------------------
