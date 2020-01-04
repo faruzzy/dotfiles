@@ -281,8 +281,8 @@ Plug 'StanAngeloff/php.vim', { 'for': 'php' }										" PHP Syntax
 
 " ECMAScript {{{
 
-Plug 'tpope/vim-commentary'																								" Comment stuff out
-" The next two plugins helps commenting react code out
+" The next two plugins helps commenting react code out and works in
+" conjunction with 'vim-commentary'
 Plug 'MaxMEllon/vim-jsx-pretty'																						" Sets the value of ‘commentstring’ to a different value depending on the region of the file you are in.
 Plug 'suy/vim-context-commentstring'																			" JSX syntax pretty highlighting for vim.
 
@@ -310,6 +310,7 @@ Plug 'cakebaker/scss-syntax.vim', { 'for': 'scss' }
 
 " Misc {{{
 
+Plug 'tpope/vim-commentary'																								" Plugin that allows you to comment stuff out
 Plug 'wellle/visual-split.vim'
 Plug 'wincent/loupe'																" Enhanced in-file search for Vim
 Plug 'jiangmiao/auto-pairs'															" provides insert mode auto-completion for quotes, parenthesis, brackets, etc
