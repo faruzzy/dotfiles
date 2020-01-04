@@ -813,9 +813,6 @@ inoremap jk <esc>
 "inoremap <esc> <nop>
 inoremap <C-^> <C-o><C-^>
 inoremap <expr><TAB>  pumvisible() ? "\<C-n>" : "\<TAB>"
-" move through complete suggestions with j/k/<tab>
-"inoremap <expr> j ((pumvisible())?("\<C-n>"):("j"))
-"inoremap <expr> k ((pumvisible())?("\<C-p>"):("k"))
 
 " ----------------------------------------------------------------------------
 " }}}
