@@ -431,6 +431,17 @@ nnoremap [b :bprev<cr>
 
 " }}}
 
+" move lines of text up or down {{{
+
+nnoremap <down> :m .+1<CR>==
+nnoremap <up> :m .-2<CR>==
+inoremap <down> <Esc>:m .+1<CR>==gi
+inoremap <up> <Esc>:m .-2<CR>==gi
+vnoremap <down> :m '>+1<CR>gv=gv
+vnoremap <up> :m '<-2<CR>gv=gv
+
+" }}}
+
 " Search and replace word under cursor (,*) {{{
 
 nnoremap <leader>* :%s/\<<C-r><C-w>\>//<Left>
