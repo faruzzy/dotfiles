@@ -244,7 +244,7 @@ Plug 'dense-analysis/ale'																										" Checks syntax in Vim asynch
 Plug 'Shougo/unite.vim'																											" Unite and create user interfaces
 Plug 'tpope/vim-unimpaired'																									" Pairs of handy bracket mappings
 
-}}
+" }}
 
 " Go {{{
 
