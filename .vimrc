@@ -236,10 +236,15 @@ Plug 'rakr/vim-one'
 
 " }}}
 
-Plug 'Shougo/neocomplete.vim'
-Plug 'w0rp/ale'
-Plug 'Shougo/unite.vim'
-Plug 'tpope/vim-unimpaired'
+" Programming {{
+
+Plug 'Shougo/neocomplete.vim'																								" Next generation completion
+Plug 'Shougo/echodoc.vim'																										" Display function signature
+Plug 'dense-analysis/ale'																										" Checks syntax in Vim asynchronously
+Plug 'Shougo/unite.vim'																											" Unite and create user interfaces
+Plug 'tpope/vim-unimpaired'																									" Pairs of handy bracket mappings
+
+}}
 
 " Go {{{
 
