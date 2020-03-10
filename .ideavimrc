@@ -1,6 +1,7 @@
 " Shamelessly copied from https://github.com/junegunn/dotfiles/blob/master/ideavimrc
 let mapleader = ','
 set number
+set relativenumber
 set incsearch
 set hlsearch | nohlsearch
 set ignorecase smartcase
