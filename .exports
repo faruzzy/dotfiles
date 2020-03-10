@@ -59,8 +59,8 @@ command -v blsd > /dev/null && export FZF_ALT_C_COMMAND='blsd $dir'
 command -v tree > /dev/null && export FZF_ALT_C_OPTS="--preview 'tree -C {} | head -200'"
 
 # JAVA
-export M2_HOME=~/dev/installs/apache-maven-3.2.5
-export JAVA_HOME=$(/usr/libexec/java_home -v 1.7)
+export M2_HOME=~/dev/installs/apache-maven-3.6.3
+export JAVA_HOME=$(/usr/libexec/java_home)
 export MW_HOME=~/Oracle/wls1036_dev
 
 export PATH=~/dev:/bin:/bin/depot_tools:/sbin:/usr/local/bin:/usr/local/Cellar/node/8.8.0/bin:/usr/bin:/usr/sbin:/usr/local/sbin:/usr/local/mysql/bin:$GOPATH/bin:$GOROOT/bin:$M2_HOME/bin:$HOME/.composer/vendor/bin:$HOME/kafka_2.13-2.4.0/bin:$PATH
