@@ -61,6 +61,6 @@ command -v tree > /dev/null && export FZF_ALT_C_OPTS="--preview 'tree -C {} | he
 # JAVA
 export M2_HOME=~/dev/installs/apache-maven-3.6.3
 export JAVA_HOME=$(/usr/libexec/java_home)
-export MW_HOME=~/Oracle/wls1036_dev
+export PSQL=/Applications/Postgres.app/Contents/Versions/12/bin
 
-export PATH=~/dev:/bin:/bin/depot_tools:/sbin:/usr/local/bin:/usr/local/Cellar/node/8.8.0/bin:/usr/bin:/usr/sbin:/usr/local/sbin:/usr/local/mysql/bin:$GOPATH/bin:$GOROOT/bin:$M2_HOME/bin:$HOME/.composer/vendor/bin:$HOME/kafka_2.13-2.4.0/bin:$PATH
+export PATH=~/dev:/bin:~/dev/installs/mongodb/bin:/bin/depot_tools:/sbin:/usr/local/bin:/usr/local/Cellar/node/8.8.0/bin:/usr/bin:/usr/sbin:/usr/local/sbin:/usr/local/mysql/bin:$PSQL:$GOPATH/bin:$GOROOT/bin:$M2_HOME/bin:$HOME/.composer/vendor/bin:$HOME/kafka_2.13-2.4.0/bin:$PATH
