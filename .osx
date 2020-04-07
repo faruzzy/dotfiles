@@ -38,6 +38,9 @@ defaults write NSGlobalDomain NSTextShowsControlCharacters -bool true
 # Restart automatically if the computer freezes
 sudo systemsetup -setrestartfreeze on
 
+# disable ApplePersistence feature
+defaults write -g ApplePersistence -bool no
+
 # go into computer sleep mode after 20min
 #sudo systemsetup -setcomputersleep 20
 
