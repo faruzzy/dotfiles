@@ -290,6 +290,7 @@ Plug 'mattn/emmet-vim', { 'for' : ['html', 'css', 'javascript'] }
 Plug 'gregsexton/MatchTag', { 'for': 'html' }															" highlight matching html tag
 Plug 'tmhedberg/matchit', { 'for': 'html' }																" Extended % matching for HTML
 Plug 'othree/xml.vim', { 'for': 'html' }																	" Helps editing [x]hml like files
+Plug 'mustache/vim-mustache-handlebars', { 'for': 'hbs' }
 
 " }}}
 
