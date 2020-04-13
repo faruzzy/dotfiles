@@ -115,6 +115,33 @@ function fe() {
 	[ -n "$file" ] && ${EDITOR:-vim} "$file"
 }
 
+# https://github.com/junegunn/fzf/issues/760
+# Custom fuzzy completion for "docker" command
+#   e.g. docker **<TAB>
+_fzf_complete_docker() {
+  ARGS="$@"
+  if [[ $ARGS = 'docker ** docker' ]]; then
+    _fzf_complete "--multi --reverse" "$@" < <(
+        echo 'images'
+        echo 'inspect'
+        echo 'ps -a'
+        echo 'rmi -f'
+        echo 'rm'
+        echo 'stop'
+        echo 'start'
+    )
+  elif [[ $ARGS = 'docker ** rmi' || $ARGS = 'docker ** -f' ]]; then
+    _fzf_complete "--multi --reverse" "$@" < <(
+        docker images --format '{{.Repository}}:{{.Tag}}'
+    )
+  elif [[ $ARGS = 'docker ** start' || $ARGS = 'docker ** stop' || $ARGS = 'docker ** rm' ]]; then
+    _fzf_complete "--multi --reverse" "$@" < <(
+        docker ps -a --format '{{.Names}}'
+    )
+  fi
+}
+[ -n "$BASH" ] && complete -F _fzf_complete_docker -o default -o bashdefault docker
+
 # Modified version where you can press
 #   - CTRL-O to open with `open` command,
 #   - CTRL-E or Enter key to open with the $EDITOR
