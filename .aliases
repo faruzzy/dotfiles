@@ -25,7 +25,7 @@ alias firefox='open -a firefoxDeveloperEdition'
 alias chrome='open -a google\ chrome'
 alias chromium='open -a google\ chrome\ canary'
 alias f='open -a Finder'
-#alias rg='rg --hidden --ignore-case'
+alias rg='rg --hidden --ignore-case'
 alias ag="ag --path-to-ignore ~/.agignore"
 alias k5="kill -9 %%"
 
