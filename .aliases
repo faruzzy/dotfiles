@@ -178,7 +178,6 @@ alias httpdump="sudo tcpdump -i en1 -n -s 0 -w - | grep -a -o -E \"Host\: .*|GET
 #type -t md5sum > /dev/null || alias md5sum="md5"
 
 ##### Vim ######
-
 alias vim='/usr/local/Cellar/vim/8.1.1750/bin/vim'
 alias v='vim'
 alias mvim='open -a /Applications/MacVim.app/ $1'
