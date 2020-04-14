@@ -212,6 +212,25 @@ function fs() {
 	tmux switch-client -t "$session"
 }
 
+# https://gist.github.com/premek/6e70446cfc913d3c929d7cdbfe896fef
+# Usage: mv oldfilename
+# If you call mv without the second parameter it will prompt you to edit the filename on command line.
+# Original mv is called when it's called with more than one argument.
+# It's useful when you want to change just a few letters in a long name.
+function mv() {
+  if [ "$#" -ne 1 ]; then
+    command mv "$@"
+    return
+  fi
+  if [ ! -f "$1" ]; then
+    command file "$@"
+    return
+  fi
+
+  read -ei "$1" newfilename
+  mv -v "$1" "$newfilename"
+}
+
 # fbr - checkout git branch
 function fbr() {
 	local branches branch
