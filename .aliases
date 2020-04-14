@@ -64,11 +64,11 @@ if [[ "$OSTYPE" =~ ^darwin ]]; then
 
 	# Hide/Show desktop icons
 	alias hide-desktop-icons='defaults write com.apple.finder CreateDesktop -bool false && killall Finder'
-    alias show-desktop-icons='defaults write com.apple.finder CreateDesktop -bool true && killall Finder'
+  alias show-desktop-icons='defaults write com.apple.finder CreateDesktop -bool true && killall Finder'
 
-    # Hide/Show hidden files in Finder
-    alias hide-hidden-files='defaults write com.apple.finder AppleShowAllFiles -bool false && killall Finder'
-    alias show-hidden-files='defaults write com.apple.finder AppleShowAllFiles -bool true && killall Finder'
+	# Hide/Show hidden files in Finder
+	alias hide-hidden-files='defaults write com.apple.finder AppleShowAllFiles -bool false && killall Finder'
+	alias show-hidden-files='defaults write com.apple.finder AppleShowAllFiles -bool true && killall Finder'
 
 elif [ "$OS" = 'ubuntu' ]; then
 
@@ -97,12 +97,12 @@ alias npmo='sudo npm install --cache-min 999999999'
 
 if [[ "$OSTYPE" =~ ^darwin ]]; then
 
-    alias update='sudo softwareupdate --install --all \
-                   && brew update \
-                   && brew upgrade --all \
-                   && brew cleanup \
-                   && npm install -g npm \
-                   && npm update -g'
+	alias update='sudo softwareupdate --install --all \
+									&& brew update \
+									&& brew upgrade --all \
+									&& brew cleanup \
+									&& npm install -g npm \
+									&& npm update -g'
 
 elif [ "$OS" = 'ubuntu' ]; then
 
