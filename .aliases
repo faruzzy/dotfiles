@@ -1,12 +1,6 @@
 alias s='source ~/.bash_profile' #TODO: This doesn't reload .inputrc and .tmux.conf .. just saying
 alias python='python3'
 
-# Easier navigation: .., ..., ~ and -
-alias ..='cd ..'
-alias ...='cd ../..'
-alias ....='cd ../../..'
-alias .....='cd ../../../..'
-
 #tmux
 alias tmux='tmux -2'
 
