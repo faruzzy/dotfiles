@@ -8,8 +8,8 @@
 	email = faruzzy@gmail.com
 
 [core]
-	whitespace = trailing-space,space-before-tab,indent-with-non-tab
-    editor = vim
+	; whitespace = trailing-space,space-before-tab,indent-with-non-tab
+	editor = vim
 	quotepath = false
 	excludesfile = ~/.gitignore_global
 	autocrlf = input
@@ -41,71 +41,71 @@
 	sshow = "!f() { git stash show stash^{/$*} -p; }; f"
 	sapply = "!f() { git stash apply stash^{/$*}; }; f"
 
-    st = status -sb
-    c = commit
-    all = commit -am
-    br = branch
-    co = checkout
-    df = diff --color --color-words --abbrev
-    dfc = diff --cached
+	st = status -sb
+	c = commit
+	all = commit -am
+	br = branch
+	co = checkout
+	df = diff --color --color-words --abbrev
+	dfc = diff --cached
 	lb = !git reflog show --pretty=format:'%gs ~ %gd' --date=relative | grep 'checkout:' | grep -oE '[^ ]+ ~ .*' | awk -F~ '!seen[$1]++' | head -n 10 | awk -F' ~ HEAD@{' '{printf(\"  \\033[33m%s: \\033[37m %s\\033[0m\\n\", substr($2, 1, length($2)-1), $1)}'
-    lg = log -p
+	lg = log -p
 	logr3 = log --stat -M -3
 	logit = log --stat -M
 	l = log --stat -C
-    lol = log --color --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit --all
-    lola = log --graph --decorate --pretty=oneline --abbrev-commit --all
-    ls = ls-files
-    ign = ls-files -o -i --exclude-standard			#Show files ignored by git:
-    p = push
-    shoot = push origin --delete
-    up = pull
-    unstage = reset HEAD --
+	lol = log --color --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit --all
+	lola = log --graph --decorate --pretty=oneline --abbrev-commit --all
+	ls = ls-files
+	ign = ls-files -o -i --exclude-standard			#Show files ignored by git:
+	p = push
+	shoot = push origin --delete
+	up = pull
+	unstage = reset HEAD --
 	hardrs = reset --hard HEAD
-    prev = checkout -
-    discard = checkout --
-    rlc = !git reset --hard HEAD~1                  # Remove last commit
-    ulc = reset --soft HEAD~1                       # Undo last commit
+	prev = checkout -
+	discard = checkout --
+	rlc = !git reset --hard HEAD~1                  # Remove last commit
+	ulc = reset --soft HEAD~1                       # Undo last commit
 	update = !git fetch upstream && git rebase upstream/`git rev-parse --abbrev-ref HEAD`
 
-    # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+	# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-    # Credit an author on the latest commit
+	# Credit an author on the latest commit
 
-    credit = "!f() { \
-        if [ -n \"$1\" ] && [ -n \"$2\" ]; then \
-            git commit --amend --author \"$1 <$2>\" -C HEAD; \
-        fi \
-    }; f"
+	credit = "!f() { \
+			if [ -n \"$1\" ] && [ -n \"$2\" ]; then \
+					git commit --amend --author \"$1 <$2>\" -C HEAD; \
+			fi \
+	}; f"
 
-    # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+	# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-    # List remote branches
+	# List remote branches
 
-    lrb = "!f() { \
-        remote="${1:-origin}"; \
-        git ls-remote --heads "$remote"; \
-    }; f"
+	lrb = "!f() { \
+			remote="${1:-origin}"; \
+			git ls-remote --heads "$remote"; \
+	}; f"
 
-    # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+	# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-    # Merge GitHub pull request on top of the `master` branch
+	# Merge GitHub pull request on top of the `master` branch
 
-    mpr = "!f() { \
-        if [ $(printf \"%s\" \"$1\" | grep '^[0-9]\\+$' > /dev/null; printf $?) -eq 0 ]; then \
-            git fetch origin refs/pull/$1/head:pr/$1 && \
-            git rebase master pr/$1 && \
-            git checkout master && \
-            git merge pr/$1 && \
-            git branch -D pr/$1 && \
-            git commit --amend -m \"$(git log -1 --pretty=%B)\n\nClose #$1\"; \
-        fi \
-    }; f"
+	mpr = "!f() { \
+			if [ $(printf \"%s\" \"$1\" | grep '^[0-9]\\+$' > /dev/null; printf $?) -eq 0 ]; then \
+					git fetch origin refs/pull/$1/head:pr/$1 && \
+					git rebase master pr/$1 && \
+					git checkout master && \
+					git merge pr/$1 && \
+					git branch -D pr/$1 && \
+					git commit --amend -m \"$(git log -1 --pretty=%B)\n\nClose #$1\"; \
+			fi \
+	}; f"
 [help]
 	autocorrect = 10
 
 [color]
-    ui = auto
+	ui = auto
 	grep = auto
 	interactive = auto
 
@@ -122,25 +122,25 @@
 	compactionHeuristic = true
 
 [color "branch"]
-    current = yellow reverse
-    local = yellow
-    remote = green
+	current = yellow reverse
+	local = yellow
+	remote = green
 	upstream = bold cyan
 
 [color "status"]
 	# staged changes
-    added = yellow
+	added = yellow
 	updated = bold white green
 	# un-staged changes
-    changed = green
-    untracked = cyan
+	changed = green
+	untracked = cyan
 	nobranch = bold red white
 
 [merge]
     log = true
 
 [github]
-    user = faruzzy
+	user = faruzzy
 	email = faruzzy@gmail.com
 	username = faruzzy
 
@@ -149,7 +149,7 @@
 
 # https://stackoverflow.com/questions/23918062/simple-vs-current-push-default-in-git-for-decentralized-workflow/23918418#23918418
 [push]
-    default = simple
+	default = simple
 	followTags = true
 
 [web]
