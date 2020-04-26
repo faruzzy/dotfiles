@@ -37,7 +37,7 @@ export LANG=en_US.UTF-8
 
 # FZF
 if [ -x "$(command -v fd)" ]; then
-	export FZF_DEFAULT_COMMAND='fd --type f --hidden --follow --exclude .git'
+	export FZF_DEFAULT_COMMAND='fd --type f --hidden --follow --exclude .git --exclude .node_modules'
 	export FZF_ALT_C_COMMAND='fd --type d --hidden --follow --exclude .git'
 	export FZF_CTRL_T_COMMAND='fd --type f --type d --hidden --follow --exclude .git'
 elif [ -x "$(command -v rg)" ]; then
@@ -45,7 +45,7 @@ elif [ -x "$(command -v rg)" ]; then
 elif [ -x "$(command -v ag)" ]; then
 	export FZF_DEFAULT_COMMAND='ag --hidden --ignore .git -g ""'
 else
-	export FZF_DEFAULT_COMMAND="find . -path '*/.git*' -prune -o -print"
+	export FZF_DEFAULT_COMMAND="find . -type d \( -path '*\.git*' -o -path '*node_modules*' \) -prune -o -print"
 	export FZF_CTRL_T_COMMAND="find . -type d -not -path '*/.git*'"
 fi
 
