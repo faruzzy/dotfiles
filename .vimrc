@@ -480,8 +480,6 @@ vnoremap <tab> %
 " Treat <li> and <p> tags like the block tags they are
 let g:html_indent_tags = 'li\|p'
 
-"nnoremap <leader>vc :call VimuxCloseRunner()<CR>
-
 " Save and close current buffer
 nnoremap <leader>x :wq!<CR>
 
