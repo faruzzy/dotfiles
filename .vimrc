@@ -484,14 +484,14 @@ let g:html_indent_tags = 'li\|p'
 " Save and close current buffer
 nnoremap <leader>x :wq!<CR>
 
-" Save and close all buffer
-nnoremap <leader>X :wqa!<CR>
+" Save and close all buffer including those created by vimux (if any)
+nnoremap <leader>X :call VimuxCloseRunner()<CR> :wqa!<CR>
 
 " Close current buffer without saving
 nnoremap <leader>q :q!<bR>
 
-" Close all buffer without saving
-nnoremap <leader>Q :qa!<CR> :VimuxCloseRunner()<CR>
+" Close all buffer without saving including those created by vimux (if any)
+nnoremap <leader>Q :call VimuxCloseRunner()<CR> :qa!<CR>
 
 " Quickly open .vimrc file in the current buffer
 nnoremap <leader>v :e ~/Github/dotfiles/.vimrc<CR>
