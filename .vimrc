@@ -16,6 +16,7 @@ syntax sync minlines=256
 let mapleader=","															" Change leader to ','
 " }}}
 
+set number relativenumber									" The current line number is always show in the left gutter, along with the relative line numbers above/below
 set title																	" Display filename in titlebar
 set titleold=																" Prevent the 'Thanks for flying Vim'
 set ttyfast																	" Optimize for fast terminal connections
@@ -591,10 +592,11 @@ if has("autocmd")
 	" run bash files
 	autocmd filetype sh nnoremap <leader>c :w <CR>:!bash %<CR>
 
-	autocmd FocusLost   * call ToggleRelativeOn()
-	autocmd FocusGained * call ToggleRelativeOn()
-	autocmd InsertEnter * call ToggleRelativeOn()
-	autocmd InsertLeave * call ToggleRelativeOn()
+	augroup numbertoggle
+		autocmd!
+		autocmd BufEnter,FocusGained,InsertLeave * set relativenumber
+		autocmd BufLeave,FocusLost,InsertEnter   * set norelativenumber
+	augroup END
 
 	autocmd VimResized  * :wincmd =																		" Resize splits when the window is resized
 	autocmd BufEnter    * silent! cd %:p:h																" update dir to current file
@@ -1067,11 +1069,6 @@ function! SetPythonOptions()
 	setlocal expandtab
 	setlocal autoindent
 	set fileformat=unix
-endfunction
-
-function! ToggleRelativeOn()
-	set relativenumber!
-	set number
 endfunction
 
 " <leader>?/! | Google it / Feeling lucky
