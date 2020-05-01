@@ -45,5 +45,5 @@ Control-f: forward-char
 Control-k: kill-line
 
 # TODO: make the lines below work
-Control-j: next-history
-Control-k: previous-history
+# Control-j: next-history
+# Control-k: previous-history
