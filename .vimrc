@@ -287,11 +287,17 @@ Plug 'nvie/vim-flake8'
 
 Plug 'othree/html5.vim', { 'for': 'html' }
 Plug 'othree/html5-syntax.vim', { 'for': 'html' }
-Plug 'mattn/emmet-vim', { 'for' : ['html', 'css', 'javascript'] }
 Plug 'gregsexton/MatchTag', { 'for': 'html' }															" highlight matching html tag
 Plug 'tmhedberg/matchit', { 'for': 'html' }																" Extended % matching for HTML
 Plug 'othree/xml.vim', { 'for': 'html' }																	" Helps editing [x]hml like files
 Plug 'mustache/vim-mustache-handlebars', { 'for': 'hbs' }
+
+Plug 'mattn/emmet-vim', { 'for' : ['html', 'css', 'javascript'] }					" Emmet for Vim
+let g:user_emmet_settings = {
+\  'html' : {
+\    'indent_blockelement': 2,
+\  },
+\}
 
 " }}}
 
