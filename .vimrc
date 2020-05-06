@@ -334,6 +334,19 @@ Plug 'cakebaker/scss-syntax.vim', { 'for': 'scss' }
 
 " Misc {{{
 
+if (executable('rg') || executable('ag'))
+	Plug 'wincent/ferret'																																" Enhanced multi-file search for Vim
+else
+	Plug 'mileszs/ack.vim'
+	if executable("rg")
+		let g:ackprg = 'rg --hidden -i'																										" Ths plugin allows you to search with ack from within Vim and shows results in a split window
+	elseif executable("ag")
+		let g:ackprg = 'ag --nogroup --nocolor --column'
+	else
+		let g:ackprg = 'git grep -H --line-number --no-color --untracked'
+	endif
+endif
+
 Plug 'tpope/vim-commentary'																								" Plugin that allows you to comment stuff out
 Plug 'wellle/visual-split.vim'
 Plug 'wincent/loupe'																" Enhanced in-file search for Vim
@@ -345,8 +358,6 @@ Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
 Plug 'junegunn/fzf.vim'
 Plug 'tpope/vim-surround'
 Plug 'tpope/vim-repeat'
-Plug 'mileszs/ack.vim'
-Plug 'wincent/ferret'
 Plug 'jremmen/vim-ripgrep'
 Plug 'majutsushi/tagbar'															" Vim plugin that displays tags in a window, ordered by scope
 Plug 'scrooloose/nerdtree', { 'on': 'NERDTreeToggle' }								" A tree explorer plugin for vim.
@@ -392,8 +403,6 @@ nnoremap <C-p> :Root<CR>:Files<CR>
 nnoremap <C-b> :Buffers<CR>
 nnoremap <silent> <leader>C			:Colors<CR>
 nnoremap <silent> <leader>l			:Lines<CR>
-nnoremap <silent> <leader>ag		:Root<CR>:Ag <C-R><C-W><CR>
-nnoremap <silent> <leader>AG		:Root<CR>:Ag <C-R><C-A><CR>
 nnoremap <silent> <leader>`			:Marks<CR>
 
 " ----------------------------------------------------------------------------
@@ -834,14 +843,6 @@ let g:go_highlight_structs = 1
 let g:go_hightlight_operators = 1
 let g:go_hightlight_build_constraints = 1
 " }}}
-
-if executable("rg")
-	let g:ackprg = 'rg --hidden -i'
-elseif executable("ag")
-	let g:ackprg = 'ag --nogroup --nocolor --column'
-else
-	let g:ackprg = 'git grep -H --line-number --no-color --untracked'
-endif
 
 " Movement in insert mode {{{
 inoremap <C-h> <C-o>h
