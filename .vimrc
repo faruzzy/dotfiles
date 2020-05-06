@@ -696,7 +696,6 @@ autocmd!
 	endfor
 
 	"let b:ag_command = b:ag_command . ' --hidden -g ""'
-	let g:ctrlp_user_command = b:ag_command
   endif
 augroup END
 " }}}
