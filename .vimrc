@@ -792,9 +792,6 @@ nnoremap <leader>vi :VimuxInterruptRunner<CR>
 " Zoom the tmux runner page
 nnoremap <leader>vz :VimuxZoomRunner<CR>
 
-" Run gulp inside runner Pane
-nnoremap <leader>gu :Root<CR>:VimuxPromptCommand("gulp")<CR>
-
 " Prompt for a command and run it in a small horizontal split bellow the current pane
 nnoremap <leader>vr :Root<CR> :VimuxPromptCommand<CR>
 "  }}}
