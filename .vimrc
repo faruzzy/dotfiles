@@ -708,6 +708,8 @@ augroup END
 " Airline.vim {{{
 augroup airline_config
 autocmd!
+	let g:airline_theme='powerlineish'
+	let g:airline_powerline_fonts = 1
 	let g:airline_powerline_fonts = 1
 	let g:airline#extensions#tabline#buffer_nr_format = '%s '
 	let g:airline#extensions#tabline#buffer_nr_show = 1
@@ -869,8 +871,6 @@ inoremap <expr><TAB>  pumvisible() ? "\<C-n>" : "\<TAB>"
 " }}}
 " ----------------------------------------------------------------------------
 
-let g:airline_theme='powerlineish'
-let g:airline_powerline_fonts = 1
 set noshowmode																" Don't Show the current mode Since we're using airline
 
 let jshint2_read = 1
