@@ -227,7 +227,6 @@ call plug#begin('~/.vim/plugged')
 " Git {{{
 
 Plug 'tpope/vim-fugitive'													" Git wrapper
-Plug 'tpope/vim-git'														" Vim Git runtime files
 Plug 'tpope/vim-rhubarb'													" GitHub extension for fugitive
 Plug 'junegunn/gv.vim', { 'on': 'GV' }										" A git commint browser
 if v:version >= 703
