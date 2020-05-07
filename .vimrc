@@ -847,7 +847,7 @@ let g:go_hightlight_build_constraints = 1
 
 " Movement in insert mode {{{
 inoremap <C-h> <C-o>h
-inoremap <C-l> <C-o>a
+inoremap <C-l> <C-o>l
 inoremap <C-j> <C-o>j
 inoremap <C-k> <C-o>k
 " }}}
