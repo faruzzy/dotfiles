@@ -470,12 +470,12 @@ nnoremap [b :bprev<cr>
 
 " move lines of text up or down {{{
 
-nnoremap <down> :m .+1<CR>==
-nnoremap <up> :m .-2<CR>==
-inoremap <down> <Esc>:m .+1<CR>==gi
-inoremap <up> <Esc>:m .-2<CR>==gi
-vnoremap <down> :m '>+1<CR>gv=gv
-vnoremap <up> :m '<-2<CR>gv=gv
+nnoremap <C-J> :m .+1<CR>==
+nnoremap <C-K> :m .-2<CR>==
+inoremap <C-J> <Esc>:m .+1<CR>==gi
+inoremap <C-K> <Esc>:m .-2<CR>==gi
+vnoremap <C-J> :m '>+1<CR>gv=gv
+vnoremap <C-K> :m '<-2<CR>gv=gv
 
 " }}}
 
