@@ -405,12 +405,6 @@ endif
 let g:fzf_files_options =
   \ '--preview "(highlight -O ansi {} || cat {}) 2> /dev/null | head -'.&lines.'"'
 
-nnoremap <C-p> :Root<CR>:Files<CR>
-nnoremap <C-b> :Buffers<CR>
-nnoremap <silent> <leader>C			:Colors<CR>
-nnoremap <silent> <leader>l			:Lines<CR>
-nnoremap <silent> <leader>`			:Marks<CR>
-
 " ----------------------------------------------------------------------------
 " }}}
 " ----------------------------------------------------------------------------
