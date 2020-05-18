@@ -242,6 +242,7 @@ endif
 Plug 'crusoexia/vim-monokai'
 Plug 'cdmedia/itg_flat_vim'
 Plug 'junegunn/seoul256.vim'
+Plug 'tomasr/molokai'
 Plug 'challenger-deep-theme/vim', { 'as': 'challenger-deep' }
 Plug 'romainl/Apprentice'
 Plug 'joshdick/onedark.vim'
