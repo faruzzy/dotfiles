@@ -734,6 +734,16 @@ function gfu() {
 	open $(git log -n 1 --skip=$n --pretty=oneline | awk "{printf \"$(gurl)/commit/%s\", substr(\$1,1,7)}")
 }
 
+# Git add, commit, and push all in one
+# Just add your commit messge after invoking gq
+function qg() {
+  message="$*"
+  git add --all
+  # note that -S signs your commit. Remove if you have not set up GPG signatures
+  git commit -S -m $message
+  git push
+}
+
 bind '"\er": redraw-current-line'
 bind '"\C-g\C-f": "$(gf)\e\C-e\er"'
 bind '"\C-g\C-b": "$(gb)\e\C-e\er"'
