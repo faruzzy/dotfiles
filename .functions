@@ -614,6 +614,7 @@ function gitexport(){
 	git archive master | tar -x -C "$1"
 }
 
+# Create a new directory and enter it
 function md() {
 	mkdir -p "$@" && cd $_;
 }
