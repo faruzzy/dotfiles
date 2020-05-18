@@ -205,6 +205,9 @@ alias chmod='chmod -v'
 # File size
 alias fs="stat -f \"%z bytes\""
 
+# get file permissions in octal (i.e. 0755)
+alias perms="stat -f '%A %a %N' *"
+
 # ROT13-encode text. Works for decoding, too! ;)
 alias rot13='tr a-zA-Z n-za-mN-ZA-M'
 
