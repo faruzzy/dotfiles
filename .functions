@@ -735,7 +735,7 @@ function gfu() {
 }
 
 # Git add, commit, and push all in one
-# Just add your commit messge after invoking gq
+# Just add your commit message after invoking gq
 function qg() {
   message="$*"
   git add --all
