@@ -422,6 +422,12 @@ nnoremap <silent> <leader>`			:Marks<CR>
 " refresh current .vimrc file for change to take effect
 nnoremap <leader>s :source %<CR>
 
+nnoremap <C-p> :Root<CR>:Files<CR>
+nnoremap <C-b> :Buffers<CR>
+nnoremap <silent> <leader>C			:Colors<CR>
+nnoremap <silent> <leader>l			:Lines<CR>
+nnoremap <silent> <leader>`			:Marks<CR>
+
 nnoremap <leader>dg :diffget<CR>
 vnoremap <leader>dg :diffget<CR>
 
@@ -758,6 +764,24 @@ let g:neocomplete#sources#syntax#min_keyword_length = 3											" Set minimum 
 let g:jsx_ext_required = 0
 
 " NERDTree Options {{{
+
+" sync open file with NERDTree
+" Check if NERDTree is open or active
+function! IsNERDTreeOpen()
+	return exists("t:NERDTreeBufNaame") && (bufwinnr(t:NERDTreeBufName) != -1)
+endfunction
+
+" Call NERDTreeFind if NERDTree is active, current window contains
+" a modifiable file, and we're not in vimdiff
+function! SyncTree()
+	if &modifiable && IsNERDTreeOpen() && strlen(expand('%')) > 0 && !&diff
+		NERDTreeFind
+		wincmd p
+	endif
+endfunction
+
+" Highlight currently open buffer in NERDTree
+autocmd BufEnter * call SyncTree()
 
 nnoremap <C-c> :NERDTreeToggle<CR>
 let NERDTreeChDirMode=2																			" setting root dir in NT also sets VIM's cd
