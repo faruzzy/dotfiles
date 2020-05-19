@@ -33,7 +33,6 @@ set spelllang=en_us,fr														" Spell checking language
 set display=lastline
 
 set diffopt=filler															" Add vertical spaces to keep right and left aligned
-set diffopt+=iwhite															" Ignore whitespace changes (focus on code changes)
 set diffopt+=vertical														" make :diffsplit default to vertical
 set shell=/bin/sh															" Use /bin/sh for executing shell commands
 set timeoutlen=1250															" Reduce annoying delay for key codes, especially <Esc>...
