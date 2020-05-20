@@ -1,16 +1,16 @@
 {
-    "extends": "eslint:recommended",
-    "env": {
-				"amd": true,
-        "browser": true,
-        "es6": true,
-				"node": true
-    },
-    "parserOptions": {
-		"ecmaVersion": 6,
-        "sourceType": "module"
-    },
-    "rules": {
+	"extends": "eslint:recommended",
+	"env": {
+		"amd": true,
+		"browser": true,
+		"es6": true,
+		"node": true
+	},
+	"parserOptions": {
+	"ecmaVersion": 6,
+		"sourceType": "module"
+	},
+	"rules": {
 		"no-console": "off",
 		"indent":[2, "tab"],
 		"max-len": ["error", 120, {
@@ -24,17 +24,17 @@
 			"argsIgnorePattern": "(^reject$|^_$)",
 			"varsIgnorePattern": "(^_$)"
 		}],
-        "linebreak-style": [
-            "error",
-            "unix"
-        ],
-        "quotes": [
-            "error",
-            "single"
-        ],
-        "semi": [
-            "error",
-            "always"
-        ]
-    }
+		"linebreak-style": [
+			"error",
+			"unix"
+		],
+		"quotes": [
+			"error",
+			"single"
+		],
+		"semi": [
+			"error",
+			"always"
+		]
+	}
 }
