@@ -238,17 +238,9 @@ endif
 
 " Color Schemes {{{
 
-Plug 'crusoexia/vim-monokai'
-Plug 'cdmedia/itg_flat_vim'
 Plug 'junegunn/seoul256.vim'
-Plug 'tomasr/molokai'
-Plug 'challenger-deep-theme/vim', { 'as': 'challenger-deep' }
-Plug 'romainl/Apprentice'
 Plug 'joshdick/onedark.vim'
-Plug 'chriskempson/base16-vim'
-Plug 'morhetz/gruvbox'
 Plug 'mhartington/oceanic-next'
-Plug 'rakr/vim-one'
 
 " }}}
 
@@ -386,8 +378,8 @@ call plug#end()
 " ----------------------------------------------------------------------------
 " }}}
 " ----------------------------------------------------------------------------
+
 colorscheme seoul256
-colorscheme OceanicNext
 
 " ----------------------------------------------------------------------------
 " fzf.vim {{{
