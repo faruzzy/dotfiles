@@ -355,7 +355,6 @@ Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
 Plug 'junegunn/fzf.vim'
 Plug 'tpope/vim-surround'
 Plug 'tpope/vim-repeat'
-Plug 'jremmen/vim-ripgrep'
 Plug 'majutsushi/tagbar'															" Vim plugin that displays tags in a window, ordered by scope
 Plug 'scrooloose/nerdtree', { 'on': 'NERDTreeToggle' }								" A tree explorer plugin for vim.
 Plug 'Xuyuanp/nerdtree-git-plugin'													" A plugin of NERDTree showing git status
