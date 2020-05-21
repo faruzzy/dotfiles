@@ -90,6 +90,9 @@ elif [ "$OS" = 'ubuntu' ]; then
 
 fi
 
+##### yarn #####
+alias ys='yarn start'
+
 ##### npm #####
 alias npmp='npm publish'
 alias npma='npm adduser'
