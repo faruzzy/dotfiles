@@ -766,7 +766,14 @@ endfunction
 " Highlight currently open buffer in NERDTree
 autocmd BufEnter * call SyncTree()
 
-nnoremap <C-c> :NERDTreeToggle<CR>
+function! ToggleNerdTree()
+  set eventignore=BufEnter
+  NERDTreeToggle
+  set eventignore=
+endfunction
+
+map <leader>r :NERDTreeFind<cr>
+nnoremap <C-c> :call ToggleNerdTree()<CR>
 let NERDTreeChDirMode=2																			" setting root dir in NT also sets VIM's cd
 let NERDTreeMapOpenSplit = "s"
 let NERDTreeMapOpenVSplit = "v"
