@@ -751,7 +751,7 @@ let g:jsx_ext_required = 0
 " sync open file with NERDTree
 " Check if NERDTree is open or active
 function! IsNERDTreeOpen()
-	return exists("t:NERDTreeBufNaame") && (bufwinnr(t:NERDTreeBufName) != -1)
+	return exists("t:NERDTreeBufName") && (bufwinnr(t:NERDTreeBufName) != -1)
 endfunction
 
 " Call NERDTreeFind if NERDTree is active, current window contains
