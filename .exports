@@ -1,7 +1,7 @@
 #!bash
 
-export EDITOR="vim"												# Make vim the default editor
-export VISUAL="vim"
+export EDITOR="nvim"													# Make neo vim the default editor
+export VISUAL="nvim"
 export MANPAGER="less -X"										# Don’t clear the screen after quitting a manual page
 export GREP_OPTIONS='--color=auto'
 export CLICOLOR=1
@@ -36,10 +36,10 @@ export LC_ALL=en_US.UTF-8
 export LANG=en_US.UTF-8
 
 # FZF
-if [ -x "$(command -v fd)" ]; then
-	export FZF_DEFAULT_COMMAND='fd --type f --hidden --follow --exclude .git --exclude node_modules'
-	export FZF_ALT_C_COMMAND='fd --type d --hidden --follow --exclude .git'
-	export FZF_CTRL_T_COMMAND='fd --type f --type d --hidden --follow --exclude .git'
+if command -v fd > /dev/null; then
+  export FZF_DEFAULT_COMMAND='fd --type f --hidden --follow --exclude .git'
+  export FZF_ALT_C_COMMAND='fd --type d --hidden --follow --exclude .git'
+  export FZF_CTRL_T_COMMAND='fd --type f --type d --hidden --follow --exclude .git'
 elif [ -x "$(command -v rg)" ]; then
 	export FZF_DEFAULT_COMMAND='rg --files'
 elif [ -x "$(command -v ag)" ]; then
@@ -49,19 +49,18 @@ else
 	export FZF_CTRL_T_COMMAND="find . -type d -not -path '*/.git*'"
 fi
 
-if [[ -x ~/.vim/plugged/fzf.vim/bin/preview.rb ]]; then
-	export FZF_CTRL_T_OPTS="--preview '~/.vim/plugged/fzf.vim/bin/preview.rb {} | head -200'"
-fi
-#export FZF_CTRL_R_OPTS="--preview 'echo {}' --preview-window down:3:hidden --bind '?:toggle-preview'"
-export FZF_CTRL_R_OPTS="--preview 'echo {}' --preview-window down:3:hidden:wrap --bind '?:toggle-preview' --bind 'ctrl-y:execute-silent(echo -n {2..} | pbcopy)+abort' --header 'Press CTRL-Y to copy command into clipboard' --border"
 
-command -v blsd > /dev/null && export FZF_ALT_C_COMMAND='blsd $dir'
+# export FZF_TMUX_OPTS='-p80%,60%'
+# export FZF_CTRL_R_OPTS="--preview 'echo {}' --preview-window down:3:hidden:wrap --bind '?:toggle-preview' --bind 'ctrl-y:execute-silent(echo -n {2..} | pbcopy)+abort' --header 'Press CTRL-Y to copy command into clipboard'"
+
+command -v bat  > /dev/null && export FZF_CTRL_T_OPTS="--preview 'bat -n --color=always {}'"
+command -v blsd > /dev/null && export FZF_ALT_C_COMMAND='blsd'
 command -v tree > /dev/null && export FZF_ALT_C_OPTS="--preview 'tree -C {} | head -200'"
 
 # JAVA
 export M2_HOME=~/dev/installs/apache-maven-3.6.3
 export JAVA_HOME=$(/usr/libexec/java_home)
+
 export PSQL=/Applications/Postgres.app/Contents/Versions/12/bin
 export SCRIPT_HOME=~/github/dotfiles/scripts
-
 export PATH=~/dev:/bin:~/dev/installs/mongodb/bin:/sbin:/usr/local/bin:/usr/bin:/usr/sbin:/usr/local/sbin:$PSQL:$GOPATH/bin:$GOROOT/bin:$SCRIPT_HOME:$M2_HOME/bin:$HOME/.composer/vendor/bin:$HOME/kafka_2.13-2.4.0/bin:$PATH
