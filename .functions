@@ -1,5 +1,5 @@
 #!bash
-
+BASE=$(dirname $(readlink $BASH_SOURCE))
 # Define a word using collinsdictionary.com
 function define() {
 	curl -s "http://www.collinsdictionary.com/dictionary/english/$*" | sed -n '/class="def"/p' | awk '{gsub(/.*<span class="def">|<\/span>.*/,"");print}' | sed "s/<[^>]\+>//g";
@@ -756,6 +756,14 @@ function gfu() {
 	local n="${@:-1}"
 	n=$((n-1))
 	open $(git log -n 1 --skip=$n --pretty=oneline | awk "{printf \"$(gurl)/commit/%s\", substr(\$1,1,7)}")
+}
+
+# Z integration
+source "$BASE/z.sh"
+unalias z 2> /dev/null
+z() {
+  [ $# -gt 0 ] && _z "$*" && return
+  cd "$(_z -l 2>&1 | fzf --height 40% --nth 2.. --reverse --inline-info +s --tac --query "${*##-* }" | sed 's/^[0-9,.]* *//')"
 }
 
 # Git add, commit, and push all in one

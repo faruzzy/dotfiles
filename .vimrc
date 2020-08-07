@@ -17,6 +17,8 @@ let mapleader=","															" Change leader to ','
 " }}}
 
 set number relativenumber									" The current line number is always show in the left gutter, along with the relative line numbers above/below
+set cmdheight=2																		" Give more space for display messages
+set updatetime=300
 set title																	" Display filename in titlebar
 set titleold=																" Prevent the 'Thanks for flying Vim'
 set ttyfast																	" Optimize for fast terminal connections
@@ -718,15 +720,15 @@ augroup cline
 augroup END
 " }}}
 
-"augroup nerd_loader
-"	autocmd!
-"	autocmd VimEnter * silent! autocmd! FileExplorer
-"	autocmd BufEnter,BufNew *
-"			\  if isdirectory(expand('<amatch>'))
-"			\|   call plug#load('nerdtree')
-"			\|   execute 'autocmd! nerd_loader'
-"			\| endif
-"augroup END
+augroup nerd_loader
+	autocmd!
+	autocmd VimEnter * silent! autocmd! FileExplorer
+	autocmd BufEnter,BufNew *
+			\  if isdirectory(expand('<amatch>'))
+			\|   call plug#load('nerdtree')
+			\|   execute 'autocmd! nerd_loader'
+			\| endif
+augroup END
 
 augroup python3
 	au! BufEnter *.py setlocal omnifunc=python3complete#Complete
@@ -764,16 +766,17 @@ function! SyncTree()
 endfunction
 
 " Highlight currently open buffer in NERDTree
-autocmd BufEnter * call SyncTree()
+" autocmd BufEnter * call SyncTree()
 
-function! ToggleNerdTree()
-  set eventignore=BufEnter
-  NERDTreeToggle
-  set eventignore=
-endfunction
+" function! ToggleNerdTree()
+"   set eventignore=BufEnter
+"   NERDTreeToggle
+"   set eventignore=
+" endfunction
 
 map <leader>r :NERDTreeFind<cr>
-nnoremap <C-c> :call ToggleNerdTree()<CR>
+" nnoremap <C-c> :call ToggleNerdTree()<CR>
+nnoremap <C-c> :NERDTreeToggle<CR>
 let NERDTreeChDirMode=2																			" setting root dir in NT also sets VIM's cd
 let NERDTreeMapOpenSplit = "s"
 let NERDTreeMapOpenVSplit = "v"

@@ -18,7 +18,7 @@ let mapleader=","															" Change leader to ','
 
 set number relativenumber									" The current line number is always show in the left gutter, along with the relative line numbers above/below
 set cmdheight=2																		" Give more space for display messages
-
+set noshowmode																" Don't Show the current mode Since we're using airline
 
 if has("patch-8.1.1564")													" Always show the signcolumn, otherwise it would shift the text each time diagnostics appear/become resolved.
   " Recently vim can merge signcolumn and number column into one
@@ -259,8 +259,6 @@ Plug 'mhartington/oceanic-next'
 
 " Programming {{
 
-Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }								" Asynchronous completion
-let g:deoplete#enable_at_startup = 1
 Plug 'Shougo/echodoc.vim'																										" Display function signature
 Plug 'dense-analysis/ale'																										" Checks syntax in Vim asynchronously
 Plug 'Shougo/unite.vim'																											" Unite and create user interfaces
@@ -326,13 +324,16 @@ Plug 'suy/vim-context-commentstring'																			" JSX syntax pretty highl
 Plug 'HerringtonDarkholme/yats.vim'												" Advanced TypeScript Syntax Highlighting
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
 let g:coc_global_extensions = [
-	\ 'coc-snippets',
-	\ 'coc-pairs',
 	\ 'coc-tsserver',
 	\ 'coc-eslint',
+	\ 'coc-snippets',
+	\ 'coc-pairs',
 	\ 'coc-prettier',
 	\ 'coc-json',
-	\ 'coc-css'
+	\ 'coc-css',
+	\ 'coc-git',
+	\ 'coc-python',
+	\ 'coc-html',
 	\]
 
 "Plug 'Shougo/vimproc.vim', {'do': 'make'}											" Interactive command execution in vim (dependency of 'Quramy/tsuquyomi')
@@ -410,13 +411,21 @@ colorscheme seoul256
 " https://github.com/junegunn/fzf
 set rtp+=~/.fzf
 
-if has('nvim')
-  let $FZF_DEFAULT_OPTS .= ' --inline-info'
-  " let $NVIM_TUI_ENABLE_TRUE_COLOR = 1
-endif
+let $FZF_DEFAULT_OPTS .= ' --inline-info'
 
-let g:fzf_files_options =
-  \ '--preview "(highlight -O ansi {} || cat {}) 2> /dev/null | head -'.&lines.'"'
+" All files
+command! -nargs=? -complete=dir AF
+  \ call fzf#run(fzf#wrap(fzf#vim#with_preview({
+  \   'source': 'fd --type f --hidden --follow --exclude .git --no-ignore . '.expand(<q-args>)
+  \ })))
+
+" Terminal buffer options for fzf
+autocmd! FileType fzf
+autocmd  FileType fzf set noshowmode noruler nonu
+
+
+" let g:fzf_files_options =
+"   \ '--preview "(highlight -O ansi {} || cat {}) 2> /dev/null | head -'.&lines.'"'
 
 " ----------------------------------------------------------------------------
 " }}}
@@ -445,8 +454,6 @@ vnoremap <leader>dp :diffput<CR>
 nnoremap <leader>O :!open .<CR>
 
 nnoremap <leader>a :Root<CR>:Ack!<Space>
-
-nnoremap <silent> <expr> <leader><leader> (expand('%') =~ 'NERD_tree' ? "\<c-w>\<c-w>" : '').":Files\<cr>"
 
 " npm install --save-dev word under cursor
 nnoremap <leader>md :execute ":!npm install --save-dev " . expand("<cword>")<CR>
@@ -735,11 +742,16 @@ augroup END
 " Cursorline {{{
 " Only show cursorline in the current window and in normal mode.
 augroup cline
+	nnoremap <silent> <expr> <leader><leader> (expand('%') =~ 'NERD_tree' ? "\<c-w>\<c-w>" : '').":Files\<cr>"
+
 	autocmd!
 	autocmd WinLeave,InsertEnter * set nocursorline
 	autocmd  WinEnter,InsertLeave * set cursorline
 augroup END
 " }}}
+
+autocmd FileType python let b:coc_root_patterns = ['.js', '.git', '.env']
+autocmd FileType javascript let b:coc_root_patterns = ['.js', '.json']
 
 "augroup nerd_loader
 "	autocmd!
@@ -881,11 +893,9 @@ inoremap <expr><TAB>  pumvisible() ? "\<C-n>" : "\<TAB>"
 " }}}
 " ----------------------------------------------------------------------------
 
-set noshowmode																" Don't Show the current mode Since we're using airline
-
-let jshint2_read = 1
-let jshint2_save = 1
-let jshint2_min_height = 3
+" let jshint2_read = 1
+" let jshint2_save = 1
+" let jshint2_min_height = 3
 
 let php_sql_query=1
 let php_htmlInStrings=1

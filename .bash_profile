@@ -1,3 +1,4 @@
+[ -f ~/.fzf.bash ] && source ~/.fzf.bash
 # Set up git completions
 if [[ -f ~/.git-completion ]]; then
 	. ~/.git-completion
@@ -37,9 +38,6 @@ export PATH="$HOME/.jenv/bin:$PATH"
 eval "$(jenv init -)"
 
 [[ -s ~/.bashrc ]] && source ~/.bashrc
-
-# MacPorts Installer addition on 2017-10-24_at_23:30:25: adding an appropriate PATH variable for use with MacPorts.
-export PATH="/opt/local/bin:/opt/local/sbin:$PATH"
 
 export MANPATH="/opt/local/share/man:$MANPATH"
 # Finished adapting your MANPATH environment variable for use with MacPorts.
