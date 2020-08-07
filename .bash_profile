@@ -1,4 +1,5 @@
 [ -f ~/.fzf.bash ] && source ~/.fzf.bash
+
 # Set up git completions
 if [[ -f ~/.git-completion ]]; then
 	. ~/.git-completion
