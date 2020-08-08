@@ -14,10 +14,12 @@ filetype plugin indent on													" Enable file type detection
 syntax on																	" Syntax highlighting
 syntax sync minlines=256
 let mapleader=","															" Change leader to ','
+let s:darwin = has('mac')
 " }}}
 
 set number relativenumber									" The current line number is always show in the left gutter, along with the relative line numbers above/below
 set cmdheight=2																		" Give more space for display messages
+set noshowmode																" Don't Show the current mode Since we're using airline
 set updatetime=300
 set title																	" Display filename in titlebar
 set titleold=																" Prevent the 'Thanks for flying Vim'
@@ -140,20 +142,6 @@ function! NeatFoldText()
 endfunction
 set foldtext=NeatFoldText()
 
-"set statusline=%<[%n]\ %F\ %m%r%y\ %{exists('g:loaded_fugitive')?fugitive#statusline():''}\ %=%-14.(%l,%c%V%)\ %P
-function! s:statusline_expr()
-  let mod = "%{&modified ? '[+] ' : !&modifiable ? '[x] ' : ''}"
-  let ro  = "%{&readonly ? '[RO] ' : ''}"
-  let ft  = "%{len(&filetype) ? '['.&filetype.'] ' : ''}"
-  let fug = "%{exists('g:loaded_fugitive') ? fugitive#statusline() : ''}"
-  let sep = ' %= '
-  let pos = ' %-12(%l : %c%V%) '
-  let pct = ' %P'
-
-  return '[%n] %F %<'.mod.ro.ft.fug.sep.pos.'%*'.pct
-endfunction
-"let &statusline = s:statusline_expr()
-
 "http://stackoverflow.com/questions/20186975/vim-mac-how-to-copy-to-clipboard-without-pbcopy
 set clipboard^=unnamed
 set complete=.,w,b,u,t														" Better Completion
@@ -161,7 +149,9 @@ set completeopt=longest,menuone
 set ofu=syntaxcomplete#Complete												" Set omni-completion method.
 set report=0																" Show all changes
 
+" ----------------------------------------------------------------------------
 " Wildmenu completion {{{
+" ----------------------------------------------------------------------------
 
 set wildmenu																" Command line autocompletion
 set wildmode=list:full														" Shows all the options
@@ -205,10 +195,6 @@ if has("gui_macvim")
   let g:molokai_original=1
   highlight SignColumn guibg=#272822
 endif
-
-" }}}
-
-let s:darwin = has('mac')
 
 " }}}
 
@@ -308,7 +294,6 @@ Plug 'StanAngeloff/php.vim', { 'for': 'php' }										" PHP Syntax
 Plug 'MaxMEllon/vim-jsx-pretty'																						" Sets the value of ‘commentstring’ to a different value depending on the region of the file you are in.
 Plug 'suy/vim-context-commentstring'																			" JSX syntax pretty highlighting for vim.
 
-"Plug 'Shutnik/jshint2.vim'
 "Plug 'posva/vim-vue'
 "Plug 'sheerun/vim-polyglot'
 Plug 'HerringtonDarkholme/yats.vim'												" Advanced TypeScript Syntax Highlighting
@@ -337,9 +322,7 @@ if (executable('rg') || executable('ag'))
 	Plug 'wincent/ferret'																																" Enhanced multi-file search for Vim
 else
 	Plug 'mileszs/ack.vim'
-	if executable("rg")
-		let g:ackprg = 'rg --hidden -i'																										" Ths plugin allows you to search with ack from within Vim and shows results in a split window
-	elseif executable("ag")
+	if executable("ag")
 		let g:ackprg = 'ag --nogroup --nocolor --column'
 	else
 		let g:ackprg = 'git grep -H --line-number --no-color --untracked'
@@ -389,13 +372,8 @@ colorscheme seoul256
 " https://github.com/junegunn/fzf
 set rtp+=~/.fzf
 
-if has('nvim')
-  let $FZF_DEFAULT_OPTS .= ' --inline-info'
-  " let $NVIM_TUI_ENABLE_TRUE_COLOR = 1
-endif
+let $FZF_DEFAULT_OPTS .= ' --inline-info'
 
-let g:fzf_files_options =
-  \ '--preview "(highlight -O ansi {} || cat {}) 2> /dev/null | head -'.&lines.'"'
 
 " ----------------------------------------------------------------------------
 " }}}
@@ -424,8 +402,6 @@ vnoremap <leader>dp :diffput<CR>
 nnoremap <leader>O :!open .<CR>
 
 nnoremap <leader>a :Root<CR>:Ack!<Space>
-
-nnoremap <silent> <expr> <leader><leader> (expand('%') =~ 'NERD_tree' ? "\<c-w>\<c-w>" : '').":Files\<cr>"
 
 " npm install --save-dev word under cursor
 nnoremap <leader>md :execute ":!npm install --save-dev " . expand("<cword>")<CR>
@@ -720,15 +696,6 @@ augroup cline
 augroup END
 " }}}
 
-augroup nerd_loader
-	autocmd!
-	autocmd VimEnter * silent! autocmd! FileExplorer
-	autocmd BufEnter,BufNew *
-			\  if isdirectory(expand('<amatch>'))
-			\|   call plug#load('nerdtree')
-			\|   execute 'autocmd! nerd_loader'
-			\| endif
-augroup END
 
 augroup python3
 	au! BufEnter *.py setlocal omnifunc=python3complete#Complete
@@ -766,17 +733,16 @@ function! SyncTree()
 endfunction
 
 " Highlight currently open buffer in NERDTree
-" autocmd BufEnter * call SyncTree()
+autocmd BufEnter * call SyncTree()
 
-" function! ToggleNerdTree()
-"   set eventignore=BufEnter
-"   NERDTreeToggle
-"   set eventignore=
-" endfunction
+function! ToggleNerdTree()
+	set eventignore=BufEnter
+	NERDTreeToggle
+	set eventignore=
+endfunction
 
-map <leader>r :NERDTreeFind<cr>
-" nnoremap <C-c> :call ToggleNerdTree()<CR>
-nnoremap <C-c> :NERDTreeToggle<CR>
+nnoremap <C-c> :call ToggleNerdTree()<CR>
+
 let NERDTreeChDirMode=2																			" setting root dir in NT also sets VIM's cd
 let NERDTreeMapOpenSplit = "s"
 let NERDTreeMapOpenVSplit = "v"
@@ -860,12 +826,6 @@ inoremap <expr><TAB>  pumvisible() ? "\<C-n>" : "\<TAB>"
 " ----------------------------------------------------------------------------
 " }}}
 " ----------------------------------------------------------------------------
-
-set noshowmode																" Don't Show the current mode Since we're using airline
-
-let jshint2_read = 1
-let jshint2_save = 1
-let jshint2_min_height = 3
 
 let php_sql_query=1
 let php_htmlInStrings=1

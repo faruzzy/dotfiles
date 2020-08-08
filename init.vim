@@ -14,6 +14,7 @@ filetype plugin indent on													" Enable file type detection
 syntax on																	" Syntax highlighting
 syntax sync minlines=256
 let mapleader=","															" Change leader to ','
+let s:darwin = has('mac')
 " }}}
 
 set number relativenumber									" The current line number is always show in the left gutter, along with the relative line numbers above/below
@@ -151,20 +152,6 @@ function! NeatFoldText()
 endfunction
 set foldtext=NeatFoldText()
 
-"set statusline=%<[%n]\ %F\ %m%r%y\ %{exists('g:loaded_fugitive')?fugitive#statusline():''}\ %=%-14.(%l,%c%V%)\ %P
-function! s:statusline_expr()
-  let mod = "%{&modified ? '[+] ' : !&modifiable ? '[x] ' : ''}"
-  let ro  = "%{&readonly ? '[RO] ' : ''}"
-  let ft  = "%{len(&filetype) ? '['.&filetype.'] ' : ''}"
-  let fug = "%{exists('g:loaded_fugitive') ? fugitive#statusline() : ''}"
-  let sep = ' %= '
-  let pos = ' %-12(%l : %c%V%) '
-  let pct = ' %P'
-
-  return '[%n] %F %<'.mod.ro.ft.fug.sep.pos.'%*'.pct
-endfunction
-"let &statusline = s:statusline_expr()
-
 "http://stackoverflow.com/questions/20186975/vim-mac-how-to-copy-to-clipboard-without-pbcopy
 set clipboard^=unnamed
 set complete=.,w,b,u,t														" Better Completion
@@ -172,7 +159,9 @@ set completeopt=longest,menuone
 set ofu=syntaxcomplete#Complete												" Set omni-completion method.
 set report=0																" Show all changes
 
+" ----------------------------------------------------------------------------
 " Wildmenu completion {{{
+" ----------------------------------------------------------------------------
 
 set wildmenu																" Command line autocompletion
 set wildmode=list:full														" Shows all the options
@@ -216,10 +205,6 @@ if has("gui_macvim")
   let g:molokai_original=1
   highlight SignColumn guibg=#272822
 endif
-
-" }}}
-
-let s:darwin = has('mac')
 
 " }}}
 
@@ -318,7 +303,6 @@ Plug 'StanAngeloff/php.vim', { 'for': 'php' }										" PHP Syntax
 Plug 'MaxMEllon/vim-jsx-pretty'																						" Sets the value of ‘commentstring’ to a different value depending on the region of the file you are in.
 Plug 'suy/vim-context-commentstring'																			" JSX syntax pretty highlighting for vim.
 
-"Plug 'Shutnik/jshint2.vim'
 "Plug 'posva/vim-vue'
 "Plug 'sheerun/vim-polyglot'
 Plug 'HerringtonDarkholme/yats.vim'												" Advanced TypeScript Syntax Highlighting
@@ -359,9 +343,7 @@ if (executable('rg') || executable('ag'))
 	Plug 'wincent/ferret'																																" Enhanced multi-file search for Vim
 else
 	Plug 'mileszs/ack.vim'
-	if executable("rg")
-		let g:ackprg = 'rg --hidden -i'																										" Ths plugin allows you to search with ack from within Vim and shows results in a split window
-	elseif executable("ag")
+	if executable("ag")
 		let g:ackprg = 'ag --nogroup --nocolor --column'
 	else
 		let g:ackprg = 'git grep -H --line-number --no-color --untracked'
@@ -413,19 +395,10 @@ set rtp+=~/.fzf
 
 let $FZF_DEFAULT_OPTS .= ' --inline-info'
 
-" All files
-command! -nargs=? -complete=dir AF
-  \ call fzf#run(fzf#wrap(fzf#vim#with_preview({
-  \   'source': 'fd --type f --hidden --follow --exclude .git --no-ignore . '.expand(<q-args>)
-  \ })))
-
 " Terminal buffer options for fzf
 autocmd! FileType fzf
 autocmd  FileType fzf set noshowmode noruler nonu
 
-
-" let g:fzf_files_options =
-"   \ '--preview "(highlight -O ansi {} || cat {}) 2> /dev/null | head -'.&lines.'"'
 
 " ----------------------------------------------------------------------------
 " }}}
@@ -753,16 +726,6 @@ augroup END
 autocmd FileType python let b:coc_root_patterns = ['.js', '.git', '.env']
 autocmd FileType javascript let b:coc_root_patterns = ['.js', '.json']
 
-"augroup nerd_loader
-"	autocmd!
-"	autocmd VimEnter * silent! autocmd! FileExplorer
-"	autocmd BufEnter,BufNew *
-"			\  if isdirectory(expand('<amatch>'))
-"			\|   call plug#load('nerdtree')
-"			\|   execute 'autocmd! nerd_loader'
-"			\| endif
-"augroup END
-
 augroup python3
 	au! BufEnter *.py setlocal omnifunc=python3complete#Complete
 augroup END
@@ -770,16 +733,6 @@ augroup END
 " ----------------------------------------------------------------------------
 " }}}
 " ----------------------------------------------------------------------------
-
-" NeoComplete {{{
-
-let g:neocomplete#enable_at_startup = 1															" Enabling neocomplete at startup
-let g:neocomplete#enable_smart_case = 1															" Use smartcase
-let g:neocomplete#sources#syntax#min_keyword_length = 3											" Set minimum syntax keyword length.
-
-" }}}
-
-let g:jsx_ext_required = 0
 
 " NERDTree Options {{{
 
@@ -789,8 +742,8 @@ function! IsNERDTreeOpen()
   return exists("t:NERDTreeBufName") && (bufwinnr(t:NERDTreeBufName) != -1)
 endfunction
 
-" Call NERDTreeFind iff NERDTree is active, current window contains a modifiable
-" file, and we're not in vimdiff
+" Call NERDTreeFind if NERDTree is active, current window contains
+" a modifiable file, and we're not in vimdiff
 function! SyncTree()
   if &modifiable && IsNERDTreeOpen() && strlen(expand('%')) > 0 && !&diff
     NERDTreeFind
@@ -807,8 +760,8 @@ function! ToggleNerdTree()
 	set eventignore=
 endfunction
 
-map <leader>r :NERDTreeFind<CR>
 nnoremap <C-c> :call ToggleNerdTree()<CR>
+
 let NERDTreeChDirMode=2																			" setting root dir in NT also sets VIM's cd
 let NERDTreeMapOpenSplit = "s"
 let NERDTreeMapOpenVSplit = "v"
@@ -892,10 +845,6 @@ inoremap <expr><TAB>  pumvisible() ? "\<C-n>" : "\<TAB>"
 " ----------------------------------------------------------------------------
 " }}}
 " ----------------------------------------------------------------------------
-
-" let jshint2_read = 1
-" let jshint2_save = 1
-" let jshint2_min_height = 3
 
 let php_sql_query=1
 let php_htmlInStrings=1
