@@ -157,10 +157,6 @@ elif [ "$OS" = 'ubuntu' ]; then
 
 fi
 
-# `cat` with beautiful colors. requires Pygments installed.
-# sudo easy_install Pygments
-alias c='pygmentize -O style=monokai -f console256 -g'
-
 ##### GIT Stuff #####
 
 alias g="git"
