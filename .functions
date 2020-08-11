@@ -21,6 +21,7 @@ function epoch() {
 	fi
 }
 
+# Github pull request
 function ghpr() {
 	local sed_cmd=$( [ "$(uname)" = Darwin ] && echo 'sed -E' || echo 'sed -r' )
 	local PR=${1}
