@@ -387,6 +387,7 @@ let $FZF_DEFAULT_OPTS .= ' --inline-info'
 nnoremap <leader>s :source %<CR>
 
 nnoremap <C-p> :Root<CR>:Files<CR>
+nnoremap <C-g> :Rg<CR>
 nnoremap <C-b> :Buffers<CR>
 nnoremap <silent> <leader>C			:Colors<CR>
 nnoremap <silent> <leader>l			:Lines<CR>
