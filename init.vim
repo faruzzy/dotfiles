@@ -189,23 +189,6 @@ set wildignore+=**/cov/**
 set wildignore+=**/vendor/**
 set wildignore+=**/bower_components/**
 
-if has("gui_macvim")
-  " No toolbars, menu or scrollbars in the GUI
-  set guifont=Source\ Code\ Pro\ Light:h12
-  set clipboard^=unnamed
-  set vb t_vb=
-  set guioptions-=m															" no menu
-  set guioptions-=T														    " no toolbar
-  set guioptions-=l
-  set guioptions-=L
-  set guioptions-=r														    " no scrollbar
-  set guioptions-=R
-
-  let macvim_skip_colorscheme=1
-  let g:molokai_original=1
-  highlight SignColumn guibg=#272822
-endif
-
 " }}}
 
 " ----------------------------------------------------------------------------
