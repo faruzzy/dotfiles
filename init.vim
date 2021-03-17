@@ -387,6 +387,7 @@ autocmd  FileType fzf set noshowmode noruler nonu
 nnoremap <leader>s :source %<CR>
 
 nnoremap <C-p> :Root<CR>:Files<CR>
+nnoremap <C-g> :Rg<CR>
 nnoremap <C-b> :Buffers<CR>
 nnoremap <silent> <leader>C			:Colors<CR>
 nnoremap <silent> <leader>l			:Lines<CR>
