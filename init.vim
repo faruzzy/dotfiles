@@ -291,7 +291,6 @@ let g:coc_global_extensions = [
 	\ 'coc-prettier',
 	\ 'coc-json',
 	\ 'coc-css',
-	\ 'coc-git',
 	\ 'coc-python',
 	\ 'coc-html',
 	\]
