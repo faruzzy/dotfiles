@@ -10,7 +10,7 @@ if [[ -f ~/z.sh ]]; then
 fi
 
 # ~/.extra can be used for settings you don't want to commit
-for file in ~/.{extra,bash_prompt,exports,aliases,functions,bash_options}; do
+for file in ~/.{bash_prompt,exports,aliases,functions,bash_options,extra}; do
 	[ -r "$file" ] && source "$file"
 done
 unset file
@@ -43,3 +43,4 @@ eval "$(jenv init -)"
 export MANPATH="/opt/local/share/man:$MANPATH"
 # Finished adapting your MANPATH environment variable for use with MacPorts.
 
+source "$HOME/.cargo/env"
