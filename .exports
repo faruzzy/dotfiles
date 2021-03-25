@@ -54,8 +54,8 @@ elif [ -x "$(command -v rg)" ]; then
 elif [ -x "$(command -v ag)" ]; then
 	export FZF_DEFAULT_COMMAND='ag --hidden --ignore .git -g ""'
 else
-	export FZF_DEFAULT_COMMAND="find . -type d \( -path '*\.git*' -o -path '*node_modules*' \) -prune -o -print"
-	export FZF_CTRL_T_COMMAND="find . -type d -not -path '*/.git*'"
+	export FZF_DEFAULT_COMMAND='find . -type d \( -path '*\.git*' -o -path '*node_modules*' \) -prune -o -print'
+	export FZF_CTRL_T_COMMAND='find . -type f -not -path "*.\git*" -not -path "*node_modules*"'
 fi
 
 command -v bat  > /dev/null && export FZF_CTRL_T_OPTS="--preview 'bat -n --color=always {}'"
