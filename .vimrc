@@ -11,6 +11,7 @@
 
 " House keeping {{{
 filetype plugin indent on													" Enable file type detection
+runtime macros/matchit.vim												" allows jumping between brackets with % in normal mode
 syntax on																	" Syntax highlighting
 syntax sync minlines=256
 let mapleader=","															" Change leader to ','
@@ -39,7 +40,9 @@ set display=lastline
 set diffopt=filler															" Add vertical spaces to keep right and left aligned
 set diffopt+=vertical														" make :diffsplit default to vertical
 set shell=/bin/sh															" Use /bin/sh for executing shell commands
-set timeoutlen=1250															" Reduce annoying delay for key codes, especially <Esc>...
+set esckeys																				" allows function keys to be recognized in Insert mode
+set ttimeoutlen=20																" timeout for a key code mapping
+set timeoutlen=1250																" Reduce annoying delay for key codes, especially <Esc>...
 set formatoptions+=1
 
 " Encoding {{{
