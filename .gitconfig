@@ -66,7 +66,7 @@
 	discard = checkout --
 	rlc = !git reset --hard HEAD~1                  # Remove last commit
 	ulc = reset --soft HEAD~1                       # Undo last commit
-	update = !git fetch upstream && git rebase upstream/`git rev-parse --abbrev-ref HEAD`
+	update = !git fetch origin && git rebase origin/`git rev-parse --abbrev-ref head`
 
 	# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
