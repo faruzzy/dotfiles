@@ -13,7 +13,7 @@ if [[ -f ~/z.sh ]]; then
 fi
 
 # ~/.extra can be used for settings you don't want to commit
-for file in ~/.{bash_prompt,exports,aliases,functions.zsh,extra}; do
+for file in ~/.{exports,aliases,functions.zsh,extra}; do
 	[ -r "$file" ] && source "$file"
 done
 unset file
@@ -42,17 +42,16 @@ fi
 export PATH="$HOME/.jenv/bin:$PATH"
 eval "$(jenv init -)"
 
-source "/Users/$(whoami)/.fzf/shell/key-bindings.zsh"
+# source "/Users/$(whoami)/.fzf/shell/key-bindings.zsh"
 
 export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
-source ~/.config/up/up.sh
+# source ~/.config/up/up.sh
 
 export MANPATH="/opt/local/share/man:$MANPATH"
 # Finished adapting your MANPATH environment variable for use with MacPorts.
 
-source "$HOME/.cargo/env"
 export ZSH="/Users/$(whoami)/.oh-my-zsh"
 
 # Set name of the theme to load --- if set to "random", it will
