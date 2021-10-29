@@ -310,6 +310,8 @@ Plug 'elzr/vim-json', { 'for' : 'json' }											" json support
 
 Plug 'SirVer/ultisnips'
 Plug 'mlaursen/vim-react-snippets'
+Plug 'pantharshit00/vim-prisma'
+Plug 'jparise/vim-graphql'
 let g:UltiSnipsExpandTrigger="<C-l>"
 " }}}
 
