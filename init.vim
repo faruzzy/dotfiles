@@ -20,20 +20,11 @@ let s:darwin = has('mac')
 set number relativenumber									" The current line number is always show in the left gutter, along with the relative line numbers above/below
 set cmdheight=2																		" Give more space for display messages
 set noshowmode																" Don't Show the current mode Since we're using airline
-
-if has("patch-8.1.1564")													" Always show the signcolumn, otherwise it would shift the text each time diagnostics appear/become resolved.
-  " Recently vim can merge signcolumn and number column into one
-  set signcolumn=number
-else
-  set signcolumn=yes
-endif
-
+set signcolumn=yes
 set updatetime=300
 set title																	" Display filename in titlebar
 set titleold=																" Prevent the 'Thanks for flying Vim'
 set ttyfast																	" Optimize for fast terminal connections
-set ttymouse=xterm2
-set ttyscroll=3
 set lazyredraw																" Wait to redraw, do not redraw while executing macros
 set nowrap
 set fo+=o																	" Automatically insert the current comment leader after hitting 'o' or 'O' in Normal mode.
@@ -303,6 +294,8 @@ Plug 'elzr/vim-json', { 'for' : 'json' }											" json support
 
 " Plug 'SirVer/ultisnips'
 Plug 'mlaursen/vim-react-snippets'
+Plug 'pantharshit00/vim-prisma'
+Plug 'jparise/vim-graphql'
 let g:UltiSnipsExpandTrigger="<C-l>"
 " }}}
 
@@ -373,7 +366,6 @@ let $FZF_DEFAULT_OPTS .= ' --inline-info'
 " Terminal buffer options for fzf
 autocmd! FileType fzf
 autocmd  FileType fzf set noshowmode noruler nonu
-
 
 " ----------------------------------------------------------------------------
 " }}}
@@ -544,7 +536,7 @@ nnoremap [r :ALEPreviousWrap<CR> " move to the previous ALE warning / error
 " ----------------------------------------------------------------------------
 
 if has("autocmd")
-  autocmd BufNewFile,Bufread *.json setfiletype json syntax=javascript								" Treat .json files as .js
+	autocmd BufNewFile,Bufread *.json setfiletype json syntax=javascript								" Treat .json files as .js
 
 	autocmd FileType css,sass,less set omnifunc=csscomplete#CompleteCSS
 	autocmd FileType javascript setlocal omnifunc=javascriptcomplete#CompleteJS
@@ -655,7 +647,7 @@ augroup END
 " Silver Searcher {{{
 augroup ag_config
 autocmd!
-  if executable("ag")
+	if executable("ag")
 	" Note we extract the column as well as the file and line number
 	"set grepprg=ag\ --nogroup\ --nocolor\ --column
 	set grepprg=rg\ --vimgrep
@@ -666,12 +658,12 @@ autocmd!
 	let b:ag_command = 'rg --hidden -i'
 
 	for i in split(&wildignore, ",")
-	  let i = substitute(i, '\*/\(.*\)/\*', '\1', 'g')
-	  let b:ag_command = b:ag_command . ' --ignore "' . substitute(i, '\*/\(.*\)/\*', '\1', 'g') . '"'
+		let i = substitute(i, '\*/\(.*\)/\*', '\1', 'g')
+		let b:ag_command = b:ag_command . ' --ignore "' . substitute(i, '\*/\(.*\)/\*', '\1', 'g') . '"'
 	endfor
 
 	"let b:ag_command = b:ag_command . ' --hidden -g ""'
-  endif
+	endif
 augroup END
 " }}}
 
@@ -715,16 +707,16 @@ augroup END
 " sync open file with NERDTree
 " Check if NERDTree is open or active
 function! IsNERDTreeOpen()
-  return exists("t:NERDTreeBufName") && (bufwinnr(t:NERDTreeBufName) != -1)
+	return exists("t:NERDTreeBufName") && (bufwinnr(t:NERDTreeBufName) != -1)
 endfunction
 
 " Call NERDTreeFind if NERDTree is active, current window contains
 " a modifiable file, and we're not in vimdiff
 function! SyncTree()
-  if &modifiable && IsNERDTreeOpen() && strlen(expand('%')) > 0 && !&diff
-    NERDTreeFind
-    wincmd p
-  endif
+	if &modifiable && IsNERDTreeOpen() && strlen(expand('%')) > 0 && !&diff
+		NERDTreeFind
+		wincmd p
+	endif
 endfunction
 
 " Highlight currently open buffer in NERDTree
@@ -751,20 +743,19 @@ let NERDTreeIgnore = ['\~$', '^\.git$', '^\.hg$', '^\.bundle$', '^\.jhw-cache$',
 
 let g:netrw_liststyle=3																			" Explore with NerdTree Style by default
 let g:NERDTreeIndicatorMapCustom = {
-    \ "Modified"  : "✹",
-    \ "Staged"    : "✚",
-    \ "Untracked" : "✭",
-    \ "Renamed"   : "➜",
-    \ "Unmerged"  : "═",
-    \ "Deleted"   : "✖",
-    \ "Dirty"     : "✗",
-    \ "Clean"     : "✔︎",
-    \ 'Ignored'   : '☒',
-    \ "Unknown"   : "?"
-    \ }
+		\ "Modified"  : "✹",
+		\ "Staged"    : "✚",
+		\ "Untracked" : "✭",
+		\ "Renamed"   : "➜",
+		\ "Unmerged"  : "═",
+		\ "Deleted"   : "✖",
+		\ "Dirty"     : "✗",
+		\ "Clean"     : "✔︎",
+		\ 'Ignored'   : '☒',
+		\ "Unknown"   : "?"
+		\ }
 
 " }}}
-
 
 " Close vim tmux runner opened by VimuxRunCommand
 nnoremap <leader>vc :call VimuxCloseRunner()<CR>
@@ -870,12 +861,12 @@ xnoremap <leader>yafp :CopyAbsoluteFilepath<CR>
 " Ignore leading/trailing punctuation (except underscore), whitespace.
 " Ignore internal punctuation (except underscore).
 function! FindALine()
-    let l:text = getline('.')
-    let l:text = substitute(l:text, "\\v^\\W+", "", "g")
-    let l:text = substitute(l:text, "\\v\\W+$", "", "g")
-    let l:text = substitute(l:text, "\\v\\/", "\\\\/", "g")
+		let l:text = getline('.')
+		let l:text = substitute(l:text, "\\v^\\W+", "", "g")
+		let l:text = substitute(l:text, "\\v\\W+$", "", "g")
+		let l:text = substitute(l:text, "\\v\\/", "\\\\/", "g")
 
-    execute 'normal! $/\c' . l:text . ''
+		execute 'normal! $/\c' . l:text . ''
 endfun
 nnoremap g<CR> :call FindALine()<CR>
 
@@ -899,20 +890,20 @@ nnoremap <silent> Q :call CloseWindowOrKillBuffer()<CR>
 
 " via: http://rails-bestpractices.com/posts/60-remove-trailing-whitespace
 function! <SID>StripTrailingWhitespaces()
-    " Preparation: save last search, and cursor position.
-    let _s=@/
-    let l = line(".")
-    let c = col(".")
-    " Do the business:
-    %s/\s\+$//e
-    " Clean up: restore previous search history, and cursor position
-    let @/=_s
-    call cursor(l, c)
+		" Preparation: save last search, and cursor position.
+		let _s=@/
+		let l = line(".")
+		let c = col(".")
+		" Do the business:
+		%s/\s\+$//e
+		" Clean up: restore previous search history, and cursor position
+		let @/=_s
+		call cursor(l, c)
 endfunction
 
 command! -nargs=1 S
-      \ | execute ':silent !git checkout '.<q-args>
-      \ | execute ':redraw!'
+			\ | execute ':silent !git checkout '.<q-args>
+			\ | execute ':redraw!'
 
 command! StripTrailingWhitespaces call <SID>StripTrailingWhitespaces()
 
