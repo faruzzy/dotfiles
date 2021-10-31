@@ -496,7 +496,7 @@ nnoremap <leader>gr :Gread<CR>
 nnoremap <leader>gm :Gmove<CR>
 nnoremap <leader>gy :Gremove<CR>
 nnoremap <leader>gs :Git<CR>
-nnoremap <leader>gp :Gpush<CR>
+nnoremap <leader>gp :Git push<CR>
 nnoremap <leader>gc :Git commit<CR>
 nnoremap <leader>gd :Gdiff<CR>
 nnoremap <leader>gb :Gblame<CR>
