@@ -8,6 +8,9 @@ export MANPAGER="less -X"																							# Don’t clear the screen after
 export LC_ALL=en_US.UTF-8
 export LANG=en_US.UTF-8
 
+export LDFLAGS="-L/usr/local/opt/libpq/lib"
+export CPPFLAGS="-I/usr/local/opt/libpq/include"
+
 
 # history
 export HISTSIZE=32768																									# Larger bash history (allow 32³ entries; default is 500)
@@ -68,6 +71,7 @@ export JAVA_HOME=$(/usr/libexec/java_home) #TODO: Do I need this knowing that I 
 
 export PSQL=/Applications/Postgres.app/Contents/Versions/12/bin
 export SCRIPT_HOME=~/github/dotfiles/scripts #TODO: what is this for?
-export PATH=~/dev:/bin:~/dev/installs/mongodb/bin:/sbin:/usr/local/bin:/usr/bin:/usr/sbin:/usr/local/sbin:$PSQL:$GOPATH/bin:$GOROOT/bin:$SCRIPT_HOME:$M2_HOME/bin:$HOME/.composer/vendor/bin:$HOME/kafka_2.13-2.4.0/bin:$PATH
+export PATH=~/dev:/bin:~/dev/installs/mongodb/bin:/sbin:/usr/local/bin:/usr/bin:/usr/sbin:/usr/local/sbin:/usr/local/opt/libpq/bin:$PSQL:$GOPATH/bin:$GOROOT/bin:$SCRIPT_HOME:$M2_HOME/bin:$HOME/.composer/vendor/bin:$HOME/kafka_2.13-2.4.0/bin:$PATH
 
 #TODO: Make neovim the default editor if neoovim is installed. Otherwise use VIM
+# export PATH="/usr/local/opt/libpq/bin:$PATH
