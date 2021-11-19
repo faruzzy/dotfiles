@@ -499,7 +499,7 @@ nnoremap <leader>gs :Git<CR>
 nnoremap <leader>gp :Git push<CR>
 nnoremap <leader>gc :Git commit<CR>
 nnoremap <leader>gd :Gdiff<CR>
-nnoremap <leader>gb :Gblame<CR>
+nnoremap <leader>gb :Git blame<CR>
 nnoremap <leader>gg :Gmerge<CR>
 nnoremap <leader>gv :GV<CR>
 nnoremap <leader>GV :GV!<CR>
