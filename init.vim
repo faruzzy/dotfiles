@@ -292,7 +292,7 @@ let g:coc_global_extensions = [
 Plug 'othree/yajs', { 'for': 'javascript' }																" Yet Another JavaScript Syntax for Vim
 Plug 'elzr/vim-json', { 'for' : 'json' }											" json support
 
-" Plug 'SirVer/ultisnips'
+Plug 'SirVer/ultisnips'
 Plug 'mlaursen/vim-react-snippets'
 Plug 'pantharshit00/vim-prisma'
 Plug 'jparise/vim-graphql'
@@ -965,7 +965,7 @@ function! BrowserOpen()
 		return
 	endif
 
-	let l:jiraRegex = '\v\C[A-Z]+-\d+'
+let l:jiraRegex = '\v\C[A-Z]+-\d+'
 	let l:jiraUrlPlaceholderRegex = '\v\C\{0\}'
 
 	let l:jiraTicket = matchstr(l:line, l:jiraRegex)
@@ -1040,3 +1040,8 @@ command! Root call s:root()
 " ----------------------------------------------------------------------------
 " }}}
 " ----------------------------------------------------------------------------
+
+" ************ Note to avoid headaches in the future *********************
+" If you don't have python3 co plugins written in python 3 will not work
+" Run `pip3 install pynvim`. It should install a Python provider
+" ************************************************************************
