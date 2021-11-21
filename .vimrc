@@ -278,6 +278,7 @@ Plug 'mattn/emmet-vim', { 'for' : ['html', 'css', 'javascript'] }					" Emmet fo
 let g:user_emmet_settings = {
 \  'html' : {
 \    'indent_blockelement': 2,
+\		 'block_all_childless': 2,
 \  },
 \}
 
@@ -498,7 +499,7 @@ nnoremap <leader>gy :Gremove<CR>
 nnoremap <leader>gs :Git<CR>
 nnoremap <leader>gp :Git push<CR>
 nnoremap <leader>gc :Git commit<CR>
-nnoremap <leader>gd :Gdiff<CR>
+nnoremap <leader>gd :call ToggleNerdTreeIfOpen()<CR> :Gdiff<CR>
 nnoremap <leader>gb :Git blame<CR>
 nnoremap <leader>gg :Gmerge<CR>
 nnoremap <leader>gv :GV<CR>
@@ -745,6 +746,12 @@ function! ToggleNerdTree()
 	set eventignore=BufEnter
 	NERDTreeToggle
 	set eventignore=
+endfunction
+
+function! ToggleNerdTreeIfOpen()
+	if IsNERDTreeOpen()
+		call ToggleNerdTree()
+	endif
 endfunction
 
 nnoremap <C-c> :call ToggleNerdTree()<CR>
