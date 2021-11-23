@@ -286,6 +286,32 @@ let g:coc_global_extensions = [
 	\ 'coc-html',
 	\]
 
+" show documentation in preview window.
+nnoremap <silent> K :call <SID>show_documentation()<cr>
+
+" goto type
+nmap <silent> gk <Plug>(coc-type-definition)
+
+" goto definition
+nmap <silent> gd <Plug>(coc-definition)
+
+" get references
+nmap <silent> gr <Plug>(coc-references)
+
+" format rename
+nmap <silent> fr <Plug>(coc-rename)
+
+" format file
+nmap <silent> pr <Plug>(coc-format)
+
+function! s:show_documentation()
+  if (index(['vim','help'], &filetype) >= 0)
+    execute 'h '.expand('<cword>')
+  else
+    call CocAction('doHover')
+  endif
+endfunction
+
 "Plug 'Shougo/vimproc.vim', {'do': 'make'}											" Interactive command execution in vim (dependency of 'Quramy/tsuquyomi')
 "Plug 'moll/vim-node'																" Allows Node.js Development with vim
 "Plug 'jelera/vim-javascript-syntax', { 'for': 'javascript' }
