@@ -403,31 +403,31 @@ autocmd  FileType fzf set noshowmode noruler nonu
 " ----------------------------------------------------------------------------
 
 " refresh current .vimrc file for change to take effect
-nnoremap <leader>s :source %<CR>
+nnoremap <leader>s :source %<cr>
 
-nnoremap <C-p> :Root<CR>:Files<CR>
-nnoremap <C-g> :Rg<CR>
-nnoremap <C-b> :Buffers<CR>
-nnoremap <silent> <leader>C			:Colors<CR>
-nnoremap <silent> <leader>l			:Lines<CR>
-nnoremap <silent> <leader>`			:Marks<CR>
+nnoremap <C-p> :Root<cr>:Files<cr>
+nnoremap <C-g> :Rg<cr>
+nnoremap <C-b> :Buffers<cr>
+nnoremap <silent> <leader>C			:Colors<cr>
+nnoremap <silent> <leader>l			:Lines<cr>
+nnoremap <silent> <leader>`			:Marks<cr>
 
-nnoremap <leader>dg :diffget<CR>
-vnoremap <leader>dg :diffget<CR>
+nnoremap <leader>dg :diffget<cr>
+vnoremap <leader>dg :diffget<cr>
 
-nnoremap <leader>dp :diffput<CR>
-vnoremap <leader>dp :diffput<CR>
+nnoremap <leader>dp :diffput<cr>
+vnoremap <leader>dp :diffput<cr>
 
 " Open the current directory in finder
-nnoremap <leader>O :!open .<CR>
+nnoremap <leader>O :!open .<cr>
 
-nnoremap <leader>a :Root<CR>:Ack!<Space>
+nnoremap <leader>a :Root<cr>:Ack!<Space>
 
 " npm install --save-dev word under cursor
-nnoremap <leader>md :execute ":!npm install --save-dev " . expand("<cword>")<CR>
+nnoremap <leader>md :execute ":!npm install --save-dev " . expand("<cword>")<cr>
 
 " npm install --save word under cursor
-nnoremap <leader>m :execute ":!npm install --save " . expand("<cword>")<CR>
+nnoremap <leader>m :execute ":!npm install --save " . expand("<cword>")<cr>
 
 " Enable folding with the spacebar
 nnoremap <space> za" Run python code by pressing F9
@@ -443,10 +443,10 @@ nnoremap <C-H> <C-W><C-H>
 
 " Quick tab movement {{{
 
-nnoremap tf :tabfirst<CR>
-nnoremap tl :tablast<CR>
-nnoremap ]t :tabnext<CR>
-nnoremap [t :tabprev<CR>
+nnoremap tf :tabfirst<cr>
+nnoremap tl :tablast<cr>
+nnoremap ]t :tabnext<cr>
+nnoremap [t :tabprev<cr>
 
 " }}}
 
@@ -459,12 +459,12 @@ nnoremap [b :bprev<cr>
 
 " move lines of text up or down {{{
 
-nnoremap <C-J> :m .+1<CR>==
-nnoremap <C-K> :m .-2<CR>==
-inoremap <C-J> <Esc>:m .+1<CR>==gi
-inoremap <C-K> <Esc>:m .-2<CR>==gi
-vnoremap <C-J> :m '>+1<CR>gv=gv
-vnoremap <C-K> :m '<-2<CR>gv=gv
+nnoremap <C-J> :m .+1<cr>==
+nnoremap <C-K> :m .-2<cr>==
+inoremap <C-J> <Esc>:m .+1<cr>==gi
+inoremap <C-K> <Esc>:m .-2<cr>==gi
+vnoremap <C-J> :m '>+1<cr>gv=gv
+vnoremap <C-K> :m '<-2<cr>gv=gv
 
 " }}}
 
@@ -475,7 +475,7 @@ vnoremap <leader>* "hy:%s/\V<C-r>h//<left>
 
 " }}}
 
-nnoremap <F12> :exec ':silent !open -a /Applications/Google\ Chrome.app %'<CR>
+nnoremap <F12> :exec ':silent !open -a /Applications/Google\ Chrome.app %'<cr>
 
 " Use tab to jump between blocks, because it's easier
 nnoremap <tab> %
@@ -485,48 +485,48 @@ vnoremap <tab> %
 let g:html_indent_tags = 'li\|p'
 
 " Save and close current buffer
-nnoremap <leader>x :wq!<CR>
+nnoremap <leader>x :wq!<cr>
 
 " Save and close all buffer including those created by vimux (if any)
-nnoremap <leader>X :call VimuxCloseRunner()<CR> :wqa!<CR>
+nnoremap <leader>X :call VimuxCloseRunner()<cr> :wqa!<cr>
 
 " Close current buffer without saving
 nnoremap <leader>q :q!<bR>
 
 " Close all buffer without saving including those created by vimux (if any)
-nnoremap <leader>Q :call VimuxCloseRunner()<CR> :qa!<CR>
+nnoremap <leader>Q :call VimuxCloseRunner()<cr> :qa!<cr>
 
 " Quickly open .vimrc file in the current buffer
-nnoremap <leader>v :e ~/Github/dotfiles/.vimrc<CR>
+nnoremap <leader>v :e ~/Github/dotfiles/.vimrc<cr>
 
 " Quickly open .vimrc file in a new vertical buffer
-nnoremap <leader>V :vs ~/Github/dotfiles/.vimrc<CR>
+nnoremap <leader>V :vs ~/Github/dotfiles/.vimrc<cr>
 
 " Fugitive {{{
 
-nnoremap <leader>ga :Git add %:p<CR><CR>
-nnoremap <leader>gw :Gwrite<CR>
-nnoremap <leader>gr :Gread<CR>
-nnoremap <leader>gm :Gmove<CR>
-nnoremap <leader>gy :Gremove<CR>
-nnoremap <leader>gs :Git<CR>
-nnoremap <leader>gp :Git push<CR>
-nnoremap <leader>gc :Git commit<CR>
-nnoremap <leader>gd :call ToggleNerdTreeIfOpen()<CR> :Gdiff<CR>
-nnoremap <leader>gb :Git blame<CR>
-nnoremap <leader>gg :Gmerge<CR>
-nnoremap <leader>gv :GV<CR>
-nnoremap <leader>GV :GV!<CR>
-nnoremap <leader>pp :Git push origin master<CR>
+nnoremap <leader>ga :Git add %:p<cr><cr>
+nnoremap <leader>gw :Gwrite<cr>
+nnoremap <leader>gr :Gread<cr>
+nnoremap <leader>gm :Gmove<cr>
+nnoremap <leader>gy :Gremove<cr>
+nnoremap <leader>gs :Git<cr>
+nnoremap <leader>gp :Git push<cr>
+nnoremap <leader>gc :Git commit<cr>
+nnoremap <leader>gd :call ToggleNerdTreeIfOpen()<cr> :Gdiff<cr>
+nnoremap <leader>gb :Git blame<cr>
+nnoremap <leader>gg :Gmerge<cr>
+nnoremap <leader>gv :GV<cr>
+nnoremap <leader>GV :GV!<cr>
+nnoremap <leader>pp :Git push origin master<cr>
 
 " }}}
 
 " Plug {{{
 
-nnoremap <leader>pi :PlugInstall<CR>
-nnoremap <leader>pu :PlugUpdate<CR>
-nnoremap <leader>pU :PlugUpgrade<CR>
-nnoremap <leader>pc :PlugClean<CR>
+nnoremap <leader>pi :PlugInstall<cr>
+nnoremap <leader>pu :PlugUpdate<cr>
+nnoremap <leader>pU :PlugUpgrade<cr>
+nnoremap <leader>pc :PlugClean<cr>
 
 " }}}
 
@@ -555,8 +555,8 @@ let g:ale_fixers = {
 
 let g:ale_fix_on_save = 1
 
-nnoremap ]r :ALENextWrap<CR>     " move to the next ALE warning / error
-nnoremap [r :ALEPreviousWrap<CR> " move to the previous ALE warning / error
+nnoremap ]r :ALENextWrap<cr>     " move to the next ALE warning / error
+nnoremap [r :ALEPreviousWrap<cr> " move to the previous ALE warning / error
 
 " ----------------------------------------------------------------------------
 " autocmd {{{
@@ -585,15 +585,15 @@ if has("autocmd")
 
 	" Convenient mappings for compiling and running quick, used mostly for school
 	" gcc compile C files
-	autocmd filetype c nnoremap <leader>c :w <CR>:!gcc % -o %:r && ./%:r<CR>
+	autocmd filetype c nnoremap <leader>c :w <cr>:!gcc % -o %:r && ./%:r<cr>
 	" java compile files
-	autocmd filetype java nnoremap <leader>c :w <CR>:!javac % && java %:r<CR>
+	autocmd filetype java nnoremap <leader>c :w <cr>:!javac % && java %:r<cr>
 	" run node files
-	autocmd filetype javascript nnoremap <leader>c :w <CR>:!node %<CR>
+	autocmd filetype javascript nnoremap <leader>c :w <cr>:!node %<cr>
 	" run python files
-	autocmd filetype python nnoremap <leader>c :exec '!python' shellescape(@%, 1)<CR>
+	autocmd filetype python nnoremap <leader>c :exec '!python' shellescape(@%, 1)<cr>
 	" run bash files
-	autocmd filetype sh nnoremap <leader>c :w <CR>:!bash %<CR>
+	autocmd filetype sh nnoremap <leader>c :w <cr>:!bash %<cr>
 
 	augroup numbertoggle
 		autocmd!
@@ -613,7 +613,7 @@ if has("autocmd")
 	autocmd FileType go nmap <leader>g  <Plug>(go-gbbuild)
 	autocmd FileType go nmap <leader>t  <Plug>(go-test-compile)
 	autocmd FileType go nmap <leader>d  <Plug>(go-doc)
-	"autocmd FileType go nmap <leader>f :GoImports<CR>
+	"autocmd FileType go nmap <leader>f :GoImports<cr>
 endif
 
 " ----------------------------------------------------------------------------
@@ -636,7 +636,7 @@ let python_highlight_all=1
 " https://thomashunter.name/blog/installing-vim-tagbar-with-macvim-in-os-x://thomashunter.name/blog/installing-vim-tagbar-with-macvim-in-os-x/
 let g:tagbar_ctags_bin='/usr/local/bin/ctags' " Proper Ctags locations
 let g:tagbar_width=26	" Default is 40, seems too wide
-nmap <F8> :TagbarToggle<CR>
+nmap <F8> :TagbarToggle<cr>
 
 " ----------------------------------------------------------------------------
 " autocmd {{{
@@ -761,7 +761,7 @@ function! ToggleNerdTreeIfOpen()
 	endif
 endfunction
 
-nnoremap <C-c> :call ToggleNerdTree()<CR>
+nnoremap <C-c> :call ToggleNerdTree()<cr>
 
 let NERDTreeChDirMode=2																			" setting root dir in NT also sets VIM's cd
 let NERDTreeMapOpenSplit = "s"
@@ -791,19 +791,19 @@ let g:NERDTreeIndicatorMapCustom = {
 " }}}
 
 " Close vim tmux runner opened by VimuxRunCommand
-nnoremap <leader>vc :call VimuxCloseRunner()<CR>
+nnoremap <leader>vc :call VimuxCloseRunner()<cr>
 
 " Run last command executed by VimuxRunCommand
-nnoremap <leader>vl :VimuxRunLastCommand<CR>
+nnoremap <leader>vl :VimuxRunLastCommand<cr>
 
 " Interrupt any command that is running inside the runner pane
-nnoremap <leader>vi :VimuxInterruptRunner<CR>
+nnoremap <leader>vi :VimuxInterruptRunner<cr>
 
 " Zoom the tmux runner page
-nnoremap <leader>vz :VimuxZoomRunner<CR>
+nnoremap <leader>vz :VimuxZoomRunner<cr>
 
 " Prompt for a command and run it in a small horizontal split bellow the current pane
-nnoremap <leader>vr :Root<CR> :VimuxPromptCommand<CR>
+nnoremap <leader>vr :Root<cr> :VimuxPromptCommand<cr>
 
 nnoremap <leader>ys :Root<cr>:VimuxPromptCommand("yarn start")<cr><cr>
 nnoremap <leader>yd :Root<cr>:VimuxPromptCommand("yarn dev")<cr><cr>
@@ -879,16 +879,16 @@ command! CopyFilepath         :let @* = expand('%') | echo 'Copied to clipboard:
 command! CopyAbsoluteFilepath :let @* = expand('%:p') | echo 'Copied to clipboard: ' . @*
 
 " Copy filename and filepath quick shortcuts.
-nnoremap <leader>yfn  :CopyFilename<CR>
-xnoremap <leader>yfn  :CopyFilename<CR>
-nnoremap <leader>yp   :CopyPath<CR>
-xnoremap <leader>yp   :CopyPath<CR>
-nnoremap <leader>yap  :CopyAbsolutePath<CR>
-xnoremap <leader>yap  :CopyAbsolutePath<CR>
-nnoremap <leader>yfp  :CopyFilepath<CR>
-xnoremap <leader>yfp  :CopyFilepath<CR>
-nnoremap <leader>yafp :CopyAbsoluteFilepath<CR>
-xnoremap <leader>yafp :CopyAbsoluteFilepath<CR>
+nnoremap <leader>yfn  :CopyFilename<cr>
+xnoremap <leader>yfn  :CopyFilename<cr>
+nnoremap <leader>yp   :CopyPath<cr>
+xnoremap <leader>yp   :CopyPath<cr>
+nnoremap <leader>yap  :CopyAbsolutePath<cr>
+xnoremap <leader>yap  :CopyAbsolutePath<cr>
+nnoremap <leader>yfp  :CopyFilepath<cr>
+xnoremap <leader>yfp  :CopyFilepath<cr>
+nnoremap <leader>yafp :CopyAbsoluteFilepath<cr>
+xnoremap <leader>yafp :CopyAbsoluteFilepath<cr>
 
 " ----------------------------------------------------------------------------
 " Custom functions {{{
@@ -905,7 +905,7 @@ function! FindALine()
 
 		execute 'normal! $/\c' . l:text . ''
 endfun
-nnoremap g<CR> :call FindALine()<CR>
+nnoremap g<cr> :call FindALine()<cr>
 
 " Use Q to intelligently close a window
 function! CloseWindowOrKillBuffer()
@@ -923,7 +923,7 @@ function! CloseWindowOrKillBuffer()
 		bdelete
 	endif
 endfunction
-nnoremap <silent> Q :call CloseWindowOrKillBuffer()<CR>
+nnoremap <silent> Q :call CloseWindowOrKillBuffer()<cr>
 
 " via: http://rails-bestpractices.com/posts/60-remove-trailing-whitespace
 function! <SID>StripTrailingWhitespaces()
@@ -945,10 +945,10 @@ command! -nargs=1 S
 command! StripTrailingWhitespaces call <SID>StripTrailingWhitespaces()
 
 " Save a file and strip trailing white spaces
-nmap <leader>w :StripTrailingWhitespaces<CR>:w<CR>
+nmap <leader>w :StripTrailingWhitespaces<cr>:w<cr>
 
 " Save a file as root (,W) and strip trailing white spaces
-noremap <leader>W :StripTrailingWhitespaces<CR>:w !sudo tee % > /dev/null<CR>
+noremap <leader>W :StripTrailingWhitespaces<cr>:w !sudo tee % > /dev/null<cr>
 
 " Easy creation of Github Pull Request for current branch against master.
 " credit: https://github.com/arkwright/dotfiles/blob/master/vimrc
@@ -1013,8 +1013,8 @@ function! BrowserOpen()
 
 	echo "No URI or JIRA ticket number found in line."
 endfunction
-nnoremap gx :call BrowserOpen()<CR>
-xnoremap gx :call BrowserOpen()<CR>
+nnoremap gx :call BrowserOpen()<cr>
+xnoremap gx :call BrowserOpen()<cr>
 
 function! s:tag_line_handler(l)
 	let keys = split(a:l, '\t')
@@ -1032,7 +1032,7 @@ endfunction
 function! SwitchBuffer()
 	b#
 endfunction
-nmap b<Tab> :call SwitchBuffer()<CR>
+nmap b<Tab> :call SwitchBuffer()<cr>
 
 " Sets python options
 function! SetPythonOptions()
