@@ -418,7 +418,9 @@ vnoremap <leader>dp :diffput<cr>
 " Open the current directory in finder
 nnoremap <leader>O :!open .<cr>
 
-nnoremap <leader>a :Root<cr>:Ack!<Space>
+nnoremap <leader>o :only<cr>
+
+nnoremap <leader>a :Root<cr>:Ack!<Space> "TODO: We need to think about retiring this bad boy
 
 " npm install --save-dev word under cursor
 nnoremap <leader>md :execute ":!npm install --save-dev " . expand("<cword>")<cr>
