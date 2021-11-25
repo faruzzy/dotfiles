@@ -633,7 +633,7 @@ endif
 let python_highlight_all=1
 
 " tagbar installation, see:
-" https://thomashunter.name/blog/installing-vim-tagbar-with-macvim-in-os-x://thomashunter.name/blog/installing-vim-tagbar-with-macvim-in-os-x/
+" https://thomashunter.name/blog/installing-vim-tagbar-with-macvim-in-os-x
 let g:tagbar_ctags_bin='/usr/local/bin/ctags' " Proper Ctags locations
 let g:tagbar_width=26	" Default is 40, seems too wide
 nmap <F8> :TagbarToggle<cr>
