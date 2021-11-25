@@ -269,9 +269,6 @@ Plug 'StanAngeloff/php.vim', { 'for': 'php' }										" PHP Syntax
 " conjunction with 'vim-commentary'
 Plug 'MaxMEllon/vim-jsx-pretty'																						" Sets the value of ‘commentstring’ to a different value depending on the region of the file you are in.
 Plug 'suy/vim-context-commentstring'																			" JSX syntax pretty highlighting for vim.
-
-"Plug 'posva/vim-vue'
-"Plug 'sheerun/vim-polyglot'
 Plug 'HerringtonDarkholme/yats.vim'												" Advanced TypeScript Syntax Highlighting
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
 let g:coc_global_extensions = [
