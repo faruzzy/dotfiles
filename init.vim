@@ -511,6 +511,7 @@ nnoremap <leader>gm :Gmove<cr>
 nnoremap <leader>gy :Gremove<cr>
 nnoremap <leader>gs :Git<cr>
 nnoremap <leader>gp :Git push<cr>
+nnoremap <leader>gl :Git pull<cr>
 nnoremap <leader>gc :Git commit<cr>
 nnoremap <leader>gd :call ToggleNerdTreeIfOpen()<cr> :Gdiff<cr>
 nnoremap <leader>gb :Git blame<cr>
