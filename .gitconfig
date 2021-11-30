@@ -56,7 +56,7 @@
 	lol = log --color --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit --all
 	lola = log --graph --decorate --pretty=oneline --abbrev-commit --all
 	ls = ls-files
-	ign = ls-files -o -i --exclude-standard			#Show files ignored by git:
+	ign = ls-files -o -i --exclude-standard			#Show files ignored by git
 	p = push
 	shoot = push origin --delete
 	up = pull
