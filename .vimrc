@@ -800,8 +800,8 @@ nnoremap <leader>vz :VimuxZoomRunner<CR>
 " Prompt for a command and run it in a small horizontal split bellow the current pane
 nnoremap <leader>vr :Root<CR> :VimuxPromptCommand<CR>
 
-nnoremap <leader>ys :Root<CR>:VimuxPromptCommand("yarn start")<CR>
-nnoremap <leader>yd :Root<CR>:VimuxPromptCommand("yarn start")<CR>
+nnoremap <leader>ys :Root<CR>:VimuxPromptCommand("yarn start")<cr>
+nnoremap <leader>yd :Root<CR>:VimuxPromptCommand("yarn dev")<cr>
 nnoremap <leader>yt :Root<cr>:VimuxPromptCommand("yarn test")<cr><cr>
 nnoremap <leader>gt :Root<cr>:VimuxPromptCommand("yarn generate:types")<cr><cr>
 "  }}}
