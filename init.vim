@@ -808,6 +808,7 @@ nnoremap <leader>vr :Root<cr> :VimuxPromptCommand<cr>
 
 nnoremap <leader>ys :Root<cr>:VimuxPromptCommand("yarn start")<cr><cr>
 nnoremap <leader>yd :Root<cr>:VimuxPromptCommand("yarn dev")<cr><cr>
+nnoremap <leader>yt :Root<cr>:VimuxPromptCommand("yarn test")<cr><cr>
 nnoremap <leader>gt :Root<cr>:VimuxPromptCommand("yarn generate:types")<cr><cr>
 "  }}}
 
