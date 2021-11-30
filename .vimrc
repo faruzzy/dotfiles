@@ -497,8 +497,8 @@ nnoremap <leader>gr :Gread<CR>
 nnoremap <leader>gm :Gmove<CR>
 nnoremap <leader>gy :Gremove<CR>
 nnoremap <leader>gs :Git<CR>
-nnoremap <leader>gp :Git push<CR>
-nnoremap <leader>gc :Git commit<CR>
+nnoremap <leader>gp :Git push<cr>
+nnoremap <leader>gl :Git pull<cr>
 nnoremap <leader>gd :call ToggleNerdTreeIfOpen()<CR> :Gdiff<CR>
 nnoremap <leader>gb :Git blame<CR>
 nnoremap <leader>gg :Gmerge<CR>
