@@ -491,20 +491,21 @@ nnoremap <leader>V :vs ~/Github/dotfiles/.vimrc<CR>
 
 " Fugitive {{{
 
-nnoremap <leader>ga :Git add %:p<CR><CR>
-nnoremap <leader>gw :Gwrite<CR>
-nnoremap <leader>gr :Gread<CR>
-nnoremap <leader>gm :Gmove<CR>
-nnoremap <leader>gy :Gremove<CR>
-nnoremap <leader>gs :Git<CR>
+nnoremap <leader>ga :Git add %:p<cr><cr>
+nnoremap <leader>gw :Gwrite<cr>
+nnoremap <leader>gr :Gread<cr>
+nnoremap <leader>gm :Gmove<cr>
+nnoremap <leader>gy :Gremove<cr>
+nnoremap <leader>gs :Git<cr>
 nnoremap <leader>gp :Git push<cr>
 nnoremap <leader>gl :Git pull<cr>
-nnoremap <leader>gd :call ToggleNerdTreeIfOpen()<CR> :Gdiff<CR>
-nnoremap <leader>gb :Git blame<CR>
-nnoremap <leader>gg :Gmerge<CR>
-nnoremap <leader>gv :GV<CR>
-nnoremap <leader>GV :GV!<CR>
-nnoremap <leader>pp :Git push origin master<CR>
+nnoremap <leader>gc :Git commit<cr>
+nnoremap <leader>gd :call ToggleNerdTreeIfOpen()<cr> :Gdiff<cr>
+nnoremap <leader>gb :Git blame<cr>
+nnoremap <leader>gg :Gmerge<cr>
+nnoremap <leader>gv :GV<cr>
+nnoremap <leader>GV :GV!<cr>
+nnoremap <leader>pp :Git push origin master<cr>
 
 " }}}
 
