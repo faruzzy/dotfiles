@@ -802,6 +802,8 @@ nnoremap <leader>vr :Root<CR> :VimuxPromptCommand<CR>
 
 nnoremap <leader>ys :Root<CR>:VimuxPromptCommand("yarn start")<CR>
 nnoremap <leader>yd :Root<CR>:VimuxPromptCommand("yarn start")<CR>
+nnoremap <leader>yt :Root<cr>:VimuxPromptCommand("yarn test")<cr><cr>
+nnoremap <leader>gt :Root<cr>:VimuxPromptCommand("yarn generate:types")<cr><cr>
 "  }}}
 
 " Vim-go {{{
