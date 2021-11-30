@@ -391,6 +391,9 @@ vnoremap <leader>dp :diffput<CR>
 " Open the current directory in finder
 nnoremap <leader>O :!open .<CR>
 
+nnoremap <leader>o :only<cr>
+nnoremap <leader>bd :bdelete<cr>
+
 nnoremap <leader>a :Root<CR>:Ack!<Space>
 
 " npm install --save-dev word under cursor
