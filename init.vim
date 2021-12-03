@@ -498,10 +498,10 @@ nnoremap <leader>q :q!<bR>
 nnoremap <leader>Q :call VimuxCloseRunner()<cr> :qa!<cr>
 
 " Quickly open .vimrc file in the current buffer
-nnoremap <leader>v :e ~/Github/dotfiles/.vimrc<cr>
+nnoremap <leader>v :e ~/Github/dotfiles/init.vim<cr>
 
 " Quickly open .vimrc file in a new vertical buffer
-nnoremap <leader>V :vs ~/Github/dotfiles/.vimrc<cr>
+nnoremap <leader>V :vs ~/Github/dotfiles/init.vim<cr>
 
 " Fugitive {{{
 
