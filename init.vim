@@ -420,6 +420,7 @@ nnoremap <leader>O :!open .<cr>
 
 nnoremap <leader>o :only<cr>
 nnoremap <leader>bd :bdelete<cr>
+nnoremap <leader>ba :%bd\|e#\|bd#<cr>
 
 nnoremap <leader>a :Root<cr>:Ack!<Space> "TODO: We need to think about retiring this bad boy
 
