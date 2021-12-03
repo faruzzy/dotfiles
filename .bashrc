@@ -1,4 +1,4 @@
-source "/Users/$(whoami)/.fzf/shell/key-bindings.bash"
+[ -f ~/.fzf/shell/key-bindings.bash ] && source ~/.fzf/shell/key-bindings.bash
 [ -f ~/.fzf.bash ] && source ~/.fzf.bash
 
 export NVM_DIR="$HOME/.nvm"
