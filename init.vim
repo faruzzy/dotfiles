@@ -503,6 +503,8 @@ nnoremap <leader>v :e ~/Github/dotfiles/init.vim<cr>
 " Quickly open .vimrc file in a new vertical buffer
 nnoremap <leader>V :vs ~/Github/dotfiles/init.vim<cr>
 
+nnoremap <leader>bg :GBranches<cr>
+
 " Fugitive {{{
 
 nnoremap <leader>ga :Git add %:p<cr><cr>
@@ -712,6 +714,7 @@ augroup END
 " Cursorline {{{
 " Only show cursorline in the current window and in normal mode.
 augroup cline
+	"TODO: does this work???
 	nnoremap <silent> <expr> <leader><leader> (expand('%') =~ 'NERD_tree' ? "\<c-w>\<c-w>" : '').":Files\<cr>"
 
 	autocmd!
@@ -1024,6 +1027,7 @@ function! s:tag_line_handler(l)
 	exec 'tag' keys[1]
 endfunction
 
+"TODO: Do I need this?
 function! MakeTags()
 	echo 'Preparing tags...'
 	call system('ctags -R')
