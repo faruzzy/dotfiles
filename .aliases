@@ -166,7 +166,7 @@ alias gpom="git push origin master"
 
 # git root
 alias gr='[ ! -z `git rev-parse --show-cdup` ] && cd `git rev-parse --show-cdup || pwd`'
-
+alias gv='v +GV +"autocmd BufWipeout <buffer> qall"'
 ##### GIT Stuff #####
 
 # IP addresses
