@@ -199,9 +199,9 @@ call plug#begin('~/.vim/plugged')
 
 " Git {{{
 
-Plug 'tpope/vim-fugitive'													" Git wrapper
-Plug 'tpope/vim-rhubarb'													" GitHub extension for fugitive
-Plug 'junegunn/gv.vim', { 'on': 'GV' }										" A git commint browser
+Plug 'tpope/vim-fugitive'																										" Git wrapper
+Plug 'tpope/vim-rhubarb'																										" GitHub extension for fugitive
+Plug 'junegunn/gv.vim', { 'on': 'GV' }																			" A git commit browser
 if v:version >= 703
 	Plug 'mhinz/vim-signify'
 elseif
