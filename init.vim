@@ -193,6 +193,11 @@ call plug#begin('~/.config/plugged')
 Plug 'tpope/vim-fugitive'													" Git wrapper
 Plug 'tpope/vim-rhubarb'													" GitHub extension for fugitive
 Plug 'junegunn/gv.vim', { 'on': 'GV' }										" A git commint browser
+Plug 'stsewd/fzf-checkout.vim'
+let g:fzf_checkout_git_options = '--sort=-committerdate'
+let g:fzf_branch_actions = {
+			\ 'track': {'keymap': 'ctrl-t'},
+			\}
 if v:version >= 703
 	Plug 'mhinz/vim-signify'
 elseif
