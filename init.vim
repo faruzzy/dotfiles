@@ -296,7 +296,7 @@ nmap <silent> gd <Plug>(coc-definition)
 nmap <silent> gr <Plug>(coc-references)
 
 " format rename
-nmap <silent> fr <Plug>(coc-rename)
+nmap <silent> at <Plug>(coc-rename)
 
 " format file
 nmap <silent> pr <Plug>(coc-format)
