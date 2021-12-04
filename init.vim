@@ -577,7 +577,10 @@ nnoremap [r :ALEPreviousWrap<cr> " move to the previous ALE warning / error
 " ----------------------------------------------------------------------------
 
 if has("autocmd")
-	autocmd BufNewFile,Bufread *.json setfiletype json syntax=javascript								" Treat .json files as .js
+	autocmd BufNewFile,Bufread *.json setfiletype json syntax=javascript								" Treat .json files as .js TODO: verify if this line works as intended considering the line below it lol
+	autocmd BufNewFile,BufRead *.ts setlocal filetype=typescript
+	autocmd BufNewFile,BufRead *.tsx setlocal filetype=typescript.tsx
+	" autocmd BufNewFile,Bufread *.tsx setlocal filetype=typescript
 
 	autocmd FileType css,sass,less set omnifunc=csscomplete#CompleteCSS
 	autocmd FileType javascript setlocal omnifunc=javascriptcomplete#CompleteJS
