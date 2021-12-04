@@ -202,6 +202,7 @@ call plug#begin('~/.vim/plugged')
 Plug 'tpope/vim-fugitive'																										" Git wrapper
 Plug 'tpope/vim-rhubarb'																										" GitHub extension for fugitive
 Plug 'junegunn/gv.vim', { 'on': 'GV' }																			" A git commit browser
+Plug 'stsewd/fzf-checkout.vim'
 if v:version >= 703
 	Plug 'mhinz/vim-signify'
 elseif
@@ -387,6 +388,9 @@ vnoremap <leader>dg :diffget<CR>
 
 nnoremap <leader>dp :diffput<CR>
 vnoremap <leader>dp :diffput<CR>
+
+nmap <leader>tl :diffget //2<cr>
+nmap <leader>tr :diffget //3<cr>
 
 " Open the current directory in finder
 nnoremap <leader>O :!open .<CR>
