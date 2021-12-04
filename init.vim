@@ -253,9 +253,13 @@ Plug 'othree/xml.vim', { 'for': 'html' }																	" Helps editing [x]hml 
 Plug 'mustache/vim-mustache-handlebars', { 'for': 'hbs' }
 
 Plug 'mattn/emmet-vim', { 'for' : ['html', 'css', 'javascript'] }					" Emmet for Vim
+let g:user_emmet_jsx = 1
 let g:user_emmet_settings = {
 \  'html' : {
 \    'indent_blockelement': 2,
+\  },
+\  'typescript.tsx': {
+\    'extends': 'jsx',
 \  },
 \}
 
