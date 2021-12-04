@@ -290,6 +290,7 @@ let g:coc_global_extensions = [
 	\ 'coc-css',
 	\ 'coc-python',
 	\ 'coc-html',
+	\ 'coc-emmet',
 	\]
 
 " show documentation in preview window.
