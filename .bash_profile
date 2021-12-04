@@ -43,4 +43,4 @@ eval "$(jenv init -)"
 export MANPATH="/opt/local/share/man:$MANPATH"
 # Finished adapting your MANPATH environment variable for use with MacPorts.
 
-source "$HOME/.cargo/env"
+[[ -s ~/.cargo/evn ]] && source "$HOME/.cargo/env"
