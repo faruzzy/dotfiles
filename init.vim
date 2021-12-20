@@ -434,7 +434,7 @@ nnoremap <leader>o :only<cr>
 nnoremap <leader>bd :bdelete<cr>
 nnoremap <leader>ba :%bd\|e#\|bd#<cr>
 
-nnoremap <leader>a :Root<cr>:Ack!<Space> "TODO: We need to think about retiring this bad boy
+nnoremap <leader>a :Root<cr>:Ack!<Space>
 
 " npm install --save-dev word under cursor
 nnoremap <leader>md :execute ":!npm install --save-dev " . expand("<cword>")<cr>
