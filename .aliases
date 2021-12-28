@@ -94,6 +94,7 @@ fi
 
 ##### yarn #####
 alias ys='yarn start'
+alias yd='yarn dev'
 
 ##### npm #####
 alias npmp='npm publish'
