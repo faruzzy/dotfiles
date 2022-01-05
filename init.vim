@@ -1,12 +1,11 @@
-""
-"   ██╗   ██╗ ██╗ ███╗   ███╗ ██████╗   ██████╗
-"   ██║   ██║ ██║ ████╗ ████║ ██╔══██╗ ██╔════╝
-"   ██║   ██║ ██║ ██╔████╔██║ ██████╔╝ ██║
-"   ╚██╗ ██╔╝ ██║ ██║╚██╔╝██║ ██╔══██╗ ██║
-" ██╗╚████╔╝  ██║ ██║ ╚═╝ ██║ ██║  ██║ ╚██████╗
-" ╚═╝ ╚═══╝   ╚═╝ ╚═╝     ╚═╝ ╚═╝  ╚═╝  ╚═════╝
 "
-" Author: Roland Pangu
+"                                                       ▟▙
+"                                                       ▝▘
+"               ██▃▅▇█▆▖  ▗▟████▙▖   ▄████▄     ██▄  ▄██  ██  ▗▟█▆▄▄▆█▙▖
+"               ██▛▔ ▝██  ██▄▄▄▄██  ██▛▔▔▜██    ▝██  ██▘  ██  ██▛▜██▛▜██
+"               ██    ██  ██▀▀▀▀▀▘  ██▖  ▗██  █  ▜█▙▟█▛   ██  ██  ██  ██
+"               ██    ██  ▜█▙▄▄▄▟▊  ▀██▙▟██▀     ▝████▘   ██  ██  ██  ██
+"               ▀▀    ▀▀   ▝▀▀▀▀▀     ▀▀▀▀         ▀▀     ▀▀  ▀▀  ▀▀  ▀▀
 ""
 
 " House keeping {{{
@@ -353,31 +352,31 @@ else
 	endif
 endif
 
-Plug 'tpope/vim-commentary'																								" Plugin that allows you to comment stuff out
+Plug 'tpope/vim-commentary'																																											" Plugin that allows you to comment stuff out
 Plug 'wellle/visual-split.vim'
-Plug 'wincent/loupe'																" Enhanced in-file search for Vim
-Plug 'jiangmiao/auto-pairs'															" provides insert mode auto-completion for quotes, parenthesis, brackets, etc
+Plug 'wincent/loupe'																																														" Enhanced in-file search for Vim
+Plug 'jiangmiao/auto-pairs'																																											" provides insert mode auto-completion for quotes, parenthesis, brackets, etc
 Plug 'easymotion/vim-easymotion'
 Plug 'vim-airline/vim-airline'
 Plug 'vim-airline/vim-airline-themes'
-Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
-Plug 'junegunn/fzf.vim'
+Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }																															" fzf itself
+Plug 'junegunn/fzf.vim'																																													" fuzzy search integration
 Plug 'tpope/vim-surround'
 Plug 'tpope/vim-repeat'
-Plug 'majutsushi/tagbar'															" Vim plugin that displays tags in a window, ordered by scope
-Plug 'scrooloose/nerdtree', { 'on': 'NERDTreeToggle' }								" A tree explorer plugin for vim.
-Plug 'Xuyuanp/nerdtree-git-plugin'													" A plugin of NERDTree showing git status
-Plug 'tpope/vim-vinegar'															" netrw enhanced / alternative to NERDTree
-Plug 'ryanoasis/vim-devicons'														" Adds file type glyphs/icons to popular Vim plugins: NERDTree, vim-airline, Powerline, Unite, vim-startify and more
-Plug 'plasticboy/vim-markdown', { 'for': 'markdown' }								" Markdown Vim Mode
-Plug 'sickill/vim-pasta'															" Pasting in Vim with indentation adjusted to destination context TODO: check if I still need this
-Plug 'jordwalke/VimSplitBalancer'													" Distributes available space among vertical splits, and plays nice with NERDTree
+Plug 'majutsushi/tagbar'																																												" Vim plugin that displays tags in a window, ordered by scop
+Plug 'scrooloose/nerdtree', { 'on': 'NERDTreeToggle' }																													" A tree explorer plugin for vim.
+Plug 'Xuyuanp/nerdtree-git-plugin'																																							" A plugin of NERDTree showing git status
+Plug 'tpope/vim-vinegar'																																												" netrw enhanced / alternative to NERDTree
+Plug 'ryanoasis/vim-devicons'																																										" Adds file type glyphs/icons to popular Vim plugins: NERDTree, vim-airline, Powerline, Unite, vim-startify and more
+Plug 'plasticboy/vim-markdown', { 'for': 'markdown' }																														" Markdown Vim Mode
+Plug 'sickill/vim-pasta'																																												" Pasting in Vim with indentation adjusted to destination context TODO: check if I still need this
+Plug 'jordwalke/VimSplitBalancer'																																								" Distributes available space among vertical splits, and plays nice with NERDTree
 "Plug 'dhruvasagar/vim-zoom' TODO: check if I still need this
-Plug 'itspriddle/ZoomWin'															" Zoom in and out of windows/buffer
-Plug 'benmills/vimux'																" Easily interact with tmux from vim
-Plug 'christoomey/vim-tmux-navigator'												" Seamless navigation between tmux panes and vim splits
-Plug 'tmux-plugins/vim-tmux-focus-events'											" This plugin restores `FocusGained` and `FocusLost` when using vim inside Tmux.
-Plug 'wellle/tmux-complete.vim'																" adds a completion function that puts all words visible in your Tmux panes right under your fingertips
+Plug 'itspriddle/ZoomWin'																																												" Zoom in and out of windows/buffer
+Plug 'benmills/vimux'																																														" Easily interact with tmux from vim
+Plug 'christoomey/vim-tmux-navigator'																																						" Seamless navigation between tmux panes and vim splits
+Plug 'tmux-plugins/vim-tmux-focus-events'																																				" This plugin restores `FocusGained` and `FocusLost` when using vim inside Tmux.
+Plug 'wellle/tmux-complete.vim'																																									" adds a completion function that puts all words visible in your Tmux panes right under your fingertips
 
 " }}}
 
