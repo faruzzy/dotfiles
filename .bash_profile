@@ -5,6 +5,10 @@ if [[ -f ~/.git-completion ]]; then
 	. ~/.git-completion
 fi
 
+if [ -e ~/.config/plugged/fzf/shell/completion.bash ]; then
+	source ~/.config/plugged/fzf/shell/completion.bash
+fi
+
 if [[ -f ~/z.sh ]]; then
 	. ~/z.sh
 fi
