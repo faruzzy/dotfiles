@@ -415,7 +415,7 @@ nnoremap <leader>s :source %<cr>
 
 nnoremap <C-p> :Root<cr>:Files<cr>
 nnoremap <C-g> :Rg<cr>
-nnoremap <C-b> :Buffers<cr>
+nnoremap <Leader><Enter>				:Buffers<CR>
 nnoremap <silent> <leader>C			:Colors<cr>
 nnoremap <silent> <leader>l			:Lines<cr>
 nnoremap <silent> <leader>`			:Marks<cr>
