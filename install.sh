@@ -26,7 +26,7 @@ EOD
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 
 # Install NVM
-curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.38.0/install.sh | bash
+curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.1/install.sh | bash
 
 # Disable Download quarantine
 defaults write com.apple.LaunchServices LSQuarantine -bool NO
@@ -62,7 +62,6 @@ brew install --cask nightowl
 #Install Java JDK
 brew install --cask	adoptopenjdk8
 brew install --cask	adoptopenjdk11
-brew install jenv maven
 
 brew tap caskroom/fonts
 brew cask install font-fira-code
@@ -110,9 +109,9 @@ brew link --overwrite graphviz
 brew install node
 brew install yarn --ignore-dependencies
 
-npm install -g @angular/cli yo  generator-jhipster
 npm install -g tldr
 npm install -g typescript
+npm install -g ts-node
 
 brew install --cask keepingyouawake \
 	mat visualvm mactex \
@@ -124,7 +123,11 @@ brew install \
 	imagemagick diff-so-fancy gnupg \
 	tree vim wget jq python fzf \
 	reattach-to-user-namespace bash bash-completion tmux \
-	translate-shell
+	translate-shell libpq exa jenv maven lua luajit-openresty \
+	perl krb5 luv python@3.9 tree-sitter berkeley-db libevent mpdecimal \
+	readline unibilium ca-certificates msgpack utf8proc libtermkey ncurses vim \
+	libuv neovim ruby xz libvterm openssl@1.1 sqlite gdbm libyaml pcre the_silver_searcher \
+	gettext pcre2
 
 # git-prompt
 if [ ! -e ~/.git-prompt.sh ]; then
