@@ -42,10 +42,10 @@ set formatoptions+=1
 
 " Encoding {{{
 
-" set encoding=utf-8 nobomb													" BOM often causes trouble
-set encoding=utf8
+set encoding=utf-8
+set fileencodings=utf-8,cp932,euc-jp										" A list of character encodings, set default encoding to UTF-8
 set guifont=Fira\ Code\ Retina:h13
-scriptencoding utf-8														" utf-8 all the way
+scriptencoding utf8														" utf-8 all the way
 if !has('nvim')
 	set term=xterm-256color
 endif
@@ -55,7 +55,6 @@ if has('nvim') || has('termguicolors')
 endif
 
 set t_ut=																	" Disable background color erase, play nicely with tmux
-set fileencodings=utf-8,cp932,euc-jp										" A list of character encodings, set default encoding to UTF-8
 set fileformats=unix,dos,mac												" Prefer Unix over Windows over OS 9 formats
 
 " }}}
