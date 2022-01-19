@@ -578,6 +578,7 @@ if has("autocmd")
 	autocmd BufNewFile,Bufread *.json setfiletype json syntax=javascript								" Treat .json files as .js TODO: verify if this line works as intended considering the line below it lol
 	autocmd BufNewFile,BufRead *.ts setlocal filetype=typescript
 	autocmd BufNewFile,BufRead *.tsx setlocal filetype=typescript.tsx
+	autocmd BufNewFile,BufRead *.jsx setfiletype=javascript.jsx
 	" autocmd BufNewFile,Bufread *.tsx setlocal filetype=typescript
 
 	autocmd FileType css,sass,less set omnifunc=csscomplete#CompleteCSS
