@@ -2,6 +2,7 @@
 
 # ~/.osx
 # paul's slight fork of https://mths.be/osx
+# and https://github.com/vheon/home/blob/master/.osx
 
 # Close any open System Preferences panes, to prevent them from overriding
 # settings we’re about to change
