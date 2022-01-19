@@ -15,6 +15,16 @@ sudo -v
 while true; do sudo -n true; sleep 60; kill -0 "$$" || exit; done 2>/dev/null &
 
 ###############################################################################
+# Dock																																				#
+###############################################################################
+
+# Set the icon size of Dock items to 55 pixels
+defaults write com.apple.dock tilesize -int 55
+
+# Autohide the dock
+defaults write com.apple.Dock autohide -bool true
+
+###############################################################################
 # General UI/UX                                                               #
 ###############################################################################
 
