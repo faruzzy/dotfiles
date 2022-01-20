@@ -53,12 +53,17 @@ brew install --cask pdfsam-basic
 brew install --cask slack
 brew install --cask intellij-idea
 brew install --cask colorsnapper
-brew install --cask rectangle
+brew install --cask spectacle
 brew install --cask alacritty
 brew install --cask karabiner-elements
 brew install --cask maccy
 brew install --cask osxfuse
 brew install --cask nightowl
+
+#less often
+brew install --cask vlc
+brew install --cask spotify
+
 #Install Java JDK
 brew install --cask	adoptopenjdk8
 brew install --cask	adoptopenjdk11
@@ -122,12 +127,12 @@ brew install \
 	fd ag ripgrep bat cmake cmus \
 	imagemagick diff-so-fancy gnupg \
 	tree vim wget jq python fzf \
-	reattach-to-user-namespace bash bash-completion tmux \
+	reattach-to-user-namespace bash bash-completion@2 tmux \
 	translate-shell libpq exa jenv maven lua luajit-openresty \
 	perl krb5 luv python@3.9 tree-sitter berkeley-db libevent mpdecimal \
 	readline unibilium ca-certificates msgpack utf8proc libtermkey ncurses vim \
 	libuv neovim ruby xz libvterm openssl@1.1 sqlite gdbm libyaml pcre the_silver_searcher \
-	gettext pcre2 ngrep
+	gettext pcre2 ngrep z ffmpeg youtube-dl
 
 # git-prompt
 if [ ! -e ~/.git-prompt.sh ]; then
