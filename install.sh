@@ -127,7 +127,7 @@ brew install \
 	perl krb5 luv python@3.9 tree-sitter berkeley-db libevent mpdecimal \
 	readline unibilium ca-certificates msgpack utf8proc libtermkey ncurses vim \
 	libuv neovim ruby xz libvterm openssl@1.1 sqlite gdbm libyaml pcre the_silver_searcher \
-	gettext pcre2
+	gettext pcre2 ngrep
 
 # git-prompt
 if [ ! -e ~/.git-prompt.sh ]; then
