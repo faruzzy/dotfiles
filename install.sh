@@ -65,6 +65,8 @@ brew install --cask vlc
 brew install --cask spotify
 
 #Install Java JDK
+brew cask install java6
+brew cask install java7
 brew install --cask	adoptopenjdk8
 brew install --cask	adoptopenjdk11
 
@@ -132,7 +134,7 @@ brew install \
 	perl krb5 luv python@3.9 tree-sitter berkeley-db libevent mpdecimal \
 	readline unibilium ca-certificates msgpack utf8proc libtermkey ncurses vim \
 	libuv neovim ruby xz libvterm openssl@1.1 sqlite gdbm libyaml pcre the_silver_searcher \
-	gettext pcre2 ngrep z ffmpeg youtube-dl
+	gettext pcre2 ngrep z ffmpeg youtube-dl cocoapods
 
 # git-prompt
 if [ ! -e ~/.git-prompt.sh ]; then
