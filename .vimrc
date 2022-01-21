@@ -949,6 +949,9 @@ nmap <leader>w :StripTrailingWhitespaces<CR>:w<CR>
 " Save a file as root (,W) and strip trailing white spaces
 noremap <leader>W :StripTrailingWhitespaces<CR>:w !sudo tee % > /dev/null<CR>
 
+" Exit the vimdiff buffer regardless of whether you're on the diff buffer or not
+nnoremap <Leader>D <c-w>h<c-w>c
+
 " Easy creation of Github Pull Request for current branch against master.
 " credit: https://github.com/arkwright/dotfiles/blob/master/vimrc
 function! s:GithubPullRequest()

@@ -408,7 +408,7 @@ call plug#end()
 " ----------------------------------------------------------------------------
 
 colorscheme seoul256
-colorscheme gruvbox
+" colorscheme gruvbox
 
 " ----------------------------------------------------------------------------
 " fzf.vim {{{
@@ -546,7 +546,7 @@ nnoremap <leader>gs :Git<cr>
 nnoremap <leader>gp :Git push<cr>
 nnoremap <leader>gl :Git pull<cr>
 nnoremap <leader>gc :Git commit<cr>
-nnoremap <leader>gd :call ToggleNerdTreeIfOpen()<cr> :Gdiff<cr>
+nnoremap <leader>gd :call ToggleNerdTreeIfOpen()<cr> :Gdiffsplit<cr>
 nnoremap <leader>gb :Git blame<cr>
 nnoremap <leader>gg :Gmerge<cr>
 nnoremap <leader>gv :GV<cr>
@@ -824,7 +824,6 @@ endfunction
 command! Todo call s:todo()
 
 nnoremap <C-c> :call ToggleNerdTree()<cr>
-
 let NERDTreeChDirMode=2																			" setting root dir in NT also sets VIM's cd
 let NERDTreeMapOpenSplit = "s"
 let NERDTreeMapOpenVSplit = "v"
@@ -1022,6 +1021,9 @@ nmap <leader>w :StripTrailingWhitespaces<cr>:w<cr>
 
 " Save a file as root (,W) and strip trailing white spaces
 noremap <leader>W :StripTrailingWhitespaces<cr>:w !sudo tee % > /dev/null<cr>
+
+" Exit the vimdiff buffer regardless of whether you're on the diff buffer or not
+nnoremap <Leader>D <c-w>h<c-w>c
 
 " Easy creation of Github Pull Request for current branch against master.
 " credit: https://github.com/arkwright/dotfiles/blob/master/vimrc
