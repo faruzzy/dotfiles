@@ -540,88 +540,59 @@ nnoremap [r :ALEPreviousWrap<CR> " move to the previous ALE warning / error
 " autocmd {{{
 " ----------------------------------------------------------------------------
 
-if has("autocmd")
-  autocmd BufNewFile,Bufread *.json setfiletype json syntax=javascript								" Treat .json files as .js
-	autocmd BufNewFile,BufRead *.ts setlocal filetype=typescript
-	autocmd BufNewFile,BufRead *.tsx setlocal filetype=typescript.tsx
-	autocmd BufNewFile,BufRead *.jsx setfiletype=javascript.jsx
+augroup python3
+	au! BufEnter *.py setlocal omnifunc=python3complete#Complete
+augroup END
 
-	autocmd FileType css,sass,less set omnifunc=csscomplete#CompleteCSS
-	autocmd FileType javascript setlocal omnifunc=javascriptcomplete#CompleteJS
-	autocmd FileType python setlocal omnifunc=pythoncomplete#CompleteTags
-	autocmd FileType xml setlocal omnifunc=xmlComplete#CompleteTags
+autocmd BufNewFile,Bufread *.json setfiletype json syntax=javascript								" Treat .json files as .js
+autocmd BufNewFile,BufRead *.ts setlocal filetype=typescript
+autocmd BufNewFile,BufRead *.tsx setlocal filetype=typescript.tsx
+autocmd BufNewFile,BufRead *.jsx setfiletype=javascript.jsx
 
-	autocmd BufNewFile,Bufread *.md setlocal filetype=markdown											" Treat .md files as Markdown
-	autocmd BufNewFile,Bufread *.js setlocal filetype=javascript
+autocmd FileType css,sass,less set omnifunc=csscomplete#CompleteCSS
+autocmd FileType javascript setlocal omnifunc=javascriptcomplete#CompleteJS
+autocmd FileType javascript let b:coc_root_patterns = ['.js', '.json']
+autocmd FileType xml setlocal omnifunc=xmlComplete#CompleteTags
+autocmd FileType python setlocal omnifunc=pythoncomplete#CompleteTags
+autocmd FileType python let b:coc_root_patterns = ['.js', '.git', '.env']
+autocmd Filetype python call SetPythonOptions()
 
-	autocmd StdinReadPre * let s:std_in=1
-	"autocmd VimEnter * if argc() == 0 && !exists("s:std_in") | NERDTree | endif
-	autocmd Filetype python call SetPythonOptions()
-	"autocmd BufWritePost *.js silent :JSHint
-	autocmd GUIEnter * set visualbell t_vb=
+autocmd BufNewFile,Bufread *.md setlocal filetype=markdown											" Treat .md files as Markdown
+autocmd BufNewFile,Bufread *.js setlocal filetype=javascript
 
-	autocmd CursorHold,CursorHoldI,FocusGained,BufEnter * checktime
-	autocmd FileChangedShellPost *
-		\ echohl WarningMsg | echo "File changed on disk. Buffer reloaded." | echohl None
+autocmd StdinReadPre * let s:std_in=1
+autocmd GUIEnter * set visualbell t_vb=
 
-	" Convenient mappings for compiling and running quick, used mostly for school
-	" gcc compile C files
-	autocmd filetype c nnoremap <leader>c :w <CR>:!gcc % -o %:r && ./%:r<CR>
-	" java compile files
-	autocmd filetype java nnoremap <leader>c :w <CR>:!javac % && java %:r<CR>
-	" run node files
-	autocmd filetype javascript nnoremap <leader>c :w <CR>:!node %<CR>
-	" run python files
-	autocmd filetype python nnoremap <leader>c :exec '!python' shellescape(@%, 1)<CR>
-	" run bash files
-	autocmd filetype sh nnoremap <leader>c :w <CR>:!bash %<CR>
+autocmd CursorHold,CursorHoldI,FocusGained,BufEnter * checktime
+autocmd FileChangedShellPost *
+	\ echohl WarningMsg | echo "File changed on disk. Buffer reloaded." | echohl None
 
-	augroup numbertoggle
-		autocmd!
-		autocmd BufEnter,FocusGained,InsertLeave * set relativenumber
-		autocmd BufLeave,FocusLost,InsertEnter   * set norelativenumber
-	augroup END
+" Convenient mappings for compiling and running quick, used mostly for school
+autocmd filetype c nnoremap <leader>c :w <CR>:!gcc % -o %:r && ./%:r<CR>
+autocmd filetype java nnoremap <leader>c :w <CR>:!javac % && java %:r<CR>
+autocmd filetype javascript nnoremap <leader>c :w <CR>:!node %<CR>
+autocmd filetype sh nnoremap <leader>c :w <CR>:!bash %<CR>
+autocmd filetype python nnoremap <leader>c :exec '!python' shellescape(@%, 1)<CR>
 
-	autocmd VimResized  * :wincmd =																		" Resize splits when the window is resized
-	autocmd BufEnter    * silent! cd %:p:h																" update dir to current file
+augroup numbertoggle
+	autocmd!
+	autocmd BufEnter,FocusGained,InsertLeave * set relativenumber
+	autocmd BufLeave,FocusLost,InsertEnter   * set norelativenumber
+augroup END
 
-	autocmd FileType go nmap <leader>s  <Plug>(go-def-split)
-	autocmd FileType go nmap <leader>v  <Plug>(go-def-vertical)
-	autocmd FileType go nmap <leader>in <Plug>(go-info)
-	autocmd FileType go nmap <leader>i  <Plug>(go-implements)
-	autocmd FileType go nmap <leader>r  <Plug>(go-run)
-	autocmd FileType go nmap <leader>b  <Plug>(go-build)
-	autocmd FileType go nmap <leader>g  <Plug>(go-gbbuild)
-	autocmd FileType go nmap <leader>t  <Plug>(go-test-compile)
-	autocmd FileType go nmap <leader>d  <Plug>(go-doc)
-	"autocmd FileType go nmap <leader>f :GoImports<CR>
-endif
+autocmd VimResized  * :wincmd =																		" Resize splits when the window is resized
+autocmd BufEnter    * silent! cd %:p:h																" update dir to current file
 
-" ----------------------------------------------------------------------------
-" }}}
-" ----------------------------------------------------------------------------
-
-" python with virtualenv support
-"py << EOF
-"import os
-"import sys
-"if 'VIRTUAL_ENV' in os.environ:
-"  project_base_dir = os.environ['VIRTUAL_ENV']
-"  activate_this = os.path.join(project_base_dir, 'bin/activate_this.py')
-"  execfile(activate_this, dict(__file__=activate_this))
-"EOF
-
-let python_highlight_all=1
-
-" tagbar installation, see:
-" https://thomashunter.name/blog/installing-vim-tagbar-with-macvim-in-os-x
-let g:tagbar_ctags_bin='/usr/local/bin/ctags' " Proper Ctags locations
-let g:tagbar_width=26	" Default is 40, seems too wide
-nmap <F8> :TagbarToggle<CR>
-
-" ----------------------------------------------------------------------------
-" autocmd {{{
-" ----------------------------------------------------------------------------
+autocmd FileType go nmap <leader>s  <Plug>(go-def-split)
+autocmd FileType go nmap <leader>v  <Plug>(go-def-vertical)
+autocmd FileType go nmap <leader>in <Plug>(go-info)
+autocmd FileType go nmap <leader>i  <Plug>(go-implements)
+autocmd FileType go nmap <leader>r  <Plug>(go-run)
+autocmd FileType go nmap <leader>b  <Plug>(go-build)
+autocmd FileType go nmap <leader>g  <Plug>(go-gbbuild)
+autocmd FileType go nmap <leader>t  <Plug>(go-test-compile)
+autocmd FileType go nmap <leader>d  <Plug>(go-doc)
+autocmd FileType go nmap <leader>f :GoImports<CR>
 
 augroup vimrcEx
 autocmd!
@@ -652,10 +623,9 @@ autocmd!
 	autocmd FileType css,scss,sass,less setlocal iskeyword+=-
 augroup END
 
-" Silver Searcher {{{
 augroup ag_config
 autocmd!
-  if executable("ag")
+	if executable("ag")
 	" Note we extract the column as well as the file and line number
 	"set grepprg=ag\ --nogroup\ --nocolor\ --column
 	set grepprg=rg\ --vimgrep
@@ -666,16 +636,14 @@ autocmd!
 	let b:ag_command = 'rg --hidden -i'
 
 	for i in split(&wildignore, ",")
-	  let i = substitute(i, '\*/\(.*\)/\*', '\1', 'g')
-	  let b:ag_command = b:ag_command . ' --ignore "' . substitute(i, '\*/\(.*\)/\*', '\1', 'g') . '"'
+		let i = substitute(i, '\*/\(.*\)/\*', '\1', 'g')
+		let b:ag_command = b:ag_command . ' --ignore "' . substitute(i, '\*/\(.*\)/\*', '\1', 'g') . '"'
 	endfor
 
 	"let b:ag_command = b:ag_command . ' --hidden -g ""'
-  endif
+	endif
 augroup END
-" }}}
 
-" Airline.vim {{{
 augroup airline_config
 autocmd!
 	let g:airline_theme='powerlineish'
@@ -686,7 +654,6 @@ autocmd!
 	let g:airline#extensions#tabline#fnamecollapse = 0
 	let g:airline#extensions#tabline#fnamemod = ':t'
 augroup END
-" }}}
 
 " Cursorline {{{
 " Only show cursorline in the current window and in normal mode.
@@ -695,16 +662,33 @@ augroup cline
 	autocmd WinLeave,InsertEnter * set nocursorline
 	autocmd  WinEnter,InsertLeave * set cursorline
 augroup END
+
+" Highlight currently open buffer in NERDTree
+autocmd BufEnter * call SyncTree()
 " }}}
 
-
-augroup python3
-	au! BufEnter *.py setlocal omnifunc=python3complete#Complete
-augroup END
 
 " ----------------------------------------------------------------------------
 " }}}
 " ----------------------------------------------------------------------------
+
+" python with virtualenv support
+"py << EOF
+"import os
+"import sys
+"if 'VIRTUAL_ENV' in os.environ:
+"  project_base_dir = os.environ['VIRTUAL_ENV']
+"  activate_this = os.path.join(project_base_dir, 'bin/activate_this.py')
+"  execfile(activate_this, dict(__file__=activate_this))
+"EOF
+
+let python_highlight_all=1
+
+" tagbar installation, see:
+" https://thomashunter.name/blog/installing-vim-tagbar-with-macvim-in-os-x
+let g:tagbar_ctags_bin='/usr/local/bin/ctags' " Proper Ctags locations
+let g:tagbar_width=26	" Default is 40, seems too wide
+nmap <F8> :TagbarToggle<CR>
 
 " NeoComplete {{{
 
@@ -733,9 +717,6 @@ function! SyncTree()
 	endif
 endfunction
 
-" Highlight currently open buffer in NERDTree
-autocmd BufEnter * call SyncTree()
-
 function! ToggleNerdTree()
 	set eventignore=BufEnter
 	NERDTreeToggle
@@ -759,7 +740,6 @@ let NERDTreeChristmasTree=1																		" Enable all colors for NERDTree
 let NERDTreeDirArrows=1
 let NERDTreeIgnore = ['\~$', '^\.git$', '^\.hg$', '^\.bundle$', '^\.jhw-cache$', '\.pyc$', '\.egg-info$', '__pycache__', '\.vagrant$', '\.dSYM$', '.DS_Store', '*.swp', '*.swo']
 
-"autocmd vimenter * if !argc() | NERDTree | endif												" Open NERDTree if we're executing vim without specifying a file to open
 
 let g:netrw_liststyle=3																			" Explore with NerdTree Style by default
 let g:NERDTreeIndicatorMapCustom = {
