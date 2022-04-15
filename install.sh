@@ -125,6 +125,9 @@ brew install --cask keepingyouawake \
 	adoptopenjdk8
 
 # dev tools
+brew install fzf
+$(brew --prefix)/opt/fzf/install
+
 brew install \
 	fd ag ripgrep bat cmake cmus \
 	imagemagick diff-so-fancy gnupg \
