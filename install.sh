@@ -39,7 +39,7 @@ defaults write NSGlobalDomain com.apple.mouse.tapBehavior -int 1
 # Graphical App install from Home-brew cask
 brew install flux
 brew install --cask bettertouchtool path-finder
-brew install --cask google-chrome firefox
+brew install --cask google-chrome-canary google-chrome firefox
 brew install --cask caffeine
 brew install --cask keka
 brew install --cask whatsapp
