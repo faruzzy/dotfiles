@@ -88,9 +88,9 @@ brew install mas mkcert nss
 # Install App from Mac App Store
 
 # Affinity Photo
-mas install 824183456
+# mas install 824183456
 # Affinity Designer
-Mas install 824171161
+# Mas install 824171161
 
 # Configure Visual Studio Code
 code --install-extension dbaeumer.vscode-eslint
