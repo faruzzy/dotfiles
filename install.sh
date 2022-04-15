@@ -105,6 +105,7 @@ code --install-extension christian-kohler.path-intellisense
 code --install-extension esbenp.prettier-vscode
 code --install-extension prisma.prisma
 code --install-extension vscodevim.vim
+code --install-extension nrwl.angular-console
 
 # Install GraphViz
 brew install libtool
