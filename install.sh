@@ -139,6 +139,9 @@ brew install \
 	libuv neovim ruby xz libvterm openssl@1.1 sqlite gdbm libyaml pcre the_silver_searcher \
 	gettext pcre2 ngrep z ffmpeg youtube-dl cocoapods
 
+# this is needed for UtilSnips
+python3 -m pip install --user --upgrade pynvim
+
 # git-prompt
 if [ ! -e ~/.git-prompt.sh ]; then
   curl https://raw.githubusercontent.com/git/git/master/contrib/completion/git-prompt.sh -o ~/.git-prompt.sh
