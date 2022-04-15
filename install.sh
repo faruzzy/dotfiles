@@ -67,7 +67,7 @@ brew install --cask spotify
 #Install Java JDK
 brew cask install java6
 brew cask install java7
-brew install --cask	adoptopenjdk8
+brew install --cask homebrew/cask-versions/adoptopenjdk8
 brew install --cask	adoptopenjdk11
 
 brew tap homebrew/cask-fonts
