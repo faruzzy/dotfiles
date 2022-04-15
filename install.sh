@@ -122,8 +122,7 @@ npm install -g typescript
 npm install -g ts-node
 
 brew install --cask keepingyouawake \
-	mat visualvm mactex \
-	adoptopenjdk8
+	mat visualvm mactex
 
 # dev tools
 brew install fzf
@@ -132,7 +131,7 @@ $(brew --prefix)/opt/fzf/install
 brew install \
 	fd ag ripgrep bat cmake cmus \
 	imagemagick diff-so-fancy gnupg \
-	tree vim wget jq python fzf \
+	tree vim wget jq python \
 	reattach-to-user-namespace bash bash-completion@2 tmux \
 	translate-shell libpq exa jenv maven lua luajit-openresty \
 	perl krb5 luv python@3.9 tree-sitter berkeley-db libevent mpdecimal \
