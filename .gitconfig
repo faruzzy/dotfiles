@@ -5,7 +5,8 @@
 
 [user]
 	name = Roland Pangu
-	email = faruzzy@gmail.com
+	email = ropangu@amazon.com
+	signingKey = FEF9C627
 
 [core]
 	; whitespace = trailing-space,space-before-tab,indent-with-non-tab
@@ -43,6 +44,7 @@
 
 	st = status -sb
 	c = commit
+	nc = commit --no-verify
 	all = commit -am
 	br = branch
 	co = checkout
@@ -58,6 +60,7 @@
 	ls = ls-files
 	ign = ls-files -o -i --exclude-standard			#Show files ignored by git
 	p = push
+	np = push --no-verify
 	shoot = push origin --delete
 	up = pull
 	unstage = reset HEAD --
@@ -161,4 +164,6 @@
 	cmd = opendiff \"$LOCAL\" \"$REMOTE\"
 	path =
 [pull]
-	ff = only
+	; ff = only
+; [commit]
+; 	gpgsign = true

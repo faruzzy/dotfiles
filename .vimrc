@@ -19,6 +19,18 @@ let s:darwin = has('mac')
 " }}}
 
 set number relativenumber									" The current line number is always show in the left gutter, along with the relative line numbers above/below
+set path=$PWD/**															" You need this (trust me) to move around
+set cursorline																" Highlight current line
+set nocursorcolumn
+set autowrite																" Automatically save before :next, :make etc.
+set autoread																" Automatically reread changed files (outside of vim) without asking me anything
+set laststatus=2															" Always show status line
+set shortmess=atI															" shortens messages
+set showcmd																	" Show me what I'm typing
+set hidden																	" Display another buffer when current buffer isn't saved
+set synmaxcol=300
+set foldmethod=indent														" Enable folding
+set foldlevel=99
 set cmdheight=2																		" Give more space for display messages
 set noshowmode																" Don't Show the current mode Since we're using airline
 set updatetime=300
@@ -96,17 +108,13 @@ set splitright																" By default, (horizontal) split to the right
 set splitbelow																" By default, (vertical) split to the bottom
 set binary																	" Don't add empty new lines at the end of files
 set noeol
-set cursorline																" Highlight current line
-set nocursorcolumn
 
 if has('mouse')
 	set mouse=a																	" Enable mouse in all modes
 endif
 
 set mousemodel=popup
-set path=$PWD/**															" You need this (trust me) to move around
 set wildmenu
-set history=1024															" Amount of Command history increased from default 20 to 1024
 set noerrorbells visualbell t_vb=											" No beeps
 set numberwidth=4															" Minimal number of columns to use for the line number
 set scrolloff=5
@@ -120,15 +128,6 @@ set nowb
 
 " }}}
 
-set autowrite																" Automatically save before :next, :make etc.
-set autoread																" Automatically reread changed files (outside of vim) without asking me anything
-set laststatus=2															" Always show status line
-set shortmess=atI															" shortens messages
-set showcmd																	" Show me what I'm typing
-set hidden																	" Display another buffer when current buffer isn't saved
-set synmaxcol=300
-set foldmethod=indent														" Enable folding
-set foldlevel=99
 
 " Modified from http://dhruvasagar.com/2013/03/28/vim-better-foldtext
 function! NeatFoldText()
@@ -203,11 +202,11 @@ Plug 'tpope/vim-fugitive'																										" Git wrapper
 Plug 'tpope/vim-rhubarb'																										" GitHub extension for fugitive
 Plug 'junegunn/gv.vim', { 'on': 'GV' }																			" A git commit browser
 Plug 'stsewd/fzf-checkout.vim'
-if v:version >= 703
+" if v:version >= 703
 	Plug 'mhinz/vim-signify'
-elseif
-	Plug 'airblade/vim-gitgutter'
-endif
+" elseif
+	" Plug 'airblade/vim-gitgutter'
+" endif
 
 " }}}
 

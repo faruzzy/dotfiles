@@ -142,7 +142,7 @@ endfunction
 set foldtext=NeatFoldText()
 
 "http://stackoverflow.com/questions/20186975/vim-mac-how-to-copy-to-clipboard-without-pbcopy
-set clipboard^=unnamed
+set clipboard^=unnamed,unnamed												" Use same clipbaord as macOS/Linux
 set complete=.,w,b,u,t														" Better Completion
 set completeopt=longest,menuone
 set ofu=syntaxcomplete#Complete												" Set omni-completion method.
@@ -449,9 +449,14 @@ vnoremap <leader>dp :diffput<cr>
 nnoremap <leader>O :!open .<cr>
 
 nnoremap <leader>o :only<cr>
-nnoremap <leader>bd :bdelete<cr>
+
+" Deletes buffer without losing the split window
+nnoremap <leader>bd :bp\|bd #<cr>
+
+" Deletes all buffers except the current one
 nnoremap <leader>ba :%bd\|e#\|bd#<cr>
 
+" Search entire project
 nnoremap <leader>a :Root<cr>:Ack!<Space>
 
 " npm install --save-dev word under cursor
@@ -463,6 +468,9 @@ nnoremap <leader>m :execute ":!npm install --save " . expand("<cword>")<cr>
 " Enable folding with the spacebar
 nnoremap <space> za" Run python code by pressing F9
 
+" Open new line below and above current line
+nnoremap <leader>r o<esc>
+nnoremap <leader>R O<esc>
 " Better split switching (Ctrl-j, Ctrl-k, Ctrl-h, Ctrl-l) {{{
 
 nnoremap <C-J> <C-W><C-J>
@@ -1134,6 +1142,17 @@ function! s:root()
 	endif
 endfunction
 command! Root call s:root()
+
+" Zoom
+function! s:zoom()
+	if winnr('$') > 1
+		tab split
+	elseif len(filter(map(range(tabpagenr('$')), 'tabpagebuflist(v:val + 1)'),
+									\ 'index(v:val, '.bufnr('').') >= 0')) > 1
+		tabclose
+	endif
+endfunction
+nnoremap <silent> <leader>z :call <sid>zoom()<cr>
 
 " ----------------------------------------------------------------------------
 " }}}

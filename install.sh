@@ -57,7 +57,7 @@ brew install --cask spectacle
 brew install --cask alacritty
 brew install --cask karabiner-elements
 brew install --cask maccy
-brew install --cask osxfuse
+brew install --cask macfuse
 brew install --cask nightowl
 
 #less often
@@ -65,8 +65,8 @@ brew install --cask vlc
 brew install --cask spotify
 
 #Install Java JDK
-brew cask install java6
-brew cask install java7
+brew install --cask java6
+brew install --cask java7
 brew install --cask homebrew/cask-versions/adoptopenjdk8
 brew install --cask	adoptopenjdk11
 
@@ -74,7 +74,7 @@ brew tap homebrew/cask-fonts
 brew install --cask font-fira-code
 
 # Brew package
-brew install mas mkcert nss
+brew install mas mkcert nss xquartz
 
 # Install zsh
 # brew install zsh shellcheck autojump
@@ -131,16 +131,21 @@ $(brew --prefix)/opt/fzf/install
 brew install \
 	fd ag ripgrep bat cmake cmus \
 	imagemagick diff-so-fancy gnupg \
-	tree vim wget jq python \
+	tree wget jq \
+	pyenv xz python python@3.9
 	reattach-to-user-namespace bash bash-completion@2 tmux \
 	translate-shell libpq exa jenv maven lua luajit-openresty \
-	perl krb5 luv python@3.9 tree-sitter berkeley-db libevent mpdecimal \
-	readline unibilium ca-certificates msgpack utf8proc libtermkey ncurses vim \
-	libuv neovim ruby xz libvterm openssl@1.1 sqlite gdbm libyaml pcre the_silver_searcher \
-	gettext pcre2 ngrep z ffmpeg youtube-dl cocoapods
+	perl krb5 luv tree-sitter berkeley-db libevent mpdecimal \
+	readline unibilium ca-certificates msgpack utf8proc libtermkey ncurses vim neovim\
+	libuv ruby xz libvterm openssl@1.1 sqlite gdbm libyaml libffi pcre the_silver_searcher \
+	gettext pcre2 ngrep z ffmpeg youtube-dl cocoapods awscli
 
 # this is needed for UtilSnips
 python3 -m pip install --user --upgrade pynvim
+
+# setup neovim
+sh -c 'curl -fLo "${XDG_DATA_HOME:-$HOME/.local/share}"/nvim/site/autoload/plug.vim --create-dirs \
+       https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim'
 
 # git-prompt
 if [ ! -e ~/.git-prompt.sh ]; then
