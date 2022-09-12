@@ -126,6 +126,7 @@ alias npmu='npm update'
 alias npmr='npm uninstall'
 alias npmrg='npm uninstall -g'
 alias nom='rm -rf node_modules && npm cache clear && npm i'
+alias nomm='rm -rf node_modules && yarn cache clear && yarn'
 
 # npm offline
 # install npm dependencies from cache
@@ -159,7 +160,7 @@ alias httpdump="sudo tcpdump -i en1 -n -s 0 -w - | grep -a -o -E \"Host\: .*|GET
 
 ##### Vim ######
 
-alias vim=/usr/local/bin/vim
+#alias vim=/usr/local/bin/vim
 alias vi=$EDITOR
 alias v='vi'
 
