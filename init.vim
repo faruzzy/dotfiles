@@ -971,7 +971,7 @@ endfunction
 nnoremap <silent> Q :call CloseWindowOrKillBuffer()<cr>
 
 function! RipgrepFzf(query, fullscreen)
-	let command_fmt = 'rg --column --line-number --no-heading --color=always --smart-case %s || true'
+	let command_fmt = 'rg --hidden --column --line-number --no-heading --color=always --smart-case %s || true'
 	let initial_command = printf(command_fmt, shellescape(a:query))
 	let reload_command = printf(command_fmt, '{q}')
   let options = {'options': ['--phony', '--query', a:query, '--bind', 'change:reload:'.reload_command], 'dir': system('git -C '.expand('%:p:h').' rev-parse --show-toplevel 2> /dev/null')[:-2]}
