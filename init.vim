@@ -542,7 +542,7 @@ nnoremap <leader>bg :GBranches<cr>
 
 nnoremap <leader>ga :Git add %:p<cr><cr>
 nnoremap <leader>gw :Gwrite<cr>
-nnoremap <leader>gr :Gread<cr>
+nnoremap <leader>gr :Gread<cr> :w<cr>
 nnoremap <leader>gm :Gmove<cr>
 nnoremap <leader>gy :Gremove<cr>
 nnoremap <leader>gs :Git<cr>
