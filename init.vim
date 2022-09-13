@@ -431,11 +431,11 @@ nnoremap <silent> <leader>C			:Colors<cr>
 nnoremap <silent> <leader>l			:Lines<cr>
 nnoremap <silent> <leader>`			:Marks<cr>
 
-nnoremap <leader>dg :diffget<cr>
-vnoremap <leader>dg :diffget<cr>
+nnoremap <leader>dg :diffget<cr> :diffupdate<cr>
+vnoremap <leader>dg :diffget<cr> :diffupdate<cr>
 
-nnoremap <leader>dp :diffput<cr>
-vnoremap <leader>dp :diffput<cr>
+nnoremap <leader>dp :diffput<cr> :diffupdate<cr>
+vnoremap <leader>dp :diffput<cr> :diffupdate<cr>
 
 " Open the current directory in finder
 nnoremap <leader>O :!open .<cr>
