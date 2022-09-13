@@ -362,17 +362,6 @@ Plug 'cakebaker/scss-syntax.vim', { 'for': 'scss' }
 
 " Misc {{{
 
-if (executable('rg') || executable('ag'))
-	Plug 'wincent/ferret'																																" Enhanced multi-file search for Vim
-else
-	Plug 'mileszs/ack.vim'
-	if executable("ag")
-		let g:ackprg = 'ag --nogroup --nocolor --column'
-	else
-		let g:ackprg = 'git grep -H --line-number --no-color --untracked'
-	endif
-endif
-
 Plug 'tpope/vim-commentary'																																											" Plugin that allows you to comment stuff out
 Plug 'wellle/visual-split.vim'
 Plug 'wincent/loupe'																																														" Enhanced in-file search for Vim
@@ -434,8 +423,10 @@ autocmd  FileType fzf set noshowmode noruler nonu
 nnoremap <leader>s :source %<cr>
 
 nnoremap <C-p> :Root<cr>:Files<cr>
-nnoremap <C-g> :Rg<cr>
+
+"show all opened buffers
 nnoremap <Leader><Enter>				:Buffers<CR>
+
 nnoremap <silent> <leader>C			:Colors<cr>
 nnoremap <silent> <leader>l			:Lines<cr>
 nnoremap <silent> <leader>`			:Marks<cr>
@@ -458,7 +449,10 @@ nnoremap <leader>bd :bp\|bd #<cr>
 nnoremap <leader>ba :%bd\|e#\|bd#<cr>
 
 " Search entire project
-nnoremap <leader>a :Root<cr>:Ack!<Space>
+nnoremap <C-g> :RG<cr>
+
+" TODO: Find where this is coming from
+"" nnoremap <C-g> :Rg<cr>
 
 " npm install --save-dev word under cursor
 nnoremap <leader>md :execute ":!npm install --save-dev " . expand("<cword>")<cr>
