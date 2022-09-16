@@ -231,6 +231,7 @@ endif
 " Color Schemes {{{
 
 Plug 'junegunn/seoul256.vim'
+Plug 'projekt0n/github-nvim-theme'
 Plug 'joshdick/onedark.vim'
 Plug 'mhartington/oceanic-next'
 Plug 'morhetz/gruvbox'
@@ -397,10 +398,10 @@ call plug#end()
 " }}}
 " ----------------------------------------------------------------------------
 
-colorscheme seoul256
+" colorscheme seoul256
 " colorscheme gruvbox
-
-" ----------------------------------------------------------------------------
+colorscheme github_dark
+"" ----------------------------------------------------------------------------
 " fzf.vim {{{
 " ----------------------------------------------------------------------------
 
