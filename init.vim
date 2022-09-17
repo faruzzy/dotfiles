@@ -334,7 +334,7 @@ nmap <silent> gr <Plug>(coc-references)
 nmap <silent> at <Plug>(coc-rename)
 
 " format file
-nmap <silent> pr <Plug>(coc-format)
+nmap <silent> fr <Plug>(coc-format)
 
 function! s:show_documentation()
   if (index(['vim','help'], &filetype) >= 0)
