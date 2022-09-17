@@ -9,43 +9,43 @@
 ""
 
 " House keeping {{{
-filetype plugin indent on													" Enable file type detection
-syntax on																	" Syntax highlighting
+filetype plugin indent on														  " Enable file type detection
+syntax on																  " Syntax highlighting
 syntax sync minlines=256
-let mapleader=","															" Change leader to ','
+let mapleader=","															  " Change leader to ','
 let s:darwin = has('mac')
 " }}}
 
-set number relativenumber									" The current line number is always show in the left gutter, along with the relative line numbers above/below
-set cmdheight=2																		" Give more space for display messages
-set noshowmode																" Don't Show the current mode Since we're using airline
+set number relativenumber														  " The current line number is always show in the left gutter, along with the relative line numbers above/below
+set cmdheight=2																  " Give more space for display messages
+set noshowmode																  " Don't Show the current mode Since we're using airline
 set signcolumn=yes
 set updatetime=300
-set title																	" Display filename in titlebar
-set titleold=																" Prevent the 'Thanks for flying Vim'
-set ttyfast																	" Optimize for fast terminal connections
-set lazyredraw																" Wait to redraw, do not redraw while executing macros
+set title																  " Display filename in titlebar
+set titleold=																  " Prevent the 'Thanks for flying Vim'
+set ttyfast																  " Optimize for fast terminal connections
+set lazyredraw																  " Wait to redraw, do not redraw while executing macros
 set nowrap
-set fo+=o																	" Automatically insert the current comment leader after hitting 'o' or 'O' in Normal mode.
-set fo-=r																	" Do not automatically insert a comment leader after an enter
-set fo-=t																	" Do not auto-wrap text using textwidth (does not apply to comments)
+set fo+=o																  " Automatically insert the current comment leader after hitting 'o' or 'O' in Normal mode.
+set fo-=r																  " Do not automatically insert a comment leader after an enter
+set fo-=t																  " Do not auto-wrap text using textwidth (does not apply to comments)
 set linebreak
 set dictionary+=/usr/share/dict/words
-set spelllang=en_us,fr														" Spell checking language
+set spelllang=en_us,fr															  " Spell checking language
 set display=lastline
 
-set diffopt=filler															" Add vertical spaces to keep right and left aligned
-set diffopt+=vertical														" make :diffsplit default to vertical
-set shell=/bin/sh															" Use /bin/sh for executing shell commands
-set timeoutlen=1250															" Reduce annoying delay for key codes, especially <Esc>...
+set diffopt=filler															  " Add vertical spaces to keep right and left aligned
+set diffopt+=vertical															  " make :diffsplit default to vertical
+set shell=/bin/sh															  " Use /bin/sh for executing shell commands
+set timeoutlen=1250															  " Reduce annoying delay for key codes, especially <Esc>...
 set formatoptions+=1
 
 " Encoding {{{
 
 set encoding=utf-8
-set fileencodings=utf-8,cp932,euc-jp										" A list of character encodings, set default encoding to UTF-8
+set fileencodings=utf-8,cp932,euc-jp													  " A list of character encodings, set default encoding to UTF-8
 set guifont=Fira\ Code\ Retina:h13
-scriptencoding utf8														" utf-8 all the way
+scriptencoding utf8															  " utf-8 all the way
 if !has('nvim')
   set term=xterm-256color
 endif
@@ -54,14 +54,14 @@ if has('nvim') || has('termguicolors')
   "set termguicolors
 endif
 
-set t_ut=																	" Disable background color erase, play nicely with tmux
-set fileformats=unix,dos,mac												" Prefer Unix over Windows over OS 9 formats
+set t_ut=																  " Disable background color erase, play nicely with tmux
+set fileformats=unix,dos,mac														  " Prefer Unix over Windows over OS 9 formats
 
 " }}}
 
 " Identation Settings {{{
 
-set autoindent																" Always set autoindenting on
+set autoindent																  " Always set autoindenting on
 set smartindent
 set cindent
 set indentkeys-=0#															" Do not break indent on #
@@ -78,7 +78,7 @@ set backspace=indent,eol,start
 " Search Basic Settings {{{
 
 set incsearch																" Display search resultings as you type
-set hlsearch | nohlsearch													" Highlight search, support reloading
+set hlsearch | nohlsearch														" Highlight search, support reloading
 set ignorecase																" Ignore case in search patterns
 set smartcase																" Override the ignorecase option if the pattern contains upper case
 set gdefault																" By default add g flag to search/replace. Add g to toggle
@@ -89,20 +89,20 @@ set matchpairs+=<:>															" For HTML Editing
 set matchtime=2																" Bracket blinking
 set splitright																" By default, (horizontal) split to the right
 set splitbelow																" By default, (vertical) split to the bottom
-set binary																	" Don't add empty new lines at the end of files
+set binary																" Don't add empty new lines at the end of files
 set noeol
 set cursorline																" Highlight current line
 set nocursorcolumn
 
 if has('mouse')
-  set mouse=a																	" Enable mouse in all modes
+  set mouse=a																" Enable mouse in all modes
 endif
 
 set mousemodel=popup
 set path=$PWD/**															" You need this (trust me) to move around
 set wildmenu
 set history=1024															" Amount of Command history increased from default 20 to 1024
-set noerrorbells visualbell t_vb=											" No beeps
+set noerrorbells visualbell t_vb=													" No beeps
 set numberwidth=4															" Minimal number of columns to use for the line number
 set scrolloff=5
 
@@ -119,10 +119,10 @@ set autowrite																" Automatically save before :next, :make etc.
 set autoread																" Automatically reread changed files (outside of vim) without asking me anything
 set laststatus=2															" Always show status line
 set shortmess=atI															" shortens messages
-set showcmd																	" Show me what I'm typing
-set hidden																	" Display another buffer when current buffer isn't saved
+set showcmd																" Show me what I'm typing
+set hidden																" Display another buffer when current buffer isn't saved
 set synmaxcol=300
-set foldmethod=indent														" Enable folding
+set foldmethod=indent															" Enable folding
 set foldlevel=99
 
 " Modified from http://dhruvasagar.com/2013/03/28/vim-better-foldtext
@@ -239,10 +239,10 @@ Plug 'morhetz/gruvbox'
 
 " Programming {{
 
-Plug 'Shougo/echodoc.vim'																										" Display function signature
-Plug 'dense-analysis/ale'																										" Checks syntax in Vim asynchronously
-Plug 'Shougo/unite.vim'																											" Unite and create user interfaces
-Plug 'tpope/vim-unimpaired'																									" Pairs of handy bracket mappings
+Plug 'Shougo/echodoc.vim'														" Display function signature
+Plug 'dense-analysis/ale'														" Checks syntax in Vim asynchronously
+Plug 'Shougo/unite.vim'															" Unite and create user interfaces
+Plug 'tpope/vim-unimpaired'														" Pairs of handy bracket mappings
 
 " }}
 
@@ -373,22 +373,22 @@ Plug 'jiangmiao/auto-pairs'																																											" provides
 Plug 'easymotion/vim-easymotion'
 Plug 'vim-airline/vim-airline'
 Plug 'vim-airline/vim-airline-themes'
-Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }																															" fzf itself
+Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }										      " fzf itself
 Plug 'junegunn/fzf.vim'																																													" fuzzy search integration
 Plug 'majutsushi/tagbar'																																												" Vim plugin that displays tags in a window, ordered by scop
-Plug 'scrooloose/nerdtree', { 'on': 'NERDTreeToggle' }																													" A tree explorer plugin for vim.
-Plug 'Xuyuanp/nerdtree-git-plugin'																																							" A plugin of NERDTree showing git status
-Plug 'ryanoasis/vim-devicons'																																										" Adds file type glyphs/icons to popular Vim plugins: NERDTree, vim-airline, Powerline, Unite, vim-startify and more
-Plug 'plasticboy/vim-markdown', { 'for': 'markdown' }																														" Markdown Vim Mode
-Plug 'sickill/vim-pasta'																																												" Pasting in Vim with indentation adjusted to destination context TODO: check if I still need this
-Plug 'jordwalke/VimSplitBalancer'																																								" Distributes available space among vertical splits, and plays nice with NERDTree
+Plug 'scrooloose/nerdtree', { 'on': 'NERDTreeToggle' }										      " A tree explorer plugin for vim.
+Plug 'Xuyuanp/nerdtree-git-plugin'												      " A plugin of NERDTree showing git status
+Plug 'ryanoasis/vim-devicons'													      " Adds file type glyphs/icons to popular Vim plugins: NERDTree, vim-airline, Powerline, Unite, vim-startify and more
+Plug 'plasticboy/vim-markdown', { 'for': 'markdown' }										      " Markdown Vim Mode
+Plug 'sickill/vim-pasta'													      " Pasting in Vim with indentation adjusted to destination context TODO: check if I still need this
+Plug 'jordwalke/VimSplitBalancer'												      " Distributes available space among vertical splits, and plays nice with NERDTree
 "Plug 'dhruvasagar/vim-zoom' TODO: check if I still need this
-Plug 'itspriddle/ZoomWin'																																												" Zoom in and out of windows/buffer
+Plug 'itspriddle/ZoomWin'													      " Zoom in and out of windows/buffer
 Plug 'benmills/vimux'																																														" Easily interact with tmux from vim
-Plug 'christoomey/vim-tmux-navigator'																																						" Seamless navigation between tmux panes and vim splits
-Plug 'tmux-plugins/vim-tmux-focus-events'																																				" This plugin restores `FocusGained` and `FocusLost` when using vim inside Tmux.
-Plug 'wellle/tmux-complete.vim'																																									" adds a completion function that puts all words visible in your Tmux panes right under your fingertips
-Plug 'psliwka/vim-smoothie'																																											" makes scrolling nice and smooth every time you press Ctrl-D or Ctrl-F
+Plug 'christoomey/vim-tmux-navigator'												      " Seamless navigation between tmux panes and vim splits
+Plug 'tmux-plugins/vim-tmux-focus-events'											      " This plugin restores `FocusGained` and `FocusLost` when using vim inside Tmux.
+Plug 'wellle/tmux-complete.vim'													      " adds a completion function that puts all words visible in your Tmux panes right under your fingertips
+Plug 'psliwka/vim-smoothie'													      " makes scrolling nice and smooth every time you press Ctrl-D or Ctrl-F
 
 " }}}
 
@@ -640,8 +640,8 @@ augroup numbertoggle
   autocmd BufLeave,FocusLost,InsertEnter   * set norelativenumber
 augroup END
 
-autocmd VimResized  * :wincmd =																		" Resize splits when the window is resized
-autocmd BufEnter    * silent! cd %:p:h																" update dir to current file
+autocmd VimResized  * :wincmd =													      " Resize splits when the window is resized
+autocmd BufEnter    * silent! cd %:p:h												      " update dir to current file
 
 autocmd FileType go nmap <leader>s  <Plug>(go-def-split)
 autocmd FileType go nmap <leader>v  <Plug>(go-def-vertical)
