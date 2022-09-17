@@ -47,11 +47,11 @@ set fileencodings=utf-8,cp932,euc-jp										" A list of character encodings, s
 set guifont=Fira\ Code\ Retina:h13
 scriptencoding utf8														" utf-8 all the way
 if !has('nvim')
-	set term=xterm-256color
+  set term=xterm-256color
 endif
 
 if has('nvim') || has('termguicolors')
-	"set termguicolors
+  "set termguicolors
 endif
 
 set t_ut=																	" Disable background color erase, play nicely with tmux
@@ -95,7 +95,7 @@ set cursorline																" Highlight current line
 set nocursorcolumn
 
 if has('mouse')
-	set mouse=a																	" Enable mouse in all modes
+  set mouse=a																	" Enable mouse in all modes
 endif
 
 set mousemodel=popup
@@ -205,19 +205,19 @@ let $FZF_DEFAULT_OPTS .= ' --inline-info'
 
 let g:fzf_colors =
 \ { 'fg':         ['fg', 'Normal'],
-  \ 'bg':         ['bg', 'Normal'],
-  \ 'preview-bg': ['bg', 'NormalFloat'],
-  \ 'hl':         ['fg', 'Comment'],
-  \ 'fg+':        ['fg', 'CursorLine', 'CursorColumn', 'Normal'],
-  \ 'bg+':        ['bg', 'CursorLine', 'CursorColumn'],
-  \ 'hl+':        ['fg', 'Statement'],
-  \ 'info':       ['fg', 'PreProc'],
-  \ 'border':     ['fg', 'Ignore'],
-  \ 'prompt':     ['fg', 'Conditional'],
-  \ 'pointer':    ['fg', 'Exception'],
-  \ 'marker':     ['fg', 'Keyword'],
-  \ 'spinner':    ['fg', 'Label'],
-  \ 'header':     ['fg', 'Comment'] }
+\ 'bg':         ['bg', 'Normal'],
+\ 'preview-bg': ['bg', 'NormalFloat'],
+\ 'hl':         ['fg', 'Comment'],
+\ 'fg+':        ['fg', 'CursorLine', 'CursorColumn', 'Normal'],
+\ 'bg+':        ['bg', 'CursorLine', 'CursorColumn'],
+\ 'hl+':        ['fg', 'Statement'],
+\ 'info':       ['fg', 'PreProc'],
+\ 'border':     ['fg', 'Ignore'],
+\ 'prompt':     ['fg', 'Conditional'],
+\ 'pointer':    ['fg', 'Exception'],
+\ 'marker':     ['fg', 'Keyword'],
+\ 'spinner':    ['fg', 'Label'],
+\ 'header':     ['fg', 'Comment'] }
 
 if v:version >= 703
 	Plug 'mhinz/vim-signify'
@@ -305,17 +305,17 @@ Plug 'suy/vim-context-commentstring'																			" JSX syntax pretty highl
 Plug 'HerringtonDarkholme/yats.vim'																				" Advanced TypeScript Syntax Highlighting
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
 let g:coc_global_extensions = [
-	\ 'coc-tsserver',
-	\ 'coc-eslint',
-	\ 'coc-snippets',
-	\ 'coc-pairs',
-	\ 'coc-prettier',
-	\ 'coc-json',
-	\ 'coc-css',
-	\ 'coc-python',
-	\ 'coc-html',
-	\ 'coc-emmet',
-	\]
+\ 'coc-tsserver',
+\ 'coc-eslint',
+\ 'coc-snippets',
+\ 'coc-pairs',
+\ 'coc-prettier',
+\ 'coc-json',
+\ 'coc-css',
+\ 'coc-python',
+\ 'coc-html',
+\ 'coc-emmet',
+\]
 
 " show documentation in preview window.
 nnoremap <silent> K :call <SID>show_documentation()<cr>
@@ -575,20 +575,20 @@ nnoremap <leader>pc :PlugClean<cr>
 let g:tmuxcomplete#trigger = 'omnifunc'
 
 let g:ale_linters = {
-\   'python': ['flake8', 'pylint'],
-\   'javascript': ['eslint'],
-\		'vue': ['eslint']
+\ 'python': ['flake8', 'pylint'],
+\ 'javascript': ['eslint'],
+\ 'vue': ['eslint']
 \}
 
 let g:ale_fixers = {
-\   'javascript': ['eslint'],
-\   'typescript': ['prettier', 'tslint', 'eslint'],
-\   'graphql': ['prettier', 'eslint'],
-\   'json': ['prettier', 'eslint'],
-\		'vue': ['eslint'],
-\		'scss': ['prettier'],
-\		'html': ['prettier'],
-\		'reason': ['refmt'],
+\ 'javascript': ['eslint'],
+\ 'typescript': ['prettier', 'tslint', 'eslint'],
+\ 'graphql': ['prettier', 'eslint'],
+\ 'json': ['prettier', 'eslint'],
+\ 'vue': ['eslint'],
+\ 'scss': ['prettier'],
+\ 'html': ['prettier'],
+\ 'reason': ['refmt'],
 \}
 
 let g:ale_fix_on_save = 1
@@ -635,9 +635,9 @@ autocmd filetype sh nnoremap <leader>c :w <cr>:!bash %<cr>
 autocmd filetype python nnoremap <leader>c :exec '!python' shellescape(@%, 1)<cr>
 
 augroup numbertoggle
-	autocmd!
-	autocmd BufEnter,FocusGained,InsertLeave * set relativenumber
-	autocmd BufLeave,FocusLost,InsertEnter   * set norelativenumber
+  autocmd!
+  autocmd BufEnter,FocusGained,InsertLeave * set relativenumber
+  autocmd BufLeave,FocusLost,InsertEnter   * set norelativenumber
 augroup END
 
 autocmd VimResized  * :wincmd =																		" Resize splits when the window is resized
@@ -657,73 +657,73 @@ autocmd FileType go nmap <leader>f :GoImports<cr>
 augroup vimrcEx
 autocmd!
 
-	" When editing a file, always jump to the last known cursor position.
-	" Don't do it for commit messages, when the position is invalid, or when
-	" inside an event handler (happens when dropping a file on gvim).
-	autocmd BufReadPost *
-		\ if &ft != 'gitcommit' && line("'\"") > 0 && line("'\"") <= line("$") |
-		\   exe "normal g`\"" |
-		\ endif
+  " When editing a file, always jump to the last known cursor position.
+  " Don't do it for commit messages, when the position is invalid, or when
+  " inside an event handler (happens when dropping a file on gvim).
+  autocmd BufReadPost *
+    \ if &ft != 'gitcommit' && line("'\"") > 0 && line("'\"") <= line("$") |
+    \   exe "normal g`\"" |
+    \ endif
 
-	" Set syntax highlighting for specific file types
-	autocmd BufRead,BufNewFile Appraisals set filetype=ruby
-	autocmd BufRead,BufNewFile *.md set filetype=markdown
+  " Set syntax highlighting for specific file types
+  autocmd BufRead,BufNewFile Appraisals set filetype=ruby
+  autocmd BufRead,BufNewFile *.md set filetype=markdown
 
-	" Enable spellchecking for Markdown
-	autocmd FileType markdown setlocal spell
+  " Enable spellchecking for Markdown
+  autocmd FileType markdown setlocal spell
 
-	" Automatically wrap at 80 characters for Markdown
-	autocmd BufRead,BufNewFile *.md setlocal textwidth=80
+  " Automatically wrap at 80 characters for Markdown
+  autocmd BufRead,BufNewFile *.md setlocal textwidth=80
 
-	" Automatically wrap at 80 characters and spell check git commit messages
-	autocmd FileType gitcommit setlocal textwidth=80
-	autocmd FileType gitcommit setlocal spell
+  " Automatically wrap at 80 characters and spell check git commit messages
+  autocmd FileType gitcommit setlocal textwidth=80
+  autocmd FileType gitcommit setlocal spell
 
-	" Allow stylesheets to autocomplete hyphenated words
-	autocmd FileType css,scss,sass,less setlocal iskeyword+=-
+  " Allow stylesheets to autocomplete hyphenated words
+  autocmd FileType css,scss,sass,less setlocal iskeyword+=-
 augroup END
 
 augroup ag_config
 autocmd!
-	if executable("ag")
-	" Note we extract the column as well as the file and line number
-	"set grepprg=ag\ --nogroup\ --nocolor\ --column
-	set grepprg=rg\ --vimgrep
-	set grepformat=%f:%l:%c%m
+  if executable("ag")
+  " Note we extract the column as well as the file and line number
+  "set grepprg=ag\ --nogroup\ --nocolor\ --column
+  set grepprg=rg\ --vimgrep
+  set grepformat=%f:%l:%c%m
 
-	" Have the silver searcher ignore all the same things as wilgignore
-	"let b:ag_command = 'ag %s -i --nocolor --nogroup'
-	let b:ag_command = 'rg --hidden -i'
+  " Have the silver searcher ignore all the same things as wilgignore
+  "let b:ag_command = 'ag %s -i --nocolor --nogroup'
+  let b:ag_command = 'rg --hidden -i'
 
-	for i in split(&wildignore, ",")
-		let i = substitute(i, '\*/\(.*\)/\*', '\1', 'g')
-		let b:ag_command = b:ag_command . ' --ignore "' . substitute(i, '\*/\(.*\)/\*', '\1', 'g') . '"'
-	endfor
+  for i in split(&wildignore, ",")
+    let i = substitute(i, '\*/\(.*\)/\*', '\1', 'g')
+    let b:ag_command = b:ag_command . ' --ignore "' . substitute(i, '\*/\(.*\)/\*', '\1', 'g') . '"'
+  endfor
 
-	"let b:ag_command = b:ag_command . ' --hidden -g ""'
-	endif
+  "let b:ag_command = b:ag_command . ' --hidden -g ""'
+  endif
 augroup END
 
 augroup airline_config
 autocmd!
-	let g:airline_theme='onedark'
-	let g:airline_powerline_fonts = 1
-	let g:airline#extensions#tabline#buffer_nr_format = '%s '
-	let g:airline#extensions#tabline#buffer_nr_show = 1
-	let g:airline#extensions#tabline#enabled = 1
-	let g:airline#extensions#tabline#fnamecollapse = 0
-	let g:airline#extensions#tabline#fnamemod = ':t'
+  let g:airline_theme='onedark'
+  let g:airline_powerline_fonts = 1
+  let g:airline#extensions#tabline#buffer_nr_format = '%s '
+  let g:airline#extensions#tabline#buffer_nr_show = 1
+  let g:airline#extensions#tabline#enabled = 1
+  let g:airline#extensions#tabline#fnamecollapse = 0
+  let g:airline#extensions#tabline#fnamemod = ':t'
 augroup END
 
 " Cursorline {{{
 " Only show cursorline in the current window and in normal mode.
 augroup cline
-	"TODO: does this work???
-	nnoremap <silent> <expr> <leader><leader> (expand('%') =~ 'NERD_tree' ? "\<c-w>\<c-w>" : '').":Files\<cr>"
+  "TODO: does this work???
+  nnoremap <silent> <expr> <leader><leader> (expand('%') =~ 'NERD_tree' ? "\<c-w>\<c-w>" : '').":Files\<cr>"
 
-	autocmd!
-	autocmd WinLeave,InsertEnter * set nocursorline
-	autocmd  WinEnter,InsertLeave * set cursorline
+  autocmd!
+  autocmd WinLeave,InsertEnter * set nocursorline
+  autocmd  WinEnter,InsertLeave * set cursorline
 augroup END
 
 " Highlight currently open buffer in NERDTree
@@ -762,28 +762,28 @@ nmap <F8> :TagbarToggle<cr>
 " sync open file with NERDTree
 " Check if NERDTree is open or active
 function! IsNERDTreeOpen()
-	return exists("t:NERDTreeBufName") && (bufwinnr(t:NERDTreeBufName) != -1)
+  return exists("t:NERDTreeBufName") && (bufwinnr(t:NERDTreeBufName) != -1)
 endfunction
 
 " Call NERDTreeFind if NERDTree is active, current window contains
 " a modifiable file, and we're not in vimdiff
 function! SyncTree()
-	if &modifiable && IsNERDTreeOpen() && strlen(expand('%')) > 0 && !&diff
-		NERDTreeFind
-		wincmd p
-	endif
+  if &modifiable && IsNERDTreeOpen() && strlen(expand('%')) > 0 && !&diff
+    NERDTreeFind
+    wincmd p
+  endif
 endfunction
 
 function! ToggleNerdTree()
-	set eventignore=BufEnter
-	NERDTreeToggle
-	set eventignore=
+  set eventignore=BufEnter
+  NERDTreeToggle
+  set eventignore=
 endfunction
 
 function! ToggleNerdTreeIfOpen()
-	if IsNERDTreeOpen()
-		call ToggleNerdTree()
-	endif
+  if IsNERDTreeOpen()
+    call ToggleNerdTree()
+  endif
 endfunction
 
 " ----------------------------------------------------------------------------
@@ -821,17 +821,17 @@ let NERDTreeIgnore = ['\~$', '^\.git$', '^\.hg$', '^\.bundle$', '^\.jhw-cache$',
 
 let g:netrw_liststyle=3																			" Explore with NerdTree Style by default
 let g:NERDTreeIndicatorMapCustom = {
-		\ "Modified"  : "✹",
-		\ "Staged"    : "✚",
-		\ "Untracked" : "✭",
-		\ "Renamed"   : "➜",
-		\ "Unmerged"  : "═",
-		\ "Deleted"   : "✖",
-		\ "Dirty"     : "✗",
-		\ "Clean"     : "✔︎",
-		\ 'Ignored'   : '☒',
-		\ "Unknown"   : "?"
-		\ }
+\ "Modified"  : "✹",
+\ "Staged"    : "✚",
+\ "Untracked" : "✭",
+\ "Renamed"   : "➜",
+\ "Unmerged"  : "═",
+\ "Deleted"   : "✖",
+\ "Dirty"     : "✗",
+\ "Clean"     : "✔︎",
+\ 'Ignored'   : '☒',
+\ "Unknown"   : "?"
+\ }
 
 " }}}
 
@@ -944,54 +944,54 @@ xnoremap <leader>yafp :CopyAbsoluteFilepath<cr>
 " Ignore leading/trailing punctuation (except underscore), whitespace.
 " Ignore internal punctuation (except underscore).
 function! FindALine()
-		let l:text = getline('.')
-		let l:text = substitute(l:text, "\\v^\\W+", "", "g")
-		let l:text = substitute(l:text, "\\v\\W+$", "", "g")
-		let l:text = substitute(l:text, "\\v\\/", "\\\\/", "g")
+  let l:text = getline('.')
+  let l:text = substitute(l:text, "\\v^\\W+", "", "g")
+  let l:text = substitute(l:text, "\\v\\W+$", "", "g")
+  let l:text = substitute(l:text, "\\v\\/", "\\\\/", "g")
 
-		execute 'normal! $/\c' . l:text . ''
+  execute 'normal! $/\c' . l:text . ''
 endfun
 nnoremap g<cr> :call FindALine()<cr>
 
 " Use Q to intelligently close a window
 function! CloseWindowOrKillBuffer()
-	let number_of_windows_to_this_buffer = len(filter(range(1, winnr('$')), "winbufnr(v:val) == bufnr('%')"))
+  let number_of_windows_to_this_buffer = len(filter(range(1, winnr('$')), "winbufnr(v:val) == bufnr('%')"))
 
-	" We should never bdelete a nerd tree
-	if matchstr(expand("%"), 'NERD') == 'NERD'
-		wincmd c
-		return
-	endif
+  " We should never bdelete a nerd tree
+  if matchstr(expand("%"), 'NERD') == 'NERD'
+	  wincmd c
+	  return
+  endif
 
-	if number_of_windows_to_this_buffer > 1
-		wincmd c
-	else
-		bdelete
-	endif
+  if number_of_windows_to_this_buffer > 1
+	  wincmd c
+  else
+	  bdelete
+  endif
 endfunction
 nnoremap <silent> Q :call CloseWindowOrKillBuffer()<cr>
 
 function! RipgrepFzf(query, fullscreen)
-	let command_fmt = 'rg --hidden --column --line-number --no-heading --color=always --smart-case %s || true'
-	let initial_command = printf(command_fmt, shellescape(a:query))
-	let reload_command = printf(command_fmt, '{q}')
+  let command_fmt = 'rg --hidden --column --line-number --no-heading --color=always --smart-case %s || true'
+  let initial_command = printf(command_fmt, shellescape(a:query))
+  let reload_command = printf(command_fmt, '{q}')
   let options = {'options': ['--phony', '--query', a:query, '--bind', 'change:reload:'.reload_command], 'dir': system('git -C '.expand('%:p:h').' rev-parse --show-toplevel 2> /dev/null')[:-2]}
-	let options = fzf#vim#with_preview(options, 'right', 'ctrl-/')
-	call fzf#vim#grep(initial_command, 1, options, a:fullscreen)
+  let options = fzf#vim#with_preview(options, 'right', 'ctrl-/')
+  call fzf#vim#grep(initial_command, 1, options, a:fullscreen)
 endfunction
 command! -nargs=* -bang RG call RipgrepFzf(<q-args>, <bang>0)
 
 " via: http://rails-bestpractices.com/posts/60-remove-trailing-whitespace
 function! <SID>StripTrailingWhitespaces()
-		" Preparation: save last search, and cursor position.
-		let _s=@/
-		let l = line(".")
-		let c = col(".")
-		" Do the business:
-		%s/\s\+$//e
-		" Clean up: restore previous search history, and cursor position
-		let @/=_s
-		call cursor(l, c)
+  " Preparation: save last search, and cursor position.
+  let _s=@/
+  let l = line(".")
+  let c = col(".")
+  " Do the business:
+  %s/\s\+$//e
+  " Clean up: restore previous search history, and cursor position
+  let @/=_s
+  call cursor(l, c)
 endfunction
 
 command! -nargs=1 S
@@ -1012,34 +1012,34 @@ nnoremap <Leader>D <c-w>h<c-w>c
 " Easy creation of Github Pull Request for current branch against master.
 " credit: https://github.com/arkwright/dotfiles/blob/master/vimrc
 function! s:GithubPullRequest()
-	let l:placeholderRegex = '\v\C\{0\}'
-	let l:httpsDomainRegex = '\v\Chttps:\/\/\zs[^\/]+\ze\/.+'
-	let l:httpsRepoRegex   = '\v\Chttps:\/\/.+\/\zs.+\/.+\ze\.git'
-	let l:sshDomainRegex   = '\v\C^.+\@\zs[^:\/]+\ze'
-	let l:sshRepoRegex     = '\v\C^.+\@.[^:\/]+:\zs[^.]+\ze\.git'
-	let l:urlTemplate      = system('echo $VIM_GITHUB_PR_URL')
-	let l:remotes          = system('cd ' . expand('%:p:h') . '; git remote -v')
-	let l:branch           = substitute(system('cd ' . expand('%:p:h') . '; git symbolic-ref --short -q HEAD'), '\v[\r\n]', '', 'g')
-	let l:urlTemplate      = 'https://{domain}/{repo}/compare/{branch}?expand=1'
+  let l:placeholderRegex = '\v\C\{0\}'
+  let l:httpsDomainRegex = '\v\Chttps:\/\/\zs[^\/]+\ze\/.+'
+  let l:httpsRepoRegex   = '\v\Chttps:\/\/.+\/\zs.+\/.+\ze\.git'
+  let l:sshDomainRegex   = '\v\C^.+\@\zs[^:\/]+\ze'
+  let l:sshRepoRegex     = '\v\C^.+\@.[^:\/]+:\zs[^.]+\ze\.git'
+  let l:urlTemplate      = system('echo $VIM_GITHUB_PR_URL')
+  let l:remotes          = system('cd ' . expand('%:p:h') . '; git remote -v')
+  let l:branch           = substitute(system('cd ' . expand('%:p:h') . '; git symbolic-ref --short -q HEAD'), '\v[\r\n]', '', 'g')
+  let l:urlTemplate      = 'https://{domain}/{repo}/compare/{branch}?expand=1'
 
-	if match(l:remotes, 'https') !=# -1
-		let l:domain = matchstr(l:remotes, l:httpsDomainRegex)
-		let l:repo   = matchstr(l:remotes, l:httpsRepoRegex)
-	else
-		let l:domain = matchstr(l:remotes, l:sshDomainRegex)
-		let l:repo   = matchstr(l:remotes, l:sshRepoRegex)
-	endif
+  if match(l:remotes, 'https') !=# -1
+	  let l:domain = matchstr(l:remotes, l:httpsDomainRegex)
+	  let l:repo   = matchstr(l:remotes, l:httpsRepoRegex)
+  else
+	  let l:domain = matchstr(l:remotes, l:sshDomainRegex)
+	  let l:repo   = matchstr(l:remotes, l:sshRepoRegex)
+  endif
 
-	if l:domain ==# '' || l:repo ==# ''
-		echoe 'Could not determine Git repo name for current file!'
-	endif
+  if l:domain ==# '' || l:repo ==# ''
+	  echoe 'Could not determine Git repo name for current file!'
+  endif
 
-	let l:prUrl = l:urlTemplate
-	let l:prUrl = substitute(l:prUrl, '\v\C\{domain\}', l:domain, '')
-	let l:prUrl = substitute(l:prUrl, '\v\C\{repo\}', l:repo, '')
-	let l:prUrl = substitute(l:prUrl, '\v\C\{branch\}', l:branch, '')
+  let l:prUrl = l:urlTemplate
+  let l:prUrl = substitute(l:prUrl, '\v\C\{domain\}', l:domain, '')
+  let l:prUrl = substitute(l:prUrl, '\v\C\{repo\}', l:repo, '')
+  let l:prUrl = substitute(l:prUrl, '\v\C\{branch\}', l:branch, '')
 
-	silent exec "!open '" . shellescape(l:prUrl, 1) . "'"
+  silent exec "!open '" . shellescape(l:prUrl, 1) . "'"
 endfunction
 command! PR :call s:GithubPullRequest()function! s:tag_line_handler(l)
 
@@ -1048,43 +1048,43 @@ command! PR :call s:GithubPullRequest()function! s:tag_line_handler(l)
 " Add the following environment variable to your shell configuration to enable JIRA ticket support:
 " export VIM_JIRA_URL=https://your-jira-domain-goes-here.com/browse/{0}
 function! BrowserOpen()
-	let l:line = getline('.')
-	let l:urlRegex = '\v\C[a-z]*:\/\/[^ >,;)]*'
+  let l:line = getline('.')
+  let l:urlRegex = '\v\C[a-z]*:\/\/[^ >,;)]*'
 
-	let l:uri = matchstr(l:line, l:urlRegex)
+  let l:uri = matchstr(l:line, l:urlRegex)
 
-	if l:uri != ""
-		silent exec "!open '" . shellescape(l:uri, 1) . "'"
-		return
-	endif
+  if l:uri != ""
+	  silent exec "!open '" . shellescape(l:uri, 1) . "'"
+	  return
+  endif
 
-	let l:jiraRegex = '\v\C[A-Z]+-\d+'
-	let l:jiraUrlPlaceholderRegex = '\v\C\{0\}'
+  let l:jiraRegex = '\v\C[A-Z]+-\d+'
+  let l:jiraUrlPlaceholderRegex = '\v\C\{0\}'
 
-	let l:jiraTicket = matchstr(l:line, l:jiraRegex)
+  let l:jiraTicket = matchstr(l:line, l:jiraRegex)
 
-	if l:jiraTicket != ""
-		let l:jiraUrl = system('echo $VIM_JIRA_URL')
-		let l:jiraUrl = substitute(l:jiraUrl, l:jiraUrlPlaceholderRegex, l:jiraTicket, 'g')
-		silent exec "!open '" . shellescape(l:jiraUrl, 1) . "'"
-		return
-	endif
+  if l:jiraTicket != ""
+	  let l:jiraUrl = system('echo $VIM_JIRA_URL')
+	  let l:jiraUrl = substitute(l:jiraUrl, l:jiraUrlPlaceholderRegex, l:jiraTicket, 'g')
+	  silent exec "!open '" . shellescape(l:jiraUrl, 1) . "'"
+	  return
+  endif
 
-	echo "No URI or JIRA ticket number found in line."
+  echo "No URI or JIRA ticket number found in line."
 endfunction
 nnoremap gx :call BrowserOpen()<cr>
 xnoremap gx :call BrowserOpen()<cr>
 
 function! s:tag_line_handler(l)
-	let keys = split(a:l, '\t')
-	exec 'tag' keys[1]
+  let keys = split(a:l, '\t')
+  exec 'tag' keys[1]
 endfunction
 
 "TODO: Do I need this?
 function! MakeTags()
-	echo 'Preparing tags...'
-	call system('ctags -R')
-	echo 'Tags done'
+  echo 'Preparing tags...'
+  call system('ctags -R')
+  echo 'Tags done'
 endfunction
 
 " Handy function to switch between current
@@ -1096,22 +1096,22 @@ nmap b<Tab> :call SwitchBuffer()<cr>
 
 " Sets python options
 function! SetPythonOptions()
-	setlocal tabstop=4
-	setlocal softtabstop=4
-	setlocal shiftwidth=4
-	setlocal smarttab
-	setlocal expandtab
-	setlocal autoindent
-	set fileformat=unix
+  setlocal tabstop=4
+  setlocal softtabstop=4
+  setlocal shiftwidth=4
+  setlocal smarttab
+  setlocal expandtab
+  setlocal autoindent
+  set fileformat=unix
 endfunction
 
 " <leader>?/! | Google it / Feeling lucky
 function! s:goog(pat, lucky)
-	let q = '"'.substitute(a:pat, '["\n]', ' ', 'g').'"'
-	let q = substitute(q, '[[:punct:] ]',
-		\ '\=printf("%%%02X", char2nr(submatch(0)))', 'g')
-	call system(printf('open "https://www.google.com/search?%sq=%s"',
-					\ a:lucky ? 'btnI&' : '', q))
+  let q = '"'.substitute(a:pat, '["\n]', ' ', 'g').'"'
+  let q = substitute(q, '[[:punct:] ]',
+    \ '\=printf("%%%02X", char2nr(submatch(0)))', 'g')
+  call system(printf('open "https://www.google.com/search?%sq=%s"',
+    \ a:lucky ? 'btnI&' : '', q))
 endfunction
 
 nnoremap <leader>? :call <SID>goog(expand("<cWORD>"), 0)<cr>
@@ -1129,24 +1129,24 @@ nnoremap [l :lprev<cr>zz
 
 " :Root | Change directory to the root of the Git repository
 function! s:root()
-	let root = systemlist('git rev-parse --show-toplevel')[0]
-	if v:shell_error
-		echo 'Not in git repo'
-	else
-		execute 'lcd' root
-		echo 'Changed directory to: '.root
-	endif
+  let root = systemlist('git rev-parse --show-toplevel')[0]
+  if v:shell_error
+    echo 'Not in git repo'
+  else
+    execute 'lcd' root
+    echo 'Changed directory to: '.root
+  endif
 endfunction
 command! Root call s:root()
 
 " Zoom
 function! s:zoom()
-	if winnr('$') > 1
-		tab split
-	elseif len(filter(map(range(tabpagenr('$')), 'tabpagebuflist(v:val + 1)'),
-									\ 'index(v:val, '.bufnr('').') >= 0')) > 1
-		tabclose
-	endif
+  if winnr('$') > 1
+    tab split
+  elseif len(filter(map(range(tabpagenr('$')), 'tabpagebuflist(v:val + 1)'),
+    \ 'index(v:val, '.bufnr('').') >= 0')) > 1
+    tabclose
+  endif
 endfunction
 nnoremap <silent> <leader>z :call <sid>zoom()<cr>
 
