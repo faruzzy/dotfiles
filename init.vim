@@ -345,7 +345,7 @@ function! s:show_documentation()
 endfunction
 
 Plug 'othree/yajs', { 'for': 'javascript' }																" Yet Another JavaScript Syntax for Vim
-Plug 'elzr/vim-json', { 'for' : 'json' }											" json support
+Plug 'elzr/vim-json', { 'for' : 'json' }																	" json support
 
 Plug 'SirVer/ultisnips'
 Plug 'mlaursen/vim-react-snippets'
@@ -364,6 +364,10 @@ Plug 'cakebaker/scss-syntax.vim', { 'for': 'scss' }
 " Misc {{{
 
 Plug 'tpope/vim-commentary'																																											" Plugin that allows you to comment stuff out
+Plug 'tpope/vim-surround'
+Plug 'tpope/vim-repeat'
+Plug 'tpope/vim-vinegar'																																												" netrw enhanced / alternative to NERDTree
+Plug 'tpope/vim-sleuth'
 Plug 'wellle/visual-split.vim'
 Plug 'wincent/loupe'																																														" Enhanced in-file search for Vim
 Plug 'jiangmiao/auto-pairs'																																											" provides insert mode auto-completion for quotes, parenthesis, brackets, etc
@@ -372,12 +376,9 @@ Plug 'vim-airline/vim-airline'
 Plug 'vim-airline/vim-airline-themes'
 Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }																															" fzf itself
 Plug 'junegunn/fzf.vim'																																													" fuzzy search integration
-Plug 'tpope/vim-surround'
-Plug 'tpope/vim-repeat'
 Plug 'majutsushi/tagbar'																																												" Vim plugin that displays tags in a window, ordered by scop
 Plug 'scrooloose/nerdtree', { 'on': 'NERDTreeToggle' }																													" A tree explorer plugin for vim.
 Plug 'Xuyuanp/nerdtree-git-plugin'																																							" A plugin of NERDTree showing git status
-Plug 'tpope/vim-vinegar'																																												" netrw enhanced / alternative to NERDTree
 Plug 'ryanoasis/vim-devicons'																																										" Adds file type glyphs/icons to popular Vim plugins: NERDTree, vim-airline, Powerline, Unite, vim-startify and more
 Plug 'plasticboy/vim-markdown', { 'for': 'markdown' }																														" Markdown Vim Mode
 Plug 'sickill/vim-pasta'																																												" Pasting in Vim with indentation adjusted to destination context TODO: check if I still need this
@@ -706,7 +707,7 @@ augroup END
 
 augroup airline_config
 autocmd!
-	let g:airline_theme='powerlineish'
+	let g:airline_theme='onedark'
 	let g:airline_powerline_fonts = 1
 	let g:airline#extensions#tabline#buffer_nr_format = '%s '
 	let g:airline#extensions#tabline#buffer_nr_show = 1
