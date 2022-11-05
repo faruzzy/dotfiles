@@ -362,6 +362,7 @@ Plug 'cakebaker/scss-syntax.vim', { 'for': 'scss' }
 
 " Misc {{{
 
+Plug 'wesQ3/vim-windowswap'													      " Allows you to swap windows easily without ruining your layout
 Plug 'tpope/vim-commentary'																																											" Plugin that allows you to comment stuff out
 Plug 'tpope/vim-surround'
 Plug 'tpope/vim-repeat'
