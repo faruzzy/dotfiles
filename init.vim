@@ -452,6 +452,8 @@ nnoremap <leader>ba :%bd\|e#\|bd#<cr>
 
 " Search entire project
 nnoremap <C-g> :RG<cr>
+" Search word under the cursor globaly
+nnoremap <C-s> :RT<cr>
 
 " TODO: Find where this is coming from
 "" nnoremap <C-g> :Rg<cr>
@@ -980,6 +982,7 @@ function! RipgrepFzf(query, fullscreen)
   call fzf#vim#grep(initial_command, 1, options, a:fullscreen)
 endfunction
 command! -nargs=* -bang RG call RipgrepFzf(<q-args>, <bang>0)
+command! -nargs=* -bang RT call RipgrepFzf(expand("<cWORD>"), <bang>0)
 
 " via: http://rails-bestpractices.com/posts/60-remove-trailing-whitespace
 function! <SID>StripTrailingWhitespaces()
