@@ -890,8 +890,7 @@ iabbrev ccopy Copyright 2018  Pangu, all rights reserved
 " }}}
 
 inoremap jk <esc>
-"inoremap <esc> <nop>
-inoremap <expr><TAB>  pumvisible() ? "\<C-n>" : "\<TAB>"
+inoremap <expr> <Tab> pumvisible() ? coc#_select_confirm() : "<Tab>"
 " ----------------------------------------------------------------------------
 " }}}
 " ----------------------------------------------------------------------------
