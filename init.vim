@@ -141,31 +141,31 @@ endfunction
 set foldtext=NeatFoldText()
 
 "http://stackoverflow.com/questions/20186975/vim-mac-how-to-copy-to-clipboard-without-pbcopy
-set clipboard^=unnamed,unnamed												" Use same clipbaord as macOS/Linux
+set clipboard^=unnamed,unnamed													" Use same clipbaord as macOS/Linux
 set complete=.,w,b,u,t														" Better Completion
 set completeopt=longest,menuone
-set ofu=syntaxcomplete#Complete												" Set omni-completion method.
-set report=0																" Show all changes
+set ofu=syntaxcomplete#Complete													" Set omni-completion method.
+set report=0															" Show all changes
 
 " ----------------------------------------------------------------------------
 " Wildmenu completion {{{
 " ----------------------------------------------------------------------------
 
-set wildmenu																" Command line autocompletion
+set wildmenu														        " Command line autocompletion
 set wildmode=list:full														" Shows all the options
-set wildignore+=.hg,.git,.svn												" Version control
-set wildignore+=*.aux,*.out,*.toc											" LaTeX intermediate files
-set wildignore+=*.jpg,*.bmp,*.gif,*.png,*.jpeg								" binary images
-set wildignore+=*.o,*.obj,*.exe,*.dll,*.manifest							" compiled object files
+set wildignore+=.hg,.git,.svn													" Version control
+set wildignore+=*.aux,*.out,*.toc												" LaTeX intermediate files
+set wildignore+=*.jpg,*.bmp,*.gif,*.png,*.jpeg											" binary images
+set wildignore+=*.o,*.obj,*.exe,*.dll,*.manifest										" compiled object files
 set wildignore+=*.spl														" compiled spelling word lists
 set wildignore+=*.sw?														" Vim swap files
-set wildignore+=*.bak,*.?~,*.??~,*.???~,*.~									" Backup files
+set wildignore+=*.bak,*.?~,*.??~,*.???~,*.~											" Backup files
 set wildignore+=*.DS_Store													" OSX bullshit
 set wildignore+=*.luac														" Lua byte code
 set wildignore+=migrations													" Django migrations
 set wildignore+=go/pkg														" Go static files
 set wildignore+=go/bin														" Go bin files
-set wildignore+=go/bin-vagrant												" Go bin-vagrant files
+set wildignore+=go/bin-vagrant													" Go bin-vagrant files
 set wildignore+=*.pyc														" Python byte code
 set wildignore+=*.jar														" Java archives
 set wildignore+=*.orig														" Merge resolution files
@@ -189,12 +189,12 @@ call plug#begin('~/.config/plugged')
 
 Plug 'tpope/vim-fugitive'													" Git wrapper
 Plug 'tpope/vim-rhubarb'													" GitHub extension for fugitive
-Plug 'junegunn/gv.vim', { 'on': 'GV' }										" A git commint browser
+Plug 'junegunn/gv.vim', { 'on': 'GV' }												" A git commint browser
 Plug 'stsewd/fzf-checkout.vim'
 let g:fzf_checkout_git_options = '--sort=-committerdate'
 let g:fzf_branch_actions = {
-			\ 'track': {'keymap': 'ctrl-t'},
-			\}
+\ 'track': {'keymap': 'ctrl-t'},
+\}
 if exists('$TMUX')
   let g:fzf_layout = { 'tmux': '-p90%,60%' }
 else
@@ -427,11 +427,11 @@ nnoremap <leader>s :source %<cr>
 nnoremap <C-p> :Root<cr>:Files<cr>
 
 "show all opened buffers
-nnoremap <Leader><Enter>				:Buffers<CR>
+nnoremap <Leader><Enter>	 :Buffers<CR>
 
-nnoremap <silent> <leader>C			:Colors<cr>
-nnoremap <silent> <leader>l			:Lines<cr>
-nnoremap <silent> <leader>`			:Marks<cr>
+nnoremap <silent> <leader>C	 :Colors<cr>
+nnoremap <silent> <leader>l	 :Lines<cr>
+nnoremap <silent> <leader>`	 :Marks<cr>
 
 nnoremap <leader>dg :diffget<cr> :diffupdate<cr>
 vnoremap <leader>dg :diffget<cr> :diffupdate<cr>
@@ -1026,15 +1026,15 @@ function! s:GithubPullRequest()
   let l:urlTemplate      = 'https://{domain}/{repo}/compare/{branch}?expand=1'
 
   if match(l:remotes, 'https') !=# -1
-	  let l:domain = matchstr(l:remotes, l:httpsDomainRegex)
-	  let l:repo   = matchstr(l:remotes, l:httpsRepoRegex)
+    let l:domain = matchstr(l:remotes, l:httpsDomainRegex)
+    let l:repo   = matchstr(l:remotes, l:httpsRepoRegex)
   else
-	  let l:domain = matchstr(l:remotes, l:sshDomainRegex)
-	  let l:repo   = matchstr(l:remotes, l:sshRepoRegex)
+    let l:domain = matchstr(l:remotes, l:sshDomainRegex)
+    let l:repo   = matchstr(l:remotes, l:sshRepoRegex)
   endif
 
   if l:domain ==# '' || l:repo ==# ''
-	  echoe 'Could not determine Git repo name for current file!'
+    echo 'Could not determine Git repo name for current file!'
   endif
 
   let l:prUrl = l:urlTemplate
@@ -1057,8 +1057,8 @@ function! BrowserOpen()
   let l:uri = matchstr(l:line, l:urlRegex)
 
   if l:uri != ""
-	  silent exec "!open '" . shellescape(l:uri, 1) . "'"
-	  return
+    silent exec "!open '" . shellescape(l:uri, 1) . "'"
+    return
   endif
 
   let l:jiraRegex = '\v\C[A-Z]+-\d+'
@@ -1067,10 +1067,10 @@ function! BrowserOpen()
   let l:jiraTicket = matchstr(l:line, l:jiraRegex)
 
   if l:jiraTicket != ""
-	  let l:jiraUrl = system('echo $VIM_JIRA_URL')
-	  let l:jiraUrl = substitute(l:jiraUrl, l:jiraUrlPlaceholderRegex, l:jiraTicket, 'g')
-	  silent exec "!open '" . shellescape(l:jiraUrl, 1) . "'"
-	  return
+    let l:jiraUrl = system('echo $VIM_JIRA_URL')
+    let l:jiraUrl = substitute(l:jiraUrl, l:jiraUrlPlaceholderRegex, l:jiraTicket, 'g')
+    silent exec "!open '" . shellescape(l:jiraUrl, 1) . "'"
+    return
   endif
 
   echo "No URI or JIRA ticket number found in line."
@@ -1093,7 +1093,7 @@ endfunction
 " Handy function to switch between current
 " and previous buffer
 function! SwitchBuffer()
-	b#
+  b#
 endfunction
 nmap b<Tab> :call SwitchBuffer()<cr>
 

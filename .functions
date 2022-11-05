@@ -198,19 +198,19 @@ function ftpane() {
 
 elif [ -d ~/github/iTerm2-Color-Schemes/ ]; then
 function ftheme() {
-	local base
-	base=~/github/iTerm2-Color-Schemes
-	$base/tools/preview.rb "$(
-	  ls {$base/schemes,~/.vim/plugged/seoul256.vim/iterm2}/*.itermcolors | fzf)"
+  local base
+  base=~/github/iTerm2-Color-Schemes
+  $base/tools/preview.rb "$(
+    ls {$base/schemes,~/.vim/plugged/seoul256.vim/iterm2}/*.itermcolors | fzf)"
 }
 fi
 
 # Switch tmux-sessions
 function fs() {
-	local session
-	session=$(tmux list-sessions -F "#{session_name}" | \
-		fzf --height 40% --reverse --query="$1" --select-1 --exit-0) &&
-	tmux switch-client -t "$session"
+  local session
+  session=$(tmux list-sessions -F "#{session_name}" | \
+	  fzf --height 40% --reverse --query="$1" --select-1 --exit-0) &&
+  tmux switch-client -t "$session"
 }
 
 # https://gist.github.com/premek/6e70446cfc913d3c929d7cdbfe896fef
