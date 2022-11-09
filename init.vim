@@ -366,7 +366,7 @@ Plug 'wesQ3/vim-windowswap'													      " Allows you to swap windows easil
 Plug 'tpope/vim-commentary'																																											" Plugin that allows you to comment stuff out
 Plug 'tpope/vim-surround'
 Plug 'tpope/vim-repeat'
-Plug 'tpope/vim-vinegar'																																												" netrw enhanced / alternative to NERDTree
+Plug 'tpope/vim-vinegar'													      " netrw enhanced / alternative to NERDTree
 Plug 'tpope/vim-sleuth'
 Plug 'wellle/visual-split.vim'
 Plug 'wincent/loupe'																																														" Enhanced in-file search for Vim
@@ -377,8 +377,9 @@ Plug 'vim-airline/vim-airline-themes'
 Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }										      " fzf itself
 Plug 'junegunn/fzf.vim'																																													" fuzzy search integration
 Plug 'majutsushi/tagbar'																																												" Vim plugin that displays tags in a window, ordered by scop
-Plug 'scrooloose/nerdtree', { 'on': 'NERDTreeToggle' }										      " A tree explorer plugin for vim.
-Plug 'Xuyuanp/nerdtree-git-plugin'												      " A plugin of NERDTree showing git status
+Plug 'scrooloose/nerdtree'													      " A tree explorer plugin for vim.
+Plug 'unkiwii/vim-nerdtree-sync'
+" Plug 'Xuyuanp/nerdtree-git-plugin'												      " A plugin of NERDTree showing git status
 Plug 'ryanoasis/vim-devicons'													      " Adds file type glyphs/icons to popular Vim plugins: NERDTree, vim-airline, Powerline, Unite, vim-startify and more
 Plug 'plasticboy/vim-markdown', { 'for': 'markdown' }										      " Markdown Vim Mode
 Plug 'sickill/vim-pasta'													      " Pasting in Vim with indentation adjusted to destination context TODO: check if I still need this
@@ -553,7 +554,7 @@ nnoremap <leader>gs :Git<cr>
 nnoremap <leader>gp :Git push<cr>
 nnoremap <leader>gl :Git pull<cr>
 nnoremap <leader>gc :Git commit<cr>
-nnoremap <leader>gd :call ToggleNerdTreeIfOpen()<cr> :Gdiffsplit<cr>
+nnoremap <leader>gd :NERDTreeClose<cr> :Gdiffsplit<cr>
 nnoremap <leader>gb :Git blame<cr>
 nnoremap <leader>gg :Gmerge<cr>
 nnoremap <leader>gv :GV<cr>
@@ -729,9 +730,7 @@ augroup cline
   autocmd  WinEnter,InsertLeave * set cursorline
 augroup END
 
-" Highlight currently open buffer in NERDTree
-autocmd BufEnter * call SyncTree()
-" ----------------------------------------------------------------------------
+"" ----------------------------------------------------------------------------
 " }}}
 " ----------------------------------------------------------------------------
 
@@ -760,33 +759,12 @@ nmap <F8> :TagbarToggle<cr>
 " }}}
 " ----------------------------------------------------------------------------
 
-" NERDTree Options {{{
-
-" sync open file with NERDTree
-" Check if NERDTree is open or active
-function! IsNERDTreeOpen()
-  return exists("t:NERDTreeBufName") && (bufwinnr(t:NERDTreeBufName) != -1)
-endfunction
-
-" Call NERDTreeFind if NERDTree is active, current window contains
-" a modifiable file, and we're not in vimdiff
-function! SyncTree()
-  if &modifiable && IsNERDTreeOpen() && strlen(expand('%')) > 0 && !&diff
-    NERDTreeFind
-    wincmd p
-  endif
-endfunction
+let g:nerdtree_sync_cursorline = 1
 
 function! ToggleNerdTree()
   set eventignore=BufEnter
   NERDTreeToggle
   set eventignore=
-endfunction
-
-function! ToggleNerdTreeIfOpen()
-  if IsNERDTreeOpen()
-    call ToggleNerdTree()
-  endif
 endfunction
 
 " ----------------------------------------------------------------------------
