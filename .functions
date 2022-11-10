@@ -42,7 +42,7 @@ function ghpr() {
 }
 
 function ghrebase1() {
-	local PR=${1}
+local PR=${1}
 	local sed_cmd=$( [ "$(uname)" = Darwin ] && echo 'sed -E' || echo 'sed -r' )
 
 	#FOO=bar nvim -c 'au VimEnter * Gcommit --amend' -s <(echo 'Afoo')
