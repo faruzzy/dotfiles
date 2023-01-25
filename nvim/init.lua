@@ -34,10 +34,10 @@ require('packer').startup(function(use)
 	}
 
   -- tmux integration
-  use { 'christoomey/vim-tmux-navigator' }
-  use { 'tmux-plugins/vim-tmux-focus-events' }
-  use { 'benmills/vimux' }
-  use { 'wellle/tmux-complete.vim' }
+  --use { 'christoomey/vim-tmux-navigator' }
+  --use { 'tmux-plugins/vim-tmux-focus-events' }
+  --use { 'benmills/vimux' }
+  --use { 'wellle/tmux-complete.vim' }
 
   use { -- LSP Configuration & Plugins
     'neovim/nvim-lspconfig',
