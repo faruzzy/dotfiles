@@ -1,3 +1,15 @@
+--[[
+
+	                                                       ▟▙
+																												 ▝▘
+               ██▃▅▇█▆▖  ▗▟████▙▖   ▄████▄     ██▄  ▄██  ██  ▗▟█▆▄▄▆█▙▖
+               ██▛▔ ▝██  ██▄▄▄▄██  ██▛▔▔▜██    ▝██  ██▘  ██  ██▛▜██▛▜██
+               ██    ██  ██▀▀▀▀▀▘  ██▖  ▗██  █  ▜█▙▟█▛   ██  ██  ██  ██
+               ██    ██  ▜█▙▄▄▄▟▊  ▀██▙▟██▀     ▝████▘   ██  ██  ██  ██
+               ▀▀    ▀▀   ▝▀▀▀▀▀     ▀▀▀▀         ▀▀     ▀▀  ▀▀  ▀▀  ▀▀
+]]--
+require('faruzzy')
+
 -- Install packer
 local install_path = vim.fn.stdpath 'data' .. '/site/pack/packer/start/packer.nvim'
 local is_bootstrap = false
@@ -7,9 +19,26 @@ if vim.fn.empty(vim.fn.glob(install_path)) > 0 then
   vim.cmd [[packadd packer.nvim]]
 end
 
+
 require('packer').startup(function(use)
   -- Package manager
   use 'wbthomason/packer.nvim'
+
+	-- Easy motion like plugin that allows you to jump anywhere in a document
+	use {
+		'phaazon/hop.nvim',
+		branch = 'v2', -- optional but strongly recommended
+		config = function()
+			-- you can configure Hop the way you like here; see :h hop-config
+			require'hop'.setup { keys = 'etovxqpdygfblzhckisuran' }
+		end
+	}
+
+  -- tmux integration
+  use { 'christoomey/vim-tmux-navigator' }
+  use { 'tmux-plugins/vim-tmux-focus-events' }
+  use { 'benmills/vimux' }
+  use { 'wellle/tmux-complete.vim' }
 
   use { -- LSP Configuration & Plugins
     'neovim/nvim-lspconfig',
@@ -40,22 +69,79 @@ require('packer').startup(function(use)
     after = 'nvim-treesitter',
   }
 
+	use {
+		'JoosepAlviste/nvim-ts-context-commentstring',
+		after = 'nvim-treesitter',
+	}
+
+	-- use({
+  -- 'jackieaskins/cmp-emmet',
+  -- run = 'npm run release'
+	-- })
+use 'mattn/emmet-vim'
+use 'tpope/vim-commentary'
+use 'norcalli/nvim-colorizer.lua'
+
+-- use 'farmergreg/vim-lastplace' -- Intelligently reopen files at your last edit position.
+
+	--[[ use {
+		'numToStr/Comment.nvim',
+		branch = 'jsx',
+		pre_hook = function(ctx)
+			return require('Comment.jsx').calculate(ctx)
+		end,
+	} ]]
+
+	--[[ use {
+		'numToStr/Comment.nvim',
+		pre_hook = function(ctx)
+			if vim.bo.filetype == 'typescriptreact' then
+        local U = require('Comment.utils')
+
+        -- Detemine whether to use linewise or blockwise commentstring
+        local type = ctx.ctype == U.ctype.line and '__default' or '__multiline'
+
+        -- Determine the location where to calculate commentstring from
+        local location = nil
+        if ctx.ctype == U.ctype.block then
+          location = require('ts_context_commentstring.utils').get_cursor_location()
+        elseif ctx.cmotion == U.cmotion.v or ctx.cmotion == U.cmotion.V then
+          location = require('ts_context_commentstring.utils').get_visual_start_location()
+        end
+
+        return require('ts_context_commentstring.internal').calculate_commentstring({
+          key = type,
+          location = location,
+        })
+      end
+		end
+	} ]]
+
   -- Git related plugins
-  use 'tpope/vim-fugitive'
-  use 'tpope/vim-rhubarb'
-  use 'lewis6991/gitsigns.nvim'
+  use 'tpope/vim-fugitive' -- Git wrapper
+  use 'tpope/vim-rhubarb' -- Github extension for fugitive
+  use 'lewis6991/gitsigns.nvim' -- Signs for added, removed, and changed files
+  use 'junegunn/gv.vim' -- A git commit browser
 
   use 'navarasu/onedark.nvim' -- Theme inspired by Atom
   use 'nvim-lualine/lualine.nvim' -- Fancier statusline
   use 'lukas-reineke/indent-blankline.nvim' -- Add indentation guides even on blank lines
-  use 'numToStr/Comment.nvim' -- "gc" to comment visual regions/lines
+  -- use 'numToStr/Comment.nvim'
   use 'tpope/vim-sleuth' -- Detect tabstop and shiftwidth automatically
+
+
+  -- Programming languages
+  use { 'neoclide/coc.nvim', branch = 'release' }
 
   -- Fuzzy Finder (files, lsp, etc)
   use { 'nvim-telescope/telescope.nvim', branch = '0.1.x', requires = { 'nvim-lua/plenary.nvim' } }
 
   -- Fuzzy Finder Algorithm which requires local dependencies to be built. Only load if `make` is available
   use { 'nvim-telescope/telescope-fzf-native.nvim', run = 'make', cond = vim.fn.executable 'make' == 1 }
+
+  -- Misc
+  use 'psliwka/vim-smoothie' -- Smooth scrolling done right
+  use 'MaxMEllon/vim-jsx-pretty'
 
   -- Add custom plugins to packer from ~/.config/nvim/lua/custom/plugins.lua
   local has_plugins, plugins = pcall(require, 'custom.plugins')
@@ -89,60 +175,10 @@ vim.api.nvim_create_autocmd('BufWritePost', {
   pattern = vim.fn.expand '$MYVIMRC',
 })
 
--- move to normal mode 
-vim.api.nvim_set_keymap("i", "jk", "<esc>", {noremap = true})
-
--- [[ Setting options ]]
--- See `:help vim.o`
-
--- Set highlight on search
-vim.o.hlsearch = false
-
--- Make line numbers default
-vim.wo.relativenumber = true
-
--- Enable mouse mode
-vim.o.mouse = 'a'
-
--- Enable break indent
-vim.o.breakindent = true
-
--- Save undo history
-vim.o.undofile = true
-
--- Case insensitive searching UNLESS /C or capital in search
-vim.o.ignorecase = true
-vim.o.smartcase = true
-
--- Decrease update time
-vim.o.updatetime = 250
-vim.wo.signcolumn = 'yes'
-
 -- Set colorscheme
 vim.o.termguicolors = true
-vim.cmd [[colorscheme onedark]]
-
--- Set completeopt to have a better completion experience
-vim.o.completeopt = 'menuone,noselect'
-
--- [[ Basic Keymaps ]]
--- Set <,> as the leader key
--- See `:help mapleader`
---  NOTE: Must happen before plugins are required (otherwise wrong leader will be used)
-vim.g.mapleader = ','
-vim.g.maplocalleader = ','
-
--- Keymaps for better default experience
--- See `:help vim.keymap.set()`
-vim.keymap.set({ 'n', 'v' }, '<Space>', '<Nop>', { silent = true })
-
-vim.keymap.set('n', '<leader>x', ':x<CR>')
-vim.keymap.set('n', '<leader>X', ':X<CR>')
-vim.keymap.set('n', '<leader>w', ':w<CR>')
-
--- Remap for dealing with word wrap
-vim.keymap.set('n', 'k', "v:count == 0 ? 'gk' : 'k'", { expr = true, silent = true })
-vim.keymap.set('n', 'j', "v:count == 0 ? 'gj' : 'j'", { expr = true, silent = true })
+-- vim.cmd [[colorscheme onedark]]
+vim.cmd.colorscheme('onedark')
 
 -- [[ Highlight on yank ]]
 -- See `:help vim.highlight.on_yank()`
@@ -166,8 +202,12 @@ require('lualine').setup {
   },
 }
 
--- Enable Comment.nvim
-require('Comment').setup()
+-- require('Comment').setup()
+require('cmp').setup({
+	sources = {
+		{ name = 'emmet' }
+	}
+})
 
 -- Enable `lukas-reineke/indent-blankline.nvim`
 -- See `:help indent_blankline.txt`
@@ -201,12 +241,15 @@ require('telescope').setup {
   },
 }
 
+-- Color highlighter
+require('colorizer').setup()
+
 -- Enable telescope fzf native, if installed
 pcall(require('telescope').load_extension, 'fzf')
 
 -- See `:help telescope.builtin`
 vim.keymap.set('n', '<leader>?', require('telescope.builtin').oldfiles, { desc = '[?] Find recently opened files' })
-vim.keymap.set('n', '<leader><space>', require('telescope.builtin').buffers, { desc = '[ ] Find existing buffers' })
+vim.keymap.set('n', '<leader><cr>', require('telescope.builtin').buffers, { desc = '[ ] Find existing buffers' })
 vim.keymap.set('n', '<leader>/', function()
   -- You can pass additional configuration to telescope to change theme, layout, etc.
   require('telescope.builtin').current_buffer_fuzzy_find(require('telescope.themes').get_dropdown {
@@ -215,7 +258,7 @@ vim.keymap.set('n', '<leader>/', function()
   })
 end, { desc = '[/] Fuzzily search in current buffer]' })
 
-vim.keymap.set('n', '<leader>sf', require('telescope.builtin').find_files, { desc = '[S]earch [F]iles' })
+vim.keymap.set('n', '<C-p>', require('telescope.builtin').find_files, { desc = '[S]earch [F]iles' })
 vim.keymap.set('n', '<leader>sh', require('telescope.builtin').help_tags, { desc = '[S]earch [H]elp' })
 vim.keymap.set('n', '<leader>sw', require('telescope.builtin').grep_string, { desc = '[S]earch current [W]ord' })
 vim.keymap.set('n', '<leader>sg', require('telescope.builtin').live_grep, { desc = '[S]earch by [G]rep' })
@@ -282,6 +325,9 @@ require('nvim-treesitter.configs').setup {
       },
     },
   },
+	context_commentstring = {
+		enable = true
+	}
 }
 
 -- Diagnostic keymaps
@@ -438,3 +484,4 @@ cmp.setup {
 
 -- The line beneath this is called `modeline`. See `:help modeline`
 -- vim: ts=2 sts=2 sw=2 et
+
