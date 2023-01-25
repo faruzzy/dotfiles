@@ -11,15 +11,15 @@ vim.keymap.set('n', '[b', vim.cmd.bprev)
 -- map('n', '<leader>]', '<CMD>bn<CR>')
 
 -- Copying the vscode behaviour of making tab splits
-vim.keymap.set('n', '<C-\\>', '<CMD>vsplit<CR>')
-vim.keymap.set('n', '<A-\\>', '<CMD>split<CR>')
+-- vim.keymap.set('n', '<C-\\>', '<CMD>vsplit<CR>')
+-- vim.keymap.set('n', '<A-\\>', '<CMD>split<CR>')
 
 -- Move line up and down in NORMAL and VISUAL modes
 -- Reference: https://vim.fandom.com/wiki/Moving_lines_up_or_down
-vim.keymap.set('n', '<C-j>', '<CMD>move .+1<CR>')
-vim.keymap.set('n', '<C-k>', '<CMD>move .-2<CR>')
-vim.keymap.set('x', '<C-j>', ":move '>+1<CR>gv=gv")
-vim.keymap.set('x', '<C-k>', ":move '<-2<CR>gv=gv")
+vim.keymap.set('n', '<C-M>', '<CMD>move .+1<CR>')
+vim.keymap.set('n', '<C-L>', '<CMD>move .-2<CR>')
+vim.keymap.set('x', '<C-M>', ":move '>+1<CR>gv=gv")
+vim.keymap.set('x', '<C-L>', ":move '<-2<CR>gv=gv")
 
 -- move to normal mode 
 vim.api.nvim_set_keymap("i", "jk", "<esc>", {noremap = true})
