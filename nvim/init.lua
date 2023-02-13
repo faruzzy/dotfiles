@@ -9,6 +9,8 @@
                ▀▀    ▀▀   ▝▀▀▀▀▀     ▀▀▀▀         ▀▀     ▀▀  ▀▀  ▀▀  ▀▀
 ]]--
 require('faruzzy')
+vim.g.loaded_netrw = 1
+vim.g.loaded_netrwPlugin = 1
 
 -- Install packer
 local install_path = vim.fn.stdpath 'data' .. '/site/pack/packer/start/packer.nvim'
@@ -60,6 +62,14 @@ require('packer').startup(function(use)
     requires = { 'hrsh7th/cmp-nvim-lsp', 'L3MON4D3/LuaSnip', 'saadparwaiz1/cmp_luasnip' },
   }
 
+	use {
+		'nvim-tree/nvim-tree.lua',
+		requires = {
+			'nvim-tree/nvim-web-devicons', -- optional, for file icons
+		},
+		tag = 'nightly' -- optional, updated every week. (see issue #1193)
+	}
+
   use { -- Highlight, edit, and navigate code
     'nvim-treesitter/nvim-treesitter',
     run = function()
@@ -84,6 +94,7 @@ require('packer').startup(function(use)
 use 'mattn/emmet-vim'
 use 'tpope/vim-commentary'
 use 'norcalli/nvim-colorizer.lua'
+use 'jordwalke/VimSplitBalancer' -- " Distributes available space among vertical splits, and plays nice with NERDTree
 
 -- use 'farmergreg/vim-lastplace' -- Intelligently reopen files at your last edit position.
 
@@ -438,8 +449,8 @@ require('lspconfig').sumneko_lua.setup {
       workspace = { library = vim.api.nvim_get_runtime_file('', true) },
       -- Do not send telemetry data containing a randomized but unique identifier
       telemetry = { enable = false },
-    },
-  },
+    }
+  }
 }
 
 -- nvim-cmp setup
@@ -487,4 +498,3 @@ cmp.setup {
 
 -- The line beneath this is called `modeline`. See `:help modeline`
 -- vim: ts=2 sts=2 sw=2 et
-

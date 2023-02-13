@@ -1,7 +1,7 @@
 local g = vim.g
 -- [[ Setting options ]]
 -- See `:help vim.o`
-local o = vim.o
+local o = vim.opt
 
 -- [[ Basic Keymaps ]]
 -- Set <,> as the leader key
@@ -9,9 +9,11 @@ local o = vim.o
 --  NOTE: Must happen before plugins are required (otherwise wrong leader will be used)
 g.mapleader = ','
 g.maplocalleader = ','
+
 vim.api.nvim_set_option('clipboard', 'unnamed') -- Copies to the clipboard
 
 -- Make line numbers default
+vim.o.number = true
 vim.wo.relativenumber = true
 -- o.relativenumber = true
 
