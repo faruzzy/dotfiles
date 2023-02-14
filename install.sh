@@ -129,10 +129,10 @@ brew install fzf
 $(brew --prefix)/opt/fzf/install
 
 brew install \
-	fd ag ripgrep bat cmake cmus \
-	imagemagick diff-so-fancy gnupg \
+	fd ag ripgrep bat git-delta cmake cmus \
+	imagemagick gnupg \
 	tree wget jq \
-	pyenv xz python python@3.9
+	pyenv xz python python@3.9 \
 	reattach-to-user-namespace bash bash-completion@2 tmux \
 	translate-shell libpq exa jenv maven lua luajit-openresty \
 	perl krb5 luv tree-sitter berkeley-db libevent mpdecimal \
@@ -151,11 +151,6 @@ sh -c 'curl -fLo "${XDG_DATA_HOME:-$HOME/.local/share}"/nvim/site/autoload/plug.
 if [ ! -e ~/.git-prompt.sh ]; then
   curl https://raw.githubusercontent.com/git/git/master/contrib/completion/git-prompt.sh -o ~/.git-prompt.sh
 fi
-
-git config --global user.email "faruzzy@gmail.com"
-git config --global user.name "Roland Pangu"
-git config --global user.signingKey FEF9C627
-git config --global commit.gpgsign true
 
 #git clone https://github.com/faruzzy/dotfiles
 # for loop for adding symbolic link to the HOME folder
