@@ -13,7 +13,7 @@ g.maplocalleader = ','
 vim.api.nvim_set_option('clipboard', 'unnamed') -- Copies to the clipboard
 
 -- Make line numbers default
-vim.o.number = true
+vim.wo.number = true
 vim.wo.relativenumber = true
 -- o.relativenumber = true
 
