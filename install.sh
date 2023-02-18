@@ -47,7 +47,7 @@ brew install --cask skitch
 brew install --cask kap
 brew install --cask qbserve
 brew install --cask 1password
-brew install --cask google-backup-and-sync
+brew install --cask google-drive
 brew install --cask visual-studio-code
 brew install --cask pdfsam-basic
 brew install --cask slack
