@@ -48,3 +48,5 @@ export MANPATH="/opt/local/share/man:$MANPATH"
 # Finished adapting your MANPATH environment variable for use with MacPorts.
 
 [[ -s ~/.cargo/evn ]] && source "$HOME/.cargo/env"
+
+eval "$(/opt/homebrew/bin/brew shellenv)"
