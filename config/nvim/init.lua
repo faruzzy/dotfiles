@@ -180,9 +180,9 @@ vim.api.nvim_create_autocmd('TextYankPost', {
 
 -- require('Comment').setup()
 require('cmp').setup({
-	sources = {
-		{ name = 'emmet' }
-	}
+  sources = {
+    { name = 'emmet' }
+  }
 })
 
 -- [[ Configure Telescope ]]
