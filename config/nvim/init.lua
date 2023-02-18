@@ -7,13 +7,14 @@
                ██    ██  ▜█▙▄▄▄▟▊  ▀██▙▟██▀     ▝████▘   ██  ██  ██  ██
                ▀▀    ▀▀   ▝▀▀▀▀▀     ▀▀▀▀         ▀▀     ▀▀  ▀▀  ▀▀  ▀▀
 ]]--
+
 require('faruzzy')
 --vim.g.loaded_netrw = 1
 --vim.g.loaded_netrwPlugin = 1
 
 -- Install package manager
---    https://github.com/folke/lazy.nvim
---    `:help lazy.nvim.txt` for more info
+-- https://github.com/folke/lazy.nvim
+-- `:help lazy.nvim.txt` for more info
 local lazypath = vim.fn.stdpath 'data' .. '/lazy/lazy.nvim'
 if not vim.loop.fs_stat(lazypath) then
   vim.fn.system {
@@ -162,14 +163,6 @@ require('lazy').setup({
   'MaxMEllon/vim-jsx-pretty',
 
 }, {});
-
--- Automatically source and re-compile packer whenever you save this init.lua
-local packer_group = vim.api.nvim_create_augroup('Packer', { clear = true })
-vim.api.nvim_create_autocmd('BufWritePost', {
-  command = 'source <afile> | PackerCompile',
-  group = packer_group,
-  pattern = vim.fn.expand '$MYVIMRC',
-})
 
 -- Set colorscheme
 vim.o.termguicolors = true
