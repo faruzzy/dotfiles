@@ -8,177 +8,159 @@
                ▀▀    ▀▀   ▝▀▀▀▀▀     ▀▀▀▀         ▀▀     ▀▀  ▀▀  ▀▀  ▀▀
 ]]--
 require('faruzzy')
-vim.g.loaded_netrw = 1
-vim.g.loaded_netrwPlugin = 1
+--vim.g.loaded_netrw = 1
+--vim.g.loaded_netrwPlugin = 1
 
--- Install packer
-local install_path = vim.fn.stdpath 'data' .. '/site/pack/packer/start/packer.nvim'
-local is_bootstrap = false
-if vim.fn.empty(vim.fn.glob(install_path)) > 0 then
-  is_bootstrap = true
-  vim.fn.execute('!git clone https://github.com/wbthomason/packer.nvim ' .. install_path)
-  vim.cmd [[packadd packer.nvim]]
+-- Install package manager
+--    https://github.com/folke/lazy.nvim
+--    `:help lazy.nvim.txt` for more info
+local lazypath = vim.fn.stdpath 'data' .. '/lazy/lazy.nvim'
+if not vim.loop.fs_stat(lazypath) then
+  vim.fn.system {
+    'git',
+    'clone',
+    '--filter=blob:none',
+    'https://github.com/folke/lazy.nvim.git',
+    '--branch=stable', -- latest stable release
+    lazypath,
+  }
 end
+vim.opt.rtp:prepend(lazypath)
 
-require('packer').startup(function(use)
-  -- Package manager
-  use 'wbthomason/packer.nvim'
+require('lazy').setup({
+	'mattn/emmet-vim',
+	'farmergreg/vim-lastplace', -- Intelligently reopen files at your last edit position.
+	'norcalli/nvim-colorizer.lua',
+	'jordwalke/VimSplitBalancer', -- " Distributes available space among vertical splits, and plays nice with NERDTree
+	'tpope/vim-commentary',
+
+	-- Git related plugins
+  'tpope/vim-fugitive', -- Git wrapper
+  'tpope/vim-rhubarb', -- Github extension for fugitive
+  'junegunn/gv.vim', -- A git commit browser
+
+	-- tmux integration
+	'tmux-plugins/vim-tmux-focus-events',
+	'christoomey/vim-tmux-navigator',
+	'benmills/vimux',
+	'wellle/tmux-complete.vim',
+
+-- use 'numToStr/Comment.nvim'
+	'tpope/vim-sleuth', -- Detect tabstop and shiftwidth automatically
+	{ -- LSP Configuration & Plugins
+    'neovim/nvim-lspconfig',
+    dependencies = {
+      -- Automatically install LSPs to stdpath for neovim
+      'williamboman/mason.nvim',
+      'williamboman/mason-lspconfig.nvim',
+
+      -- Useful status updates for LSP
+      -- NOTE: `opts = {}` is the same as calling `require('fidget').setup({})`
+      { 'j-hui/fidget.nvim', opts = {} },
+
+      -- Additional lua configuration, makes nvim stuff amazing!
+      'folke/neodev.nvim',
+    },
+  },
+
+	{
+		"windwp/nvim-autopairs",
+    config = function() require("nvim-autopairs").setup {} end
+	},
 
 	-- Easy motion like plugin that allows you to jump anywhere in a document
-	use {
+	{
 		'phaazon/hop.nvim',
 		branch = 'v2', -- optional but strongly recommended
 		config = function()
 			-- you can configure Hop the way you like here; see :h hop-config
 			require'hop'.setup { keys = 'etovxqpdygfblzhckisuran' }
 		end
-	}
+	},
 
-	-- tmux integration
-	use { 'tmux-plugins/vim-tmux-focus-events' }
-	use { 'christoomey/vim-tmux-navigator' }
-	use { 'benmills/vimux' }
-	use { 'wellle/tmux-complete.vim' }
-
-
-  use { -- LSP Configuration & Plugins
-    'neovim/nvim-lspconfig',
-    requires = {
-      -- Automatically install LSPs to stdpath for neovim
-      'williamboman/mason.nvim',
-      'williamboman/mason-lspconfig.nvim',
-
-      -- Useful status updates for LSP
-      'j-hui/fidget.nvim',
-
-			-- Additional lua configuration, makes nvim stuff amazing
-      'folke/neodev.nvim',
-    },
-  }
-
-  use { -- Autocompletion
+	{ -- Autocompletion
     'hrsh7th/nvim-cmp',
-    requires = { 'hrsh7th/cmp-nvim-lsp', 'L3MON4D3/LuaSnip', 'saadparwaiz1/cmp_luasnip' },
-  }
+    dependencies = { 'hrsh7th/cmp-nvim-lsp', 'L3MON4D3/LuaSnip', 'saadparwaiz1/cmp_luasnip' },
+  },
 
-	use {
-		'nvim-tree/nvim-tree.lua',
-		requires = {
-			'nvim-tree/nvim-web-devicons', -- optional, for file icons
-		},
-		tag = 'nightly' -- optional, updated every week. (see issue #1193)
-	}
+	{ -- Adds git releated signs to the gutter, as well as utilities for managing changes
+    'lewis6991/gitsigns.nvim',
+    opts = {
+      -- See `:help gitsigns.txt`
+      signs = {
+        add = { text = '+' },
+        change = { text = '~' },
+        delete = { text = '_' },
+        topdelete = { text = '‾' },
+        changedelete = { text = '~' },
+      },
+    },
+  },
 
-  use { -- Highlight, edit, and navigate code
+	{ -- Theme inspired by Atom
+    'navarasu/onedark.nvim',
+    priority = 1000,
+    config = function()
+      vim.cmd.colorscheme 'onedark'
+    end,
+  },
+
+	{ -- Set lualine as statusline
+    'nvim-lualine/lualine.nvim',
+    -- See `:help lualine.txt`
+    opts = {
+      options = {
+        icons_enabled = false,
+        theme = 'onedark',
+        component_separators = '|',
+        section_separators = '',
+      },
+    },
+  },
+
+	{ -- Add indentation guides even on blank lines
+    'lukas-reineke/indent-blankline.nvim',
+    -- Enable `lukas-reineke/indent-blankline.nvim`
+    -- See `:help indent_blankline.txt`
+    opts = {
+      char = '┊',
+      show_trailing_blankline_indent = false,
+    },
+  },
+
+	-- Fuzzy Finder (files, lsp, etc)
+  { 'nvim-telescope/telescope.nvim', version = '*', dependencies = { 'nvim-lua/plenary.nvim' } },
+
+	-- Fuzzy Finder Algorithm which requires local dependencies to be built.
+  -- Only load if `make` is available. Make sure you have the system
+  -- requirements installed.
+  {
+    'nvim-telescope/telescope-fzf-native.nvim',
+    -- NOTE: If you are having trouble with this installation,
+    --       refer to the README for telescope-fzf-native for more instructions.
+    build = 'make',
+    cond = function()
+      return vim.fn.executable 'make' == 1
+    end,
+  },
+	-- "gc" to comment visual regions/lines
+  -- { 'numToStr/Comment.nvim', opts = {} },
+
+	{ -- Highlight, edit, and navigate code
     'nvim-treesitter/nvim-treesitter',
-    run = function()
+    dependencies = {
+      'nvim-treesitter/nvim-treesitter-textobjects',
+    },
+    config = function()
       pcall(require('nvim-treesitter.install').update { with_sync = true })
     end,
-  }
+  },
 
-  use { -- Additional text objects via treesitter
-    'nvim-treesitter/nvim-treesitter-textobjects',
-    after = 'nvim-treesitter',
-  }
+	-- Misc
+	'psliwka/vim-smoothie', -- Smooth scrolling done right
+	'MaxMEllon/vim-jsx-pretty',
 
-	use {
-		'JoosepAlviste/nvim-ts-context-commentstring',
-		after = 'nvim-treesitter',
-	}
-
-	-- use({
-  -- 'jackieaskins/cmp-emmet',
-  -- run = 'npm run release'
-	-- })
-use 'mattn/emmet-vim'
-use 'tpope/vim-commentary'
-use 'norcalli/nvim-colorizer.lua'
-use 'jordwalke/VimSplitBalancer' -- " Distributes available space among vertical splits, and plays nice with NERDTree
-
--- use 'farmergreg/vim-lastplace' -- Intelligently reopen files at your last edit position.
-
-	--[[ use {
-		'numToStr/Comment.nvim',
-		branch = 'jsx',
-		pre_hook = function(ctx)
-			return require('Comment.jsx').calculate(ctx)
-		end,
-	} ]]
-
-	--[[ use {
-		'numToStr/Comment.nvim',
-		pre_hook = function(ctx)
-			if vim.bo.filetype == 'typescriptreact' then
-        local U = require('Comment.utils')
-
-        -- Detemine whether to use linewise or blockwise commentstring
-        local type = ctx.ctype == U.ctype.line and '__default' or '__multiline'
-
-        -- Determine the location where to calculate commentstring from
-        local location = nil
-        if ctx.ctype == U.ctype.block then
-          location = require('ts_context_commentstring.utils').get_cursor_location()
-        elseif ctx.cmotion == U.cmotion.v or ctx.cmotion == U.cmotion.V then
-          location = require('ts_context_commentstring.utils').get_visual_start_location()
-        end
-
-        return require('ts_context_commentstring.internal').calculate_commentstring({
-          key = type,
-          location = location,
-        })
-      end
-		end
-	} ]]
-
-  -- Git related plugins
-  use 'tpope/vim-fugitive' -- Git wrapper
-  use 'tpope/vim-rhubarb' -- Github extension for fugitive
-  use 'lewis6991/gitsigns.nvim' -- Signs for added, removed, and changed files
-  use 'junegunn/gv.vim' -- A git commit browser
-
-  use 'navarasu/onedark.nvim' -- Theme inspired by Atom
-  use 'nvim-lualine/lualine.nvim' -- Fancier statusline
-  use 'lukas-reineke/indent-blankline.nvim' -- Add indentation guides even on blank lines
-  -- use 'numToStr/Comment.nvim'
-  use 'tpope/vim-sleuth' -- Detect tabstop and shiftwidth automatically
-
-
-  -- Programming languages
-  -- use { 'neoclide/coc.nvim', branch = 'release' }
-
-  -- Fuzzy Finder (files, lsp, etc)
-  use { 'nvim-telescope/telescope.nvim', branch = '0.1.x', requires = { 'nvim-lua/plenary.nvim' } }
-
-  -- Fuzzy Finder Algorithm which requires local dependencies to be built. Only load if `make` is available
-  use { 'nvim-telescope/telescope-fzf-native.nvim', run = 'make', cond = vim.fn.executable 'make' == 1 }
-
-  -- Misc
-  use 'psliwka/vim-smoothie' -- Smooth scrolling done right
-  use 'MaxMEllon/vim-jsx-pretty'
-
-  -- Add custom plugins to packer from ~/.config/nvim/lua/custom/plugins.lua
-  local has_plugins, plugins = pcall(require, 'custom.plugins')
-  if has_plugins then
-    plugins(use)
-  end
-
-  if is_bootstrap then
-    require('packer').sync()
-  end
-end)
-
--- When we are bootstrapping a configuration, it doesn't
--- make sense to execute the rest of the init.lua.
---
--- You'll need to restart nvim, and then it will work.
-if is_bootstrap then
-  print '=================================='
-  print '    Plugins are being installed'
-  print '    Wait until Packer completes,'
-  print '       then restart nvim'
-  print '=================================='
-  return
-end
+}, {});
 
 -- Automatically source and re-compile packer whenever you save this init.lua
 local packer_group = vim.api.nvim_create_augroup('Packer', { clear = true })
@@ -190,8 +172,6 @@ vim.api.nvim_create_autocmd('BufWritePost', {
 
 -- Set colorscheme
 vim.o.termguicolors = true
--- vim.cmd [[colorscheme onedark]]
-vim.cmd.colorscheme('onedark')
 
 -- [[ Highlight on yank ]]
 -- See `:help vim.highlight.on_yank()`
@@ -204,42 +184,12 @@ vim.api.nvim_create_autocmd('TextYankPost', {
   pattern = '*',
 })
 
--- Set lualine as statusline
--- See `:help lualine.txt`
-require('lualine').setup {
-  options = {
-    icons_enabled = false,
-    theme = 'onedark',
-    component_separators = '|',
-    section_separators = '',
-  },
-}
-
 -- require('Comment').setup()
 require('cmp').setup({
 	sources = {
 		{ name = 'emmet' }
 	}
 })
-
--- Enable `lukas-reineke/indent-blankline.nvim`
--- See `:help indent_blankline.txt`
-require('indent_blankline').setup {
-  char = '┊',
-  show_trailing_blankline_indent = false,
-}
-
--- Gitsigns
--- See `:help gitsigns.txt`
-require('gitsigns').setup {
-  signs = {
-    add = { text = '+' },
-    change = { text = '~' },
-    delete = { text = '_' },
-    topdelete = { text = '‾' },
-    changedelete = { text = '~' },
-  },
-}
 
 -- [[ Configure Telescope ]]
 -- See `:help telescope` and `:help telescope.setup()`
@@ -260,11 +210,11 @@ require('telescope').setup {
 	},
 }
 
--- Color highlighter
-require('colorizer').setup()
-
 -- Enable telescope fzf native, if installed
 pcall(require('telescope').load_extension, 'fzf')
+
+-- Color highlighter
+require('colorizer').setup()
 
 -- See `:help telescope.builtin`
 vim.keymap.set('n', '<leader>?', require('telescope.builtin').oldfiles, { desc = '[?] Find recently opened files' })
@@ -409,7 +359,19 @@ require('mason').setup()
 
 -- Enable the following language servers
 -- Feel free to add/remove any LSPs that you want here. They will automatically be installed
-local servers = { 'clangd', 'rust_analyzer', 'pyright', 'tsserver', 'sumneko_lua', 'gopls' }
+local servers = { 
+	'clangd', 
+	'rust_analyzer', 
+	'pyright', 
+	'tsserver', 
+	-- 'gopls',
+	lua_ls = {
+    Lua = {
+      workspace = { checkThirdParty = false },
+      telemetry = { enable = false },
+    },
+  },
+}
 
 -- Ensure the servers above are installed
 require('mason-lspconfig').setup {
@@ -436,27 +398,6 @@ require('fidget').setup()
 local runtime_path = vim.split(package.path, ';')
 table.insert(runtime_path, 'lua/?.lua')
 table.insert(runtime_path, 'lua/?/init.lua')
-
-require('lspconfig').sumneko_lua.setup {
-  on_attach = on_attach,
-  capabilities = capabilities,
-  settings = {
-    Lua = {
-      runtime = {
-        -- Tell the language server which version of Lua you're using (most likely LuaJIT)
-        version = 'LuaJIT',
-        -- Setup your lua path
-        path = runtime_path,
-      },
-      diagnostics = {
-        globals = { 'vim' },
-      },
-      workspace = { library = vim.api.nvim_get_runtime_file('', true) },
-      -- Do not send telemetry data containing a randomized but unique identifier
-      telemetry = { enable = false },
-    }
-  }
-}
 
 -- nvim-cmp setup
 local cmp = require 'cmp'
