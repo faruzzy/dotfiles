@@ -49,21 +49,21 @@ o.fileformats = 'unix,dos,mac'
 
 -- should the following line be in?
 -- o.autoindent = true 
-o.smartindent = true
-o.cindent = true
+-- o.smartindent = true
+-- o.cindent = true
 
 o.expandtab = true
--- o.shiftround = true
+o.shiftround = true
 o.shiftwidth = 2
 o.softtabstop = 2
-o.tabstop = 2
+-- o.tabstop = 2 -- this is causing weird spacing issues
 o.list = true
 o.backspace = 'indent,eol,start'
 
 o.incsearch = true
 -- Set highlight on search
 o.hlsearch = true
-o.ignorecase = true
+o.ignorecase = false
 o.smartcase = true
 o.gdefault = true
 
@@ -81,6 +81,7 @@ vim.opt.signcolumn = "yes"
 o.matchtime = 2
 o.splitright = true
 o.splitbelow = true
+-- o.splitkeep = 'screen'
 o.binary = true
 
 -- o.noeol = true --Todo: nvim doesn't know about this, find alternative

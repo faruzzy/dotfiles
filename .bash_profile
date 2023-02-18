@@ -2,20 +2,20 @@
 
 # Set up git completions
 if [[ -f ~/.git-completion ]]; then
-	. ~/.git-completion
+  . ~/.git-completion
 fi
 
 if [ -e ~/.config/plugged/fzf/shell/completion.bash ]; then
-	source ~/.config/plugged/fzf/shell/completion.bash
+  source ~/.config/plugged/fzf/shell/completion.bash
 fi
 
 if [[ -f ~/z.sh ]]; then
-	. ~/z.sh
+  . ~/z.sh
 fi
 
 # ~/.extra can be used for settings you don't want to commit
 for file in ~/.{bash_prompt,exports,aliases,functions,bash_options,extra}; do
-	[ -r "$file" ] && source "$file"
+  [ -r "$file" ] && source "$file"
 done
 unset file
 
@@ -23,16 +23,16 @@ unset file
 # * `autocd`, e.g. `**/qux` will enter `./foo/bar/baz/qux`
 # * Recursive globbing, e.g. `echo **/*.txt`
 for option in autocd globstar; do
-	shopt -s "$option" 2> /dev/null
+  shopt -s "$option" 2> /dev/null
 done
 
 # git-prompt
 if [ ! -e ~/.git-prompt.sh ]; then
-  	curl https://raw.githubusercontent.com/git/git/master/contrib/completion/git-prompt.sh -o ~/.git-prompt.sh
+  curl https://raw.githubusercontent.com/git/git/master/contrib/completion/git-prompt.sh -o ~/.git-prompt.sh
 fi
 
 if [ -e ~/.git-prompt.sh ]; then
-	source ~/.git-prompt.sh
+  source ~/.git-prompt.sh
 fi
 
 # Add bash completion for git.

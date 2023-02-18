@@ -1,8 +1,8 @@
 #!bash
 
-export EDITOR="nvim"																									# Make neo vim the default editor
+export EDITOR="nvim"  # Make neo vim the default editor
 export VISUAL="nvim"
-export MANPAGER="less -X"																							# Don’t clear the screen after quitting a manual page
+export MANPAGER="less -X" # Don’t clear the screen after quitting a manual page
 export CR_INSTALL_PATH=~/.toolbox/bin
 
 # Prefer US English and use UTF-8

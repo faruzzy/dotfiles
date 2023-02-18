@@ -1,169 +1,169 @@
 [filter "hawser"]
-	clean = git hawser clean %f
-	smudge = git hawser smudge %f
-	required = true
+  clean = git hawser clean %f
+  smudge = git hawser smudge %f
+  required = true
 
 [user]
-	name = Roland Pangu
-	email = faruzzy@gmail.com
-	signingKey = FEF9C627
+  name = Roland Pangu
+  email = faruzzy@gmail.com
+  signingKey = FEF9C627
 
 [core]
-	; whitespace = trailing-space,space-before-tab,indent-with-non-tab
-	editor = vim
-	quotepath = false
-	excludesfile = ~/.gitignore_global
-	autocrlf = input
-	pager = delta
+  ; whitespace = trailing-space,space-before-tab,indent-with-non-tab
+  editor = vim
+  quotepath = false
+  excludesfile = ~/.gitignore_global
+  autocrlf = input
+  pager = delta
 
 [interactive]
-	diffFilter = delta --color-only
-	#attributesfile = ~/.gitattributes
+  diffFilter = delta --color-only
+  #attributesfile = ~/.gitattributes
 
 [delta]
-	side-by-side = true
-	navigate = true
-	light = false
+  side-by-side = true
+  navigate = true
+  light = false
 
 [mergetool "sourcetree"]
-	cmd = /Applications/Sourcetree.app/Contents/Resources/opendiff-w.sh \"$LOCAL\" \"$REMOTE\" -ancestor \"$BASE\" -merge \"$MERGED\"
-	trustExitCode = true
+  cmd = /Applications/Sourcetree.app/Contents/Resources/opendiff-w.sh \"$LOCAL\" \"$REMOTE\" -ancestor \"$BASE\" -merge \"$MERGED\"
+  trustExitCode = true
 
 [difftool "Kaleidoscope"]
-	cmd = ksdiff --partial-changeset --relative-path \"$MERGED\" -- \"$LOCAL\" \"$REMOTE\"
+  cmd = ksdiff --partial-changeset --relative-path \"$MERGED\" -- \"$LOCAL\" \"$REMOTE\"
 
 [mergetool "Kaleidoscope"]
-	cmd = ksdiff --merge --output \"$MERGED\" --base \"$BASE\" -- \"$LOCAL\" --snapshot \"$REMOTE\" --snapshot
-	trustexitcode = true
+  cmd = ksdiff --merge --output \"$MERGED\" --base \"$BASE\" -- \"$LOCAL\" --snapshot \"$REMOTE\" --snapshot
+  trustexitcode = true
 
 [filter "lfs"]
-	clean = git lfs clean %f
-	smudge = git lfs smudge %f
-	required = true
+  clean = git lfs clean %f
+  smudge = git lfs smudge %f
+  required = true
 
 [alias]
-	# thanks to http://stackoverflow.com/questions/11269256/how-to-name-and-retrieve-a-stash-by-name-in-git
-	sshow = "!f() { git stash show stash^{/$*} -p; }; f"
-	sapply = "!f() { git stash apply stash^{/$*}; }; f"
+  # thanks to http://stackoverflow.com/questions/11269256/how-to-name-and-retrieve-a-stash-by-name-in-git
+  sshow = "!f() { git stash show stash^{/$*} -p; }; f"
+  sapply = "!f() { git stash apply stash^{/$*}; }; f"
 
-	st = status -sb
-	c = commit
-	nc = commit --no-verify
-	all = commit -am
-	br = branch
-	co = checkout
-	df = diff --color --abbrev
-	dfc = diff --cached
-	lb = !git reflog show --pretty=format:'%gs ~ %gd' --date=relative | grep 'checkout:' | grep -oE '[^ ]+ ~ .*' | awk -F~ '!seen[$1]++' | head -n 10 | awk -F' ~ HEAD@{' '{printf(\"  \\033[33m%s: \\033[37m %s\\033[0m\\n\", substr($2, 1, length($2)-1), $1)}'
-	lg = log -p
-	logr3 = log --stat -M -3
-	logit = log --stat -M
-	l = log --stat -C
-	lol = log --color --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit --all
-	lola = log --graph --decorate --pretty=oneline --abbrev-commit --all
-	ls = ls-files
-	ign = ls-files -o -i --exclude-standard			#Show files ignored by git
-	p = push
-	np = push --no-verify
-	shoot = push origin --delete
-	up = pull
-	unstage = reset HEAD --
-	hardrs = reset --hard HEAD
-	prev = checkout -
-	discard = checkout --
-	rlc = !git reset --hard HEAD~1                  # Remove last commit
-	ulc = reset --soft HEAD~1                       # Undo last commit
-	update = !git fetch origin && git rebase origin/`git rev-parse --abbrev-ref head`
+  st = status -sb
+  c = commit
+  nc = commit --no-verify
+  all = commit -am
+  br = branch
+  co = checkout
+  df = diff --color --abbrev
+  dfc = diff --cached
+  lb = !git reflog show --pretty=format:'%gs ~ %gd' --date=relative | grep 'checkout:' | grep -oE '[^ ]+ ~ .*' | awk -F~ '!seen[$1]++' | head -n 10 | awk -F' ~ HEAD@{' '{printf(\"  \\033[33m%s: \\033[37m %s\\033[0m\\n\", substr($2, 1, length($2)-1), $1)}'
+  lg = log -p
+  logr3 = log --stat -M -3
+  logit = log --stat -M
+  l = log --stat -C
+  lol = log --color --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit --all
+  lola = log --graph --decorate --pretty=oneline --abbrev-commit --all
+  ls = ls-files
+  ign = ls-files -o -i --exclude-standard			#Show files ignored by git
+  p = push
+  np = push --no-verify
+  shoot = push origin --delete
+  up = pull
+  unstage = reset HEAD --
+  hardrs = reset --hard HEAD
+  prev = checkout -
+  discard = checkout --
+  rlc = !git reset --hard HEAD~1                  # Remove last commit
+  ulc = reset --soft HEAD~1                       # Undo last commit
+  update = !git fetch origin && git rebase origin/`git rev-parse --abbrev-ref head`
 
-	# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-	# Credit an author on the latest commit
+  # Credit an author on the latest commit
 
-	credit = "!f() { \
-			if [ -n \"$1\" ] && [ -n \"$2\" ]; then \
-					git commit --amend --author \"$1 <$2>\" -C HEAD; \
-			fi \
-	}; f"
+  credit = "!f() { \
+    if [ -n \"$1\" ] && [ -n \"$2\" ]; then \
+      git commit --amend --author \"$1 <$2>\" -C HEAD; \
+    fi \
+  }; f"
 
-	# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-	# List remote branches
+  # List remote branches
 
-	lrb = "!f() { \
-			remote="${1:-origin}"; \
-			git ls-remote --heads "$remote"; \
-	}; f"
+  lrb = "!f() { \
+    remote="${1:-origin}"; \
+    git ls-remote --heads "$remote"; \
+  }; f"
 
-	# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-	# Merge GitHub pull request on top of the `master` branch
+  # Merge GitHub pull request on top of the `master` branch
 
-	mpr = "!f() { \
-			if [ $(printf \"%s\" \"$1\" | grep '^[0-9]\\+$' > /dev/null; printf $?) -eq 0 ]; then \
-					git fetch origin refs/pull/$1/head:pr/$1 && \
-					git rebase master pr/$1 && \
-					git checkout master && \
-					git merge pr/$1 && \
-					git branch -D pr/$1 && \
-					git commit --amend -m \"$(git log -1 --pretty=%B)\n\nClose #$1\"; \
-			fi \
-	}; f"
+  mpr = "!f() { \
+    if [ $(printf \"%s\" \"$1\" | grep '^[0-9]\\+$' > /dev/null; printf $?) -eq 0 ]; then \
+      git fetch origin refs/pull/$1/head:pr/$1 && \
+      git rebase master pr/$1 && \
+      git checkout master && \
+      git merge pr/$1 && \
+      git branch -D pr/$1 && \
+      git commit --amend -m \"$(git log -1 --pretty=%B)\n\nClose #$1\"; \
+    fi \
+  }; f"
 [help]
-	autocorrect = 10
+  autocorrect = 10
 
 [color]
-	ui = auto
-	grep = auto
-	interactive = auto
+  ui = auto
+  grep = auto
+  interactive = auto
 
 [color "diff"]
-	meta = yellow bold
-	frag = magenta bold
-	old = red bold
-	new = green bold
+  meta = yellow bold
+  frag = magenta bold
+  old = red bold
+  new = green bold
 
 [fetch]
-	prune = true
+  prune = true
 
 [diff]
-	compactionHeuristic = true
+  compactionHeuristic = true
 
 [color "branch"]
-	current = yellow reverse
-	local = yellow
-	remote = green
-	upstream = bold cyan
+  current = yellow reverse
+  local = yellow
+  remote = green
+  upstream = bold cyan
 
 [color "status"]
-	# staged changes
-	added = yellow
-	updated = bold white green
-	# un-staged changes
-	changed = green
-	untracked = cyan
-	nobranch = bold red white
+  # staged changes
+  added = yellow
+  updated = bold white green
+  # un-staged changes
+  changed = green
+  untracked = cyan
+  nobranch = bold red white
 
 [merge]
-    log = true
+  log = true
 
 [github]
-	user = faruzzy
-	email = faruzzy@gmail.com
-	username = faruzzy
+  user = faruzzy
+  email = faruzzy@gmail.com
+  username = faruzzy
 
 [mergetool]
-    keepBackup = true
+  keepBackup = true
 
 # https://stackoverflow.com/questions/23918062/simple-vs-current-push-default-in-git-for-decentralized-workflow/23918418#23918418
 [push]
-	default = simple
-	followTags = true
+  default = simple
+  followTags = true
 
 [web]
-	browser = open
+  browser = open
 
 [browser "ch"]
-	cmd = open -a \"/Applications/Google\\ Chrome.app\"
+  cmd = open -a \"/Applications/Google\\ Chrome.app\"
 [difftool "sourcetree"]
-	cmd = opendiff \"$LOCAL\" \"$REMOTE\"
-	path =
+  cmd = opendiff \"$LOCAL\" \"$REMOTE\"
+  path =
