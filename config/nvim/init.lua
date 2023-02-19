@@ -32,7 +32,6 @@ require('lazy').setup({
   'mattn/emmet-vim',
   'farmergreg/vim-lastplace', -- Intelligently reopen files at your last edit position.
   'norcalli/nvim-colorizer.lua',
-  'jordwalke/VimSplitBalancer', -- " Distributes available space among vertical splits, and plays nice with NERDTree
   'tpope/vim-commentary',
   'jordwalke/VimSplitBalancer', -- " Distributes available space among vertical splits, and plays nice with NERDTree
 
