@@ -28,14 +28,6 @@ EOD
 # Install NVM
 curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.1/install.sh | bash
 
-# Disable Download quarantine
-defaults write com.apple.LaunchServices LSQuarantine -bool NO
-
-# Configure Touchpad
-defaults write com.apple.driver.AppleBluetoothMultitouch.trackpad Clicking -bool true
-defaults -currentHost write NSGlobalDomain com.apple.mouse.tapBehavior -int 1
-defaults write NSGlobalDomain com.apple.mouse.tapBehavior -int 1
-
 # Graphical App install from Home-brew cask
 brew install flux
 brew install --cask bettertouchtool path-finder
