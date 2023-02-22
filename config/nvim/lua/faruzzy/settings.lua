@@ -63,7 +63,7 @@ o.backspace = 'indent,eol,start'
 o.incsearch = true
 -- Set highlight on search
 o.hlsearch = true
-o.ignorecase = false
+o.ignorecase = true
 o.smartcase = true
 o.gdefault = true
 
