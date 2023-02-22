@@ -114,12 +114,11 @@ brew install graphviz
 brew link --overwrite graphviz
 
 #Install Frontend Development tools
-brew install node
 brew install yarn --ignore-dependencies
-
-npm install -g tldr
 npm install -g typescript
 npm install -g ts-node
+
+npm install -g tldr
 
 brew install --cask keepingyouawake \
 	mat visualvm mactex
