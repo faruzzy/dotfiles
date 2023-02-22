@@ -67,8 +67,9 @@ o.ignorecase = false
 o.smartcase = true
 o.gdefault = true
 
-vim.opt.backup = false
-vim.opt.writebackup = false
+o.backup = false
+o.writebackup = false
+o.swapfile = false
 
 -- Set completeopt to have a better completion experience
 vim.o.completeopt = 'menuone,noselect'
