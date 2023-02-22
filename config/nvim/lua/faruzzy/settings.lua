@@ -77,7 +77,7 @@ vim.o.completeopt = 'menuone,noselect'
 -- Decrease update time
 vim.o.updatetime = 250
 vim.wo.signcolumn = 'yes'
-vim.opt.signcolumn = "yes"
+o.signcolumn = "yes"
 
 o.matchtime = 2
 o.splitright = true
