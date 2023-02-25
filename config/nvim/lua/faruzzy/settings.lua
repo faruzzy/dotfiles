@@ -20,6 +20,8 @@ vim.wo.relativenumber = true
 -- Enable mouse mode
 vim.o.mouse = 'a'
 
+vim.o.termguicolors = true
+
 -- Enable break indent
 vim.o.breakindent = true
 
