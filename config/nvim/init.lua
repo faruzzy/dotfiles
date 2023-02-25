@@ -145,7 +145,13 @@ require('lazy').setup({
       return vim.fn.executable 'make' == 1
     end,
   },
-	-- "gc" to comment visual regions/lines
+
+  -- extension that offers intelligent prioritization when selecting files from your editing history.
+  {
+    'nvim-telescope/telescope-frecency.nvim',
+    config = function() require('telescope').load_extension('frecency') end,
+  },
+  -- "gc" to comment visual regions/lines
   -- { 'numToStr/Comment.nvim', opts = {} },
 
   { -- Highlight, edit, and navigate code
