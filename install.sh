@@ -119,6 +119,7 @@ brew install --cask keepingyouawake \
 brew install fzf
 $(brew --prefix)/opt/fzf/install
 
+brew install --HEAD neovim # install the development version of Nvim
 brew install \
 	fd ag ripgrep bat git-delta cmake cmus \
 	imagemagick gnupg \
@@ -127,7 +128,7 @@ brew install \
 	reattach-to-user-namespace bash bash-completion@2 tmux \
 	translate-shell libpq exa jenv maven lua luajit-openresty \
 	perl krb5 luv tree-sitter berkeley-db libevent mpdecimal \
-	readline unibilium ca-certificates msgpack utf8proc libtermkey ncurses vim neovim\
+	readline unibilium ca-certificates msgpack utf8proc libtermkey ncurses vim \
 	libuv ruby xz libvterm openssl@1.1 sqlite gdbm libyaml libffi pcre the_silver_searcher \
 	gettext pcre2 ngrep z ffmpeg youtube-dl cocoapods awscli
 
