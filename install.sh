@@ -29,7 +29,7 @@ EOD
 curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.1/install.sh | bash
 
 # Graphical App install from Home-brew cask
-brew install flux
+brew install --cask flux
 brew install --cask bettertouchtool path-finder
 brew install --cask google-chrome-canary google-chrome firefox
 brew install --cask caffeine
@@ -136,8 +136,8 @@ brew install \
 python3 -m pip install --user --upgrade pynvim
 
 # setup neovim
-sh -c 'curl -fLo "${XDG_DATA_HOME:-$HOME/.local/share}"/nvim/site/autoload/plug.vim --create-dirs \
-       https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim'
+# sh -c 'curl -fLo "${XDG_DATA_HOME:-$HOME/.local/share}"/nvim/site/autoload/plug.vim --create-dirs \
+#        https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim'
 
 # git-prompt
 if [ ! -e ~/.git-prompt.sh ]; then
