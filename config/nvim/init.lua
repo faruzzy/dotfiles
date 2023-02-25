@@ -354,6 +354,8 @@ local servers = {
   -- 'gopls',
   lua_ls = {
     Lua = {
+      -- Get the language server to recognize the `vim` global
+      diagnostics = { globals = { 'vim' } },
       workspace = { checkThirdParty = false },
       telemetry = { enable = false },
     },
