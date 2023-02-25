@@ -8,9 +8,10 @@
                ▀▀    ▀▀   ▝▀▀▀▀▀     ▀▀▀▀         ▀▀     ▀▀  ▀▀  ▀▀  ▀▀
 ]]--
 
-require('faruzzy')
+require 'faruzzy'
+require 'faruzzy.plugins.autoformat'
 --vim.g.loaded_netrw = 1
---vim.g.loaded_netrwPlugin = 1
+--vim.g.loaded_netrwPugin = 1
 
 -- Install package manager
 -- https://github.com/folke/lazy.nvim
@@ -64,6 +65,11 @@ require('lazy').setup({
     },
   },
 
+  { -- Autocompletion
+    'hrsh7th/nvim-cmp',
+    dependencies = { 'hrsh7th/cmp-nvim-lsp', 'L3MON4D3/LuaSnip', 'saadparwaiz1/cmp_luasnip' },
+  },
+
   {
     "windwp/nvim-autopairs",
     config = function() require("nvim-autopairs").setup {} end
@@ -77,11 +83,6 @@ require('lazy').setup({
       -- you can configure Hop the way you like here; see :h hop-config
       require'hop'.setup { keys = 'etovxqpdygfblzhckisuran' }
     end
-  },
-
-  { -- Autocompletion
-    'hrsh7th/nvim-cmp',
-    dependencies = { 'hrsh7th/cmp-nvim-lsp', 'L3MON4D3/LuaSnip', 'saadparwaiz1/cmp_luasnip' },
   },
 
   { -- Adds git releated signs to the gutter, as well as utilities for managing changes
@@ -129,10 +130,10 @@ require('lazy').setup({
     },
   },
 
-	-- Fuzzy Finder (files, lsp, etc)
+    -- Fuzzy Finder (files, lsp, etc)
   { 'nvim-telescope/telescope.nvim', version = '*', dependencies = { 'nvim-lua/plenary.nvim' } },
 
-	-- Fuzzy Finder Algorithm which requires local dependencies to be built.
+  -- Fuzzy Finder Algorithm which requires local dependencies to be built.
   -- Only load if `make` is available. Make sure you have the system
   -- requirements installed.
   {
@@ -163,7 +164,6 @@ require('lazy').setup({
 
 }, {});
 
--- Set colorscheme
 vim.o.termguicolors = true
 
 -- [[ Highlight on yank ]]
@@ -230,10 +230,12 @@ vim.keymap.set('n', '<leader>sd', require('telescope.builtin').diagnostics, { de
 -- See `:help nvim-treesitter`
 require('nvim-treesitter.configs').setup {
   -- Add languages to be installed here that you want installed for treesitter
-  ensure_installed = { 'c', 'cpp', 'go', 'lua', 'python', 'rust', 'typescript', 'help' },
+  ensure_installed = { 'c', 'cpp', 'go', 'lua', 'python', 'rust', 'tsx', 'typescript', 'help', 'vim' },
+
+  -- auto_install = true,
 
   highlight = { enable = true },
-  indent = { enable = true },
+  indent = { enable = true, disable = { 'python '} },
   incremental_selection = {
     enable = true,
     keymaps = {
@@ -337,26 +339,18 @@ local on_attach = function(_, bufnr)
     print(vim.inspect(vim.lsp.buf.list_workspace_folders()))
   end, '[W]orkspace [L]ist Folders')
 
-  -- Create a command `:Format` local to the LSP buffer
   vim.api.nvim_buf_create_user_command(bufnr, 'Format', function(_)
-    if vim.lsp.buf.format then
-      vim.lsp.buf.format()
-    elseif vim.lsp.buf.formatting then
-      vim.lsp.buf.formatting()
-    end
+    vim.lsp.buf.format()
   end, { desc = 'Format current buffer with LSP' })
 end
 
--- Setup mason so it can manage external tooling
-require('mason').setup()
-
 -- Enable the following language servers
 -- Feel free to add/remove any LSPs that you want here. They will automatically be installed
-local servers = { 
-  'clangd', 
-  'rust_analyzer', 
-  'pyright', 
-  'tsserver', 
+local servers = {
+  'clangd',
+  'rust_analyzer',
+  'pyright',
+  'tsserver',
   -- 'gopls',
   lua_ls = {
     Lua = {
@@ -366,24 +360,32 @@ local servers = {
   },
 }
 
--- Ensure the servers above are installed
-require('mason-lspconfig').setup {
-  ensure_installed = servers,
-}
+require('neodev').setup()
 
 -- nvim-cmp supports additional completion capabilities
 local capabilities = vim.lsp.protocol.make_client_capabilities()
 capabilities = require('cmp_nvim_lsp').default_capabilities(capabilities)
 
-for _, lsp in ipairs(servers) do
-  require('lspconfig')[lsp].setup {
-    on_attach = on_attach,
-    capabilities = capabilities,
-  }
-end
+-- Setup mason so it can manage external tooling
+require('mason').setup()
 
--- Turn on lsp status information
-require('fidget').setup()
+--Ensure the servers above are installed
+local mason_lspconfig = require 'mason-lspconfig'
+
+--Ensure the servers above are installed
+require('mason-lspconfig').setup {
+  ensure_installed = servers,
+}
+
+mason_lspconfig.setup_handlers {
+  function(server_name)
+    require('lspconfig')[server_name].setup {
+      capabilities = capabilities,
+      on_attach = on_attach,
+      settings = servers[server_name],
+    }
+  end,
+}
 
 -- Example custom configuration for lua
 --
@@ -405,7 +407,7 @@ cmp.setup {
   mapping = cmp.mapping.preset.insert {
     ['<C-d>'] = cmp.mapping.scroll_docs(-4),
     ['<C-f>'] = cmp.mapping.scroll_docs(4),
-    ['<C-Space>'] = cmp.mapping.complete(),
+    ['<C-Space>'] = cmp.mapping.complete {},
     ['<CR>'] = cmp.mapping.confirm {
       behavior = cmp.ConfirmBehavior.Replace,
       select = true,
