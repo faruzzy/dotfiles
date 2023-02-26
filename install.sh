@@ -135,10 +135,6 @@ brew install \
 # this is needed for UtilSnips
 python3 -m pip install --user --upgrade pynvim
 
-# setup neovim
-# sh -c 'curl -fLo "${XDG_DATA_HOME:-$HOME/.local/share}"/nvim/site/autoload/plug.vim --create-dirs \
-#        https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim'
-
 # git-prompt
 if [ ! -e ~/.git-prompt.sh ]; then
   curl https://raw.githubusercontent.com/git/git/master/contrib/completion/git-prompt.sh -o ~/.git-prompt.sh
