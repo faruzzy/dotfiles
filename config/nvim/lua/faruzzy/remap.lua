@@ -77,6 +77,12 @@ vim.keymap.set('n', '<leader>gb', ':Git blame<cr>')
 vim.keymap.set('n', '<leader>gg', ':Gmerge<cr>')
 vim.keymap.set('n', '<leader>pp', ':Git push origin master<cr>')
 
+-- Diagnostic keymaps
+vim.keymap.set('n', '[d', vim.diagnostic.goto_prev)
+vim.keymap.set('n', ']d', vim.diagnostic.goto_next)
+vim.keymap.set('n', '<leader>e', vim.diagnostic.open_float)
+vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist)
+
 -- GV
 vim.keymap.set('n', '<leader>gv', ':GV')
 vim.keymap.set('n', '<leader>Gv', ':GV!')
