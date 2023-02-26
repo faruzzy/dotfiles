@@ -1,8 +1,8 @@
 -- [[ Configure Telescope ]]
 -- See `:help telescope` and `:help telescope.setup()`
 local M = {
-  'nvim-telescope/telescope.nvim', 
-  version = '*', 
+  'nvim-telescope/telescope.nvim',
+  version = '*',
   dependencies = {
     { 'nvim-lua/plenary.nvim' },
     -- Fuzzy Finder Algorithm which requires local dependencies to be built.
@@ -27,13 +27,25 @@ local M = {
 
 function M.config()
   local telescope = require 'telescope'
+  local actions = require 'telescope.actions'
+  local action_set = require 'telescope.actions.set'
 
   telescope.setup({
     defaults = {
       mappings = {
 	i = {
+	  -- ['<Tab>'] = actions.toggle_selection + actions.move_selection_next,
 	  ['<C-u>'] = false,
 	  ['<C-d>'] = false,
+	  ['<C-j>'] = function(prompt_bufnr)
+            action_set.scroll_results(prompt_bufnr, 1)
+          end,
+          ['<C-k>'] = function(prompt_bufnr)
+            action_set.scroll_results(prompt_bufnr, -1)
+          end,
+	  ['<C-f>'] = actions.preview_scrolling_down,
+          ['<C-b>'] = actions.preview_scrolling_up,
+          ['<C-a>'] = actions.select_all,
 	},
       },
     },
@@ -41,6 +53,11 @@ function M.config()
       find_files = {
 	hidden = true,
 	find_command = {'rg', '--files', '--hidden', '-g', '!.git' }
+      },
+      buffers = {
+	initial_mode = 'normal',
+	sort_lastused = true,
+	sort_mru = true,
       },
     },
   })
@@ -50,6 +67,7 @@ function M.config()
   vim.keymap.set('n', '<leader>sw', require('telescope.builtin').grep_string, { desc = '[S]earch current [W]ord' })
   vim.keymap.set('n', '<leader>sg', require('telescope.builtin').live_grep, { desc = '[S]earch by [G]rep' })
   vim.keymap.set('n', '<leader>sd', require('telescope.builtin').diagnostics, { desc = '[S]earch [D]iagnostics' })
+  -- vim.keymap.set('n', '<leader>gs', '<cmd>Telescope git_status<CR>')
 
   -- See `:help telescope.builtin`
   vim.keymap.set('n', '<leader>?', require('telescope.builtin').oldfiles, { desc = '[?] Find recently opened files' })
@@ -64,6 +82,7 @@ function M.config()
 
   telescope.load_extension('fzf')
   telescope.load_extension('frecency')
+  telescope.load_extension('notify')
 end
 
 return M

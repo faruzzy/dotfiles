@@ -43,12 +43,8 @@ vim.keymap.set('n', '<leader>vi', ':VimuxInterruptRunner<cr>')
 vim.keymap.set('n', '<leader>vz', ':VimuxZoomRunner<cr>')
 
 -- Remap for dealing with word wrap
-vim.keymap.set('n', 'k', "v:count == 0 ? 'gk' : 'k'", { expr = true, silent = true })
-vim.keymap.set('n', 'j', "v:count == 0 ? 'gj' : 'j'", { expr = true, silent = true })
-
--- vim.cmd [[let g:fugitive_pty = 0]]
-vim.keymap.set('n', '<leader>gs', ':Git<CR>', { noremap = true })
-vim.keymap.set('n', '<leader>gb', ':Git blame<CR>', { noremap = true })
+-- vim.keymap.set('n', 'k', "v:count == 0 ? 'gk' : 'k'", { expr = true, silent = true })
+-- vim.keymap.set('n', 'j', "v:count == 0 ? 'gj' : 'j'", { expr = true, silent = true })
 
 -- leader-o/O inserts blank line below/above
 vim.keymap.set('n', '<leader>o', 'o<ESC>')
@@ -69,11 +65,11 @@ vim.keymap.set('n', '<leader>gw', ':Gwrite<cr>')
 vim.keymap.set('n', '<leader>gr', ':Gread<cr> :w<cr>')
 vim.keymap.set('n', '<leader>gm', ':Gmove<cr>')
 vim.keymap.set('n', '<leader>gy', ':Gremove<cr>')
-vim.keymap.set('n', '<leader>gs', ':Git<cr>')
 vim.keymap.set('n', '<leader>gl', ':Git pull<cr>')
 vim.keymap.set('n', '<leader>gc', ':Git commit<cr>')
 vim.keymap.set('n', '<leader>gd', ':Gdiffsplit<cr>')
-vim.keymap.set('n', '<leader>gb', ':Git blame<cr>')
+vim.keymap.set('n', '<leader>gs', ':Git<cr>', { noremap = true })
+vim.keymap.set('n', '<leader>gb', ':Git blame<cr>', { noremap = true })
 vim.keymap.set('n', '<leader>gg', ':Gmerge<cr>')
 vim.keymap.set('n', '<leader>pp', ':Git push origin master<cr>')
 

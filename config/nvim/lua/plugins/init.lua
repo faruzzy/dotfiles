@@ -24,5 +24,4 @@ return {
   'MaxMEllon/vim-jsx-pretty',
   'rcarriga/nvim-notify', -- Notifications library
   'tpope/vim-repeat', keys = { { '.', desc = 'REPEAT' } },
-  'nvim-tree/nvim-web-devicons', -- for file icons
 }
