@@ -32,9 +32,8 @@ o.cmdheight = 2
 vim.o.undofile = true
 
 o.title = true
-o.lazyredraw = true
 
-o.lazyredraw = true
+-- o.lazyredraw = true
 -- o.nowrap = true --TODO: nvim doesn't know about this, find alternative
 
 o.linebreak = true
