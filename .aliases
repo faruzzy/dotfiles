@@ -14,7 +14,6 @@ alias dt='cd ~/Desktop'
 alias tmux='tmux -2'
 
 # programs
-alias st='open -a "Sublime Text"'
 alias xcode='open -a Xcode'
 alias safari='open -a safari'
 alias firefox='open -a firefoxDeveloperEdition'
