@@ -8,18 +8,10 @@ alias ..='cd ..'
 alias ...='cd ../..'
 alias ....='cd ../../..'
 alias .....='cd ../../../..'
-
-# cd shortcuts
-alias -- -='cd -'
-
-#tmux
-alias tmux='tmux -2'
-
-# Shortcuts
 alias dl='cd ~/Downloads'
 alias dt='cd ~/Desktop'
-#alias h='history'
 
+alias tmux='tmux -2'
 
 # programs
 alias st='open -a "Sublime Text"'
