@@ -22,7 +22,7 @@ function M.config()
   -- Setup mason so it can manage external tooling
   require('mason').setup()
 
-  local on_attach = function(_, bufnr)
+  local on_attach = function(client, bufnr)
     -- NOTE: Remember that lua is a real programming language, and as such it is possible
     -- to define small helper and utility functions so you don't have to repeat yourself
     -- many times.
@@ -35,6 +35,18 @@ function M.config()
       end
 
       vim.keymap.set('n', keys, func, { buffer = bufnr, desc = desc })
+    end
+
+    if client.server_capabilities.signatureHelpProvider then
+      local lsp_overloads_ok, lsp_overloads = pcall(require, "lsp-overloads")
+      if lsp_overloads_ok then
+	lsp_overloads.setup(client, {
+	  ui = {
+	    close_events = { "CursorMoved", "CursorMovedI", "InsertCharPre" },
+	    floating_window_above_cur_line = true
+	  }
+	})
+      end
     end
 
     nmap('<leader>rn', vim.lsp.buf.rename, '[R]e[n]ame')

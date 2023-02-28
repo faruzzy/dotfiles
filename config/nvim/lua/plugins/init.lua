@@ -4,6 +4,7 @@ return {
   'norcalli/nvim-colorizer.lua',
   'tpope/vim-commentary',
   'jordwalke/VimSplitBalancer', -- " Distributes available space among vertical splits, and plays nice with NERDTree
+  'Issafalcon/lsp-overloads.nvim',
 
   -- Git related plugins
   'tpope/vim-fugitive', -- Git wrapper
