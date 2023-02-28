@@ -46,10 +46,6 @@ vim.keymap.set('n', '<leader>vz', ':VimuxZoomRunner<cr>')
 -- vim.keymap.set('n', 'k', "v:count == 0 ? 'gk' : 'k'", { expr = true, silent = true })
 -- vim.keymap.set('n', 'j', "v:count == 0 ? 'gj' : 'j'", { expr = true, silent = true })
 
--- leader-o/O inserts blank line below/above
-vim.keymap.set('n', '<leader>o', 'o<ESC>')
-vim.keymap.set('n', '<leader>O', 'O<ESC>')
-
 -- turn off higlighting until the next search
 vim.keymap.set('n', '<leader>n', ':noh<cr>')
 
@@ -80,5 +76,5 @@ vim.keymap.set('n', '<leader>e', vim.diagnostic.open_float)
 vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist)
 
 -- GV
-vim.keymap.set('n', '<leader>gv', ':GV')
-vim.keymap.set('n', '<leader>Gv', ':GV!')
+vim.keymap.set('n', '<leader>gv', ':GV<cr>')
+vim.keymap.set('n', '<leader>Gv', ':GV!<cr>')
