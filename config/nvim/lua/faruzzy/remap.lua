@@ -56,7 +56,7 @@ vim.keymap.set('n', '<leader>n', ':noh<cr>')
 -- This command prompts you to type one key, and will hint that key in the buffer.
 vim.keymap.set('n', '<leader>,', ':HopChar1<cr>')
 
--- vim.keymap.set('n', '<leader>o', ':only<cr>') -- only show the current buffer
+vim.keymap.set('n', '<leader>o', ':only<cr>') -- only show the current buffer
 vim.keymap.set('n', '<leader>O', ':!open .<cr>') -- open the current directory in finder
 
 -- fugitive
