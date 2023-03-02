@@ -3,19 +3,13 @@
 export EDITOR="nvim"  # Make neo vim the default editor
 export VISUAL="nvim"
 export MANPAGER="less -X" # Don’t clear the screen after quitting a manual page
-export CR_INSTALL_PATH=~/.toolbox/bin
 
 # Prefer US English and use UTF-8
 export LC_ALL=en_US.UTF-8
 export LANG=en_US.UTF-8
 
-export LDFLAGS="-L/usr/local/opt/libpq/lib"
-export CPPFLAGS="-I/usr/local/opt/libpq/include"
-
-
 # history
-export HISTSIZE=32768																									# Larger bash history (allow 32³ entries; default is 500)
-export HISTFILESIZE=$HISTSIZE
+export HISTFILESIZE=32768
 export HISTCONTROL=ignoredups:erasedups																# Ignore duplicates in the history
 export HISTTIMEFORMAT="%Y/%m/%d %H:%M:%S:   "
 export HISTIGNORE="cd:cd -:pwd;exit:date:* --help"										# Make some commands not show up in history
@@ -25,13 +19,8 @@ export NODE_REPL_HISTORY=~/.node_history;															# Enable persistent REPL
 export NODE_REPL_HISTORY_SIZE='32768';																# Allow 32³ entries; the default is 1000.
 export NODE_REPL_MODE='sloppy';																				# Use sloppy mode by default, matching web browsers.
 
-export PYTHONIOENCODING='UTF-8';																			# Make Python use UTF-8 encoding for output to stdin, stdout, and stderr.
-
 export GREP_OPTIONS='--color=auto'
 export CLICOLOR=1
-export LS_COLORS_BOLD='no=00:fi=00:di=;34:ln=01;95:pi=40;33:so=01;35:do=01;35:bd=40;33;01:cd=40;33;01:or=40;31;01:ex=01;32:*.tar=01;31:*.tgz=01;31:*.arj=01;31:*.taz=01;31:*.lzh=01;31:*.zip=01;31:*.z=01;31:*.Z=01;31:*.gz=01;31:*.bz2=01;31:*.deb=01;31:*.rpm=01;31:*.jar=01;31:*.jpg=01;35:*.jpeg=01;35:*.gif=01;35:*.bmp=01;35:*.pbm=01;35:*.pgm=01;35:*.ppm=01;35:*.tga=01;35:*.xbm=01;35:*.xpm=01;35:*.tif=01;35:*.tiff=01;35:*.png=01;35:*.mpg=01;35:*.mpeg=01;35:*.avi=01;35:*.fli=01;35:*.gl=01;35:*.dl=01;35:*.xcf=01;35:*.xwd=01;35:*.ogg=01;35:*.mp3=01;35:*.wav=01;35:*.tex=01;33:*.sxw=01;33:*.sxc=01;33:*.lyx=01;33:*.pdf=0;35:*.ps=00;36:*.asm=1;33:*.S=0;33:*.s=0;33:*.h=0;31:*.c=0;35:*.cxx=0;35:*.cc=0;35:*.C=0;35:*.o=1;30:*.am=1;33:*.py=0;34:'
-export LS_COLORS_NORM='no=00:fi=00:di=00;34:ln=00;36:pi=40;33:so=00;35:do=00;35:bd=40;33;01:cd=40;33;01:or=40;31;01:ex=00;32:*.tar=00;31:*.tgz=00;31:*.arj=00;31:*.taz=00;31:*.lzh=00;31:*.zip=00;31:*.z=00;31:*.Z=00;31:*.gz=00;31:*.bz2=00;31:*.deb=00;31:*.rpm=00;31:*.jar=00;31:*.jpg=00;35:*.jpeg=00;35:*.gif=00;35:*.bmp=00;35:*.pbm=00;35:*.pgm=00;35:*.ppm=00;35:*.tga=00;35:*.xbm=00;35:*.xpm=00;35:*.tif=00;35:*.tiff=00;35:*.png=00;35:*.mpg=00;35:*.mpeg=00;35:*.avi=00;35:*.fli=00;35:*.gl=00;35:*.dl=00;35:*.xcf=00;35:*.xwd=00;35:*.ogg=00;35:*.mp3=00;35:*.wav=00;35:*.tex=00;33:*.sxw=00;33:*.sxc=00;33:*.lyx=00;33:*.pdf=0;35:*.ps=00;36:*.asm=0;33:*.S=0;33:*.s=0;33:*.h=0;31:*.c=0;35:*.cxx=0;35:*.cc=0;35:*.C=0;35:*.o=0;30:*.am=0;33:*.py=0;34:'
-export MY_LS_COLORS="${MY_LS_COLORS:-LS_COLORS_BOLD}"
 eval export LS_COLORS=\${$MY_LS_COLORS}
 export TERM='xterm-256color'
 
@@ -44,22 +33,18 @@ export LESS_TERMCAP_so=$(printf '\e[01;33m')													# enter standout mode �
 export LESS_TERMCAP_ue=$(printf '\e[0m')															# leave underline mode
 export LESS_TERMCAP_us=$(printf '\e[04;36m')													# enter underline mode – cyan
 
-# GoLang
-export GOROOT=/usr/local/go
-export GOPATH=$HOME/go
-
 # FZF
 if command -v fd > /dev/null; then
   export FZF_DEFAULT_COMMAND='fd --type f --hidden --follow --exclude .git'
   export FZF_ALT_C_COMMAND='fd --type d --hidden --follow --exclude .git'
   export FZF_CTRL_T_COMMAND='fd --type f --type d --hidden --follow --exclude .git'
 elif [ -x "$(command -v rg)" ]; then
-	export FZF_DEFAULT_COMMAND='rg --files'
+  export FZF_DEFAULT_COMMAND='rg --files'
 elif [ -x "$(command -v ag)" ]; then
-	export FZF_DEFAULT_COMMAND='ag --hidden --ignore .git -g ""'
+  export FZF_DEFAULT_COMMAND='ag --hidden --ignore .git -g ""'
 else
-	export FZF_DEFAULT_COMMAND='find . -type d \( -path '*\.git*' -o -path '*node_modules*' \) -prune -o -print'
-	export FZF_CTRL_T_COMMAND='find . -type f -not -path "*.\git*" -not -path "*node_modules*"'
+  export FZF_DEFAULT_COMMAND='find . -type d \( -path '*\.git*' -o -path '*node_modules*' \) -prune -o -print'
+  export FZF_CTRL_T_COMMAND='find . -type f -not -path "*.\git*" -not -path "*node_modules*"'
 fi
 
 command -v bat  > /dev/null && export FZF_CTRL_T_OPTS="--preview 'bat -n --color=always {}'"
@@ -67,12 +52,6 @@ command -v blsd > /dev/null && export FZF_ALT_C_COMMAND='blsd'
 command -v tree > /dev/null && export FZF_ALT_C_OPTS="--preview 'tree -C {} | head -200'"
 
 # JAVA
-export M2_HOME=~/dev/installs/apache-maven-3.6.3
 export JAVA_HOME=$(/usr/libexec/java_home) #TODO: Do I need this knowing that I have `jenv`
 
-export PSQL=/Applications/Postgres.app/Contents/Versions/12/bin
-export SCRIPT_HOME=~/github/dotfiles/scripts #TODO: what is this for?
-export PATH=~/dev:/bin:~/dev/installs/mongodb/bin:/sbin:/usr/local/bin:/usr/bin:/usr/sbin:/usr/local/sbin:/usr/local/opt/libpq/bin:$PSQL:$GOPATH/bin:$GOROOT/bin:$SCRIPT_HOME:$M2_HOME/bin:$HOME/.composer/vendor/bin:$HOME/kafka_2.13-2.4.0/bin:$PATH
-
-#TODO: Make neovim the default editor if neoovim is installed. Otherwise use VIM
-# export PATH="/usr/local/opt/libpq/bin:$PATH
+export PATH=~/dev:/bin:/sbin:/usr/local/bin:/usr/bin:/usr/sbin:/usr/local/sbin:/usr/local/opt/libpq/bin:$PSQL:$GOPATH/bin:$GOROOT/bin:$SCRIPT_HOME:$M2_HOME/bin:$HOME/.composer/vendor/bin:$PATH
