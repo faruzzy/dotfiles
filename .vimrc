@@ -106,7 +106,6 @@ set matchpairs+=<:>															" For HTML Editing
 set matchtime=2																" Bracket blinking
 set splitright																" By default, (horizontal) split to the right
 set splitbelow																" By default, (vertical) split to the bottom
-set binary																	" Don't add empty new lines at the end of files
 set noeol
 
 if has('mouse')

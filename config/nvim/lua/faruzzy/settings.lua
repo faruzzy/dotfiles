@@ -53,11 +53,12 @@ o.fileformats = 'unix,dos,mac'
 -- o.smartindent = true
 -- o.cindent = true
 
+-- Spaces and Tabs
 o.expandtab = true
 o.shiftround = true
 o.shiftwidth = 2
 o.softtabstop = 2
-o.tabstop = 2 -- this is causing weird spacing issues
+o.tabstop = 2
 o.list = true
 o.backspace = 'indent,eol,start'
 
