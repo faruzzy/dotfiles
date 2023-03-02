@@ -57,7 +57,7 @@ o.expandtab = true
 o.shiftround = true
 o.shiftwidth = 2
 o.softtabstop = 2
--- o.tabstop = 2 -- this is causing weird spacing issues
+o.tabstop = 2 -- this is causing weird spacing issues
 o.list = true
 o.backspace = 'indent,eol,start'
 
@@ -84,7 +84,6 @@ o.matchtime = 2
 o.splitright = true
 o.splitbelow = true
 -- o.splitkeep = 'screen'
-o.binary = true
 
 -- o.noeol = true --Todo: nvim doesn't know about this, find alternative
 o.cursorline = true
