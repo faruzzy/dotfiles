@@ -1,0 +1,143 @@
+{
+  "Jest Module Mock": {
+    "prefix": "mm",
+    "body": [
+      "jest.mock(\"${1}\", () => ({",
+      "\t${2}",
+      "}));"
+    ]
+  },
+  "Jest Module Mock Require Actual": {
+    "prefix": "mmra",
+    "body": [
+      "jest.mock(\"${1}\", () => ({",
+      "\t...jest.requireActual<any>(\"$1\"),",
+      "\t${2}",
+      "}));"
+    ]
+  },
+  "Jest Before Each Block": {
+    "prefix": "be",
+    "body": [
+      "beforeEach(() => {",
+      "\t${1}",
+      "});"
+    ]
+  },
+  "Jest Describe Block": {
+    "prefix": "desc",
+    "body": [
+      "describe(\"${1}\", () => {",
+      "\t${2}",
+      "});"
+    ]
+  },
+  "Jest Test Case": {
+    "prefix": "it",
+    "body": [
+      "it(\"${1}\", () => {",
+      "\t${2}",
+      "});"
+    ]
+  },
+  "Jest Async Test Case": {
+    "prefix": "ita",
+    "body": [
+      "it(\"${1}\", async () => {",
+      "\texpect.assertions(${2:1});",
+      "",
+      "\t${3}",
+      "});"
+    ]
+  },
+  "Except To Equal": {
+    "prefix": "ete",
+    "body": [
+      "expect(${1}).toEqual(${2});"
+    ]
+  },
+  "Except To Match Snapshot": {
+    "prefix": "etms",
+    "body": [
+      "expect(${1}).toMatchSnapshot();"
+    ]
+  },
+  "Except To Have Been Called": {
+    "prefix": "ethbc",
+    "body": [
+      "expect(${1}).toHaveBeenCalled();"
+    ]
+  },
+  "Expect To Have Been Called With": {
+    "prefix": "ethbcw",
+    "body": [
+      "expect(${1}).toHaveBeenCalledWith(${2});"
+    ]
+  },
+  "CDK Construct": {
+    "prefix": "cdkc",
+    "body": [
+      "import { Construct } from \"constructs\";",
+      "",
+      "export class ${1}Construct extends Construct {",
+      "\tconstructor(scope: Construct, id: string) {",
+      "\t\tsuper(scope, id);",
+      "",
+      "\t\t${2}",
+      "\t}",
+      "}"
+    ]
+  },
+  "CDK Construct With Props": {
+    "prefix": "cdkcp",
+    "body": [
+      "import { Construct } from \"constructs\";",
+      "",
+      "export interface ${1}ConstructProps {",
+      "\t${2}",
+      "}",
+      "",
+      "export class $1Construct extends Construct {",
+      "\tconstructor(scope: Construct, id: string, ${3:props}: $1ConstructProps) {",
+      "\t\tsuper(scope, id);",
+      "",
+      "\t\t${4}",
+      "\t}",
+      "}"
+    ]
+  },
+  "CDK Stack": {
+    "prefix": "cdks",
+    "body": [
+      "import { Stack, StackProps } from \"aws-cdk-lib\";",
+      "import { Construct } from \"constructs\";",
+      "",
+      "export class ${1}Stack extends Stack {",
+      "\tconstructor(scope: Construct, id: string, props?: StackProps) {",
+      "\t\tsuper(scope, id, props);",
+      "",
+      "\t\t${2}",
+      "\t}",
+      "}"
+    ]
+  },
+  "CDK Stack With Props": {
+    "prefix": "cdksp",
+    "body": [
+      "import { Stack, StackProps } from \"aws-cdk-lib\";",
+      "import { Construct } from \"constructs\";",
+      "",
+      "export interface ${1}StackProps extends StackProps {",
+      "\t${2}",
+      "}",
+      "",
+      "export class $1Stack extends Stack {",
+      "\tconstructor(scope: Construct, id: string, props?: $1StackProps) {",
+      "\t\tsuper(scope, id, props);",
+      "",
+      "\t\t${3}",
+      "\t}",
+      "}"
+    ]
+  }
+}
