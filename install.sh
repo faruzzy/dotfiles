@@ -27,8 +27,11 @@ EOD
 
 # Install NVM
 curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.1/install.sh | bash
+nvm install node #Install the latest available version right away
 
 # Graphical App install from Home-brew cask
+brew install --cask rectangle
+brew install --cask app-cleaner
 brew install --cask flux
 brew install --cask bettertouchtool path-finder
 brew install --cask google-chrome-canary google-chrome firefox
@@ -42,7 +45,6 @@ brew install --cask 1password
 brew install --cask google-drive
 brew install --cask visual-studio-code
 brew install --cask pdfsam-basic
-brew install --cask slack
 brew install --cask intellij-idea
 brew install --cask colorsnapper
 brew install --cask spectacle
