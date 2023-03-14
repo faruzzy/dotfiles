@@ -21,7 +21,6 @@ export NODE_REPL_MODE='sloppy';																				# Use sloppy mode by default,
 
 export GREP_OPTIONS='--color=auto'
 export CLICOLOR=1
-eval export LS_COLORS=\${$MY_LS_COLORS}
 export TERM='xterm-256color'
 
 # Less Colors for Man Pages
