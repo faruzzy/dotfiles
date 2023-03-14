@@ -1,6 +1,12 @@
 local M = {
   'hrsh7th/nvim-cmp',
-  dependencies = { 'hrsh7th/cmp-nvim-lsp', 'L3MON4D3/LuaSnip', 'saadparwaiz1/cmp_luasnip' },
+  dependencies = {
+    'hrsh7th/cmp-nvim-lsp',
+    'saadparwaiz1/cmp_luasnip',
+    'hrsh7th/cmp-buffer',
+    'hrsh7th/cmp-cmdline',
+    'hrsh7th/cmp-path',
+  },
 }
 
 function M.config()
@@ -43,9 +49,19 @@ function M.config()
       end, { 'i', 's' }),
     },
     sources = {
-      { name = 'nvim_lsp' },
       { name = 'luasnip' },
-      { name = 'emmet' }
+      { name = 'nvim_lsp' },
+      { name = 'emmet' },
+      { name = 'cmdline' },
+      { name = 'path' },
+      {
+	name = 'buffer',
+	option = {
+	  get_bufnrs = function()
+	    return vim.api.nvim_list_bufs()
+	  end
+	}
+      }
     },
   }
 end
