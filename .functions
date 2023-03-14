@@ -1,4 +1,4 @@
-#!bash
+#!/usr/bin/env bash
 
 # Define a word using collinsdictionary.com
 function define() {

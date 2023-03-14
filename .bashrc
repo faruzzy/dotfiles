@@ -1,3 +1,5 @@
+#!/usr/bin/env bash
+
 [ -f ~/.fzf/shell/key-bindings.bash ] && source ~/.fzf/shell/key-bindings.bash
 [ -f ~/.fzf.bash ] && source ~/.fzf.bash
 
