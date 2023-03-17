@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-alias s='source ~/.bash_profile' #TODO: This doesn't reload .inputrc and .tmux.conf .. just saying
+alias s='source ~/.bash_profile && tmux source-file ~/.tmux.conf && bind -f ~/.inputrc'
 alias python='python3'
 
 # Easier navigation: .., ..., ~ and -
