@@ -22,7 +22,7 @@ vim.keymap.set('x', '<A-k>', ":move '<-2<CR>gv=gv")
 vim.keymap.set('x', '<A-j>', ":move '>+1<CR>gv=gv")
 
 -- move to normal mode 
-vim.api.nvim_set_keymap("i", "jk", "<esc>", {noremap = true})
+-- vim.api.nvim_set_keymap("i", "jk", "<esc>", {noremap = true})
 
 -- Keymaps for better default experience
 -- See `:help vim.keymap.set()`
