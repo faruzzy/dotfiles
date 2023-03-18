@@ -19,6 +19,7 @@ return {
   'wellle/tmux-complete.vim',
 
   'tpope/vim-sleuth', -- Detect tabstop and shiftwidth automatically
+  'wsdjeg/vim-fetch', -- Fetch that line and column, boy!
 
   -- Misc
   'psliwka/vim-smoothie', -- Smooth scrolling done right
