@@ -22,6 +22,7 @@ return {
   'wsdjeg/vim-fetch', -- Fetch that line and column, boy!
 
   -- Misc
+  'Pocco81/auto-save.nvim', -- automatically save your changes so the world doesn't collapse
   'psliwka/vim-smoothie', -- Smooth scrolling done right
   'MaxMEllon/vim-jsx-pretty',
   'rcarriga/nvim-notify', -- Notifications library

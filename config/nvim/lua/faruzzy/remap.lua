@@ -6,6 +6,9 @@ vim.keymap.set('n', 'b<Tab>', '<cmd>b#<cr>')
 vim.keymap.set('n', ']b', vim.cmd.bnext)
 vim.keymap.set('n', '[b', vim.cmd.bprev)
 
+-- AutoSave toggle
+vim.api.nvim_set_keymap("n", "<leader>as", ":ASToggle<CR>", {})
+
 -- Move to the next/previous buffer
 -- map('n', '<leader>[', '<CMD>bp<CR>')
 -- map('n', '<leader>]', '<CMD>bn<CR>')
