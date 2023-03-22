@@ -1,5 +1,6 @@
 return {
   'mattn/emmet-vim',
+  'windwp/nvim-ts-autotag', -- Use treesitter to autoclose and autorename html tags
   'farmergreg/vim-lastplace', -- Intelligently reopen files at your last edit position.
   'norcalli/nvim-colorizer.lua',
   -- 'tpope/vim-commentary',
