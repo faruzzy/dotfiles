@@ -3,7 +3,6 @@ return {
   'windwp/nvim-ts-autotag', -- Use treesitter to autoclose and autorename html tags
   'farmergreg/vim-lastplace', -- Intelligently reopen files at your last edit position.
   'norcalli/nvim-colorizer.lua',
-  -- 'tpope/vim-commentary',
   'jordwalke/VimSplitBalancer', -- " Distributes available space among vertical splits, and plays nice with NERDTree
   'Issafalcon/lsp-overloads.nvim',
 
