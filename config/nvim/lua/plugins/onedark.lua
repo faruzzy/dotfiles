@@ -1,8 +1,7 @@
 return {
   'navarasu/onedark.nvim',
   config = function()
-    priority = 1000,
-    vim.cmd.colorscheme 'onedark'
+    priority = 1000
   end,
   opts = {
     options = {
