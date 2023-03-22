@@ -50,17 +50,17 @@ scrolling:
 font:
   # The normal (roman) font face to use.
   normal:
-    family: SauceCodePro Nerd Font
+    family: FiraCode Nerd Font
     style: Regular
 
   # The bold font face
   bold:
-    family: SauceCodePro Nerd Font
+    family: FiraCode Nerd Font
     style: Bold
 
   # The italic font face
   italic:
-    family: SauceCodePro Nerd Font
+    family: FiraCode Nerd Font
     style: Regular Italic
 
   # Point size of the font
