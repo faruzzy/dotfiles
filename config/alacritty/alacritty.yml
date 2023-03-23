@@ -1,4 +1,6 @@
 # Configuration for Alacritty, the GPU enhanced terminal emulator shamelessly copied from https://github.com/fatih/dotfiles
+import:
+ - ~/.config/alacritty/catppuccin/catppuccin-frappe.yml
 
 # Any items in the `env` entry below will be added as
 # environment variables. Some entries may override variables
@@ -32,7 +34,7 @@ window:
 
   # Window decorations
   # Setting this to false will result in window without borders and title bar.
-  decorations: full
+  decorations: "Buttonless"
 
 # When true, bold text is drawn using the bright variant of colors.
 draw_bold_text_with_bright_colors: true
@@ -50,6 +52,8 @@ scrolling:
 font:
   # The normal (roman) font face to use.
   normal:
+    # family: PragmataPro Mono Liga
+    # family: JetBrainsMono Nerd Font
     family: FiraCode Nerd Font
     style: Regular
 
@@ -85,53 +89,53 @@ debug:
   render_timer: false
 
 # Colors (Tomorrow Night Bright)
-colors:
-  # Default colors
-  primary:
-    background: '0x24292e'
-    foreground: '0xd1d5da'
-
-  # Colors the cursor will use if `custom_cursor_colors` is true
-  cursor:
-    text:   '0xf1c1c1'
-    cursor: '0xff2600'
-
-  # Normal colors
-  normal:
-    black:   '0x586069'
-    red:     '0xea4a5a'
-    green:   '0x34d058'
-    yellow:  '0xffea7f'
-    blue:    '0x2188ff'
-    magenta: '0xb392f0'
-    cyan:    '0x39c5cf'
-    white:   '0xd1d5da'
-
-  # Bright colors
-  bright:
-    black:   '0x959da5'
-    red:     '0xf97583'
-    green:   '0x85e89d'
-    yellow:  '0xffea7f'
-    blue:    '0x79b8ff'
-    magenta: '0xb392f0'
-    cyan:    '0x56d4dd'
-    white:   '0xfafbfc'
-
-  indexed_colors:
-    - { index: 16, color: '0xd18616' }
-    - { index: 17, color: '0xf97583' }
-
-  # Dim colors (Optional)
-  dim:
-    black:   '0x333333'
-    red:     '0xf2777a'
-    green:   '0x99cc99'
-    yellow:  '0xffcc66'
-    blue:    '0x6699cc'
-    magenta: '0xcc99cc'
-    cyan:    '0x66cccc'
-    white:   '0xdddddd'
+# colors:
+#   # Default colors
+#   primary:
+#     background: '0x24292e'
+#     foreground: '0xd1d5da'
+#
+#   # Colors the cursor will use if `custom_cursor_colors` is true
+#   cursor:
+#     text:   '0xf1c1c1'
+#     cursor: '0xff2600'
+#
+#   # Normal colors
+#   normal:
+#     black:   '0x586069'
+#     red:     '0xea4a5a'
+#     green:   '0x34d058'
+#     yellow:  '0xffea7f'
+#     blue:    '0x2188ff'
+#     magenta: '0xb392f0'
+#     cyan:    '0x39c5cf'
+#     white:   '0xd1d5da'
+#
+#   # Bright colors
+#   bright:
+#     black:   '0x959da5'
+#     red:     '0xf97583'
+#     green:   '0x85e89d'
+#     yellow:  '0xffea7f'
+#     blue:    '0x79b8ff'
+#     magenta: '0xb392f0'
+#     cyan:    '0x56d4dd'
+#     white:   '0xfafbfc'
+#
+#   indexed_colors:
+#     - { index: 16, color: '0xd18616' }
+#     - { index: 17, color: '0xf97583' }
+#
+#   # Dim colors (Optional)
+#   dim:
+#     black:   '0x333333'
+#     red:     '0xf2777a'
+#     green:   '0x99cc99'
+#     yellow:  '0xffcc66'
+#     blue:    '0x6699cc'
+#     magenta: '0xcc99cc'
+#     cyan:    '0x66cccc'
+#     white:   '0xdddddd'
 
 # Visual Bell
 #
