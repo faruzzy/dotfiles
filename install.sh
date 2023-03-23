@@ -77,6 +77,12 @@ brew install mas mkcert nss xquartz
 # git clone https://github.com/zsh-users/zsh-autosuggestions ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-autosuggestions
 # git clone https://github.com/supercrabtree/k ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/k
 
+# Install TPM
+git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
+
+# Install catppuccin for TMUX theme
+git clone https://github.com/catppuccin/alacritty.git ~/.config/alacritty/catppuccin
+
 # mkdir -p $HOME/.shellrc/zshrc.d/
 
 # Install App from Mac App Store
