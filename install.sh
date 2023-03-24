@@ -138,7 +138,7 @@ brew install \
 	perl krb5 luv tree-sitter berkeley-db libevent mpdecimal \
 	readline unibilium ca-certificates msgpack utf8proc libtermkey ncurses vim \
 	libuv ruby xz libvterm openssl@1.1 sqlite gdbm libyaml libffi pcre the_silver_searcher \
-	gettext pcre2 ngrep z ffmpeg youtube-dl cocoapods awscli
+	gettext pcre2 ngrep z ffmpeg youtube-dl cocoapods awscli http-server allure
 
 # this is needed for UtilSnips
 python3 -m pip install --user --upgrade pynvim
