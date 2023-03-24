@@ -52,9 +52,7 @@ scrolling:
 font:
   # The normal (roman) font face to use.
   normal:
-    # family: PragmataPro Mono Liga
-    # family: JetBrainsMono Nerd Font
-    family: FiraCode Nerd Font
+    family: Monaco for Powerline
     style: Regular
 
   # The bold font face
@@ -68,13 +66,13 @@ font:
     style: Regular Italic
 
   # Point size of the font
-  size: 14.5
+  size: 15
 
   # Offset is the extra space around each character. offset.y can be thought of
   # as modifying the linespacing, and offset.x as modifying the letter spacing.
   offset:
     x: 0
-    y: 0
+    y: 1
 
   # Glyph offset determines the locations of the glyphs within their cells with
   # the default being at the bottom. Increase the x offset to move the glyph to
