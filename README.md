@@ -1,6 +1,8 @@
 # Faruzzy dotfiles configuration
 
 My configuration files for Linux / Mac OS X
+![image](https://user-images.githubusercontent.com/766723/227434030-02bc9326-b9b3-4dc0-8201-f27a1e92856a.png)
+
 > Shamelessly copied from [various](https://github.com/junegunn/dotfiles) [places](https://github.com/addyosmani/dotfiles)
 
 ## Philosophy
