@@ -27,8 +27,12 @@ return {
     local text_node = luasnip.text_node
     local fmt = require('luasnip.extras.fmt').fmt
 
-    require('luasnip.loaders.from_vscode').lazy_load({
-      paths = { '~/dotfiles/vim-common' },
+    require('luasnip.loaders.from_vscode').load({
+      paths = { '~/github/dotfiles/vim-common/' }
+    })
+
+    require('luasnip.loaders.from_snipmate').load({
+      paths = '~/github/dotfiles/config/nvim/snippets/'
     })
 
     luasnip.config.set_config({
