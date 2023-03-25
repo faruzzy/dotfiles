@@ -56,17 +56,17 @@ font:
     style: Regular
 
   # The bold font face
-  bold:
-    family: FiraCode Nerd Font
-    style: Bold
+  # bold:
+  #   family: FiraCode Nerd Font
+  #   style: Bold
 
-  # The italic font face
-  italic:
-    family: FiraCode Nerd Font
-    style: Regular Italic
+  # # The italic font face
+  # italic:
+  #   family: FiraCode Nerd Font
+  #   style: Regular Italic
 
   # Point size of the font
-  size: 14
+  size: 13.5
 
   # Offset is the extra space around each character. offset.y can be thought of
   # as modifying the linespacing, and offset.x as modifying the letter spacing.
