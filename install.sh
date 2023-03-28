@@ -161,8 +161,8 @@ code --install-extension nrwl.angular-console
 
 npm install -g typescript
 npm install -g ts-node
-
 npm install -g tldr
+npm install -g git-open
 # this is needed for UtilSnips
 python3 -m pip install --user --upgrade pynvim
 
