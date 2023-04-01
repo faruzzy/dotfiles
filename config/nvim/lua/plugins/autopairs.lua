@@ -59,7 +59,7 @@ local config = function()
 
   -- add space around =
   local add_space_equal = {
-    rule('=', '', { 'typescript', 'typescriptreact', 'javascript' })
+    rule('=', '', { 'typescript', 'javascript' })
       :with_pair(cond.not_inside_quote())
       :with_pair(function(opts)
         local last_char = opts.line:sub(opts.col - 1, opts.col - 1)
@@ -98,13 +98,18 @@ local config = function()
   apair.add_rules(end_lua)
   apair.add_rules(add_space_paren)
   apair.add_rules(add_space_equal)
-  apair.add_rules(add_arrow_js)
+  -- apair.add_rules(add_arrow_js)
 
 end
 
 return {
   'windwp/nvim-autopairs',
   event = 'InsertEnter *.*',
-  config = config,
+  config = config
   -- config = function() require('nvim-autopairs').setup {} end
 }
+
+-- return {
+--   "windwp/nvim-autopairs",
+--   config = function() require("nvim-autopairs").setup {} end,
+-- }
