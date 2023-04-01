@@ -50,7 +50,7 @@ o.fileformats = 'unix,dos,mac'
 
 -- should the following line be in?
 -- o.autoindent = true 
--- o.smartindent = true
+o.smartindent = true
 -- o.cindent = true
 
 -- Spaces and Tabs
