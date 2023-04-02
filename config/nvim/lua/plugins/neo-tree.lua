@@ -11,6 +11,7 @@ return {
     'MunifTanjim/nui.nvim',
   },
   config = {
+    close_if_last_window = true,
     filesystem = {
       follow_current_file = true,
       hijack_netrw_behavior = 'open_current',
