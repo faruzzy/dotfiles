@@ -103,7 +103,7 @@ function M.config()
       { name = 'luasnip' },
       { name = 'nvim_lsp' },
       { name = 'emmet' },
-      { name = 'cmdline' },
+      -- { name = 'cmdline' },
       { name = 'path' },
       {
 	name = 'buffer',
