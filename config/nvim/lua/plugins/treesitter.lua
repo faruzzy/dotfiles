@@ -26,8 +26,8 @@ function M.config()
     incremental_selection = {
       enable = true,
       keymaps = {
-	init_selection = '<c-space>',
-	node_incremental = '<c-space>',
+	init_selection = 'gn',
+	node_incremental = 'gn',
 	scope_incremental = '<c-s>',
 	node_decremental = '<c-backspace>',
       },
@@ -50,21 +50,29 @@ function M.config()
 	enable = true,
 	set_jumps = true, -- whether to set jumps in the jumplist
 	goto_next_start = {
-	  [']m'] = '@function.outer',
-	  [']]'] = '@class.outer',
-	},
-	goto_next_end = {
-	  [']M'] = '@function.outer',
-	  [']['] = '@class.outer',
-	},
-	goto_previous_start = {
-	  ['[m'] = '@function.outer',
-	  ['[['] = '@class.outer',
-	},
-	goto_previous_end = {
-	  ['[M'] = '@function.outer',
-	  ['[]'] = '@class.outer',
-	},
+          [']m'] = {
+            query = { '@function.outer', '@class.outer' },
+            desc = 'Go to start of next function/class',
+          },
+        },
+        goto_previous_start = {
+          ['[m'] = {
+            query = { '@function.outer', '@class.outer' },
+            desc = 'Go to start of previous function/class',
+          },
+        },
+        goto_next_end = {
+          [']M'] = {
+            query = { '@function.outer', '@class.outer' },
+            desc = 'Go to end of next function/class',
+          },
+        },
+        goto_previous_end = {
+          ['[M'] = {
+            query = { '@function.outer', '@class.outer' },
+            desc = 'Go to end of previous function/class',
+          },
+        },
       },
       swap = {
 	enable = true,
