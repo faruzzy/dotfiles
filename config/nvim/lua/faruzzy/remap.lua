@@ -32,6 +32,9 @@ vim.keymap.set('i', '<c-h>', '<left>', {})
 vim.keymap.set('i', '<c-l>', '<right>', {})
 -- vim.keymap.set('i', '<C-y>', '<esc>yyp', {}) -- [ ctrl + y ] copy current line and paste next line
 
+vim.keymap.set('n', '<A-i>', "<CMD>lua require('FTerm').toggle()<CR>")
+vim.keymap.set('t', '<A-i>', "<C-\\><C-n><CMD>lua require('FTerm').toggle()<CR>")
+
 vim.keymap.set('n', '<leader>x', ':x<CR>')
 vim.keymap.set('n', '<leader>X', ':wqa!<CR>')
 -- vim.keymap.set('n', '<leader>w', vim.cmd.update)
