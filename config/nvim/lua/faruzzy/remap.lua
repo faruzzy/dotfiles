@@ -24,12 +24,13 @@ vim.keymap.set('n', '<A-j>', '<CMD>move .+1<CR>')
 vim.keymap.set('x', '<A-k>', ":move '<-2<CR>gv=gv")
 vim.keymap.set('x', '<A-j>', ":move '>+1<CR>gv=gv")
 
--- move to normal mode 
--- vim.api.nvim_set_keymap("i", "jk", "<esc>", {noremap = true})
-
--- Keymaps for better default experience
--- See `:help vim.keymap.set()`
+-- Prevents moving cursor with the space key
 vim.keymap.set({ 'n', 'v' }, '<Space>', '<Nop>', { silent = true })
+-- vim.keymap.set('i', '<c-j>', '<down>', {})
+-- vim.keymap.set('i', '<c-k>', '<up>', {})
+vim.keymap.set('i', '<c-h>', '<left>', {})
+vim.keymap.set('i', '<c-l>', '<right>', {})
+-- vim.keymap.set('i', '<C-y>', '<esc>yyp', {}) -- [ ctrl + y ] copy current line and paste next line
 
 vim.keymap.set('n', '<leader>x', ':x<CR>')
 vim.keymap.set('n', '<leader>X', ':wqa!<CR>')
