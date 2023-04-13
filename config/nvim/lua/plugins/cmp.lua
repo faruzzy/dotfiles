@@ -118,8 +118,8 @@ function M.config()
 
 	vim_item.menu = ({
 	  luasnip = '[Snippet]',
-	  buffer = '[Buffer]',
 	  nvim_lsp = '[LSP]',
+	  buffer = '[Buffer]',
 	  path = '[Path]',
 	})[entry.source.name]
 
