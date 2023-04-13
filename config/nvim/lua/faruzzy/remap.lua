@@ -48,6 +48,7 @@ vim.keymap.set('n', '<leader>vc', ':call VimuxCloseRunner()<cr>')
 vim.keymap.set('n', '<leader>vl', ':VimuxRunLastCommand<cr>')
 vim.keymap.set('n', '<leader>vi', ':VimuxInterruptRunner<cr>')
 vim.keymap.set('n', '<leader>vz', ':VimuxZoomRunner<cr>')
+vim.keymap.set('n', '<leader>vt', ':VimuxTogglePane<cr>')
 
 -- Remap for dealing with word wrap
 -- vim.keymap.set('n', 'k', "v:count == 0 ? 'gk' : 'k'", { expr = true, silent = true })
