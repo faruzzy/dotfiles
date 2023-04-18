@@ -86,8 +86,14 @@ vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist)
 -- GV
 vim.keymap.set('n', '<leader>gv', ':GV<cr>')
 vim.keymap.set('n', '<leader>Gv', ':GV!<cr>')
+
 -- lsp-overloads
 -- vim.api.nvim_set_keymap("n", "<A-s>", ":LspOverloadsSignature<CR>", { noremap = true, silent = true })
 -- vim.api.nvim_set_keymap("i", "<A-s>", "<cmd>LspOverloadsSignature<CR>", { noremap = true, silent = true })
+
+-- diffs
+vim.keymap.set('n', '<leader>gl', '<cmd>diffget //2<cr>')
+vim.keymap.set('n', '<leader>gr', '<cmd>diffget //3<cr>')
+
 -- Undotree
 vim.keymap.set('n', '<leader>ut', vim.cmd.UndotreeToggle)
