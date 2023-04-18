@@ -86,3 +86,5 @@ vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist)
 -- GV
 vim.keymap.set('n', '<leader>gv', ':GV<cr>')
 vim.keymap.set('n', '<leader>Gv', ':GV!<cr>')
+-- Undotree
+vim.keymap.set('n', '<leader>ut', vim.cmd.UndotreeToggle)

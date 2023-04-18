@@ -24,6 +24,8 @@ return {
   -- Misc
   'Pocco81/auto-save.nvim', -- automatically save your changes so the world doesn't collapse
   'psliwka/vim-smoothie', -- Smooth scrolling done right
+  -- 'karb94/neoscroll.nvim', -- look into this as a potential replacement for vim-smoothie
+  'mbbill/undotree',
   'MaxMEllon/vim-jsx-pretty',
   'rcarriga/nvim-notify', -- Notifications library
   'tpope/vim-repeat', keys = { { '.', desc = 'REPEAT' } },
