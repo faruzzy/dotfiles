@@ -3,6 +3,7 @@ local M = { -- Highlight, edit, and navigate code
   build = ':TSUpdate',
   dependencies = {
     'nvim-treesitter/nvim-treesitter-textobjects',
+    'nvim-treesitter/nvim-treesitter-context'
   },
   config = function()
     pcall(require('nvim-treesitter.install').update { with_sync = true })
