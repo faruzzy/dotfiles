@@ -37,17 +37,23 @@ function M.config()
       vim.keymap.set('n', keys, func, { buffer = bufnr, desc = desc })
     end
 
-    if client.server_capabilities.signatureHelpProvider then
+    --[[ if client.server_capabilities.signatureHelpProvider then
       local lsp_overloads_ok, lsp_overloads = pcall(require, "lsp-overloads")
       if lsp_overloads_ok then
 	lsp_overloads.setup(client, {
 	  ui = {
 	    close_events = { "CursorMoved", "CursorMovedI", "InsertCharPre" },
-	    floating_window_above_cur_line = true
-	  }
+	    floating_window_above_cur_line = true,
+	  },
+	  keymaps = {
+	    next_signature = "<C-j>",
+	    previous_signature = "<C-k>",
+	    next_parameter = "<C-l>",
+	    previous_parameter = "<C-h>",
+	  },
 	})
       end
-    end
+    end ]]
 
     nmap('<leader>rn', vim.lsp.buf.rename, '[R]e[n]ame')
     nmap('<leader>ca', vim.lsp.buf.code_action, '[C]ode [A]ction')
