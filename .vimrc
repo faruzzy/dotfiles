@@ -214,7 +214,6 @@ Plug 'stsewd/fzf-checkout.vim'
 Plug 'junegunn/seoul256.vim'
 Plug 'joshdick/onedark.vim'
 Plug 'mhartington/oceanic-next'
-Plug 'catppuccin/vim', { 'as': 'catppuccin' }
 
 " }}}
 
@@ -352,9 +351,7 @@ call plug#end()
 " }}}
 " ----------------------------------------------------------------------------
 
-" colorscheme seoul256
-" colorscheme catpuccin
-let g:lightline = {'colorscheme': 'catppuccin_latte'}
+colorscheme seoul256
 
 " ----------------------------------------------------------------------------
 " fzf.vim {{{
@@ -647,7 +644,7 @@ augroup END
 
 augroup airline_config
 autocmd!
-  let g:airline_theme = 'catppuccin_latte'
+	let g:airline_theme='powerlineish'
 	let g:airline_powerline_fonts = 1
 	let g:airline#extensions#tabline#buffer_nr_format = '%s '
 	let g:airline#extensions#tabline#buffer_nr_show = 1
