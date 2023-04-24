@@ -62,7 +62,7 @@ set formatoptions+=1
 set encoding=utf-8 nobomb													" BOM often causes trouble
 scriptencoding utf-8														" utf-8 all the way
 if !has('nvim')
-	set term=xterm-256color
+  set term=xterm-256color
 endif
 
 if has('nvim') || has('termguicolors')
@@ -214,6 +214,7 @@ Plug 'stsewd/fzf-checkout.vim'
 Plug 'junegunn/seoul256.vim'
 Plug 'joshdick/onedark.vim'
 Plug 'mhartington/oceanic-next'
+Plug 'catppuccin/vim', { 'as': 'catppuccin' }
 
 " }}}
 
@@ -351,7 +352,9 @@ call plug#end()
 " }}}
 " ----------------------------------------------------------------------------
 
-colorscheme seoul256
+" colorscheme seoul256
+" colorscheme catpuccin
+let g:lightline = {'colorscheme': 'catppuccin_latte'}
 
 " ----------------------------------------------------------------------------
 " fzf.vim {{{
@@ -515,7 +518,7 @@ let g:tmuxcomplete#trigger = 'omnifunc'
 let g:ale_linters = {
 \   'python': ['flake8', 'pylint'],
 \   'javascript': ['eslint'],
-\		'vue': ['eslint']
+\   'vue': ['eslint']
 \}
 
 let g:ale_fixers = {
@@ -523,10 +526,10 @@ let g:ale_fixers = {
 \   'typescript': ['prettier', 'tslint', 'eslint'],
 \   'graphql': ['prettier', 'eslint'],
 \   'json': ['prettier', 'eslint'],
-\		'vue': ['eslint'],
-\		'scss': ['prettier'],
-\		'html': ['prettier'],
-\		'reason': ['refmt'],
+\   'vue': ['eslint'],
+\   'scss': ['prettier'],
+\   'html': ['prettier'],
+\   'reason': ['refmt'],
 \}
 
 let g:ale_fix_on_save = 1
@@ -644,7 +647,7 @@ augroup END
 
 augroup airline_config
 autocmd!
-	let g:airline_theme='powerlineish'
+  let g:airline_theme = 'catppuccin_latte'
 	let g:airline_powerline_fonts = 1
 	let g:airline#extensions#tabline#buffer_nr_format = '%s '
 	let g:airline#extensions#tabline#buffer_nr_show = 1
