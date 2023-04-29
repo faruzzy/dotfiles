@@ -15,6 +15,15 @@ local M = {
 }
 
 function M.config()
+  local custom_servers = require('lsp.servers')
+  for server_name, server in pairs(custom_servers) do
+    if not server.skip_lspconfig then
+      local base_config = require('lsp.base_config')()
+      local config = server.config and server.config(base_config) or base_config
+      require('lspconfig')[server_name].setup(config)
+    end
+  end
+
   -- nvim-cmp supports additional completion capabilities
   local capabilities = vim.lsp.protocol.make_client_capabilities()
   capabilities = require('cmp_nvim_lsp').default_capabilities(capabilities)
@@ -89,7 +98,6 @@ function M.config()
     'rust_analyzer',
     'pyright',
     'tsserver',
-    'eslint',
     -- 'gopls',
     lua_ls = {
       Lua = {
@@ -103,7 +111,6 @@ function M.config()
 
   --Ensure the servers above are installed
   local mason_lspconfig = require('mason-lspconfig')
-
   mason_lspconfig.setup {
     ensure_installed = servers,
   }

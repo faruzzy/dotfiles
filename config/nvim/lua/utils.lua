@@ -1,5 +1,18 @@
 local M = {}
 
+---Define vim keymap
+---@param mode string | table<string>
+---@param lhs string
+---@param rhs string | function
+---@param opts? table
+function M.map(mode, lhs, rhs, opts)
+  local options = { silent = true }
+  if opts then
+    options = vim.tbl_extend('force', options, opts)
+  end
+  vim.keymap.set(mode, lhs, rhs, options)
+end
+
 ---Define vim user command
 ---@param name string
 ---@param command string | function
