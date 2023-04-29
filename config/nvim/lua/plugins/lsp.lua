@@ -89,6 +89,7 @@ function M.config()
     'rust_analyzer',
     'pyright',
     'tsserver',
+    'eslint',
     -- 'gopls',
     lua_ls = {
       Lua = {
