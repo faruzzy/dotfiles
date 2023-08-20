@@ -18,9 +18,10 @@ local M = {
       end,
     },
     -- extension that offers intelligent prioritization when selecting files from your editing history.
-    {
+    --[[ {
       'nvim-telescope/telescope-frecency.nvim',
       config = function() require('telescope').load_extension('frecency') end,
+    }, ]]
     },
   }
 }
@@ -82,7 +83,7 @@ function M.config()
   end, { desc = '[/] Fuzzily search in current buffer]' })
 
   telescope.load_extension('fzf')
-  telescope.load_extension('frecency')
+  -- telescope.load_extension('frecency')
   telescope.load_extension('notify')
 end
 
