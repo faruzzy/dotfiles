@@ -1,5 +1,8 @@
 local M = {
   'neovim/nvim-lspconfig',
+  opts = {
+    inlay_hints = { enabled = true }
+  },
   dependencies = {
     -- Automatically install LSPs to stdpath for neovim
     'williamboman/mason.nvim',
@@ -67,10 +70,10 @@ function M.config()
     nmap('<leader>rn', vim.lsp.buf.rename, '[R]e[n]ame')
     nmap('<leader>ca', vim.lsp.buf.code_action, '[C]ode [A]ction')
 
-    nmap('gd', vim.lsp.buf.definition, '[G]oto [D]efinition')
+    nmap('gd','<cmd>Telescope lsp_definitions reuse=true<cr>', '[G]oto [D]efinition')
     nmap('gr', require('telescope.builtin').lsp_references, '[G]oto [R]eferences')
-    nmap('gI', vim.lsp.buf.implementation, '[G]oto [I]mplementation')
-    nmap('<leader>D', vim.lsp.buf.type_definition, 'Type [D]efinition')
+    nmap('gI', '<cmd>Telescope lsp_implementations reuse=true<cr>', '[G]oto [I]mplementation')
+    nmap('<leader>D', '<cmd>Telescope lsp_type_definitions reuse=true<cr>', 'Type [D]efinition')
     nmap('<leader>ds', require('telescope.builtin').lsp_document_symbols, '[D]ocument [S]ymbols')
     nmap('<leader>ws', require('telescope.builtin').lsp_dynamic_workspace_symbols, '[W]orkspace [S]ymbols')
 
