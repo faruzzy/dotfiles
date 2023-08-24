@@ -29,4 +29,5 @@ return {
   'MaxMEllon/vim-jsx-pretty',
   'rcarriga/nvim-notify', -- Notifications library
   'tpope/vim-repeat', keys = { { '.', desc = 'REPEAT' } },
+  'AndrewRadev/splitjoin.vim',
 }
