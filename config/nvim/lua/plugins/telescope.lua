@@ -23,7 +23,6 @@ local M = {
       config = function() require('telescope').load_extension('frecency') end,
     }, ]]
     },
-  }
 }
 
 function M.config()
