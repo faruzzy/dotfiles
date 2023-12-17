@@ -394,6 +394,8 @@ vim.o.smartcase = true
 
 -- set vim diff options
 vim.o.diffopt = 'internal,filler,closeoff,vertical'
+vim.o.splitright = true
+vim.o.splitbelow = true
 
 -- Keep signcolumn on by default
 vim.wo.signcolumn = 'yes'
