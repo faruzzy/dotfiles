@@ -372,6 +372,7 @@ vim.o.hlsearch = false
 
 -- Make line numbers default
 vim.wo.number = true
+vim.wo.relativenumber = true
 
 -- Enable mouse mode
 vim.o.mouse = 'a'
@@ -390,6 +391,9 @@ vim.o.undofile = true
 -- Case-insensitive searching UNLESS \C or capital in search
 vim.o.ignorecase = true
 vim.o.smartcase = true
+
+-- set vim diff options
+vim.o.diffopt = 'internal,filler,closeoff,vertical'
 
 -- Keep signcolumn on by default
 vim.wo.signcolumn = 'yes'
@@ -433,6 +437,29 @@ vim.keymap.set('n', '<leader>Gv', ':GV!<cr>')
 
 -- turn off higlighting until the next search
 vim.keymap.set('n', '<leader>n', ':noh<cr>')
+
+if vim.lsp.inlay_hint then
+  vim.keymap.set(
+  'n',
+  '<leader>uh',
+  function () vim.lsp.inlay_hint.enable(0, nil) end,
+    { desc = 'Toggle Inlay Hints' }
+  )
+end
+
+-- fugitive
+vim.keymap.set('n', '<leader>ga', ':Git add %:p<cr><cr>')
+vim.keymap.set('n', '<leader>gw', ':Gwrite<cr>')
+vim.keymap.set('n', '<leader>gr', ':Gread<cr> :w<cr>')
+vim.keymap.set('n', '<leader>gm', ':Gmove<cr>')
+vim.keymap.set('n', '<leader>gy', ':Gremove<cr>')
+vim.keymap.set('n', '<leader>gl', ':Git pull<cr>')
+vim.keymap.set('n', '<leader>gc', ':Git commit<cr>')
+vim.keymap.set('n', '<leader>gd', ':Gvdiffsplit<cr>')
+vim.keymap.set('n', '<leader>gs', ':Git<cr>', { noremap = true })
+vim.keymap.set('n', '<leader>gb', ':Git blame<cr>', { noremap = true })
+vim.keymap.set('n', '<leader>gg', ':Gmerge<cr>')
+vim.keymap.set('n', '<leader>pp', ':Git push origin master<cr>')
 
 -- [[ Highlight on yank ]]
 -- See `:help vim.highlight.on_yank()`
@@ -683,7 +710,8 @@ local servers = {
     Lua = {
       workspace = { checkThirdParty = false },
       telemetry = { enable = false },
-      -- NOTE: toggle below to ignore Lua_LS's noisy `missing-fields` warnings
+      hint = { enable = true },
+      -- OTE: toggle below to ignore Lua_LS's noisy `missing-fields` warnings
       -- diagnostics = { disable = { 'missing-fields' } },
     },
   },
