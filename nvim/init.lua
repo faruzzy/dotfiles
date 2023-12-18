@@ -101,7 +101,7 @@ require('lazy').setup({
   'tpope/vim-sleuth',
 
   -- NOTE: This is where your plugins related to LSP can be installed.
-  --  The configuration is done below. Search for lspconfig to find it below.
+  -- The configuration is done below. Search for lspconfig to find it below.
   {
     -- LSP Configuration & Plugins
     'neovim/nvim-lspconfig',
@@ -284,15 +284,6 @@ require('lazy').setup({
   },
 
   {
-    -- Theme inspired by Atom
-    'navarasu/onedark.nvim',
-    priority = 1000,
-    config = function()
-      vim.cmd.colorscheme 'onedark'
-    end,
-  },
-
-  {
     -- Set lualine as statusline
     'nvim-lualine/lualine.nvim',
     -- See `:help lualine.txt`
@@ -398,15 +389,13 @@ require('lazy').setup({
 -- See `:help vim.o`
 -- NOTE: You can change these options as you wish!
 
--- Set highlight on search
-vim.o.hlsearch = false
+vim.o.hlsearch = false        -- Set highlight on search
 
--- Make line numbers default
-vim.wo.number = true
-vim.wo.relativenumber = true
+vim.wo.relativenumber = true  -- Make line numbers relative by default
 
--- Enable mouse mode
-vim.o.mouse = 'a'
+vim.wo.cursorline = true      -- hightlight current line
+
+vim.o.mouse = 'a'             -- Enable mouse mode
 
 -- Sync clipboard between OS and Neovim.
 --  Remove this option if you want your OS clipboard to remain independent.
@@ -436,13 +425,13 @@ vim.o.updatetime = 250
 vim.o.timeoutlen = 300
 
 -- Spaces and Tabs
-vim.o.expandtab = true
+vim.o.expandtab = true        -- on pressing tab, insert 2 spaces
 vim.o.shiftround = true
-vim.o.shiftwidth = 2
+vim.o.shiftwidth = 2          -- when indenting '>', use 2 spaces width
 vim.o.softtabstop = 2
-vim.o.tabstop = 2
+vim.o.tabstop = 2             -- show eisting tab with 2 spaces width
 vim.o.list = true
-vim.o.backspace = 'indent,eol,start'
+vim.o.backspace = { 'indent', 'eol', 'start' }        -- make backspace work properly
 
 -- Set completeopt to have a better completion experience
 vim.o.completeopt = 'menuone,noselect'
@@ -491,17 +480,17 @@ end
 
 -- fugitive
 vim.keymap.set('n', '<leader>ga', ':Git add %:p<cr><cr>')
-vim.keymap.set('n', '<leader>gw', ':Gwrite<cr>')
-vim.keymap.set('n', '<leader>gr', ':Gread<cr> :w<cr>')
 vim.keymap.set('n', '<leader>gm', ':Gmove<cr>')
 vim.keymap.set('n', '<leader>gy', ':Gremove<cr>')
 vim.keymap.set('n', '<leader>gl', ':Git pull<cr>')
 vim.keymap.set('n', '<leader>gc', ':Git commit<cr>')
 vim.keymap.set('n', '<leader>gd', ':Gvdiffsplit<cr>')
 vim.keymap.set('n', '<leader>gs', ':Git<cr>', { noremap = true })
-vim.keymap.set('n', '<leader>gb', ':Git blame<cr>', { noremap = true })
 vim.keymap.set('n', '<leader>gg', ':Gmerge<cr>')
 vim.keymap.set('n', '<leader>pp', ':Git push origin master<cr>')
+
+-- Undotree
+vim.keymap.set('n', '<leader>ut', vim.cmd.UndotreeToggle)
 
 -- [[ Highlight on yank ]]
 -- See `:help vim.highlight.on_yank()`
@@ -745,16 +734,16 @@ local servers = {
   -- gopls = {},
   -- pyright = {},
   -- rust_analyzer = {},
-  -- tsserver = {},
-  -- html = { filetypes = { 'html', 'twig', 'hbs'} },
+  tsserver = {},
+  html = { filetypes = { 'html', 'twig', 'hbs'} },
 
   lua_ls = {
     Lua = {
       workspace = { checkThirdParty = false },
       telemetry = { enable = false },
       hint = { enable = true },
-      -- OTE: toggle below to ignore Lua_LS's noisy `missing-fields` warnings
-      -- diagnostics = { disable = { 'missing-fields' } },
+      -- NOTE: toggle below to ignore Lua_LS's noisy `missing-fields` warnings
+      diagnostics = { disable = { 'missing-fields' } },
     },
   },
 }
