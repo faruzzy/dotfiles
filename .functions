@@ -26,11 +26,11 @@ function ghpr() {
   local sed_cmd=$( [ "$(uname)" = Darwin ] && echo 'sed -E' || echo 'sed -r' )
   local PR=${1}
   local REPO_SLUG="$(git config --get remote.upstream.url \
-	| sed 's/^.*github.com[\/:]\(.*\)\.git/\1/')"
+        | sed 's/^.*github.com[\/:]\(.*\)\.git/\1/')"
   local req_url="https://api.github.com/repos/${REPO_SLUG}/pulls/${PR}"
   local PR_TITLE="$(curl -Ss "$req_url" \
-	| grep '"title"' \
-	| $sed_cmd 's/.*(\[(RFC|RDY)\]) *(.*)../\3/')"
+        | grep '"title"' \
+        | $sed_cmd 's/.*(\[(RFC|RDY)\]) *(.*)../\3/')"
 
   [ -z "$PR_TITLE" ] && { printf "error. request: $req_url\n       response: $(curl -Ss $req_url)\n"; return 1; }
 
@@ -54,7 +54,7 @@ function ghrebase1() {
     && git reset --hard upstream/master \
     && git merge --ff-only - \
     && git commit --amend -m "$(git log -1 --pretty=format:"%B" \
-	    | $sed_cmd "1 s/^(.*)\$/\\1 #${PR}/g")" \
+              | $sed_cmd "1 s/^(.*)\$/\\1 #${PR}/g")" \
     && git log --oneline --graph --decorate -n 5
 }
 
@@ -227,10 +227,10 @@ function mv() {
 
 # fbr - checkout git branch
 function fbr() {
-	local branches branch
-	branches=$(git branch) &&
-	branch=$(echo "$branches" | fzf-tmux -d 15 +m) &&
-	git checkout $(echo "$branch" | sed "s/.* //")
+  local branches branch
+  branches=$(git branch) &&
+  branch=$(echo "$branches" | fzf-tmux -d 15 +m) &&
+  git checkout $(echo "$branch" | sed "s/.* //")
 }
 
 # fstash - easier way to deal with stashes
@@ -250,10 +250,10 @@ function fstash() {
     sha=$(tail -1 <<< "$out" | cut -d' ' -f1)
     [ -z "$sha" ] && continue
       if [ "$k" = 'ctrl-d' ]; then
-	git diff $sha
+        git diff $sha
       elif [ "$k" = 'ctrl-b' ]; then
-	git stash branch "stash-$sha" $sha
-	  break;
+        git stash branch "stash-$sha" $sha
+        break;
       else
         git stash show -p $sha
       fi
@@ -327,19 +327,19 @@ function extract() {
     fi
       mkdir -p "$foldername" && cd "$foldername"
       case $1 in
-	*.tar.bz2) tar xjf "$fullpath" ;;
-	*.tar.gz) tar xzf "$fullpath" ;;
-	*.tar.xz) tar Jxvf "$fullpath" ;;
-	*.tar.Z) tar xzf "$fullpath" ;;
-	*.tar) tar xf "$fullpath" ;;
-	*.taz) tar xzf "$fullpath" ;;
-	*.tb2) tar xjf "$fullpath" ;;
-	*.tbz) tar xjf "$fullpath" ;;
-	*.tbz2) tar xjf "$fullpath" ;;
-	*.tgz) tar xzf "$fullpath" ;;
-	*.txz) tar Jxvf "$fullpath" ;;
-	*.zip) unzip "$fullpath" ;;
-	*) echo "'$1' cannot be extracted via extract()" && cd .. && ! $didfolderexist && rm -r "$foldername" ;;
+        *.tar.bz2) tar xjf "$fullpath" ;;
+        *.tar.gz) tar xzf "$fullpath" ;;
+        *.tar.xz) tar Jxvf "$fullpath" ;;
+        *.tar.Z) tar xzf "$fullpath" ;;
+        *.tar) tar xf "$fullpath" ;;
+        *.taz) tar xzf "$fullpath" ;;
+        *.tb2) tar xjf "$fullpath" ;;
+        *.tbz) tar xjf "$fullpath" ;;
+        *.tbz2) tar xjf "$fullpath" ;;
+        *.tgz) tar xzf "$fullpath" ;;
+        *.txz) tar Jxvf "$fullpath" ;;
+        *.zip) unzip "$fullpath" ;;
+        *) echo "'$1' cannot be extracted via extract()" && cd .. && ! $didfolderexist && rm -r "$foldername" ;;
       esac
   else
     echo "'$1' is not a valid file"
@@ -479,30 +479,6 @@ function clone {
   git clone $url $repo && cd $repo && subl .;
 }
 
-# open new cloned project with IntteliJ
-function clonei {
-  # customize username to your own
-  local username="faruzzy"
-  local url=$1;
-  local repo=$2;
-
-  if [[ ${url:0:4} == 'http' || ${url:0:3} == 'git' ]]
-  then
-    # just clone this thing.
-    repo=$(echo $url | awk -F/ '{print $NF}' | sed -e 's/.git$//');
-  elif [[ -z $repo ]]
-  then
-    # my own stuff.
-    repo=$url;
-    url="git@github.com:$username/$repo";
-  else
-    # not my own, but I know whose it is.
-    url="git@github.com:$url/$repo.git";
-  fi
-
-  git clone $url $repo && cd $repo && idea .;
-}
-
 # Copy w/ progress
 function cp_p () {
   rsync -WavP --human-readable --progress $1 $2
@@ -573,74 +549,12 @@ function unidecode() {
   echo # newline
 }
 
-# Add note to Notes.app (OS X 10.8)
-# Usage: `note 'title' 'body'` or `echo 'body' | note`
-# Title is optional
-function note() {
-  local title
-  local body
-  if [ -t 0 ]; then
-	  title="$1"
-	  body="$2"
-  else
-	  title=$(cat)
-  fi
-    osascript >/dev/null <<EOF
-      tell application "Notes"
-	  tell account "iCloud"
-	      tell folder "Notes"
-		  make new note with properties {name:"$title", body:"$title" & "<br><br>" & "$body"}
-	      end tell
-	  end tell
-      end tell
-EOF
-}
-
-# Add reminder to Reminders.app (OS X 10.8)
-# Usage: `remind 'foo'` or `echo 'foo' | remind`
-function remind() {
-  local text
-  if [ -t 0 ]; then
-    text="$1" # argument
-  else
-    text=$(cat) # pipe
-  fi
-  osascript >/dev/null <<EOF
-    tell application "Reminders"
-      tell the default list
-	make new reminder with properties {name:"$text"}
-      end tell
-    end tell
-EOF
-}
-
 # Launch installed browsers for a specific URL
 # Usage: browsers "http://www.google.com"
 function browsers(){
   chrome $1
   firefox $1
   safari $1
-}
-
-# open all changed files (that still actually exist) in the editor
-# credit: @cowboy
-function ged() {
-  local files=()
-  for f in $(git diff --name-only "$@"); do
-    [[ -e "$f" ]] && files=("${files[@]}" "$f")
-  done
-  local n=${#files[@]}
-  echo "Opening $n $([[ "$@" ]] || echo "modified ")file$([[ $n != 1 ]] && \
-  echo s)${@:+ modified in }$@"
-  q "${files[@]}"
-}
-
-# open last commit in GitHub, in the browser.
-# credit: @cowboy
-function gfu() {
-  local n="${@:-1}"
-  n=$((n-1))
-  open $(git log -n 1 --skip=$n --pretty=oneline | awk "{printf \"$(gurl)/commit/%s\", substr(\$1,1,7)}")
 }
 
 # Git add, commit, and push all in one
@@ -651,6 +565,10 @@ function qg() {
   # note that -S signs your commit. Remove if you have not set up GPG signatures
   git commit -S -m $message
   git push
+}
+
+fzf-down() {
+  fzf --height 50% "$@" --border
 }
 
 _gp() {
