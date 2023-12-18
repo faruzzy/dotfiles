@@ -1,10 +1,10 @@
 return {
   'mattn/emmet-vim',
   'windwp/nvim-ts-autotag', -- Use treesitter to autoclose and autorename html tags
+  'Issafalcon/lsp-overloads.nvim',
   'farmergreg/vim-lastplace', -- Intelligently reopen files at your last edit position.
   'norcalli/nvim-colorizer.lua',
   -- 'jordwalke/VimSplitBalancer', -- " Distributes available space among vertical splits, and plays nice with NERDTree
-  'Issafalcon/lsp-overloads.nvim',
 
   -- Git related plugins
   'tpope/vim-fugitive', -- Git wrapper
@@ -18,13 +18,12 @@ return {
   'benmills/vimux',
   'wellle/tmux-complete.vim',
 
-  'tpope/vim-sleuth', -- Detect tabstop and shiftwidth automatically
-  'wsdjeg/vim-fetch', -- Fetch that line and column, boy!
-
   -- Misc
   'Pocco81/auto-save.nvim', -- automatically save your changes so the world doesn't collapse
   'psliwka/vim-smoothie', -- Smooth scrolling done right
   -- 'karb94/neoscroll.nvim', -- look into this as a potential replacement for vim-smoothie
+  'wsdjeg/vim-fetch', -- Fetch that line and column, boy!
+  'tpope/vim-sleuth', -- Detect tabstop and shiftwidth automatically
   'mbbill/undotree',
   'MaxMEllon/vim-jsx-pretty',
   'rcarriga/nvim-notify', -- Notifications library
