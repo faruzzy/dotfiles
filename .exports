@@ -53,4 +53,4 @@ command -v tree > /dev/null && export FZF_ALT_C_OPTS="--preview 'tree -C {} | he
 # JAVA
 export JAVA_HOME=$(/usr/libexec/java_home) #TODO: Do I need this knowing that I have `jenv`
 
-export PATH=~/dev:/bin:/sbin:/usr/local/bin:/usr/bin:/usr/sbin:/usr/local/sbin:/usr/local/opt/libpq/bin:$PSQL:$GOPATH/bin:$GOROOT/bin:$SCRIPT_HOME:$M2_HOME/bin:$HOME/.composer/vendor/bin:$PATH
+export PATH=~/.local/share/bob/nvim-bin:/opt/homebrew/bin:/bin:/sbin:/usr/local/bin:/usr/bin:/usr/sbin:/usr/local/sbin:/usr/local/opt/libpq/bin:$PSQL:$GOPATH/bin:$GOROOT/bin:$SCRIPT_HOME:$M2_HOME/bin:$PATH
