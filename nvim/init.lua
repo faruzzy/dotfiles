@@ -391,6 +391,7 @@ require('lazy').setup({
 
 vim.o.hlsearch = false        -- Set highlight on search
 
+vim.wo.number = true          -- Display the real number
 vim.wo.relativenumber = true  -- Make line numbers relative by default
 
 vim.wo.cursorline = true      -- hightlight current line
@@ -431,7 +432,7 @@ vim.o.shiftwidth = 2          -- when indenting '>', use 2 spaces width
 vim.o.softtabstop = 2
 vim.o.tabstop = 2             -- show eisting tab with 2 spaces width
 vim.o.list = true
-vim.o.backspace = { 'indent', 'eol', 'start' }        -- make backspace work properly
+vim.opt.backspace = { 'indent', 'eol', 'start' }        -- make backspace work properly
 
 -- Set completeopt to have a better completion experience
 vim.o.completeopt = 'menuone,noselect'
