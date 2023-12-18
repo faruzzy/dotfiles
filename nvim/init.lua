@@ -348,6 +348,28 @@ require('lazy').setup({
     build = ':TSUpdate',
   },
 
+  {
+    'nvim-neo-tree/neo-tree.nvim',
+    cmd = 'Neotree',
+    branch = 'v2.x',
+    keys = {
+      { '<C-c>', '<cmd>Neotree toggle<cr>', desc = 'Neotree' },
+    },
+    dependencies = {
+      'nvim-lua/plenary.nvim',
+      'nvim-tree/nvim-web-devicons', -- not strictly required, but recommended
+      'MunifTanjim/nui.nvim',
+    },
+    config = function()
+      require('neo-tree').setup({
+        close_if_last_window = true,
+        filesystem = {
+          follow_current_file = true,
+          hijack_netrw_behavior = 'open_current',
+        }
+      })
+    end
+  },
   -- NOTE: Next Step on Your Neovim Journey: Add/Configure additional "plugins" for kickstart
   --       These are some example plugins that I've included in the kickstart repository.
   --       Uncomment any of the lines below to enable them.
