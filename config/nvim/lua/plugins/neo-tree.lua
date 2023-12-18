@@ -10,11 +10,13 @@ return {
     'nvim-tree/nvim-web-devicons', -- not strictly required, but recommended
     'MunifTanjim/nui.nvim',
   },
-  config = {
-    close_if_last_window = true,
-    filesystem = {
-      follow_current_file = true,
-      hijack_netrw_behavior = 'open_current',
-    }
-  }
+  config = function()
+    require('neo-tree').setup({
+      close_if_last_window = true,
+      filesystem = {
+        follow_current_file = true,
+        hijack_netrw_behavior = 'open_current',
+      }
+    })
+  end
 }
