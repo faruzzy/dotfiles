@@ -95,7 +95,8 @@ else
   # brew install zsh shellcheck autojump
 
   brew install \
-    fd ag ripgrep bat git-delta cmake cmus \
+    ninja cmake gettext curl # NeoVim build dependencies
+    fd ag ripgrep bat git-delta cmus \
     imagemagick gnupg \
     tree wget jq \
     pyenv xz python python@3.9 \
@@ -104,7 +105,7 @@ else
     perl krb5 luv tree-sitter berkeley-db libevent mpdecimal \
     readline unibilium ca-certificates msgpack utf8proc libtermkey ncurses vim \
     libuv ruby xz libvterm openssl@1.1 sqlite gdbm libyaml libffi pcre the_silver_searcher \
-    gettext pcre2 ngrep z ffmpeg youtube-dl cocoapods awscli http-server allure \
+    pcre2 ngrep z ffmpeg youtube-dl cocoapods awscli http-server allure \
 
   brew install libtool
   brew link libtool
