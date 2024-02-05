@@ -37,13 +37,9 @@ I hope you enjoy your Neovim journey,
 
 P.S. You can delete this when you're done too. It's your config now :)
 --]]
-require('faruzzy.settings')
 
--- Set comma ',' as the leader key
--- See `:help mapleader`
--- NOTE: Must happen before plugins are required (otherwise wrong leader will be used)
-vim.g.mapleader = ','
-vim.g.maplocalleader = ','
+require('faruzzy.settings')
+require('faruzzy.remap')
 
 -- [[ Install `lazy.nvim` plugin manager ]]
 --    https://github.com/folke/lazy.nvim
@@ -65,122 +61,6 @@ require('lazy').setup('plugins', {
   change_detection = { notify = false },
   checker = { enabled = true, notify = false },
 })
-
---[[ require('lazy').setup({
-  -- NOTE: First, some plugins that don't require any configuration
-  'mattn/emmet-vim',
-  'windwp/nvim-ts-autotag', -- Use treesitter to autoclose and autorename html tags
-  'Issafalcon/lsp-overloads.nvim',
-  'farmergreg/vim-lastplace', -- Intelligently reopen files at your last edit position.
-  'norcalli/nvim-colorizer.lua',
-
-  -- tmux integration
-  'tmux-plugins/vim-tmux-focus-events',
-  'christoomey/vim-tmux-navigator',
-  'benmills/vimux',
-  'wellle/tmux-complete.vim',
-
-  -- Git related plugins
-  'tpope/vim-fugitive', -- Git wrapper
-  'tpope/vim-rhubarb', -- Github extension for fugitive
-  'junegunn/gv.vim', -- A git commit browser
-  'rhysd/git-messenger.vim', cmd = 'GitMessenger',
-
-  -- Misc
-  'Pocco81/auto-save.nvim', -- automatically save your changes so the world doesn't collapse
-  'psliwka/vim-smoothie', -- Smooth scrolling done right
-  -- 'karb94/neoscroll.nvim', -- look into this as a potential replacement for vim-smoothie
-  'wsdjeg/vim-fetch', -- Fetch that line and column, boy!
-  'tpope/vim-sleuth', -- Detect tabstop and shiftwidth automatically
-  'mbbill/undotree',
-  'MaxMEllon/vim-jsx-pretty',
-  'rcarriga/nvim-notify', -- Notifications library
-  'tpope/vim-repeat', keys = { { '.', desc = 'REPEAT' } },
-  'AndrewRadev/splitjoin.vim',
-  'tpope/vim-sleuth', -- Detect tabstop and shiftwidth automatically
-
-  {
-    -- Set lualine as statusline
-    'nvim-lualine/lualine.nvim',
-    -- See `:help lualine.txt`
-    opts = {
-      options = {
-        icons_enabled = false,
-        theme = 'onedark',
-        component_separators = '|',
-        section_separators = '',
-      },
-    },
-  },
-
-  {
-    -- Highlight, edit, and navigate code
-    'nvim-treesitter/nvim-treesitter',
-    dependencies = {
-      'nvim-treesitter/nvim-treesitter-textobjects',
-    },
-    build = ':TSUpdate',
-  },
-
-  {
-    'nvim-neo-tree/neo-tree.nvim',
-    cmd = 'Neotree',
-    branch = 'v2.x',
-    keys = {
-      { '<C-c>', '<cmd>Neotree toggle<cr>', desc = 'Neotree' },
-    },
-    dependencies = {
-      'nvim-lua/plenary.nvim',
-      'nvim-tree/nvim-web-devicons', -- not strictly required, but recommended
-      'MunifTanjim/nui.nvim',
-    },
-    config = function()
-      require('neo-tree').setup({
-        close_if_last_window = true,
-        filesystem = {
-          follow_current_file = true,
-          hijack_netrw_behavior = 'open_current',
-        }
-      })
-    end
-  },
-
-  {
-    'windwp/nvim-autopairs',
-    event = 'InsertEnter *.*',
-    config = autoPairs_config
-    -- config = function() require('nvim-autopairs').setup {} end
-  },
-
-  -- Easy motion like plugin that allows you to jump anywhere in a document
-  {
-    'phaazon/hop.nvim',
-    branch = 'v2', -- optional but strongly recommended
-    config = function()
-      -- you can configure Hop the way you like here; see :h hop-config
-      require'hop'.setup { keys = 'etovxqpdygfblzhckisuran' }
-    end
-  },
-
-  -- NOTE: Next Step on Your Neovim Journey: Add/Configure additional "plugins" for kickstart
-  --       These are some example plugins that I've included in the kickstart repository.
-  --       Uncomment any of the lines below to enable them.
-  -- require 'kickstart.plugins.autoformat',
-  -- require 'kickstart.plugins.debug',
-
-  -- NOTE: The import below can automatically add your own plugins, configuration, etc from `lua/custom/plugins/*.lua`
-  --    You can use this folder to prevent any conflicts with this init.lua if you're interested in keeping
-  --    up-to-date with whatever is in the kickstart repo.
-  --    Uncomment the following line and add your plugins to `lua/custom/plugins/*.lua` to get going.
-  --
-  --    For additional information see: https://github.com/folke/lazy.nvim#-structuring-your-plugins
-  -- { import = 'custom.plugins' },
-}, {})
-]]
-
--- [[ Setting options ]]
--- See `:help vim.o`
--- NOTE: You can change these options as you wish!
 
 vim.o.hlsearch = false        -- Set highlight on search
 

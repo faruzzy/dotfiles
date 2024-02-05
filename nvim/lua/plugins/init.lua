@@ -28,4 +28,12 @@ return {
   'rcarriga/nvim-notify', -- Notifications library
   'tpope/vim-repeat', keys = { { '.', desc = 'REPEAT' } },
   'AndrewRadev/splitjoin.vim',
+  'RRethy/vim-illuminate', -- automatically hightlight ohter uses of the word under the cursor
+  {
+    'Bekaboo/dropbar.nvim',
+    -- optional, but required for fuzzy finder support
+    dependencies = {
+      'nvim-telescope/telescope-fzf-native.nvim'
+    }
+  },
 }
