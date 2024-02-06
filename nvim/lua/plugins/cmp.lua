@@ -12,6 +12,7 @@ return {
     'hrsh7th/cmp-nvim-lsp',
     'hrsh7th/cmp-nvim-lsp-signature-help',
     'hrsh7th/cmp-path',
+    'saadparwaiz1/cmp_luasnip',
 
     -- Adds a number of user-friendly snippets
     'rafamadriz/friendly-snippets',
