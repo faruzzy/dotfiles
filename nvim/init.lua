@@ -40,6 +40,7 @@ P.S. You can delete this when you're done too. It's your config now :)
 
 require('faruzzy.settings')
 require('faruzzy.remap')
+require('faruzzy.autocmd')
 
 -- [[ Install `lazy.nvim` plugin manager ]]
 --    https://github.com/folke/lazy.nvim
@@ -62,86 +63,9 @@ require('lazy').setup('plugins', {
   checker = { enabled = true, notify = false },
 })
 
-vim.o.hlsearch = false        -- Set highlight on search
-
-vim.wo.number = true          -- Display the real number
-vim.wo.relativenumber = true  -- Make line numbers relative by default
-
-vim.wo.cursorline = true      -- hightlight current line
-
-vim.o.mouse = 'a'             -- Enable mouse mode
-
--- Sync clipboard between OS and Neovim.
---  Remove this option if you want your OS clipboard to remain independent.
---  See `:help 'clipboard'`
-vim.o.clipboard = 'unnamedplus'
-
--- Enable break indent
-vim.o.breakindent = true
-
--- Save undo history
-vim.o.undofile = true
-
--- Case-insensitive searching UNLESS \C or capital in search
-vim.o.ignorecase = true
-vim.o.smartcase = true
-
--- set vim diff options
-vim.o.diffopt = 'internal,filler,closeoff,vertical'
-vim.o.splitright = true
-vim.o.splitbelow = true
-
--- Keep signcolumn on by default
-vim.wo.signcolumn = 'yes'
-
--- Decrease update time
-vim.o.updatetime = 250
-vim.o.timeoutlen = 300
-
--- Spaces and Tabs
-vim.o.expandtab = true        -- on pressing tab, insert 2 spaces
-vim.o.shiftround = true
-vim.o.shiftwidth = 2          -- when indenting '>', use 2 spaces width
-vim.o.softtabstop = 2
-vim.o.tabstop = 2             -- show eisting tab with 2 spaces width
-vim.o.list = true
-vim.opt.backspace = { 'indent', 'eol', 'start' }        -- make backspace work properly
-
--- Set completeopt to have a better completion experience
-vim.o.completeopt = 'menuone,noselect'
-
--- NOTE: You should make sure your terminal supports this
-vim.o.termguicolors = true
-
--- [[ Basic Keymaps ]]
-
--- Keymaps for better default experience
--- See `:help vim.keymap.set()`
-vim.keymap.set({ 'n', 'v' }, '<Space>', '<Nop>', { silent = true })
-
 -- Remap for dealing with word wrap
 vim.keymap.set('n', 'k', "v:count == 0 ? 'gk' : 'k'", { expr = true, silent = true })
 vim.keymap.set('n', 'j', "v:count == 0 ? 'gj' : 'j'", { expr = true, silent = true })
-
--- Diagnostic keymaps
-vim.keymap.set('n', '[d', vim.diagnostic.goto_prev, { desc = 'Go to previous diagnostic message' })
-vim.keymap.set('n', ']d', vim.diagnostic.goto_next, { desc = 'Go to next diagnostic message' })
-vim.keymap.set('n', '<leader>e', vim.diagnostic.open_float, { desc = 'Open floating diagnostic message' })
-vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist, { desc = 'Open diagnostics list' })
-
--- Quickly save the current buffer or all buffers
-vim.keymap.set('n', '<leader>w', '<CMD>update<CR>')
-vim.keymap.set('n', '<leader>W', '<CMD>wall<CR>')
-
-vim.keymap.set('n', '<leader>x', ':x<CR>')
-vim.keymap.set('n', '<leader>X', ':wqa!<CR>')
-
--- GV
-vim.keymap.set('n', '<leader>gv', ':GV<cr>')
-vim.keymap.set('n', '<leader>Gv', ':GV!<cr>')
-
--- turn off higlighting until the next search
-vim.keymap.set('n', '<leader>n', ':noh<cr>')
 
 if vim.lsp.inlay_hint then
   vim.keymap.set(
@@ -151,23 +75,6 @@ if vim.lsp.inlay_hint then
     { desc = 'Toggle Inlay Hints' }
   )
 end
-
--- fugitive
-vim.keymap.set('n', '<leader>ga', ':Git add %:p<cr><cr>')
-vim.keymap.set('n', '<leader>gm', ':Gmove<cr>')
-vim.keymap.set('n', '<leader>gy', ':Gremove<cr>')
-vim.keymap.set('n', '<leader>gl', ':Git pull<cr>')
-vim.keymap.set('n', '<leader>gc', ':Git commit<cr>')
-vim.keymap.set('n', '<leader>gd', ':Gvdiffsplit<cr>')
-vim.keymap.set('n', '<leader>gs', ':Git<cr>', { noremap = true })
-vim.keymap.set('n', '<leader>gg', ':Gmerge<cr>')
-vim.keymap.set('n', '<leader>pp', ':Git push origin master<cr>')
-
--- Undotree
-vim.keymap.set('n', '<leader>ut', vim.cmd.UndotreeToggle)
-
--- This command prompts you to type one key, and will hint that key in the buffer.
-vim.keymap.set('n', '<leader>,', ':HopChar1<cr>')
 
 -- [[ Highlight on yank ]]
 -- See `:help vim.highlight.on_yank()`

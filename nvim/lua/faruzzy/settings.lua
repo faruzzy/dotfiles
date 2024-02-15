@@ -11,14 +11,16 @@ g.mapleader = ','
 g.maplocalleader = ','
 
 vim.api.nvim_set_option('clipboard', 'unnamed') -- Copies to the clipboard
+-- Sync clipboard between OS and Neovim.
+--  Remove this option if you want your OS clipboard to remain independent.
+--  See `:help 'clipboard'`
+vim.o.clipboard = 'unnamedplus'
 
--- Make line numbers default
-vim.wo.number = true
-vim.wo.relativenumber = true
--- o.relativenumber = true
+vim.wo.number = true          -- Display the real number on the current line
+vim.wo.relativenumber = true  -- Display the relative number for everything else
+vim.o.cursorline = true
 
--- Enable mouse mode
-vim.o.mouse = 'a'
+vim.o.mouse = 'a'             -- Enable mouse mode
 
 vim.o.termguicolors = true
 
@@ -40,9 +42,12 @@ o.linebreak = true
 o.spelllang='en_us,fr'
 o.display = 'lastline'
 
-o.diffopt = 'filler'
+-- set vim diff options
+vim.o.diffopt = 'internal,filler,closeoff,vertical'
+vim.o.splitright = true
+vim.o.splitbelow = true
+
 -- o.shell = /bin/sh
-o.timeoutlen = 1250
 
 o.encoding = 'utf-8'
 o.fileencodings = 'utf-8,cp932,euc-jp'
@@ -60,32 +65,31 @@ o.shiftwidth = 2
 o.softtabstop = 2
 o.tabstop = 2
 o.list = true
-o.backspace = 'indent,eol,start'
+vim.opt.backspace = { 'indent', 'eol', 'start' }        -- make backspace work properly
 
 o.incsearch = true
 -- Set highlight on search
 o.hlsearch = true
+-- Case-insensitive searching UNLESS \C or capital in search
 o.ignorecase = true
 o.smartcase = true
+
 o.gdefault = true
 
 o.backup = false
 o.writebackup = false
 o.swapfile = false
 
--- Set completeopt to have a better completion experience
-vim.o.completeopt = 'menuone,noselect'
+vim.o.completeopt = 'menuone,noselect'  -- Set completeopt to have a better completion experience
 
--- Decrease update time
-vim.o.updatetime = 250
-vim.wo.signcolumn = 'yes'
+vim.o.updatetime = 250 -- Decrease update time
+vim.o.timeoutlen = 1250
+
+vim.wo.signcolumn = 'yes' -- Keep signcolumn on by default
 o.signcolumn = "yes"
 
 o.matchtime = 2
-o.splitright = true
-o.splitbelow = true
 -- o.splitkeep = 'screen'
 
 -- o.noeol = true --Todo: nvim doesn't know about this, find alternative
-o.cursorline = true
 -- o.nocursorcolumn = true --TODO: nvim doesn't know about this, find alternative
