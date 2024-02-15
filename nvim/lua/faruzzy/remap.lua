@@ -65,15 +65,12 @@ vim.keymap.set('n', '<leader>O', ':!open .<cr>') -- open the current directory i
 
 -- fugitive
 vim.keymap.set('n', '<leader>ga', ':Git add %:p<cr><cr>')
-vim.keymap.set('n', '<leader>gw', ':Gwrite<cr>')
-vim.keymap.set('n', '<leader>gr', ':Gread<cr> :w<cr>')
 vim.keymap.set('n', '<leader>gm', ':Gmove<cr>')
 vim.keymap.set('n', '<leader>gy', ':Gremove<cr>')
 vim.keymap.set('n', '<leader>gl', ':Git pull<cr>')
 vim.keymap.set('n', '<leader>gc', ':Git commit<cr>')
 vim.keymap.set('n', '<leader>gd', ':Gvdiffsplit<cr>')
 vim.keymap.set('n', '<leader>gs', ':Git<cr>', { noremap = true })
-vim.keymap.set('n', '<leader>gb', ':Git blame<cr>', { noremap = true })
 vim.keymap.set('n', '<leader>gg', ':Gmerge<cr>')
 vim.keymap.set('n', '<leader>pp', ':Git push origin master<cr>')
 
