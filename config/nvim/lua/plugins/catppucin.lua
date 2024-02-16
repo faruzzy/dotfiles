@@ -69,7 +69,4 @@ return {
   'catppuccin/nvim',
   name = 'catppuccin',
   config = config_catpuccin
-  -- config = function()
-  --   vim.cmd.colorscheme "catppuccin-frappe"
-  -- end
 }
