@@ -97,7 +97,7 @@ else
   brew install \
     ninja cmake gettext curl # NeoVim build dependencies
     fd ag ripgrep bat git-delta cmus \
-    imagemagick gnupg \
+    imagemagick gnupg gnu-sed\
     tree wget jq \
     pyenv xz python python@3.9 \
     reattach-to-user-namespace bash bash-completion@2 tmux \
