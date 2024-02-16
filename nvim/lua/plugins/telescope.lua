@@ -43,7 +43,7 @@ function M.config()
     pickers = {
       find_files = {
         hidden = true,
-        find_command = {'rg', '--files', '--hidden', '-g', '!.git' }
+        find_command = { 'rg', '--files', '--hidden', '-g', '!.git' }
       },
       buffers = {
         initial_mode = 'normal',
