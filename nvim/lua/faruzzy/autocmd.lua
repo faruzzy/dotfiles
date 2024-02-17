@@ -15,3 +15,10 @@ vim.api.nvim_create_autocmd('TextYankPost', {
   pattern = '*',
 })
 
+local spell_group = vim.api.nvim_create_augroup('spell_group', { clear = true })
+vim.api.nvim_create_autocmd('FileType', {
+  pattern = 'gitcommit,markdown',
+  command = 'setlocal spell',
+  group = spell_group,
+})
+
