@@ -5,5 +5,8 @@ return {
   config = function()
     -- you can configure Hop the way you like here; see :h hop-config
     require'hop'.setup { keys = 'etovxqpdygfblzhckisuran' }
+
+    -- This command prompts you to type one key, and will hint that key in the buffer.
+    vim.keymap.set('n', '<leader>,', ':HopChar1<cr>')
   end
 }

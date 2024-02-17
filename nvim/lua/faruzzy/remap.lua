@@ -32,9 +32,6 @@ vim.keymap.set('i', '<c-h>', '<left>', {})
 vim.keymap.set('i', '<c-l>', '<right>', {})
 -- vim.keymap.set('i', '<C-y>', '<esc>yyp', {}) -- [ ctrl + y ] copy current line and paste next line
 
-vim.keymap.set('n', '<A-i>', "<CMD>lua require('FTerm').toggle()<CR>")
-vim.keymap.set('t', '<A-i>', "<C-\\><C-n><CMD>lua require('FTerm').toggle()<CR>")
-
 vim.keymap.set('n', '<leader>x', ':x<CR>')
 vim.keymap.set('n', '<leader>X', ':wqa!<CR>')
 -- vim.keymap.set('n', '<leader>w', vim.cmd.update)
@@ -94,6 +91,3 @@ vim.keymap.set('n', '<leader>gr', '<cmd>diffget //3<cr>')
 
 -- Undotree
 vim.keymap.set('n', '<leader>ut', vim.cmd.UndotreeToggle)
-
--- This command prompts you to type one key, and will hint that key in the buffer.
-vim.keymap.set('n', '<leader>,', ':HopChar1<cr>')
