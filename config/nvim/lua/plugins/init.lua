@@ -1,6 +1,7 @@
 return {
   'mattn/emmet-vim',
   'windwp/nvim-ts-autotag', -- Use treesitter to autoclose and autorename html tags
+  'MaxMEllon/vim-jsx-pretty',
   'Issafalcon/lsp-overloads.nvim',
   'farmergreg/vim-lastplace', -- Intelligently reopen files at your last edit position.
   'norcalli/nvim-colorizer.lua',
@@ -25,7 +26,6 @@ return {
   'wsdjeg/vim-fetch', -- Fetch that line and column, boy!
   'tpope/vim-sleuth', -- Detect tabstop and shiftwidth automatically
   'mbbill/undotree',
-  'MaxMEllon/vim-jsx-pretty',
   'rcarriga/nvim-notify', -- Notifications library
   'tpope/vim-repeat', keys = { { '.', desc = 'REPEAT' } },
   'AndrewRadev/splitjoin.vim',
