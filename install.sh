@@ -134,7 +134,7 @@ nvm install node #Install the latest available version right away
 git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
 
 # Install catppuccin for TMUX theme
-git clone https://github.com/catppuccin/alacritty.git ~/.config/alacritty/catppuccin
+git clone --depth 1 --branch yaml https://github.com/catppuccin/alacritty.git ~/.config/alacritty/catppuccin
 
 # mkdir -p $HOME/.shellrc/zshrc.d/
 
