@@ -1,40 +1,40 @@
 {
-	"extends": "eslint:recommended",
-	"env": {
-		"amd": true,
-		"browser": true,
-		"es6": true,
-		"node": true
-	},
-	"parserOptions": {
-	"ecmaVersion": 6,
-		"sourceType": "module"
-	},
-	"rules": {
-		"no-console": "off",
-		"indent":[2, "tab"],
-		"max-len": ["error", 120, {
-			"ignoreComments": true,
-			"ignoreUrls": true,
-			"tabWidth": 4
-		}],
-		"no-unused-vars": ["error", {
-			"vars": "all",
-			"args": "after-used",
-			"argsIgnorePattern": "(^reject$|^_$)",
-			"varsIgnorePattern": "(^_$)"
-		}],
-		"linebreak-style": [
-			"error",
-			"unix"
-		],
-		"quotes": [
-			"error",
-			"single"
-		],
-		"semi": [
-			"error",
-			"always"
-		]
-	}
+  "extends": "eslint:recommended",
+  "env": {
+    "amd": true,
+    "browser": true,
+    "es6": true,
+    "node": true
+  },
+  "parserOptions": {
+  "ecmaVersion": 6,
+    "sourceType": "module"
+  },
+  "rules": {
+    "no-console": "off",
+    "indent":[2, "tab"],
+    "max-len": ["error", 120, {
+      "ignoreComments": true,
+      "ignoreUrls": true,
+      "tabWidth": 4
+    }],
+    "no-unused-vars": ["error", {
+      "vars": "all",
+      "args": "after-used",
+      "argsIgnorePattern": "(^reject$|^_$)",
+      "varsIgnorePattern": "(^_$)"
+    }],
+    "linebreak-style": [
+      "error",
+      "unix"
+    ],
+    "quotes": [
+      "error",
+      "single"
+    ],
+    "semi": [
+      "error",
+      "always"
+    ]
+  }
 }
