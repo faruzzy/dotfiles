@@ -29,4 +29,5 @@ return {
   'tpope/vim-repeat', keys = { { '.', desc = 'REPEAT' } },
   'AndrewRadev/splitjoin.vim',
   'RRethy/vim-illuminate', -- automatically hightlight ohter uses of the word under the cursor
+  'moll/vim-bbye', -- allows you to delete buffers without closing your windows or messing up your layout
 }

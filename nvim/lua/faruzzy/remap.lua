@@ -91,3 +91,6 @@ vim.keymap.set('n', '<leader>gr', '<cmd>diffget //3<cr>')
 
 -- Undotree
 vim.keymap.set('n', '<leader>ut', vim.cmd.UndotreeToggle)
+
+-- vim-bbye
+vim.keymap.set('n', '<leader>q', ':Bwipeout<CR>')
