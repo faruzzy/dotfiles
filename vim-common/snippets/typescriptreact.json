@@ -33,6 +33,16 @@
       "}"
     ]
   },
+  "React Hook Component": {
+    "prefix": "rhc",
+    "body": [
+      "export const ${1:$TM_FILENAME_BASE} = (): JSX.Element => {",
+      "\treturn (",
+      "\t\t${2:<div />}",
+      "\t);",
+      "}"
+    ]
+  },
   "React Function Component with Props": {
     "prefix": "rfcp",
     "body": [
