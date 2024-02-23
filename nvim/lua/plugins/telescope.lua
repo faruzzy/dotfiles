@@ -10,9 +10,14 @@ local M = {
     {
       'nvim-telescope/telescope-fzf-native.nvim',
       build = 'make',
+      config = function () require('telescope').load_extension('fzf') end,
       cond = function()
         return vim.fn.executable 'make' == 1
       end,
+    },
+    {
+      'nvim-telescope/telescope-frecency.nvim', -- extension that offers intelligent prioritization
+      config = function() require('telescope').load_extension('frecency') end,
     },
   },
 }
@@ -24,10 +29,14 @@ function M.config()
 
   telescope.setup {
     defaults = {
+      path_display = { 'truncate' },
+      prompt_prefix = '   ',
+      entry_prefix = '  ',
+      selection_caret = ' ',
       mappings = {
         i = {
-          ['<C-u>'] = false,
-          ['<C-d>'] = false,
+          ['<C-u>'] = actions.results_scrolling_up,
+          ['<C-d>'] = actions.results_scrolling_down,
           ['<C-j>'] = function(prompt_bufnr)
             action_set.scroll_results(prompt_bufnr, 1)
           end,
@@ -38,7 +47,19 @@ function M.config()
           ['<C-b>'] = actions.preview_scrolling_up,
           ['<C-a>'] = actions.select_all,
         },
+        n = {
+          ['<C-u>'] = actions.preview_scrolling_up,
+          ['<C-d>'] = actions.preview_scrolling_down,
+        }
       },
+    },
+    extensions = {
+      fzf = {
+        fuzzy = true,
+        override_generic_sorter = true,
+        override_file_sorter = true,
+        case_mode = 'smart_case',
+      }
     },
     pickers = {
       find_files = {
@@ -60,6 +81,7 @@ function M.config()
   vim.keymap.set('n', '<leader>sd', require('telescope.builtin').diagnostics, { desc = '[S]earch [D]iagnostics' })
   vim.keymap.set('n', '<leader>ss', require('telescope.builtin').builtin, { desc = '[S]earch [S]elect Telescope' })
   vim.keymap.set('n', '<C-g>', require('telescope.builtin').resume, { desc = 'Search Resume' }) -- useful for running the last global grep search
+  vim.keymap.set('n', '<leader>f', '<cmd>Telescope frecency<CR>')
   -- vim.keymap.set('n', '<leader>gs', '<cmd>Telescope git_status<CR>')
 
   -- See `:help telescope.builtin`
@@ -72,10 +94,6 @@ function M.config()
       previewer = false,
     })
   end, { desc = '[/] Fuzzily search in current buffer]' })
-
-  telescope.load_extension('fzf')
-  -- telescope.load_extension('frecency')
-  telescope.load_extension('notify')
 end
 
 return M
