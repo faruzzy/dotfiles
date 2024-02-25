@@ -30,5 +30,26 @@ return {
   'RRethy/vim-illuminate',                                      -- automatically hightlight ohter uses of the word under the cursor
   'moll/vim-bbye',                                              -- allows you to delete buffers without closing your windows or messing up your layout
   { 'gbprod/stay-in-place.nvim', opts = {} },                   -- prevent the cursor from moving when using shift and filter actions
-  { 'ellisonleao/glow.nvim', config = true, cmd = 'Glow' }      -- preview markdown code directly in your neovim terminal
+  { 'ellisonleao/glow.nvim', config = true, cmd = 'Glow' },     -- preview markdown code directly in your neovim terminal
+  {
+    "toppair/peek.nvim",
+    event = { "VeryLazy" },
+    build = "deno task --quiet build:fast",
+    config = function()
+        require("peek").setup()
+        -- refer to `configuration to change defaults`
+        vim.api.nvim_create_user_command("PeekOpen", require("peek").open, {})
+        vim.api.nvim_create_user_command("PeekClose", require("peek").close, {})
+    end,
+  },
+  {
+    'glacambre/firenvim',
+
+    -- Lazy load firenvim
+    -- Explanation: https://github.com/folke/lazy.nvim/discussions/463#discussioncomment-4819297
+    lazy = not vim.g.started_by_firenvim,
+    build = function()
+      vim.fn["firenvim#install"](0)
+    end
+  }
 }
