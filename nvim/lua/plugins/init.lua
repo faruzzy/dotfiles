@@ -51,5 +51,6 @@ return {
     build = function()
       vim.fn["firenvim#install"](0)
     end
-  }
+  },
+  { "folke/trouble.nvim", config = true, cmd = 'Trouble' }      -- pretty list for showing diagnostics, quickfix to help solve the trouble
 }
