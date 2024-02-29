@@ -119,6 +119,7 @@ else
   $(brew --prefix)/opt/fzf/install
 
   brew install --HEAD neovim # install the development version of Nvim
+  brew install deno
 fi
 
 # Install NVM
