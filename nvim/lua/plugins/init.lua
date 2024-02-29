@@ -32,17 +32,7 @@ return {
   { 'gbprod/stay-in-place.nvim', opts = {} },                   -- prevent the cursor from moving when using shift and filter actions
   { 'ellisonleao/glow.nvim', config = true, cmd = 'Glow' },     -- preview markdown code directly in your neovim terminal
   { 'folke/trouble.nvim', config = true, cmd = 'Trouble' },     -- pretty list for showing diagnostics, quickfix to help solve the trouble
-    "toppair/peek.nvim",
-    event = { "VeryLazy" },
-    build = "deno task --quiet build:fast",
-    config = function()
-        require("peek").setup()
-        -- refer to `configuration to change defaults`
-        vim.api.nvim_create_user_command("PeekOpen", require("peek").open, {})
-        vim.api.nvim_create_user_command("PeekClose", require("peek").close, {})
-    end,
-  },
-  {
+  --[[ {
     'glacambre/firenvim',
 
     -- Lazy load firenvim
@@ -51,6 +41,10 @@ return {
     build = function()
       vim.fn["firenvim#install"](0)
     end
+  }, ]]
+  {
+    'folke/trouble.nvim',
+    config = true,
+    cmd = 'Trouble',
   },
-  { "folke/trouble.nvim", config = true, cmd = 'Trouble' }      -- pretty list for showing diagnostics, quickfix to help solve the trouble
 }
