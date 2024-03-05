@@ -2,11 +2,8 @@ require('faruzzy.settings')
 require('faruzzy.remap')
 require('faruzzy.autocmd')
 
--- [[ Install `lazy.nvim` plugin manager ]]
---    https://github.com/folke/lazy.nvim
---    `:help lazy.nvim.txt` for more info
 local lazypath = vim.fn.stdpath 'data' .. '/lazy/lazy.nvim'
-if not vim.loop.fs_stat(lazypath) then
+if not vim.uv.fs_stat(lazypath) then
   local lazyrepo = 'https://github.com/folke/lazy.nvim.git'
   vim.fn.system { 'git', 'clone', '--filter=blob:none','--branch=stable', lazyrepo, lazypath }
 end
@@ -20,15 +17,6 @@ require('lazy').setup('plugins', {
 -- Remap for dealing with word wrap
 vim.keymap.set('n', 'k', "v:count == 0 ? 'gk' : 'k'", { expr = true, silent = true })
 vim.keymap.set('n', 'j', "v:count == 0 ? 'gj' : 'j'", { expr = true, silent = true })
-
-if vim.lsp.inlay_hint then
-  vim.keymap.set(
-  'n',
-  '<leader>uh',
-  function () vim.lsp.inlay_hint.enable(0, nil) end,
-    { desc = 'Toggle Inlay Hints' }
-  )
-end
 
 -- Telescope live_grep in git root
 -- Function to find the git root directory based on the current buffer's path

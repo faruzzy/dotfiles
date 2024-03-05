@@ -6,9 +6,6 @@ vim.keymap.set('n', 'b<Tab>', '<cmd>b#<cr>')
 vim.keymap.set('n', ']b', vim.cmd.bnext)
 vim.keymap.set('n', '[b', vim.cmd.bprev)
 
--- AutoSave toggle
-vim.api.nvim_set_keymap("n", "<leader>as", ":ASToggle<CR>", {})
-
 -- Move to the next/previous buffer
 -- map('n', '<leader>[', '<CMD>bp<CR>')
 -- map('n', '<leader>]', '<CMD>bn<CR>')
@@ -95,3 +92,13 @@ vim.keymap.set('n', '<leader>ut', vim.cmd.UndotreeToggle)
 
 -- vim-bbye
 vim.keymap.set('n', '<leader>q', ':Bwipeout<CR>')
+
+if vim.lsp.inlay_hint then
+  vim.keymap.set(
+  'n',
+  '<leader>uh',
+  function () vim.lsp.inlay_hint.enable(0, nil) end,
+    { desc = 'Toggle Inlay Hints' }
+  )
+end
+
