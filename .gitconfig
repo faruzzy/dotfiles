@@ -127,6 +127,7 @@
 
 [diff]
   compactionHeuristic = true
+  algorithm = histogram
 
 [color "branch"]
   current = yellow reverse
@@ -172,3 +173,9 @@
   rebase = true
 [rerere]
   enabled = true
+[commit]
+  verbose = true
+[branch]
+  sort = -committerdate
+[init]
+  defaultBranch = main
