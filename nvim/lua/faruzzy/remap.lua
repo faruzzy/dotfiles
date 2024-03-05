@@ -87,18 +87,11 @@ vim.keymap.set('n', '<leader>Gv', ':GV!<cr>')
 vim.keymap.set('n', '<leader>gl', '<cmd>diffget //2<cr>')
 vim.keymap.set('n', '<leader>gr', '<cmd>diffget //3<cr>')
 
--- Undotree
-vim.keymap.set('n', '<leader>ut', vim.cmd.UndotreeToggle)
-
 -- vim-bbye
 vim.keymap.set('n', '<leader>q', ':Bwipeout<CR>')
 
-if vim.lsp.inlay_hint then
-  vim.keymap.set(
-  'n',
-  '<leader>uh',
-  function () vim.lsp.inlay_hint.enable(0, nil) end,
-    { desc = 'Toggle Inlay Hints' }
-  )
-end
+vim.keymap.set('n', '<leader>ti', function ()
+  local inlay_state = vim.lsp.inlay_hint.is_enabled(0)
+  vim.lsp.inlay_hint.enable(0, not inlay_state)
+end, { desc = 'Toggle Inlay Hints' })
 
