@@ -90,6 +90,10 @@ vim.keymap.set('n', '<leader>gr', '<cmd>diffget //3<cr>')
 -- vim-bbye
 vim.keymap.set('n', '<leader>q', ':Bwipeout<CR>')
 
+-- run last command easily
+local def_opts = { silent = false, noremap = true }
+vim.keymap.set({ 'n', 'v' }, '<CR>', ':<up>', def_opts)
+
 vim.keymap.set('n', '<leader>ti', function ()
   local inlay_state = vim.lsp.inlay_hint.is_enabled(0)
   vim.lsp.inlay_hint.enable(0, not inlay_state)
