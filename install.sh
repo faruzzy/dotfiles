@@ -96,7 +96,7 @@ else
 
   brew install \
     ninja cmake gettext curl # NeoVim build dependencies
-    fd ag ripgrep bat git-delta cmus \
+    fd ag ripgrep bat gh git-delta cmus \
     imagemagick gnupg gnu-sed\
     tree wget jq \
     pyenv xz python python@3.9 \
@@ -165,6 +165,7 @@ npm install -g typescript
 npm install -g ts-node
 npm install -g tldr
 npm install -g git-open
+npm install -g pnpm
 # this is needed for UtilSnips
 python3 -m pip install --user --upgrade pynvim
 pip install Pygments
