@@ -53,6 +53,7 @@ local servers = {
       diagnostics = { disable = { 'missing-fields' } },
     },
   },
+  eslint = {},
 }
 
 return {
