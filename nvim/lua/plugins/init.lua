@@ -32,19 +32,15 @@ return {
   { 'gbprod/stay-in-place.nvim', opts = {} },                   -- prevent the cursor from moving when using shift and filter actions
   { 'ellisonleao/glow.nvim', config = true, cmd = 'Glow' },     -- preview markdown code directly in your neovim terminal
   { 'folke/trouble.nvim', config = true, cmd = 'Trouble' },     -- pretty list for showing diagnostics, quickfix to help solve the trouble
-  --[[ {
-    'glacambre/firenvim',
-
-    -- Lazy load firenvim
-    -- Explanation: https://github.com/folke/lazy.nvim/discussions/463#discussioncomment-4819297
-    lazy = not vim.g.started_by_firenvim,
-    build = function()
-      vim.fn["firenvim#install"](0)
-    end
-  }, ]]
   {
     'folke/trouble.nvim',
     config = true,
     cmd = 'Trouble',
+  },
+  {
+    'fei6409/log-highlight.nvim',                               -- Neovim plugin that brings syntax highlighting to generic log files
+    config = function()
+      require('log-highlight').setup {}
+    end,
   },
 }
