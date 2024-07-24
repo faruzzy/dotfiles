@@ -54,7 +54,6 @@ else
   # Graphical App install from Home-brew cask
   brew install --cask rectangle
   brew install --cask app-cleaner
-  brew install --cask flux
   brew install --cask bettertouchtool path-finder
   brew install --cask google-chrome-canary google-chrome firefox
   brew install --cask caffeine
@@ -163,6 +162,7 @@ code --install-extension nrwl.angular-console
 
 npm install -g typescript
 npm install -g ts-node
+npm install -g aws-cdk
 npm install -g tldr
 npm install -g git-open
 npm install -g pnpm
