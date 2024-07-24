@@ -2,7 +2,7 @@
   "Jest Module Mock": {
     "prefix": "mm",
     "body": [
-      "jest.mock(\"${1}\", () => ({",
+      "jest.mock('${1}', () => ({",
       "\t${2}",
       "}));"
     ]
@@ -10,8 +10,8 @@
   "Jest Module Mock Require Actual": {
     "prefix": "mmra",
     "body": [
-      "jest.mock(\"${1}\", () => ({",
-      "\t...jest.requireActual<any>(\"$1\"),",
+      "jest.mock('${1}', () => ({",
+      "\t...jest.requireActual<any>('$1'),",
       "\t${2}",
       "}));"
     ]
@@ -27,7 +27,7 @@
   "Jest Describe Block": {
     "prefix": "desc",
     "body": [
-      "describe(\"${1}\", () => {",
+      "describe('${1}', () => {",
       "\t${2}",
       "});"
     ]
@@ -35,7 +35,7 @@
   "Jest Test Case": {
     "prefix": "it",
     "body": [
-      "it(\"${1}\", () => {",
+      "it('${1}', () => {",
       "\t${2}",
       "});"
     ]
@@ -43,7 +43,7 @@
   "Jest Async Test Case": {
     "prefix": "ita",
     "body": [
-      "it(\"${1}\", async () => {",
+      "it('${1}', async () => {",
       "\texpect.assertions(${2:1});",
       "",
       "\t${3}",
@@ -77,7 +77,7 @@
   "CDK Construct": {
     "prefix": "cdkc",
     "body": [
-      "import { Construct } from \"constructs\";",
+      "import { Construct } from 'constructs';",
       "",
       "export class ${1}Construct extends Construct {",
       "\tconstructor(scope: Construct, id: string) {",
@@ -91,7 +91,7 @@
   "CDK Construct With Props": {
     "prefix": "cdkcp",
     "body": [
-      "import { Construct } from \"constructs\";",
+      "import { Construct } from 'constructs';",
       "",
       "export interface ${1}ConstructProps {",
       "\t${2}",
@@ -109,8 +109,8 @@
   "CDK Stack": {
     "prefix": "cdks",
     "body": [
-      "import { Stack, StackProps } from \"aws-cdk-lib\";",
-      "import { Construct } from \"constructs\";",
+      "import { Stack, StackProps } from 'aws-cdk-lib';",
+      "import { Construct } from 'constructs';",
       "",
       "export class ${1}Stack extends Stack {",
       "\tconstructor(scope: Construct, id: string, props?: StackProps) {",
@@ -124,8 +124,8 @@
   "CDK Stack With Props": {
     "prefix": "cdksp",
     "body": [
-      "import { Stack, StackProps } from \"aws-cdk-lib\";",
-      "import { Construct } from \"constructs\";",
+      "import { Stack, StackProps } from 'aws-cdk-lib';",
+      "import { Construct } from 'constructs';",
       "",
       "export interface ${1}StackProps extends StackProps {",
       "\t${2}",
