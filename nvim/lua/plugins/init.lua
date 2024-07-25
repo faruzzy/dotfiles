@@ -28,6 +28,7 @@ return {
   'tpope/vim-repeat', keys = { { '.', desc = 'REPEAT' } },
   'AndrewRadev/splitjoin.vim',
   'RRethy/vim-illuminate',                                      -- automatically hightlight ohter uses of the word under the cursor
+  'jordwalke/VimSplitBalancer',                                 -- Distributes available space among vertical splits
   'moll/vim-bbye',                                              -- allows you to delete buffers without closing your windows or messing up your layout
   { 'gbprod/stay-in-place.nvim', opts = {} },                   -- prevent the cursor from moving when using shift and filter actions
   { 'ellisonleao/glow.nvim', config = true, cmd = 'Glow' },     -- preview markdown code directly in your neovim terminal
