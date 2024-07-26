@@ -27,8 +27,8 @@ window:
   # Units are physical pixels; this is not DPI aware.
   # (change requires restart)
   padding:
-    x: 2
-    y: 2
+    x: 1
+    y: 1
 
   # Spread additional padding evenly around the terminal content.
   dynamic_padding: false
@@ -54,7 +54,8 @@ font:
   # The normal (roman) font face to use.
   normal:
     family: ComicMono Nerd Font
-    family: FiraCode Nerd Font
+    family: FantasqueSansM Nerd Font
+    # family: ZedMono Nerd Font Mono
     style: Regular
 
   # The bold font face
@@ -68,13 +69,13 @@ font:
   #   style: Regular Italic
 
   # Point size of the font
-  size: 14
+  size: 16
 
   # Offset is the extra space around each character. offset.y can be thought of
   # as modifying the linespacing, and offset.x as modifying the letter spacing.
   offset:
     x: 0
-    y: 1
+    y: 0
 
   # Glyph offset determines the locations of the glyphs within their cells with
   # the default being at the bottom. Increase the x offset to move the glyph to
