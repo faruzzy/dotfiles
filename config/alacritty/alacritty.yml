@@ -47,18 +47,19 @@ scrolling:
 
   # Number of lines the viewport will move for every line scrolled when
   # scrollback is enabled (history > 0).
-  multiplier: 3
+  multiplier: 1
 
 # Font configuration (changes require restart)
 font:
   # The normal (roman) font face to use.
   normal:
-    family: Monaco for Powerline
+    family: ComicMono Nerd Font
+    family: FiraCode Nerd Font
     style: Regular
 
   # The bold font face
   # bold:
-  #   family: FiraCode Nerd Font
+  #   family: ComicMono Nerd Font
   #   style: Bold
 
   # # The italic font face
@@ -67,7 +68,7 @@ font:
   #   style: Regular Italic
 
   # Point size of the font
-  size: 13.5
+  size: 14
 
   # Offset is the extra space around each character. offset.y can be thought of
   # as modifying the linespacing, and offset.x as modifying the letter spacing.
@@ -87,77 +88,7 @@ debug:
   # Should display the render timer
   render_timer: false
 
-# Colors (Tomorrow Night Bright)
-# colors:
-#   # Default colors
-#   primary:
-#     background: '0x24292e'
-#     foreground: '0xd1d5da'
-#
-#   # Colors the cursor will use if `custom_cursor_colors` is true
-#   cursor:
-#     text:   '0xf1c1c1'
-#     cursor: '0xff2600'
-#
-#   # Normal colors
-#   normal:
-#     black:   '0x586069'
-#     red:     '0xea4a5a'
-#     green:   '0x34d058'
-#     yellow:  '0xffea7f'
-#     blue:    '0x2188ff'
-#     magenta: '0xb392f0'
-#     cyan:    '0x39c5cf'
-#     white:   '0xd1d5da'
-#
-#   # Bright colors
-#   bright:
-#     black:   '0x959da5'
-#     red:     '0xf97583'
-#     green:   '0x85e89d'
-#     yellow:  '0xffea7f'
-#     blue:    '0x79b8ff'
-#     magenta: '0xb392f0'
-#     cyan:    '0x56d4dd'
-#     white:   '0xfafbfc'
-#
-#   indexed_colors:
-#     - { index: 16, color: '0xd18616' }
-#     - { index: 17, color: '0xf97583' }
-#
-#   # Dim colors (Optional)
-#   dim:
-#     black:   '0x333333'
-#     red:     '0xf2777a'
-#     green:   '0x99cc99'
-#     yellow:  '0xffcc66'
-#     blue:    '0x6699cc'
-#     magenta: '0xcc99cc'
-#     cyan:    '0x66cccc'
-#     white:   '0xdddddd'
-
-# Visual Bell
-#
-# Any time the BEL code is received, Alacritty "rings" the visual bell. Once
-# rung, the terminal background will be set to white and transition back to the
-# default background color. You can control the rate of this transition by
-# setting the `duration` property (represented in milliseconds). You can also
-# configure the transition function by setting the `animation` property.
-#
-# Possible values for `animation`
-# `Ease`
-# `EaseOut`
-# `EaseOutSine`
-# `EaseOutQuad`
-# `EaseOutCubic`
-# `EaseOutQuart`
-# `EaseOutQuint`
-# `EaseOutExpo`
-# `EaseOutCirc`
-# `Linear`
-#
 # To completely disable the visual bell, set its duration to 0.
-#
 bell:
   animation: EaseOutExpo
   duration: 0
