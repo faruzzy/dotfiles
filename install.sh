@@ -53,6 +53,8 @@ else
   [ -d /opt/homebrew ] && eval "$(/opt/homebrew/bin/brew shellenv)"
   # Graphical App install from Home-brew cask
   brew install --cask rectangle
+  brew install koekeishiya/formulae/yabai
+  brew install koekeishiya/formulae/skhd
   brew install --cask app-cleaner
   brew install --cask bettertouchtool path-finder
   brew install --cask google-chrome-canary google-chrome firefox
