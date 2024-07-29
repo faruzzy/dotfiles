@@ -53,7 +53,7 @@ scrolling:
 font:
   # The normal (roman) font face to use.
   normal:
-    family: ComicMono Nerd Font
+    family: ComicShannsMono Nerd Font
     # family: FantasqueSansM Nerd Font
     # family: ZedMono Nerd Font Mono
     style: Regular
