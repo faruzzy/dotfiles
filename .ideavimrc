@@ -1,16 +1,50 @@
 " Shamelessly copied from https://github.com/junegunn/dotfiles/blob/master/ideavimrc
+" consider checking this out: https://github.com/OptimusCrime/ideavim/blob/master/ideavimrc
+" register leader
 let mapleader = ','
+
 set number
 set relativenumber
 set incsearch
 set hlsearch | nohlsearch
 set ignorecase smartcase
 set clipboard=unnamed
+set visualbell
 set scrolloff=5
+set showcmd
 set showmode
-set commentary
+set history=1000
+set ideastatusicon=gray
+set idearefactormode=normal
+
+" extensions
 set surround
 set easymotion
+set commentary
+set highlightedyank
+" set multiple-cursors
+" set NERDTree
+" set argtextobj
+" set sneak
+" set quickscope
+
+" Center screen when jumping to next match
+nnoremap n nzz
+nnoremap N Nzz
+vnoremap n nzz
+vnoremap N Nzz
+
+" Center screen when moving up and down
+nnoremap <C-u> <C-u>zz
+nnoremap <C-o> <C-d>zz
+vnoremap <C-u> <C-u>zz
+vnoremap <C-o> <C-d>zz
+
+" easy window navigation
+" nnoremap <a-k> gT
+" nnoremap <a-j> gt
+" nnoremap <c-s-tab> gT
+" nnoremap <c-tab> gt
 
 inoremap jk <Esc>
 vnoremap jk <Esc>
