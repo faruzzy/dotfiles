@@ -80,11 +80,11 @@
       "import { Construct } from 'constructs';",
       "",
       "export class ${1}Construct extends Construct {",
-      "\tconstructor(scope: Construct, id: string) {",
-      "\t\tsuper(scope, id);",
+      "  constructor(scope: Construct, id: string) {",
+      "  \tsuper(scope, id);",
       "",
-      "\t\t${2}",
-      "\t}",
+      "  \t${2}",
+      "  }",
       "}"
     ]
   },
@@ -113,11 +113,11 @@
       "import { Construct } from 'constructs';",
       "",
       "export class ${1}Stack extends Stack {",
-      "\tconstructor(scope: Construct, id: string, props?: StackProps) {",
-      "\t\tsuper(scope, id, props);",
+      "  constructor(scope: Construct, id: string, props?: StackProps) {",
+      "  \tsuper(scope, id, props);",
       "",
-      "\t\t${2}",
-      "\t}",
+      "  \t${2}",
+      "  }",
       "}"
     ]
   },
@@ -128,15 +128,15 @@
       "import { Construct } from 'constructs';",
       "",
       "export interface ${1}StackProps extends StackProps {",
-      "\t${2}",
+      "  ${2}",
       "}",
       "",
       "export class $1Stack extends Stack {",
-      "\tconstructor(scope: Construct, id: string, props?: $1StackProps) {",
-      "\t\tsuper(scope, id, props);",
+      "  constructor(scope: Construct, id: string, props?: $1StackProps) {",
+      "  \tsuper(scope, id, props);",
       "",
-      "\t\t${3}",
-      "\t}",
+      "  \t${3}",
+      "  }",
       "}"
     ]
   }
