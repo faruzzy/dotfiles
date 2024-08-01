@@ -4,6 +4,7 @@ local M = {
   branch = '0.1.x',
   dependencies = {
     'nvim-lua/plenary.nvim',
+    'jonarrien/telescope-cmdline.nvim',
     -- Fuzzy Finder Algorithm which requires local dependencies to be built.
     -- Only load if `make` is available. Make sure you have the system
     -- requirements installed.
@@ -72,6 +73,19 @@ function M.config()
         sort_mru = true,
       },
     },
+    cmdline = {
+      picker = {
+        layout_config = {
+          width  = 120,
+          height = 25,
+        }
+      },
+      mappings    = {
+        complete      = '<Tab>',
+        run_selection = '<C-CR>',
+        run_input     = '<CR>',
+      },
+    }
   }
 
   vim.keymap.set('n', '<C-p>', require('telescope.builtin').find_files, { desc = '[S]earch [F]iles' })
@@ -88,12 +102,14 @@ function M.config()
   vim.keymap.set('n', '<leader>?', require('telescope.builtin').oldfiles, { desc = '[?] Find recently opened files' })
   vim.keymap.set('n', '<leader><cr>', require('telescope.builtin').buffers, { desc = '[ ] Find existing buffers' })
   vim.keymap.set('n', '<leader>/', function()
+
     -- You can pass additional configuration to telescope to change theme, layout, etc.
     require('telescope.builtin').current_buffer_fuzzy_find(require('telescope.themes').get_dropdown {
       winblend = 10,
       previewer = false,
     })
   end, { desc = '[/] Fuzzily search in current buffer]' })
+  vim.api.nvim_set_keymap('n', ':', ':Telescope cmdline<CR>', { noremap = true, desc = "Cmdline" })
 end
 
 return M
