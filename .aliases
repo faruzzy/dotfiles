@@ -43,8 +43,7 @@ alias lsh='ls -ld .?*'
 # Stopwatch
 alias timer='echo "Timer started. Stop with Ctrl-D." && date && time cat && date'
 
-# Lock the screen (when going AFK) - mac only
-alias afk="/System/Library/CoreServices/Menu\ Extras/User.menu/Contents/Resources/CGSession -suspend"
+alias sleep="pmset sleepnow"
 
 if [[ "$OSTYPE" =~ ^darwin ]]; then
   alias ls="command ls -G"
