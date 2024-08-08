@@ -372,12 +372,6 @@ function calc() {
 	printf "\n"
 }
 
-function camerausedby() {
-	echo "Checking to see who is using the iSight camera… 📷"
-	usedby=$(lsof | grep -w "AppleCamera\|USBVDC\|iSight" | awk '{printf $2"\n"}' | xargs ps)
-	echo -e "Recent camera uses:\n$usedby"
-}
-
 # Create a .tart.gz archive, using zopfli, pigz or gzip for compression
 function targz() {
   local tmpFile="${@%/}.tar"
