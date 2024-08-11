@@ -1,5 +1,4 @@
 return {
-  -- NOTE: First, some plugins that don't require any configuration
   'mattn/emmet-vim',
   'MaxMEllon/vim-jsx-pretty',
   -- 'Issafalcon/lsp-overloads.nvim',
@@ -17,6 +16,7 @@ return {
   'tpope/vim-rhubarb',                                          -- Github extension for fugitive
   'junegunn/gv.vim',                                            -- A git commit browser
   'rhysd/git-messenger.vim', cmd = 'GitMessenger',
+  { "wintermute-cell/gitignore.nvim", dependencies = "nvim-telescope/telescope.nvim" },
 
   -- Misc
   'Pocco81/auto-save.nvim',                                     -- automatically save your changes so the world doesn't collapse
