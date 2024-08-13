@@ -57,8 +57,8 @@ local neogit_extension = {
 local active_lsp = {
   function()
     local msg = ''
-    local buf_ft = vim.api.nvim_buf_get_option(0, 'filetype')
-    local clients = vim.lsp.get_active_clients()
+    local buf_ft = vim.api.nvim_get_option_value('filetype', {})
+    local clients = vim.lsp.get_clients()
     if next(clients) == nil then return msg end
     for _, client in ipairs(clients) do
       local filetypes = client.config.filetypes
@@ -109,7 +109,7 @@ local evil_opts = function()
     options = {
       -- Disable sections and component separators
       component_separators = '',
-      section_separators = { left = "▓▒░", right = "░▒▓" },
+      section_separators = '',
       theme = {
         -- We are going to use lualine_c an lualine_x as left and
         -- right section. Both are highlighted by c theme .  So we
@@ -301,7 +301,7 @@ local norm_opts = {
       { 'filename', path = 1 },
       { 'aerial' }
     },
-    --[[ lualine_x = {
+    lualine_x = {
       {
         require("noice").api.status.command.get,
         cond = require("noice").api.status.command.has,
@@ -329,7 +329,7 @@ local norm_opts = {
         'encoding',
         fmt = string.upper
       },
-    } ,]]
+    },
     lualine_y = { 'location', 'progress' },
     lualine_z = {
       {

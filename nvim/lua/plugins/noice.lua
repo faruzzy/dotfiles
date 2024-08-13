@@ -26,7 +26,7 @@ local config = function()
 end
 
 return {
-  -- 'folke/noice.nvim',
-  -- event = 'VeryLazy',
-  -- config = config,
+  'folke/noice.nvim',
+  event = 'VeryLazy',
+  config = config,
 }
