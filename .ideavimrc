@@ -1,5 +1,6 @@
 " Shamelessly copied from https://github.com/junegunn/dotfiles/blob/master/ideavimrc
 " consider checking this out: https://github.com/OptimusCrime/ideavim/blob/master/ideavimrc
+
 " register leader
 let mapleader = ','
 
