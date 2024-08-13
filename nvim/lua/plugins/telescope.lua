@@ -4,7 +4,7 @@ local M = {
   branch = '0.1.x',
   dependencies = {
     'nvim-lua/plenary.nvim',
-    'jonarrien/telescope-cmdline.nvim',
+    'jonarrien/telescope-cmdline.nvim', -- extension to use command line in a floating window, rather than in bottom-left corner
     -- Fuzzy Finder Algorithm which requires local dependencies to be built.
     -- Only load if `make` is available. Make sure you have the system
     -- requirements installed.
