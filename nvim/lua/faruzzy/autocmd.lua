@@ -1,3 +1,5 @@
+local augroup = require('utils').augroup
+
 -- [[ Prevent auto comment on <CR> ]]
 local no_auto_comment = vim.api.nvim_create_augroup('no_auto_comment', { clear = true })
 vim.api.nvim_create_autocmd('FileType', {
@@ -22,3 +24,12 @@ vim.api.nvim_create_autocmd('FileType', {
   group = spell_group,
 })
 
+augroup('mode_highlights', {
+  {
+    'ModeChanged',
+    callback = function()
+      require('modes').relink_highlights()
+      require('tint').refresh()
+    end,
+  },
+})
