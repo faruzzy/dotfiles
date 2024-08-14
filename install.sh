@@ -55,6 +55,7 @@ else
   brew install --cask rectangle
   brew install koekeishiya/formulae/yabai
   brew install koekeishiya/formulae/skhd
+  brew install alt-tab
   brew install --cask app-cleaner
   brew install --cask bettertouchtool path-finder
   brew install --cask google-chrome-canary google-chrome firefox
