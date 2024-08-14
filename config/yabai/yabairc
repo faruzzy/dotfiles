@@ -1,25 +1,30 @@
+#!/usr/bin/env sh
+
+sudo yabai --load-sa
+yabai -m signal --add event=dock_did_restart action="sudo yabai --load-sa"
+
 # default layout (can be bsp, stack or float)
-yabai -m config layout stack
-
+# yabai -m config layout bsp
 # New window spawns to the right if vertical split, or bottom if horizontal split
-# yabai -m config window_placement second_child
+yabai -m config window_placement second_child
 
-yabai -m space 1 --label one
-yabai -m space 2 --label two
-yabai -m space 3 --label three
-yabai -m space 4 --label four
-yabai -m space 5 --label five
-yabai -m space 6 --label six
-yabai -m space 7 --label seven
-yabai -m space 8 --label eight
-yabai -m space 9 --label nine
+yabai -m space 1 --label code
+yabai -m space 2 --label mail
+yabai -m space 3 --label web
+yabai -m space 4 --label webdev
+yabai -m space 4 --label notes
+yabai -m space 5 --label media
+# yabai -m space 6 --label six
+# yabai -m space 7 --label seven
+# yabai -m space 8 --label eight
+# yabai -m space 9 --label nine
 
 # padding set to 12px
-yabai -m config top_padding 2
-yabai -m config bottom_padding 2
-yabai -m config left_padding 2
-yabai -m config right_padding 2
-yabai -m config window_gap 2
+# yabai -m config top_padding 2
+# yabai -m config bottom_padding 2
+# yabai -m config left_padding 2
+# yabai -m config right_padding 2
+# yabai -m config window_gap 2
 
 # center mouse on window with focus
 yabai -m config mouse_follows_focus on
@@ -33,8 +38,60 @@ yabai -m config mouse_action2 resize
 
 
 # when window is dropped in center of another window, swap them (on edges it will split it)
-yabai -m mouse_drop_action swap
+# yabai -m mouse_drop_action swap
 
-yabai -m rule --add app="^System Settings$" manage=off
-yabai -m rule --add app="^Calculator$" manage=off
-yabai -m rule --add app="^Karabiner-Elements$" manage=off
+# window rules
+yabai -m rule --add app="^Alacritty$" space=code
+yabai -m rule --add app="^Spark$" space=mail
+yabai -m rule --add app="^Safari$" space=web
+yabai -m rule --add app="^Google Chrome$" space=webdev
+yabai -m rule --add app="^Notes$" space=notes
+yabai -m rule --add app="^Spotify$" space=media
+yabai -m rule --add manage=off app="^App Store$"
+yabai -m rule --add manage=off app="^Calculator$"
+yabai -m rule --add manage=off app="^System Preferences$"
+yabai -m rule --add manage=off app="^Archive Utility$"
+yabai -m rule --add manage=off app="^Karabiner-Elements$"
+yabai -m rule --add manage=off app="^Qbserve$"
+yabai -m rule --add manage=off app="^Finder$"
+
+# specific space settings
+yabai -m config --space mail  layout stack
+yabai -m config --space web layout float
+yabai -m config --space webdev layout stack
+
+yabai -m config                              \
+    external_bar                off:41:0     \
+    mouse_follows_focus         on           \
+    focus_follows_mouse         autoraise    \
+    window_placement            second_child \
+    window_topmost              off          \
+    window_shadow               off          \
+    window_animation_duration   0.25         \
+    window_opacity_duration     0.25         \
+    active_window_opacity       0.90         \
+    normal_window_opacity       0.50         \
+    window_opacity              on           \
+    insert_feedback_color       0xaad75f5f   \
+    active_window_border_color  0xBF775759   \
+    normal_window_border_color  0x7f353535   \
+    window_border_width         4            \
+    window_border_radius        12           \
+    window_border_blur          on           \
+    window_border_hidpi         on           \
+    window_border               on           \
+    split_ratio                 0.50         \
+    split_type                  auto         \
+    auto_balance                off          \
+    top_padding                 10           \
+    left_padding                10           \
+    right_padding               10           \
+    bottom_padding              10           \
+    window_gap                  10           \
+    layout                      bsp          \
+    mouse_modifier              fn           \
+    mouse_action1               move         \
+    mouse_action2               resize       \
+    mouse_drop_action           swap
+
+echo "yabai configuration loaded.."
