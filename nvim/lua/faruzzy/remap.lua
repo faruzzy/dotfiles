@@ -99,3 +99,4 @@ vim.keymap.set('n', '<leader>ti', function ()
   vim.lsp.inlay_hint.enable(0, not inlay_state)
 end, { desc = 'Toggle Inlay Hints' })
 
+vim.keymap.set('n', '<leader>ut', vim.cmd.UndotreeToggle) -- undotree

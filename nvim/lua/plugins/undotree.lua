@@ -9,8 +9,6 @@ local config = function()
   vim.g.undotree_TreeSplitShape = '╱'
   vim.g.undotree_TreeReturnShape = '╲'
   vim.g.undotree_SetFocusWhenToggle = 1
-
-  vim.keymap.set('n', '<leader>ut', vim.cmd.UndotreeToggle)
 end
 
 return {
