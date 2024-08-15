@@ -99,7 +99,7 @@ function M.config()
   -- vim.keymap.set('n', '<leader>gs', '<cmd>Telescope git_status<CR>')
 
   -- See `:help telescope.builtin`
-  vim.keymap.set('n', '<leader>?', require('telescope.builtin').oldfiles, { desc = '[?] Find recently opened files' })
+  -- vim.keymap.set('n', '<leader>?', require('telescope.builtin').oldfiles, { desc = '[?] Find recently opened files' })
   vim.keymap.set('n', '<leader><cr>', require('telescope.builtin').buffers, { desc = '[ ] Find existing buffers' })
   vim.keymap.set('n', '<leader>/', function()
 
