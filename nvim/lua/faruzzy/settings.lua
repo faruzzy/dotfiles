@@ -4,7 +4,9 @@ local o = vim.opt
 g.mapleader = ','
 g.maplocalleader = ','
 
-vim.api.nvim_set_option('clipboard', 'unnamed') -- Copies to the clipboard
+vim.g.have_nerd_font = true
+
+vim.api.nvim_set_option_value('clipboard', 'unnamed', {}) -- Copies to the clipboard
 vim.o.clipboard = 'unnamedplus'
 
 vim.wo.number = true          -- Display the real number on the current line
