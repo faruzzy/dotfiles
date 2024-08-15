@@ -1,6 +1,7 @@
 return {
-  'mattn/emmet-vim',                                            -- provides support for expanding abbreviations similar to emmet
-  'MaxMEllon/vim-jsx-pretty',                                   -- React syntax highlighting and indenting plugin for vim. Also supports the typescript tsx file.
+  'mattn/emmet-vim',                                            -- Provides support for expanding abbreviations similar to emmet
+  'MaxMEllon/vim-jsx-pretty',                                   -- React syntax highlighting and indenting plugin for vim.
+  'sickill/vim-pasta',                                          -- Pasting with indentation adjusted to destination context
   -- 'Issafalcon/lsp-overloads.nvim',
   'farmergreg/vim-lastplace',                                   -- Intelligently reopen files at your last edit position.
   'norcalli/nvim-colorizer.lua',                                -- A color highlighter for Neovim
@@ -16,7 +17,17 @@ return {
   'tpope/vim-rhubarb',                                          -- Github extension for fugitive
   'junegunn/gv.vim',                                            -- A git commit browser
   'rhysd/git-messenger.vim', cmd = 'GitMessenger',              -- reveal the hidden message from Git under the cursor quickly in a popup window
-  { "wintermute-cell/gitignore.nvim", dependencies = "nvim-telescope/telescope.nvim" },
+  {
+    "wintermute-cell/gitignore.nvim",                           -- plugin for generating .gitignore files in seconds, by allowing you to select from a huge number of different technologies
+    dependencies = "nvim-telescope/telescope.nvim",
+  },
+
+  'pantharshit00/vim-prisma',                                   -- Provides file detection and syntax highlighting suppor for Prisma files
+  'jparise/vim-graphql',                                        -- Provides fie detection, syntax highlighting and indentation.
+  'udalov/javap-vim',                                           -- Allows you to read the decompiled bytecode of a JVM class file
+
+  'wesQ3/vim-windowswap',                                       -- Swap windows without ruining your layout
+  'wellle/visual-split.vim',
 
   -- Misc
   'Pocco81/auto-save.nvim',                                     -- automatically save your changes so the world doesn't collapse
