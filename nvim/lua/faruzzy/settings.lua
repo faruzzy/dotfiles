@@ -57,7 +57,7 @@ o.swapfile = false
 vim.o.completeopt = 'menuone,noselect'  -- Set completeopt to have a better completion experience
 
 vim.o.updatetime = 250 -- Decrease update time
-vim.o.timeoutlen = 1250
+vim.o.timeoutlen = 250 -- Displays which-key popup sooner
 
 vim.wo.signcolumn = 'yes' -- Keep signcolumn on by default
 o.signcolumn = "yes"
