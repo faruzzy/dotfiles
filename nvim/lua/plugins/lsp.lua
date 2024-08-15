@@ -68,8 +68,6 @@ return {
     -- NOTE: `opts = {}` is the same as calling `require('fidget').setup({})`
     { 'j-hui/fidget.nvim', opts = {}, tag = 'legacy' },
 
-    -- Additional lua configuration, makes nvim stuff amazing!
-    'folke/neodev.nvim',
   },
 
   config = function()
@@ -77,8 +75,6 @@ return {
     -- before setting up the servers.
     require('mason').setup()
     require('mason-lspconfig').setup()
-
-    require('neodev').setup()
 
     local capabilities = vim.lsp.protocol.make_client_capabilities()
     capabilities = require('cmp_nvim_lsp').default_capabilities(capabilities)
