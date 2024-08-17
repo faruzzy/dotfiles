@@ -36,7 +36,8 @@ return {
   'wsdjeg/vim-fetch',                                           -- Fetch that line and column, boy!
   'tpope/vim-sleuth',                                           -- Detect tabstop and shiftwidth automatically
   'rcarriga/nvim-notify',                                       -- Notifications library
-  'tpope/vim-repeat', keys = { { '.', desc = 'REPEAT' } },
+  'tpope/vim-repeat', keys = { { '.', desc = 'REPEAT' } },      -- Allows you to use the repeat the last native command `.` more than once
+  { 'tpope/vim-rsi', event = { 'InsertEnter *', 'CmdlineEnter' } }, -- Extend Readline keybindings to neovim TODO: Replace with linty-org/readline.nvim
   'AndrewRadev/splitjoin.vim',                                  -- Makes switching between a single-line statement and a multi-line one easy
   'RRethy/vim-illuminate',                                      -- automatically highlight other uses of the word under the cursor
   'jordwalke/VimSplitBalancer',                                 -- Distributes available space among vertical splits
