@@ -1,3 +1,5 @@
+-- stylua: ignore
+
 return {
   'mattn/emmet-vim',                                            -- Provides support for expanding abbreviations similar to emmet
   'MaxMEllon/vim-jsx-pretty',                                   -- React syntax highlighting and indenting plugin for vim.
