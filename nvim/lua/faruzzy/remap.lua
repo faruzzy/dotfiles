@@ -18,8 +18,8 @@ vim.keymap.set('n', '[b', vim.cmd.bprev)
 -- Move line up and down in NORMAL and VISUAL modes
 vim.keymap.set('n', '<A-k>', '<CMD>move .-2<CR>')
 vim.keymap.set('n', '<A-j>', '<CMD>move .+1<CR>')
-vim.keymap.set('x', '<A-k>', ":move '<-2<CR>gv=gv")
-vim.keymap.set('x', '<A-j>', ":move '>+1<CR>gv=gv")
+vim.keymap.set('x', '<A-k>', ':move \'<-2<CR>gv=gv')
+vim.keymap.set('x', '<A-j>', ':move \'>+1<CR>gv=gv')
 
 -- Prevents moving cursor with the space key
 vim.keymap.set({ 'n', 'v' }, '<Space>', '<Nop>', { silent = true })
@@ -71,7 +71,10 @@ vim.keymap.set('n', '<leader>pp', ':Git push origin master<cr>')
 -- Diagnostic keymaps
 vim.keymap.set('n', '[d', vim.diagnostic.goto_prev)
 vim.keymap.set('n', ']d', vim.diagnostic.goto_next)
--- TODO: ensure this is working 
+
+vim.keymap.set('n', '<leader>rn', vim.lsp.buf.rename)
+vim.keymap.set('n', '<leader>ca', vim.lsp.buf.code_action)
+-- TODO: ensure this is working
 -- vim.keymap.set('n', '<leader>e', vim.diagnostic.open_float)
 -- vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist)
 
@@ -94,7 +97,7 @@ vim.keymap.set('n', '<leader>q', ':Bwipeout<CR>')
 local def_opts = { silent = false, noremap = true }
 vim.keymap.set({ 'n', 'v' }, '<CR>', ':<up>', def_opts)
 
-vim.keymap.set('n', '<leader>ti', function ()
+vim.keymap.set('n', '<leader>ti', function()
   local inlay_state = vim.lsp.inlay_hint.is_enabled(0)
   vim.lsp.inlay_hint.enable(0, not inlay_state)
 end, { desc = 'Toggle Inlay Hints' })
