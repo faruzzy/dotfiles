@@ -24,9 +24,11 @@ return {
     dependencies = "nvim-telescope/telescope.nvim",
   },
 
+  -- Language specifics
   'pantharshit00/vim-prisma',                                   -- Provides file detection and syntax highlighting suppor for Prisma files
   'jparise/vim-graphql',                                        -- Provides fie detection, syntax highlighting and indentation.
   'udalov/javap-vim',                                           -- Allows you to read the decompiled bytecode of a JVM class file
+  'MeanderingProgrammer/render-markdown.nvim',                  -- Improves viewing Markdown files in Neovim
 
   'wesQ3/vim-windowswap',                                       -- Swap windows without ruining your layout
   'wellle/visual-split.vim',
