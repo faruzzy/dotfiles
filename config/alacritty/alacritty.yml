@@ -59,14 +59,14 @@ font:
     style: Regular
 
   # The bold font face
-  # bold:
-  #   family: ComicMono Nerd Font
-  #   style: Bold
+  bold:
+    family: ComicShannsMono Nerd Font
+    style: Bold
 
   # # The italic font face
-  # italic:
-  #   family: FiraCode Nerd Font
-  #   style: Regular Italic
+  italic:
+    family: FiraCode Nerd Font
+    style: Regular Italic
 
   # Point size of the font
   size: 16
