@@ -15,8 +15,11 @@ return {
   'wellle/tmux-complete.vim',                                   -- plugin for insert mode completion of words in adjacent tmux panes
 
   -- Git related plugins
-  'tpope/vim-fugitive',                                         -- Git wrapper
-  'tpope/vim-rhubarb',                                          -- Github extension for fugitive
+  {
+    'tpope/vim-fugitive',                                       -- Git wrapper
+    config = function () vim.keymap.set('n', 'g<cr>', '<cmd>Git<cr>') end,
+    dependencies = { 'tpope/vim-rhubarb' }                      -- Github extension for fugitive
+  },
   'junegunn/gv.vim',                                            -- A git commit browser
   'rhysd/git-messenger.vim', cmd = 'GitMessenger',              -- reveal the hidden message from Git under the cursor quickly in a popup window
   {
