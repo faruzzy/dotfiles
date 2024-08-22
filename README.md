@@ -17,6 +17,7 @@ Everything here revolves around `vim` and its movement.
 ## Customizations
 
 * Line numbers
+* Alternate Line number
 * Ruler
 * Make searching highlighted, incremental, and case insensitive unless a capital letter is used
 * Always show a Status line
