@@ -53,39 +53,55 @@ function ghrebase1() {
     && git log --oneline --graph --decorate -n 5
 }
 
-# fshow - git commit browser (enter for show, ctrl-d for diff, ` toggles sort)
-# thanks to http://junegunn.kr/2015/03/browsing-git-commits-with-fzf/
+# fshow - git commit browser (enter for show, ctrl-m for diff, ` toggles sort)
+# thanks to https://gist.github.com/junegunn/f4fca918e937e6bf5bad?permalink_comment_id=1666125#gistcomment-1666125
 fshow() {
-  local out shas sha q k
+  git log --graph --color=always \
+      --format="%C(auto)%h%d %s %C(black)%C(bold)%cr" "$@" |
+  fzf --ansi --no-sort --reverse --tiebreak=index --bind=ctrl-s:toggle-sort \
+      --bind "ctrl-m:execute:
+                (grep -o '[a-f0-9]\{7\}' | head -1 |
+                xargs -I % sh -c 'git show --color=always % | less -R') << 'FZF-EOF'
+                {}
+                FZF-EOF"
+}
+
+# fstash - easier way to deal with stashes
+# type fstash to get a list of your stashes
+# enter shows you the contents of the stash
+# ctrl-d shows a diff of the stash against your current HEAD
+# ctrl-b checks the stash out as a branch, for easier merging
+function fstash() {
+  local out q k sha
   while out=$(
-      git log --graph --color=always \
-          --format="%C(auto)%h%d %s %C(black)%C(bold)%cr" "$@" |
-      fzf --ansi --multi --no-sort --reverse --query="$q" \
-          --print-query --expect=ctrl-d --toggle-sort=\`); do
+    git stash list --pretty="%C(yellow)%h %>(14)%Cgreen%cr %C(blue)%gs" |
+    fzf --ansi --no-sort --query="$q" --print-query \
+        --expect=ctrl-d,ctrl-b);
+  do
     q=$(head -1 <<< "$out")
     k=$(head -2 <<< "$out" | tail -1)
-    shas=$(sed '1,2d;s/^[^a-z0-9]*//;/^$/d' <<< "$out" | awk '{print $1}')
-    [ -z "$shas" ] && continue
-    if [ "$k" = ctrl-d ]; then
-      git diff --color=always $shas | less -R
-    else
-      for sha in $shas; do
-        git show --color=always $sha | less -R
-      done
-    fi
+    sha=$(tail -1 <<< "$out" | cut -d' ' -f1)
+    [ -z "$sha" ] && continue
+      if [ "$k" = 'ctrl-d' ]; then
+        git diff $sha
+      elif [ "$k" = 'ctrl-b' ]; then
+        git stash branch "stash-$sha" $sha
+        break;
+      else
+        git stash show -p $sha
+      fi
   done
 }
 
-# dd - cd to selected directory
-function dd() {
-  DIR=`find ${1:-*} -path '*/\.*' -prune -o -type d -print 2> /dev/null | fzf-tmux` \
-    && cd "$DIR"
+# fcs - get git commit sha
+# example usage: git rebase -i `fcs`
+function fcs() {
+  local commits commit
+  commits=$(git log --color=always --pretty=oneline --abbrev-commit --reverse) &&
+  commit=$(echo "$commits" | fzf --tac +s +m -e --ansi --reverse) &&
+  echo -n $(echo "$commit" | sed "s/ .*//")
 }
 
-# dda - including hidden directories
-function dda() {
-  DIR=`find ${1:-.} -type d 2> /dev/null | fzf-tmux` && cd "$DIR"
-}
 
 # fco - checkout git branch/tag
 function fco() {
@@ -121,10 +137,21 @@ function fe() {
   [ -n "$file" ] && ${EDITOR:-vim} "$file"
 }
 
+# dd - cd to selected directory
+function dd() {
+  DIR=`find ${1:-*} -path '*/\.*' -prune -o -type d -print 2> /dev/null | fzf-tmux` \
+    && cd "$DIR"
+}
+
+# dda - including hidden directories
+function dda() {
+  DIR=`find ${1:-.} -type d 2> /dev/null | fzf-tmux` && cd "$DIR"
+}
+
 # https://github.com/junegunn/fzf/issues/760
 # Custom fuzzy completion for "docker" command
 #   e.g. docker **<TAB>
-_fzf_complete_docker() {
+function _fzf_complete_docker() {
   ARGS="$@"
   if [[ $ARGS = 'docker ** docker' ]]; then
     _fzf_complete "--multi --reverse" "$@" < <(
@@ -236,42 +263,6 @@ function fbr() {
   branches=$(git branch) &&
   branch=$(echo "$branches" | fzf-tmux -d 15 +m) &&
   git checkout $(echo "$branch" | sed "s/.* //")
-}
-
-# fstash - easier way to deal with stashes
-# type fstash to get a list of your stashes
-# enter shows you the contents of the stash
-# ctrl-d shows a diff of the stash against your current HEAD
-# ctrl-b checks the stash out as a branch, for easier merging
-function fstash() {
-  local out q k sha
-  while out=$(
-    git stash list --pretty="%C(yellow)%h %>(14)%Cgreen%cr %C(blue)%gs" |
-    fzf --ansi --no-sort --query="$q" --print-query \
-        --expect=ctrl-d,ctrl-b);
-  do
-    q=$(head -1 <<< "$out")
-    k=$(head -2 <<< "$out" | tail -1)
-    sha=$(tail -1 <<< "$out" | cut -d' ' -f1)
-    [ -z "$sha" ] && continue
-      if [ "$k" = 'ctrl-d' ]; then
-        git diff $sha
-      elif [ "$k" = 'ctrl-b' ]; then
-        git stash branch "stash-$sha" $sha
-        break;
-      else
-        git stash show -p $sha
-      fi
-  done
-}
-
-# fcs - get git commit sha
-# example usage: git rebase -i `fcs`
-function fcs() {
-  local commits commit
-  commits=$(git log --color=always --pretty=oneline --abbrev-commit --reverse) &&
-  commit=$(echo "$commits" | fzf --tac +s +m -e --ansi --reverse) &&
-  echo -n $(echo "$commit" | sed "s/ .*//")
 }
 
 # Create a .tart.gz archive, using zopfli, pigz or gzip for compression
