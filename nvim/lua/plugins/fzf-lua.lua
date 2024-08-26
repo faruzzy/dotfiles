@@ -2,6 +2,7 @@ return {
   { 'junegunn/fzf', dir = '~/.fzf', build = './install --bin' },
   {
     'ibhagwan/fzf-lua',
+    dependencies = { 'echasnovski/mini.icons' },
     opts = {
       winopts = {
         backdrop = 100,
@@ -61,7 +62,7 @@ return {
     },
     keys = {
       {
-        '<C-P>',
+        '<C-p>',
         function()
           require('fzf-lua').files({ file_icons = false, git_icons = false })
         end,
@@ -72,27 +73,38 @@ return {
         [[<cmd>lua require('fzf-lua').grep_project({ file_icons=false, git_icons=false })<CR>]],
         desc = 'file lines',
       },
+      --- Buffer
       { '<C-r>', [[<cmd>lua require('fzf-lua').buffers()<CR>]], desc = 'buffers' },
       { '<C-g>', [[<cmd>lua require('fzf-lua').resume()<CR>]], desc = 'marks' },
       { '<leader>?', [[<cmd>lua require('fzf-lua').oldfiles()<CR>]], desc = 'buffers' },
+
+      --- Search
       { '<leader>/', [[<cmd>lua require('fzf-lua').lgrep_curbuf()<CR>]], desc = 'buffer Lines' },
-      { '<leader>sh', [[<cmd>lua require('fzf-lua').help_tags()<CR>]], desc = 'help tags' },
-      { '<leader>au', [[<cmd>lua require('fzf-lua').autocmds()<CR>]], desc = 'autocmds' },
+      { '<leader>fw', [[<cmd>lua require('fzf-lua').grep_cword()<CR>]], desc = 'buffer Lines' },
+      { '<leader>fW', [[<cmd>lua require('fzf-lua').grep_cWORD()<CR>]], desc = 'buffer Lines' },
+
+      --- Code Navigation
       { '<leader>sd', [[<cmd>lua require('fzf-lua').diagnostics_workspace()<CR>]], desc = 'workspace diagnostics' },
-      { '<Leader>:', [[<cmd>lua require('fzf-lua').commands()<CR>]], desc = 'vim commands' },
       { '<leader>sd', [[<cmd>lua require('fzf-lua').lsp_document_symbols()<CR>]], desc = 'Document Symbols' },
       { '<leader>sw', [[<cmd>lua require('fzf-lua').lsp_workspace_symbols()<CR>]], desc = 'Workspace Symbols' },
+
+      --- Git
       { '<Leader>gl', [[<cmd>lua require('fzf-lua').git_commits()<CR>]], desc = 'git commits' },
       { '<Leader>gL', [[<cmd>lua require('fzf-lua').git_bcommits()<CR>]], desc = 'git buffer commits' },
       { '<Leader>gS', [[<cmd>lua require('fzf-lua').git_status()<CR>]], desc = 'git status' },
-      { '<Leader>m', [[<cmd>lua require('fzf-lua').keymaps()<CR>]], desc = 'keymaps' },
-      { '<Leader>k', [[<cmd>lua require('fzf-lua').marks()<CR>]], desc = 'marks' },
+
+      --- Misc
+      { '<Leader>k', [[<cmd>lua require('fzf-lua').keymaps()<CR>]], desc = 'keymaps' },
+      { '<Leader>m', [[<cmd>lua require('fzf-lua').marks()<CR>]], desc = 'marks' },
       {
         '<Leader>h',
         [[<cmd>lua require('fzf-lua').command_history()<CR>]],
         desc = 'command history',
       },
       { [[<Leader>"]], [[<cmd>lua require('fzf-lua').registers()<CR>]], desc = 'registers' },
+      { '<Leader>:', [[<cmd>lua require('fzf-lua').commands()<CR>]], desc = 'vim commands' },
+      { '<leader>sh', [[<cmd>lua require('fzf-lua').help_tags()<CR>]], desc = 'help tags' },
+      { '<leader>au', [[<cmd>lua require('fzf-lua').autocmds()<CR>]], desc = 'autocmds' },
     },
     init = function()
       local utils = require('utils')
@@ -111,9 +123,6 @@ return {
               ['g*'] = 'lsp_finder',
             }
 
-            -- for key, value in pairs(args) do
-            --   print(key .. ' ' .. value)
-            -- end
             local bsk = utils.buffer_map(args.buf)
             for key, cmd in pairs(maps) do
               bsk('n', key, '<cmd>FzfLua ' .. cmd .. '<CR>')
