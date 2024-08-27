@@ -76,7 +76,7 @@ return {
       --- Buffer
       { '<C-r>', [[<cmd>lua require('fzf-lua').buffers()<CR>]], desc = 'buffers' },
       { '<C-g>', [[<cmd>lua require('fzf-lua').resume()<CR>]], desc = 'marks' },
-      { '<leader>?', [[<cmd>lua require('fzf-lua').oldfiles()<CR>]], desc = 'buffers' },
+      -- { '<leader>?', [[<cmd>lua require('fzf-lua').oldfiles()<CR>]], desc = 'buffers' }, TODO: find a better mapping for this
 
       --- Search
       { '<leader>/', [[<cmd>lua require('fzf-lua').lgrep_curbuf()<CR>]], desc = 'buffer Lines' },
