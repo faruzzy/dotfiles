@@ -45,4 +45,3 @@ function M.setup_auto_close_tag(client, bufnr, method)
 end
 
 return M
-

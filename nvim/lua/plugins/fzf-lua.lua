@@ -84,9 +84,29 @@ return {
       { '<leader>fW', [[<cmd>lua require('fzf-lua').grep_cWORD()<CR>]], desc = 'buffer Lines' },
 
       --- Code Navigation
-      { '<leader>wd', [[<cmd>lua require('fzf-lua').diagnostics_workspace()<CR>]], desc = 'Workspace diagnostics' },
-      { '<leader>ws', [[<cmd>lua require('fzf-lua').lsp_workspace_symbols()<CR>]], desc = 'Workspace Symbols' },
-      { '<leader>ds', [[<cmd>lua require('fzf-lua').lsp_document_symbols()<CR>]], desc = 'Document Symbols' },
+      { '<Leader>wd', [[<cmd>lua require('fzf-lua').diagnostics_workspace()<CR>]], desc = 'Workspace diagnostics' },
+      { '<Leader>ws', [[<cmd>lua require('fzf-lua').lsp_workspace_symbols()<CR>]], desc = 'Workspace Symbols' },
+      { '<Leader>ds', [[<cmd>lua require('fzf-lua').lsp_document_symbols()<CR>]], desc = 'Document Symbols' },
+      {
+        'gr',
+        [[<cmd>lua require('fzf-lua').lsp_references({ jump_to_single_result = true })<CR>]],
+        desc = '[G]o to [R]eferences',
+      },
+      {
+        'gd',
+        [[<cmd>lua require('fzf-lua').lsp_definitions({ jump_to_single_result = true })<CR>]],
+        desc = '[G]o to [D]efinition',
+      },
+      {
+        'gi',
+        [[<cmd>lua require('fzf-lua').lsp_implementations({ jump_to_single_result = true })<CR>]],
+        desc = '[G]o to [I]mplementation',
+      },
+      {
+        'D',
+        [[<cmd>lua require('fzf-lua').lsp_implementations({ jump_to_single_result = true })<CR>]],
+        desc = 'Type Definition',
+      },
 
       --- Git
       { '<Leader>gl', [[<cmd>lua require('fzf-lua').git_commits()<CR>]], desc = 'git commits' },
@@ -109,27 +129,29 @@ return {
     init = function()
       local utils = require('utils')
 
-      utils.augroup('fzf_lsp_attach', {
-        {
-          'LspAttach',
-          callback = function(args)
-            local maps = {
-              gr = 'lsp_references jump_to_single_result=true',
-              gpr = 'lsp_references',
-              gd = 'lsp_definitions jump_to_single_result=true',
-              gpd = 'lsp_definitions',
-              gi = 'lsp_implementations jump_to_single_result=true',
-              gpi = 'lsp_implementations',
-              ['g*'] = 'lsp_finder',
-            }
+      -- TODO: Implement this section for lsp commands
+      -- utils.augroup('fzf_lsp_attach', {
+      --   {
+      --     'LspAttach',
+      --     callback = function(args)
+      --       local maps = {
+      --         gr = 'lsp_references jump_to_single_result=true',
+      --         gpr = 'lsp_references',
+      --         gd = 'lsp_definitions jump_to_single_result=true',
+      --         gpd = 'lsp_definitions',
+      --         gi = 'lsp_implementations jump_to_single_result=true',
+      --         gpi = 'lsp_implementations',
+      --         ['g*'] = 'lsp_finder',
+      --       }
 
-            local bsk = utils.buffer_map(args.buf)
-            for key, cmd in pairs(maps) do
-              bsk('n', key, '<cmd>FzfLua ' .. cmd .. '<CR>')
-            end
-          end,
-        },
-      })
+      --       local bsk = utils.buffer_map(args.buf)
+      --       for key, cmd in pairs(maps) do
+      --         -- bsk('n', key, '<cmd>FzfLua ' .. cmd .. '()<CR>')
+      --         -- bsk('n', key, [[<cmd>lua require('fzf-lua').lsp_references({ jump_to_single_result = true })<CR>]])
+      --       end
+      --     end,
+      --   },
+      -- })
     end,
   },
 }
