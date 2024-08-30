@@ -117,6 +117,14 @@ function fco() {
   git checkout $(echo "$target" | awk '{print $2}')
 }
 
+# fbr - checkout git branch
+function fbr() {
+  local branches branch
+  branches=$(git branch) &&
+  branch=$(echo "$branches" | fzf-tmux -d 15 +m) &&
+  git checkout $(echo "$branch" | sed "s/.* //")
+}
+
 # ftags - search ctags
 function ftags() {
   local line
@@ -255,14 +263,6 @@ function mv() {
 
   read -ei "$1" newfilename
   mv -v "$1" "$newfilename"
-}
-
-# fbr - checkout git branch
-function fbr() {
-  local branches branch
-  branches=$(git branch) &&
-  branch=$(echo "$branches" | fzf-tmux -d 15 +m) &&
-  git checkout $(echo "$branch" | sed "s/.* //")
 }
 
 # Create a .tart.gz archive, using zopfli, pigz or gzip for compression
