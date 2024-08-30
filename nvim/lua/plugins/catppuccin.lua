@@ -16,19 +16,10 @@ return {
         -- For details and workaround: https://github.com/catppuccin/nvim/issues/667
         -- Unfortunately the workaround can't be used here
         -- This hard-codes the highlights I was referencing until there's a better solution
-        local cursor_line = {
-          bg = utils.vary_color({
-            latte = utils.lighten(colors.mantle, 0.70, colors.base),
-          }, utils.darken(colors.surface0, 0.64, colors.base)),
-        }
         local inc_search = {
-          bg = utils.darken(colors.sky, 0.90, colors.base),
+          bg = utils.darken(colors.yellow, 0.90, colors.yellow),
           fg = colors.mantle,
         }
-
-        local telescope_selection = vim.tbl_extend('force', cursor_line, {
-          fg = colors.blue,
-        })
 
         local anchor_link = { fg = colors.blue, style = { 'underline' } }
         local inline_code = { bg = colors.surface0 }
@@ -63,6 +54,15 @@ return {
           LuasnipInsertNodeActive = { link = 'Visual' },
           LuasnipInsertNodePassive = { link = 'Visual' },
 
+          -- fzf-lua
+          FzfLuaHeaderBind = { fg = colors.blue },
+          FzfLuaHeaderText = { fg = colors.mauve },
+          FzfLuaFzfInfo = { fg = colors.mauve },
+          FzfLuaFzfMatch = { fg = colors.blue },
+          FzfLuaFzfPointer = { fg = colors.blue },
+          FzfLuaFzfPrompt = { fg = colors.blue },
+          FzfLuaTitle = { link = 'FzfLuaBorder' },
+
           -- highlight-undo.nvim
           HighlightUndo = { link = 'IncSearch' },
           HighlightRedo = { link = 'IncSearch' },
@@ -76,22 +76,8 @@ return {
           -- nvim-lightbulb
           LightBulbVirtText = { bg = colors.none },
 
-          -- nvim-tree.lua
-          NvimTreeExecFile = { style = { 'underline', 'bold' } },
-          NvimTreeNormal = { fg = colors.text, bg = colors.base },
-          NvimTreeWinSeparator = { fg = colors.surface1, bg = colors.none },
-
           -- nvim-treesitter-context
           TreesitterContext = { fg = colors.text, bg = colors.mantle },
-
-          -- telescope.lua
-          TelescopePromptPrefix = { fg = colors.blue },
-          TelescopeResultsDiffAdd = { fg = colors.green },
-          TelescopeResultsDiffChange = { fg = colors.yellow },
-          TelescopeResultsDiffDelete = { fg = colors.red },
-          TelescopeResultsDiffUntracked = { fg = colors.none },
-          TelescopeSelection = telescope_selection,
-          TelescopeSelectionCaret = telescope_selection,
         }
 
         return vim.tbl_extend('force', custom_highlights, require('modes').get_initial_highlights(colors))
@@ -100,6 +86,8 @@ return {
         colorful_winsep = { enabled = true, color = 'blue' },
         diffview = true,
         fidget = true,
+        fzf = true,
+        gitsigns = true,
         indent_blankline = {
           enabled = true,
           colored_indent_levels = false,
@@ -114,9 +102,7 @@ return {
             information = { 'undercurl' },
           },
         },
-        neotest = true,
         notify = true,
-        nvimtree = true,
         symbols_outline = true,
         treesitter_context = true,
       },
