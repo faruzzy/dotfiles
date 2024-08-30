@@ -84,8 +84,8 @@ return {
       { '<leader>fW', [[<cmd>lua require('fzf-lua').grep_cWORD()<CR>]], desc = 'buffer Lines' },
 
       --- Code Navigation
-      { '<Leader>wd', [[<cmd>lua require('fzf-lua').diagnostics_workspace()<CR>]], desc = 'Workspace diagnostics' },
-      { '<Leader>ws', [[<cmd>lua require('fzf-lua').lsp_workspace_symbols()<CR>]], desc = 'Workspace Symbols' },
+      { '<Leader>dw', [[<cmd>lua require('fzf-lua').diagnostics_workspace()<CR>]], desc = 'Workspace diagnostics' },
+      { '<Leader>sw', [[<cmd>lua require('fzf-lua').lsp_workspace_symbols()<CR>]], desc = 'Workspace Symbols' },
       { '<Leader>ds', [[<cmd>lua require('fzf-lua').lsp_document_symbols()<CR>]], desc = 'Document Symbols' },
       {
         'gr',

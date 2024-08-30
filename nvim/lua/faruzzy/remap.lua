@@ -27,16 +27,11 @@ vim.keymap.set('n', '<leader>x', ':x<CR>')
 vim.keymap.set('n', '<leader>X', ':wqa!<CR>')
 
 -- Quickly save the current buffer or all buffers
-vim.keymap.set('n', '<leader>w', '<CMD>update<CR>')
-vim.keymap.set('n', '<leader>W', '<CMD>wall<CR>')
+vim.keymap.set('n', '<Leader>w', '<CMD>update<CR>')
+vim.keymap.set('n', '<Leader>W', '<CMD>wall<CR>')
 
-vim.keymap.set('n', '<leader>vr', ':VimuxPromptCommand<cr>')
-vim.keymap.set('n', '<leader>vc', ':call VimuxCloseRunner()<cr>')
-vim.keymap.set('n', '<leader>vl', ':VimuxRunLastCommand<cr>')
-vim.keymap.set('n', '<leader>vi', ':VimuxInterruptRunner<cr>')
-vim.keymap.set('n', '<leader>vz', ':VimuxZoomRunner<cr>')
-vim.keymap.set('n', '<leader>vt', ':VimuxTogglePane<cr>')
-
+-- Remove buffer from history
+vim.keymap.set('n', '<Leader>q', ':Bwipeout<CR>')
 -- Remap for dealing with word wrap
 -- vim.keymap.set('n', 'k', "v:count == 0 ? 'gk' : 'k'", { expr = true, silent = true })
 -- vim.keymap.set('n', 'j', "v:count == 0 ? 'gj' : 'j'", { expr = true, silent = true })
