@@ -6,14 +6,14 @@ return {
   },
   config = function()
     require('paren-hint').setup({
-    -- Include the opening paren in the ghost text
-    include_paren = true,
+      -- Include the opening paren in the ghost text
+      include_paren = true,
 
-    -- Show ghost text when cursor is anywhere on the line that includes the close paren rather just when the cursor is on the close paren
-    anywhere_on_line = false,
+      -- Show ghost text when cursor is anywhere on the line that includes the close paren rather just when the cursor is on the close paren
+      anywhere_on_line = false,
 
-    -- show the ghost text when the opening paren is on the same line as the close paren
-    show_same_line_opening = true,
+      -- show the ghost text when the opening paren is on the same line as the close paren
+      show_same_line_opening = false,
     })
   end,
 }
