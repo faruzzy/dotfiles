@@ -109,8 +109,8 @@ return {
       },
 
       --- Git
-      { '<Leader>gl', [[<cmd>lua require('fzf-lua').git_commits()<CR>]], desc = 'git commits' },
-      { '<Leader>gL', [[<cmd>lua require('fzf-lua').git_bcommits()<CR>]], desc = 'git buffer commits' },
+      { '<Leader>gx', [[<cmd>lua require('fzf-lua').git_commits()<CR>]], desc = 'git commits' },
+      { '<Leader>gX', [[<cmd>lua require('fzf-lua').git_bcommits()<CR>]], desc = 'git buffer commits' },
       { '<Leader>gS', [[<cmd>lua require('fzf-lua').git_status()<CR>]], desc = 'git status' },
 
       --- Misc

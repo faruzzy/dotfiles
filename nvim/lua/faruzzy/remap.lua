@@ -23,8 +23,8 @@ vim.keymap.set('i', '<c-h>', '<left>', {})
 vim.keymap.set('i', '<c-l>', '<right>', {})
 -- vim.keymap.set('i', '<C-y>', '<esc>yyp', {}) -- [ ctrl + y ] copy current line and paste next line
 
-vim.keymap.set('n', '<leader>x', ':x<CR>')
-vim.keymap.set('n', '<leader>X', ':wqa!<CR>')
+vim.keymap.set('n', '<Leader>x', ':x<CR>')
+vim.keymap.set('n', '<Leader>X', ':wqa!<CR>')
 
 -- Quickly save the current buffer or all buffers
 vim.keymap.set('n', '<Leader>w', '<CMD>update<CR>')
@@ -37,34 +37,18 @@ vim.keymap.set('n', '<Leader>q', ':Bwipeout<CR>')
 -- vim.keymap.set('n', 'j', "v:count == 0 ? 'gj' : 'j'", { expr = true, silent = true })
 
 -- turn off highlighting until the next search
-vim.keymap.set('n', '<leader>n', ':noh<cr>')
+vim.keymap.set('n', '<Leader>n', ':noh<cr>')
 
--- This command prompts you to type one key, and will hint that key in the buffer.
-vim.keymap.set('n', '<leader>,', ':HopChar1<cr>')
-
-vim.keymap.set('n', '<leader>o', ':only<cr>') -- only show the current buffer
-vim.keymap.set('n', '<leader>O', ':!open .<cr>') -- open the current directory in finder
-
--- fugitive
-vim.keymap.set('n', '<leader>ga', ':Git add %:p<cr><cr>')
-vim.keymap.set('n', '<leader>gm', ':Gmove<cr>')
-vim.keymap.set('n', '<leader>gy', ':Gremove<cr>')
-vim.keymap.set('n', '<leader>gl', ':Git pull<cr>')
-vim.keymap.set('n', '<leader>gc', ':Git commit<cr>')
-vim.keymap.set('n', '<leader>gd', ':Gvdiffsplit<cr>')
-vim.keymap.set('n', '<leader>gs', ':Git<cr>', { noremap = true })
-vim.keymap.set('n', '<leader>gg', ':Gmerge<cr>')
-vim.keymap.set('n', '<leader>pp', ':Git push origin master<cr>')
+vim.keymap.set('n', '<Leader>o', ':only<cr>') -- only show the current buffer
+vim.keymap.set('n', '<Leader>O', ':!open .<cr>') -- open the current directory in finder
 
 -- Diagnostic keymaps
-vim.keymap.set('n', '[d', vim.diagnostic.goto_prev)
-vim.keymap.set('n', ']d', vim.diagnostic.goto_next)
+vim.keymap.set('n', '[d', vim.diagnostic.goto_prev, { desc = 'Diagnostic Pevious Diagnostic' })
+vim.keymap.set('n', ']d', vim.diagnostic.goto_next, { desc = 'Diagnostic Next Diagnostic' })
+vim.keymap.set('n', '<Leader>e', vim.diagnostic.open_float, { desc = 'Diagnostic Open Float Window' })
 
-vim.keymap.set('n', '<leader>rn', vim.lsp.buf.rename)
-vim.keymap.set('n', '<leader>ca', vim.lsp.buf.code_action)
--- TODO: ensure this is working
--- vim.keymap.set('n', '<leader>e', vim.diagnostic.open_float)
--- vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist)
+vim.keymap.set('n', '<Leader>rn', vim.lsp.buf.rename, { desc = 'Buffer Rename' })
+vim.keymap.set('n', '<Leader>ca', vim.lsp.buf.code_action, { desc = 'Code Action' })
 
 -- GV
 vim.keymap.set('n', '<leader>gv', ':GV<cr>')
