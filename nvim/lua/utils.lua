@@ -25,6 +25,23 @@ function M.buffer_map(bufnr)
   end
 end
 
+---Maps from a table to list
+---@generic K : string
+---@generic V
+---@generic R
+---@param fn fun(value: V, key: K): R
+---@param tbl table<K, V>
+---@return R[]
+function M.map_table_to_list(fn, tbl)
+  local list = {}
+
+  for key, value in pairs(tbl) do
+    table.insert(list, fn(value, key))
+  end
+
+  return list
+end
+
 ---Create vim highlight
 ---@param name string
 ---@param highlight_map vim.api.keyset.highlight

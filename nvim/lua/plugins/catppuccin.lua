@@ -73,6 +73,11 @@ return {
           -- mini.icons
           MiniIconsGrey = { fg = colors.overlay0 },
 
+          -- nvim-cmp
+          CmpItemAbbr = { fg = colors.text },
+          CmpItemAbbrMatch = { fg = colors.blue },
+          CmpItemMenu = { fg = colors.surface2 },
+
           -- nvim-lightbulb
           LightBulbVirtText = { bg = colors.none },
 
