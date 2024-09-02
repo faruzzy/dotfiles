@@ -76,6 +76,20 @@ end, { desc = 'Toggle Inlay Hints' })
 
 vim.keymap.set('n', '<leader>ut', vim.cmd.UndotreeToggle) -- undotree
 
+function CloseAllButCurrent()
+  local current_buf = vim.fn.bufnr()
+  local current_win = vim.fn.win_getid()
+  local bufs = vim.fn.getbufinfo({ buflisted = 1 })
+  for _, buf in ipairs(bufs) do
+    if buf.bufnr ~= current_buf then
+      vim.cmd('silent! bdelete ' .. buf.bufnr)
+    end
+  end
+  vim.fn.win_gotoid(current_win)
+end
+vim.keymap.set('n', '<Leader>aq', function()
+  CloseAllButCurrent()
+end, { silent = true, desc = 'Close all other buffers except current one.' })
 vim.cmd([[
 function! s:goog(pat, lucky)
   let q = '"'.substitute(a:pat, '["\n]', ' ', 'g').'"'
