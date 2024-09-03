@@ -51,8 +51,8 @@ vim.keymap.set('n', '<Leader>rn', vim.lsp.buf.rename, { desc = 'Buffer Rename' }
 vim.keymap.set('n', '<Leader>ca', vim.lsp.buf.code_action, { desc = 'Code Action' })
 
 -- GV
-vim.keymap.set('n', '<leader>gv', ':GV<cr>')
-vim.keymap.set('n', '<leader>Gv', ':GV!<cr>')
+-- vim.keymap.set('n', '<Leader>gv', '<cmd>GV<cr>')
+-- vim.keymap.set('n', '<Leader>Gv', '<cmd>GV!<cr>')
 
 -- lsp-overloads
 -- vim.api.nvim_set_keymap("n", "<A-s>", ":LspOverloadsSignature<CR>", { noremap = true, silent = true })
@@ -61,9 +61,6 @@ vim.keymap.set('n', '<leader>Gv', ':GV!<cr>')
 -- diffs
 vim.keymap.set('n', '<leader>gl', '<cmd>diffget //2<cr>')
 vim.keymap.set('n', '<leader>gr', '<cmd>diffget //3<cr>')
-
--- vim-bbye
-vim.keymap.set('n', '<leader>q', ':Bwipeout<CR>')
 
 -- run last command easily
 local def_opts = { silent = false, noremap = true }
@@ -90,6 +87,7 @@ end
 vim.keymap.set('n', '<Leader>aq', function()
   CloseAllButCurrent()
 end, { silent = true, desc = 'Close all other buffers except current one.' })
+
 vim.cmd([[
 function! s:goog(pat, lucky)
   let q = '"'.substitute(a:pat, '["\n]', ' ', 'g').'"'

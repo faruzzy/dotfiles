@@ -11,16 +11,33 @@ return {
   -- tmux integration
   'tmux-plugins/vim-tmux-focus-events',
   'christoomey/vim-tmux-navigator',
-  'benmills/vimux',
+  {
+    'benmills/vimux',
+    keys = {
+      { '<Leader>vr', '<cmd>VimuxPromptCommand<cr>', desc = 'Vimux Prompt Command' },
+      { '<Leader>vl', '<cmd>VimuxRunLastCommand<cr>', desc = 'Vimux Run Last Command' },
+      { '<Leader>vc', '<cmd>VimuxCloseRunner<cr>', desc = 'Vimux Close Runner' },
+      { '<Leader>vz', '<cmd>VimuxZoomRunner<cr>', desc = 'Vimux Zoom Runner' },
+      { '<Leader>vt', '<cmd>VimuxTogglePane<cr>', desc = 'Vimux Toggle Pane' },
+    }
+  },
   'wellle/tmux-complete.vim',                                   -- plugin for insert mode completion of words in adjacent tmux panes
 
   -- Git related plugins
   {
     'tpope/vim-fugitive',                                       -- Git wrapper
-    config = function () vim.keymap.set('n', 'g<cr>', '<cmd>Git<cr>') end,
+    keys = {
+      { '<Leader>ga', '<cmd>Git add %:p<cr><cr>', desc = 'Git Add' },
+      { '<Leader>gp', '<cmd>Git pull<cr>', desc = 'Git Pull' },
+      { '<Leader>pp', '<cmd>Git push origin master<cr>', desc = 'Git Push Master' },
+      { '<Leader>gs', '<cmd>Git<cr>', desc = 'Git Status' },
+      { 'g<cr>', '<cmd>Git<cr>', desc = 'Git Status' }, -- find this shorter
+      { '<Leader>gc', '<cmd>Git commit<cr>', desc = 'Git Commit' },
+      { '<Leader>gd', '<cmd>Gvdiffsplit<cr>', desc = 'Git Diff' },
+    },
     dependencies = { 'tpope/vim-rhubarb' }                      -- Github extension for fugitive
   },
-  'junegunn/gv.vim',                                            -- A git commit browser
+  'junegunn/gv.vim',                                            -- A git commit browser TODO: fix GV not working
   'rhysd/git-messenger.vim', cmd = 'GitMessenger',              -- reveal the hidden message from Git under the cursor quickly in a popup window
   {
     "wintermute-cell/gitignore.nvim",                           -- plugin for generating .gitignore files in seconds, by allowing you to select from a huge number of different technologies
