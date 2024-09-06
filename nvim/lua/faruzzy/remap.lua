@@ -26,10 +26,6 @@ vim.keymap.set('i', '<c-l>', '<right>', {})
 vim.keymap.set('n', '<Leader>x', ':x<CR>')
 vim.keymap.set('n', '<Leader>X', ':wqa!<CR>')
 
--- Quickly save the current buffer or all buffers
-vim.keymap.set('n', '<Leader>w', '<CMD>update<CR>')
-vim.keymap.set('n', '<Leader>W', '<CMD>wall<CR>')
-
 -- Remove buffer from history
 vim.keymap.set('n', '<Leader>q', ':Bwipeout<CR>')
 -- Remap for dealing with word wrap
