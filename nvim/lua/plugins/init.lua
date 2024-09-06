@@ -16,6 +16,7 @@ return {
     keys = {
       { '<Leader>vr', '<cmd>VimuxPromptCommand<cr>', desc = 'Vimux Prompt Command' },
       { '<Leader>vl', '<cmd>VimuxRunLastCommand<cr>', desc = 'Vimux Run Last Command' },
+      { '<Leader>vi', '<cmd>VimuxInterruptRunner<cr>', desc = 'Vimux Interrupt Runner' },
       { '<Leader>vc', '<cmd>VimuxCloseRunner<cr>', desc = 'Vimux Close Runner' },
       { '<Leader>vz', '<cmd>VimuxZoomRunner<cr>', desc = 'Vimux Zoom Runner' },
       { '<Leader>vt', '<cmd>VimuxTogglePane<cr>', desc = 'Vimux Toggle Pane' },
