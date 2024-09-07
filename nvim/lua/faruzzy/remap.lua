@@ -26,8 +26,6 @@ vim.keymap.set('i', '<c-l>', '<right>', {})
 vim.keymap.set('n', '<Leader>x', ':x<CR>')
 vim.keymap.set('n', '<Leader>X', ':wqa!<CR>')
 
--- Remove buffer from history
-vim.keymap.set('n', '<Leader>q', ':Bwipeout<CR>')
 -- Remap for dealing with word wrap
 -- vim.keymap.set('n', 'k', "v:count == 0 ? 'gk' : 'k'", { expr = true, silent = true })
 -- vim.keymap.set('n', 'j', "v:count == 0 ? 'gj' : 'j'", { expr = true, silent = true })
