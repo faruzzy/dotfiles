@@ -1,6 +1,7 @@
 -- Quick buffer movement
 vim.keymap.set('n', ']b', vim.cmd.bnext)
 vim.keymap.set('n', '[b', vim.cmd.bprev)
+
 -- Move to last buffer
 vim.keymap.set('n', 'b<Tab>', '<cmd>b#<cr>')
 
@@ -60,9 +61,10 @@ vim.keymap.set('n', '<leader>gr', '<cmd>diffget //3<cr>')
 local def_opts = { silent = false, noremap = true }
 vim.keymap.set({ 'n', 'v' }, '<CR>', ':<up>', def_opts)
 
-vim.keymap.set('n', '<leader>ti', function()
-  local inlay_state = vim.lsp.inlay_hint.is_enabled(0)
-  vim.lsp.inlay_hint.enable(0, not inlay_state)
+-- TODO: verify why it's not working
+vim.keymap.set('n', '<Leader>ti', function()
+  local inlay_state = vim.lsp.inlay_hint.is_enabled({ bufnr = 0 })
+  vim.lsp.inlay_hint.enable(inlay_state, { bufnr = 0 })
 end, { desc = 'Toggle Inlay Hints' })
 
 vim.keymap.set('n', '<leader>ut', vim.cmd.UndotreeToggle) -- undotree
