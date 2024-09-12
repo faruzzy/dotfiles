@@ -117,7 +117,7 @@ return {
       { '<Leader>k', [[<cmd>lua require('fzf-lua').keymaps()<CR>]], desc = 'keymaps' },
       { '<Leader>m', [[<cmd>lua require('fzf-lua').marks()<CR>]], desc = 'marks' },
       {
-        '<Leader>h',
+        '<Leader>hi',
         [[<cmd>lua require('fzf-lua').command_history()<CR>]],
         desc = 'command history',
       },
