@@ -24,6 +24,7 @@ export CLICOLOR=1
 export TERM='xterm-256color'
 
 # FZF
+export FZF_DEFAULT_OPTS_FILE="$HOME/github/dotfiles/fzfrc"
 if command -v fd > /dev/null; then
   export FZF_DEFAULT_COMMAND='fd --type f --hidden --follow --exclude .git'
   export FZF_ALT_C_COMMAND='fd --type d --hidden --follow --exclude .git'
