@@ -54,17 +54,17 @@ local supported_formatters = vim.g.supported_formatters
 return {
   'stevearc/conform.nvim',
   event = 'BufWritePre',
-  config = function()
-    local conform = require('conform')
-    conform.setup({
-      log_level = vim.log.levels.DEBUG,
-      formatters_by_ft = {
-        javascript = { 'prettierd', 'prettier' },
-        typescript = { 'prettierd', 'prettier' },
-        typescriptreact = { 'prettierd', 'prettier' },
-      },
-    })
-  end,
+  -- config = function()
+  --   local conform = require('conform')
+  --   conform.setup({
+  --     log_level = vim.log.levels.DEBUG,
+  --     formatters_by_ft = {
+  --       javascript = { 'prettierd', 'prettier' },
+  --       typescript = { 'prettierd', 'prettier' },
+  --       typescriptreact = { 'prettierd', 'prettier' },
+  --     },
+  --   })
+  -- end,
   opts = function()
     local customized_formatters = {}
     for name, formatter in pairs(supported_formatters) do
