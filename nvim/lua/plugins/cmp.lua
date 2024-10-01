@@ -10,7 +10,7 @@ local source_menu_map = {
   lazydev = 'lazy',
   luasnip = 'snip',
   nvim_lsp = 'lsp',
-  nvim_lsp_signature_help = 'sig',
+  -- nvim_lsp_signature_help = 'sig',
   path = 'path',
 }
 
@@ -51,8 +51,9 @@ return {
 
     -- Adds LSP completion capabilities
     'hrsh7th/cmp-nvim-lsp',
-    'hrsh7th/cmp-nvim-lsp-signature-help',
+    -- 'hrsh7th/cmp-nvim-lsp-signature-help',
     'hrsh7th/cmp-path',
+    'folke/lazydev.nvim',
 
     -- Adds a number of user-friendly snippets
     'rafamadriz/friendly-snippets',
@@ -107,14 +108,15 @@ return {
       }),
       sources = {
         { name = 'nvim_lsp' },
-        { name = 'nvim_lsp_signature_help' },
         { name = 'luasnip' },
-        { name = 'emmet' },
         { name = 'path' },
+        -- { name = 'nvim_lsp_signature_help' },
+        { name = 'emmet' },
         {
           name = 'buffer',
           option = { get_bufnrs = vim.api.nvim_list_bufs },
         },
+        { name = 'lazydev', group_index = 0 },
       },
       window = {
         completion = cmp.config.window.bordered(border_config),
