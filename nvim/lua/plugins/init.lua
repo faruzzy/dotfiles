@@ -3,7 +3,6 @@
 return {
   'mattn/emmet-vim',                                            -- Provides support for expanding abbreviations similar to emmet
   'MaxMEllon/vim-jsx-pretty',                                   -- React syntax highlighting and indenting plugin for vim.
-  'sickill/vim-pasta',                                          -- Pasting with indentation adjusted to destination context
   -- 'Issafalcon/lsp-overloads.nvim',
   'farmergreg/vim-lastplace',                                   -- Intelligently reopen files at your last edit position.
   'norcalli/nvim-colorizer.lua',                                -- A color highlighter for Neovim
@@ -74,6 +73,13 @@ return {
     'fei6409/log-highlight.nvim',                               -- Neovim plugin that brings syntax highlighting to generic log files
     config = function()
       require('log-highlight').setup {}
-    end,
+    end
   },
+  {                                                             -- Pasting with indentation adjusted to destination context
+    'hrsh7th/nvim-pasta',
+    config = function ()
+      vim.keymap.set({ 'n', 'x' }, 'p', require('pasta.mapping').p)
+      vim.keymap.set({ 'n', 'x' }, 'P', require('pasta.mapping').P)
+    end
+  }
 }
