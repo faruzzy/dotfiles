@@ -22,8 +22,8 @@ alias chromium='open -a google\ chrome\ canary'
 alias f='open -a Finder'
 alias rg='rg --hidden --ignore-case'
 alias ag="ag --path-to-ignore ~/.agignore"
-alias la='exa -all --icons --git'
-alias exa='exa -l --icons --git'
+alias la='eza -all --icons --git'
+alias eza='eza -l --icons --git'
 alias k5="kill -9 %%"
 
 # List all files colorized in long format, including dot files

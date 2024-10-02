@@ -103,7 +103,7 @@ else
     tree wget jq \
     pyenv xz python python@3.9 \
     reattach-to-user-namespace bash bash-completion@2 tmux \
-    translate-shell libpq exa jenv maven lua luajit-openresty \
+    translate-shell libpq eza jenv maven lua luajit-openresty \
     perl krb5 luv tree-sitter berkeley-db libevent mpdecimal \
     readline unibilium ca-certificates msgpack utf8proc libtermkey ncurses vim \
     libuv ruby xz libvterm openssl@1.1 sqlite gdbm libyaml libffi pcre the_silver_searcher \
