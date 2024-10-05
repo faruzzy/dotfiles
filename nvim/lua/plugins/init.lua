@@ -34,10 +34,11 @@ return {
       { 'g<cr>', '<cmd>Git<cr>', desc = 'Git Status' }, -- find this shorter
       { '<Leader>gc', '<cmd>Git commit<cr>', desc = 'Git Commit' },
       { '<Leader>gd', '<cmd>Gvdiffsplit<cr>', desc = 'Git Diff' },
+      { '<Leader>g3', '<cmd>Gdiffsplit!<cr>', desc = 'Git three way diff' },
     },
     dependencies = { 'tpope/vim-rhubarb' }                      -- Github extension for fugitive
   },
-  'junegunn/gv.vim',                                            -- A git commit browser TODO: fix GV not working
+  'junegunn/gv.vim',                                            -- A git commit browser
   'rhysd/git-messenger.vim', cmd = 'GitMessenger',              -- reveal the hidden message from Git under the cursor quickly in a popup window
   {
     "wintermute-cell/gitignore.nvim",                           -- plugin for generating .gitignore files in seconds, by allowing you to select from a huge number of different technologies
