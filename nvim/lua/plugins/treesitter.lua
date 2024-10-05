@@ -3,27 +3,56 @@ return {
   'nvim-treesitter/nvim-treesitter',
   dependencies = {
     'nvim-treesitter/nvim-treesitter-textobjects',
-    'windwp/nvim-ts-autotag',                  -- Use treesitter to autoclose and autorename html tags
+    'windwp/nvim-ts-autotag', -- Use treesitter to autoclose and autorename html tags
     'nvim-treesitter/nvim-treesitter-context', -- shows the context of the currently visible buffer contents
 
-    -- TODO: taken from jaskin, please investigate what this does
-    'RRethy/nvim-treesitter-endwise',
+    'RRethy/nvim-treesitter-endwise', -- plugin that helps to end certain structures automatically.
     'RRethy/nvim-treesitter-textsubjects',
   },
   build = ':TSUpdate',
 
   config = function()
-    require('nvim-ts-autotag').setup();
-    require('nvim-treesitter.configs').setup {
+    -- require('nvim-ts-autotag').setup()
+    ---@diagnostic disable-next-line: missing-fields
+    require('nvim-treesitter.configs').setup({
       -- Add languages to be installed here that you want installed for treesitter
-      ensure_installed = vim.tbl_flatten {
-        { 'html', 'c', 'cpp', 'go', 'lua', 'python', 'rust', 'tsx', 'javascript', 'typescript', 'vimdoc', 'vim', 'bash' },
-        { 'c_sharp', 'comment', 'cpp', 'css', 'dockerfile', 'go', 'graphql', 'java', 'jsdoc', 'json', 'jsonc', 'latex' },
-        { 'markdown', 'python', 'regex', 'ruby', 'scss', 'vue', 'yaml', 'smithy', 'markdown_inline', 'gitcommit' },
-      },
+      ensure_installed = vim
+        .iter({
+          {
+            'html',
+            'c',
+            'cpp',
+            'go',
+            'lua',
+            'python',
+            'rust',
+            'tsx',
+            'javascript',
+            'typescript',
+            'vimdoc',
+            'vim',
+            'bash',
+          },
+          {
+            'c_sharp',
+            'comment',
+            'cpp',
+            'css',
+            'dockerfile',
+            'go',
+            'graphql',
+            'java',
+            'jsdoc',
+            'json',
+            'jsonc',
+            'latex',
+          },
+          { 'markdown', 'python', 'regex', 'ruby', 'scss', 'vue', 'yaml', 'smithy', 'markdown_inline', 'gitcommit' },
+        })
+        :flatten(),
 
-      -- Autoinstall languages that are not installed. Defaults to false (but you can change for yourself!)
-      auto_install = false,
+      -- Autoinstall languages that are not installed. Defaults to false
+      auto_install = true,
 
       highlight = { enable = true },
       indent = { enable = true },
@@ -36,12 +65,26 @@ return {
           node_decremental = '<c-r>',
         },
       },
+
+      endwise = {
+        enable = true,
+      },
+
+      textsubjects = {
+        enable = true,
+        prev_selection = ',',
+        keymaps = {
+          ['.'] = 'textsubjects-smart',
+          [';'] = 'textsubjects-container-outer',
+          ['i;'] = { 'textsubjects-container-inner', desc = 'Select inside containers (classes, functions, etc.)' },
+        },
+      },
+
       textobjects = {
         select = {
           enable = true,
           lookahead = true, -- Automatically jump forward to textobj, similar to targets.vim
           keymaps = {
-            -- You can use the capture groups defined in textobjects.scm
             ['aa'] = '@parameter.outer',
             ['ia'] = '@parameter.inner',
             ['af'] = '@function.outer',
@@ -80,6 +123,6 @@ return {
           },
         },
       },
-    }
-  end
+    })
+  end,
 }
