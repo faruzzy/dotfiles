@@ -47,16 +47,15 @@ return {
 
   -- Language specifics
   'pantharshit00/vim-prisma',                                   -- Provides file detection and syntax highlighting suppor for Prisma files
-  'jparise/vim-graphql',                                        -- Provides fie detection, syntax highlighting and indentation.
+  'jparise/vim-graphql',                                        -- Provides file detection, syntax highlighting and indentation.
   'udalov/javap-vim',                                           -- Allows you to read the decompiled bytecode of a JVM class file
   'MeanderingProgrammer/render-markdown.nvim',                  -- Improves viewing Markdown files in Neovim
-
-  'wesQ3/vim-windowswap',                                       -- Swap windows without ruining your layout
-  'wellle/visual-split.vim',
 
   -- Misc
   'Pocco81/auto-save.nvim',                                     -- automatically save your changes so the world doesn't collapse
   'psliwka/vim-smoothie',                                       -- Smooth scrolling done right
+  'wesQ3/vim-windowswap',                                       -- Swap windows without ruining your layout
+  'wellle/visual-split.vim',                                    -- Control splits with visual selections or text objects
   -- 'karb94/neoscroll.nvim',                                   -- look into this as a potential replacement for vim-smoothie
   'wsdjeg/vim-fetch',                                           -- Fetch that line and column, boy!
   'tpope/vim-sleuth',                                           -- Detect tabstop and shiftwidth automatically
