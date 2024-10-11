@@ -14,7 +14,7 @@ local servers = {
   emmet_language_server = require('lsp.servers.emmet_language_server'),
   eslint = require('lsp.servers.eslint'),
   -- gdscript = { install = { "brew", "godot" } },
-  gopls = { install = { 'go', 'golang.org/x/tools/gopls@latest' } },
+  -- gopls = { install = { 'go', 'golang.org/x/tools/gopls@latest' } },
   graphql = require('lsp.servers.graphql'),
   html = require('lsp.servers.html'),
   -- jdtls = require('lsp.servers.jdtls'),
