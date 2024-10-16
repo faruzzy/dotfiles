@@ -12,6 +12,4 @@
 --border='rounded'
 --layout=reverse
 
---preview='bat --style=numbers --color=always {}'
-
 --multi
