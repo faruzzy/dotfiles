@@ -79,9 +79,17 @@ return {
       { '<leader>of', [[<cmd>lua require('fzf-lua').oldfiles()<CR>]], desc = '[O]ld [F]iles' },
 
       --- Search
-      { '<leader>/', [[<cmd>lua require('fzf-lua').lgrep_curbuf()<CR>]], desc = 'buffer Lines' },
-      { '<leader>fw', [[<cmd>lua require('fzf-lua').grep_cword()<CR>]], desc = 'buffer Lines' },
-      { '<leader>fW', [[<cmd>lua require('fzf-lua').grep_cWORD()<CR>]], desc = 'buffer Lines' },
+      { '<leader>/', [[<cmd>lua require('fzf-lua').lgrep_curbuf()<CR>]], desc = 'Search current buffer Lines' },
+      {
+        '<leader>fw',
+        [[<cmd>lua require('fzf-lua').grep_cword()<CR>]],
+        desc = 'Search word under the cursor globally',
+      },
+      {
+        '<leader>fW',
+        [[<cmd>lua require('fzf-lua').grep_cWORD()<CR>]],
+        desc = 'Search word under the cursor in current buffer',
+      },
 
       --- Code Navigation
       { '<Leader>dw', [[<cmd>lua require('fzf-lua').diagnostics_workspace()<CR>]], desc = 'Workspace diagnostics' },
