@@ -12,11 +12,6 @@ local formatters = {
     filetypes = { 'c' },
   },
   ['format-queries'] = { filetypes = { 'query' } },
-  gdformat = {
-    install_cmd = { 'pip', 'git+https://github.com/Scony/godot-gdscript-toolkit.git' },
-    required_file = 'project.godot',
-    filetypes = { 'gdscript' },
-  },
   prettierd = {
     install_cmd = { 'npm', '@fsouza/prettierd' },
     required_file = './node_modules/.bin/prettier',

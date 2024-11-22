@@ -1,0 +1,70 @@
+import = ["/Users/faruzzy/.config/alacritty/catppuccin-frappe.toml"]
+live_config_reload = true
+
+[bell]
+animation = "EaseOutExpo"
+duration = 0
+
+[colors]
+draw_bold_text_with_bright_colors = true
+
+[cursor]
+style = "Block"
+unfocused_hollow = false
+
+[debug]
+render_timer = false
+
+[env]
+TERM = "screen-256color"
+
+[font]
+size = 16
+
+[font.bold]
+family = "ComicShannsMono Nerd Font"
+style = "Bold"
+
+[font.glyph_offset]
+x = 0
+y = 0
+
+[font.italic]
+family = "FiraCode Nerd Font"
+style = "Regular Italic"
+
+[font.normal]
+family = "ComicShannsMono Nerd Font"
+style = "Regular"
+
+[font.offset]
+x = 0
+y = 1
+
+[mouse]
+hide_when_typing = true
+
+[[mouse.bindings]]
+action = "PasteSelection"
+mouse = "Middle"
+
+[scrolling]
+history = 10000
+multiplier = 1
+
+[selection]
+save_to_clipboard = true
+semantic_escape_chars = ",│`|:\"' ()[]{}<>"
+
+[window]
+decorations = "buttonless"
+dynamic_padding = false
+option_as_alt = "OnlyLeft"
+
+[window.dimensions]
+columns = 160
+lines = 48
+
+[window.padding]
+x = 1
+y = 1
