@@ -9,7 +9,7 @@ return {
 
   -- tmux integration
   'tmux-plugins/vim-tmux-focus-events',
-  'christoomey/vim-tmux-navigator',
+  'christoomey/vim-tmux-navigator',                             -- Allows navigating seamlessly between vim and tmux splits using a consistent set of hotkeys. Works in conjunction with the same plugin in .tmux.conf
   {
     'benmills/vimux',
     keys = {
