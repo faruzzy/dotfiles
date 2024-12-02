@@ -1,4 +1,4 @@
-import = ["/Users/faruzzy/.config/alacritty/catppuccin-frappe.toml"]
+import = ["~/.config/alacritty/catppuccin-frappe.toml"]
 live_config_reload = true
 
 [bell]
