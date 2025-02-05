@@ -100,7 +100,7 @@ else
     ninja cmake gettext curl # NeoVim build dependencies
     fd ag ripgrep bat gh git-delta cmus \
     imagemagick gnupg gnu-sed\
-    tree wget jq \
+    tree wget jq tig\
     pyenv xz python python@3.9 \
     reattach-to-user-namespace bash bash-completion@2 tmux \
     translate-shell libpq eza jenv maven lua luajit-openresty \
