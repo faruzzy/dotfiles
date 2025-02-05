@@ -59,7 +59,13 @@ nnoremap Y y$
 nnoremap Q @q
 nnoremap [c :action VcsShowPrevChangeMarker<cr>
 nnoremap ]c :action VcsShowNextChangeMarker<cr>
+nnoremap ]e :action GotoNextError<cr>
+nnoremap [e :action GotoPreviousError<cr>
 nnoremap gcc :action CommentByLineComment<cr>
+
+nnoremap <C-f> :action SearchEverywhere<cr>
+nnoremap <C-o> :action Back<cr>
+nnoremap <C-i> :action Forward<cr>
 
 nnoremap <leader>s :source ~/.ideavimrc<CR>
 nnoremap <leader>fu :action FindUsages<cr>
@@ -83,8 +89,6 @@ nnoremap <leader>gr :action GotoRelated<cr>
 nnoremap <leader>gb :action Annotate<cr>
 nnoremap <leader>tl Vy<cr>:action ActivateTerminalToolWindow<cr>
 vnoremap <leader>tl y<cr>:action ActivateTerminalToolWindow<cr>
-nnoremap ]e :action GotoNextError<cr>
-nnoremap [e :action GotoPreviousError<cr>
 map <leader><leader>c <Plug>(easymotion-s))
 map <leader><leader>e <Plug>(easymotion-f))
 
