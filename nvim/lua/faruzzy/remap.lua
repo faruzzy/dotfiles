@@ -3,7 +3,7 @@ vim.keymap.set('n', ']b', vim.cmd.bnext)
 vim.keymap.set('n', '[b', vim.cmd.bprev)
 
 -- Move to last buffer
-vim.keymap.set('n', 'b<Tab>', '<cmd>b#<cr>')
+vim.keymap.set('n', '<Tab><Tab>', '<cmd>b#<cr>')
 
 -- Copying the vscode behaviour of making tab splits
 -- vim.keymap.set('n', '<C-\\>', '<CMD>vsplit<CR>')
