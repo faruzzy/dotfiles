@@ -8,6 +8,8 @@ return {
       '.eslintrc.yml',
       '.eslintrc.json',
       'eslint.config.js',
+      'eslint.config.mjs',
+      'eslint.config.cjs',
       './node_modules/eslint'
     )
     config.on_attach = function(_, bufnr)
