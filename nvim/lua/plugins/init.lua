@@ -49,7 +49,7 @@ return {
   'pantharshit00/vim-prisma',                                   -- Provides file detection and syntax highlighting suppor for Prisma files
   'jparise/vim-graphql',                                        -- Provides file detection, syntax highlighting and indentation.
   'udalov/javap-vim',                                           -- Allows you to read the decompiled bytecode of a JVM class file
-  'MeanderingProgrammer/render-markdown.nvim',                  -- Improves viewing Markdown files in Neovim
+  -- 'MeanderingProgrammer/render-markdown.nvim',                  -- Improves viewing Markdown files in Neovim
 
   -- Misc
   'Pocco81/auto-save.nvim',                                     -- automatically save your changes so the world doesn't collapse
