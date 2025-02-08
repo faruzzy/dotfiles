@@ -7,7 +7,7 @@ return {
       winopts = {
         backdrop = 100,
         border = vim.g.border_style,
-        preview = { border = 'sharp', wrap = 'wrap', flip_columns = 160 },
+        preview = { border = 'border-double', wrap = 'wrap', flip_columns = 160 },
       },
       previewers = {
         git_diff = { pager = 'delta --file-style="omit" --hunk-header-style="omit"' },
