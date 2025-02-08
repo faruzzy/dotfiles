@@ -27,7 +27,7 @@ local servers = {
   -- svelte = require("lsp.servers.svelte"),
   tailwindcss = require('lsp.servers.tailwindcss'),
   -- ["typescript-tools"] = require("lsp.servers.typescript-tools"),
-  tsserver = {},
+  ts_ls = {},
   rust_analyzer = {},
   vimls = { install = { 'npm', 'vim-language-server' } },
   yamlls = { install = { 'npm', 'yaml-language-server' } },
