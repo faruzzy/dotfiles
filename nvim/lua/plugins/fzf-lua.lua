@@ -1,8 +1,8 @@
 return {
-  { 'junegunn/fzf', dir = '~/.fzf', build = './install --bin' },
   {
     'ibhagwan/fzf-lua',
     dependencies = { 'echasnovski/mini.icons' },
+    event = 'VeryLazy',
     opts = {
       winopts = {
         backdrop = 100,
