@@ -38,7 +38,7 @@ return {
     },
     dependencies = { 'tpope/vim-rhubarb' }                      -- Github extension for fugitive
   },
-  'junegunn/gv.vim',                                            -- A git commit browser
+  { 'junegunn/gv.vim', dependencies = { 'tpope/vim-fugitive' } }, -- A git commit browser
   'rhysd/git-messenger.vim', cmd = 'GitMessenger',              -- reveal the hidden message from Git under the cursor quickly in a popup window
   {
     "wintermute-cell/gitignore.nvim",                           -- plugin for generating .gitignore files in seconds, by allowing you to select from a huge number of different technologies
