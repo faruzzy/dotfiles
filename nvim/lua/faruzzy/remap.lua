@@ -75,7 +75,7 @@ function CloseAllButCurrent()
   local bufs = vim.fn.getbufinfo({ buflisted = 1 })
   for _, buf in ipairs(bufs) do
     if buf.bufnr ~= current_buf then
-      vim.cmd('silent! bdelete ' .. buf.bufnr)
+      vim.cmd('silent! Bdelete ' .. buf.bufnr)
     end
   end
   vim.fn.win_gotoid(current_win)
@@ -83,6 +83,8 @@ end
 vim.keymap.set('n', '<Leader>aq', function()
   CloseAllButCurrent()
 end, { silent = true, desc = 'Close all other buffers except current one.' })
+
+vim.keymap.set('n', '<Leader>q', ':Bdelete<CR>')
 
 vim.cmd([[
 function! s:goog(pat, lucky)
