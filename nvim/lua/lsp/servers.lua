@@ -21,7 +21,7 @@ local servers = {
   jsonls = require('lsp.servers.jsonls'),
   lua_ls = require('lsp.servers.lua_ls'),
   cssls = { install = { 'npm', 'vscode-langservers-extracted' } },
-  ts_ls = {},
+  -- ts_ls = {},
   vimls = { install = { 'npm', 'vim-language-server' } },
   yamlls = { install = { 'npm', 'yaml-language-server' } },
 }
