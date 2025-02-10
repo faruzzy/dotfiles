@@ -2,6 +2,9 @@
 vim.keymap.set('n', ']b', vim.cmd.bnext)
 vim.keymap.set('n', '[b', vim.cmd.bprev)
 
+-- AutoSave toggle
+vim.api.nvim_set_keymap('n', '<leader>as', ':ASToggle<CR>', {})
+
 -- Move to last buffer
 vim.keymap.set('n', '<Tab><Tab>', '<cmd>b#<cr>')
 
