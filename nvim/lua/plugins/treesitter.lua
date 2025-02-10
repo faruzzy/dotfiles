@@ -12,7 +12,7 @@ return {
   build = ':TSUpdate',
 
   config = function()
-    -- require('nvim-ts-autotag').setup()
+    require('nvim-ts-autotag').setup()
     ---@diagnostic disable-next-line: missing-fields
     require('nvim-treesitter.configs').setup({
       -- Add languages to be installed here that you want installed for treesitter
@@ -32,6 +32,8 @@ return {
             'vimdoc',
             'vim',
             'bash',
+            'diff',
+            'git_rebase',
           },
           {
             'c_sharp',
