@@ -75,7 +75,7 @@ return {
       },
       --- Buffer
       { '<Leader><CR>', [[<cmd>lua require('fzf-lua').buffers()<CR>]], desc = 'buffers' },
-      { '<C-g>', [[<cmd>lua require('fzf-lua').resume()<CR>]], desc = 'marks' },
+      { '<C-g>', [[<cmd>lua require('fzf-lua').resume()<CR>]], desc = 'resume' },
       { '<leader>of', [[<cmd>lua require('fzf-lua').oldfiles()<CR>]], desc = '[O]ld [F]iles' },
 
       --- Search
