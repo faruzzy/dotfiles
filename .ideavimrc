@@ -35,6 +35,9 @@ nnoremap N Nzz
 vnoremap n nzz
 vnoremap N Nzz
 
+nnoremap <C-h> <C-W>h
+nnoremap <C-l> <C-W>l
+
 " Center screen when moving up and down
 nnoremap <C-u> <C-u>zz
 nnoremap <C-o> <C-d>zz
