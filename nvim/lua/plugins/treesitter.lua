@@ -34,6 +34,7 @@ return {
             'bash',
             'diff',
             'git_rebase',
+            'git_config',
           },
           {
             'c_sharp',
