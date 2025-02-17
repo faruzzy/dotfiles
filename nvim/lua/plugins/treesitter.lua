@@ -46,8 +46,10 @@ return {
             'java',
             'jsdoc',
             'json',
+            'toml',
             'jsonc',
             'latex',
+            'tmux',
           },
           { 'markdown', 'python', 'regex', 'ruby', 'scss', 'vue', 'yaml', 'smithy', 'markdown_inline', 'gitcommit' },
         })
