@@ -32,7 +32,7 @@ family = "FiraCode Nerd Font"
 style = "Regular Italic"
 
 [font.normal]
-family = "ComicShannsMono Nerd Font"
+family = "FiraCode Nerd Font"
 style = "Regular"
 
 [font.offset]
@@ -69,4 +69,4 @@ y = 1
 
 [general]
 live_config_reload = true
-import = ["~/.config/alacritty/catppuccin-frappe.toml"]
+import = ["~/.config/alacritty/catppucin-mocha.toml"]

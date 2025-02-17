@@ -5,7 +5,7 @@ return {
   priority = 1000,
   config = function()
     require('catppuccin').setup({
-      flavour = 'frappe',
+      flavour = 'mocha',
       term_colors = true, -- Setting for baleia.nvim
       background = { light = 'latte', dark = 'macchiato' },
       custom_highlights = function(colors)

@@ -15,10 +15,14 @@
   diffFilter = delta --color-only
   #attributesfile = ~/.gitattributes
 
+[include]
+  path = ~/github/dotfiles/catppuccin.gitconfig
+
 [delta]
   side-by-side = true
   navigate = true
   light = false
+  features = catppuccin-mocha
 
 [filter "lfs"]
   clean = git lfs clean %f
