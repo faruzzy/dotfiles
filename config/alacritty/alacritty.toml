@@ -28,11 +28,11 @@ x = 0
 y = 0
 
 [font.italic]
-family = "FiraCode Nerd Font"
+family = "ComicShannsMono Nerd Font"
 style = "Regular Italic"
 
 [font.normal]
-family = "FiraCode Nerd Font"
+family = "ComicShannsMono Nerd Font"
 style = "Regular"
 
 [font.offset]
