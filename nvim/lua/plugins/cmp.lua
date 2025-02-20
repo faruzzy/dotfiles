@@ -1,3 +1,4 @@
+-- A completion engine plugin for neovim
 local colors = require('colors').get_colors()
 
 local border_config = {

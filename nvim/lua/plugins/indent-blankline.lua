@@ -1,6 +1,7 @@
+-- adds indentation guides to Neovim
 return {
   'lukas-reineke/indent-blankline.nvim',
-  config = function ()
+  config = function()
     -- local hooks = require('ibl.hooks')
     -- local hi = Config.common.hl.hi
 
@@ -21,16 +22,16 @@ return {
       enabled = true,
       debounce = 200,
       indent = {
-        char = "▏",
-        tab_char = "▏",
+        char = '▏',
+        tab_char = '▏',
         smart_indent_cap = true,
-        highlight = "Whitespace",
+        highlight = 'Whitespace',
       },
       scope = {
         enabled = true,
-        char = "▏",
+        char = '▏',
         show_start = false,
-      }
+      },
     })
-  end
+  end,
 }

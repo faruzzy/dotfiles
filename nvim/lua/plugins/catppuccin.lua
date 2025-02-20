@@ -1,3 +1,4 @@
+-- Soothing pastel theme for (Neo)vim
 return {
   'catppuccin/nvim',
   lazy = false,
