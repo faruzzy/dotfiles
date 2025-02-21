@@ -1,4 +1,4 @@
--- undotree configs
+-- Undotree visualizes the undo history
 
 local config = function()
   vim.g.undotree_WindowLayout = 2

@@ -1,3 +1,4 @@
+-- Jump to symbols in your code with live preview, built-in fuzzy finding, and other modules
 return {
   'bassamsdata/namu.nvim',
   config = function()

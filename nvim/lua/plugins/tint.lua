@@ -1,3 +1,4 @@
+-- Tint inactive windows in Neovim
 return {
   'levouh/tint.nvim',
   opts = function()

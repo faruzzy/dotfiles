@@ -1,3 +1,4 @@
+-- Adds a ghost text to the right of the cursor that shows the text preceding the opening parentheses
 return {
   'briangwaltney/paren-hint.nvim',
   lazy = false,

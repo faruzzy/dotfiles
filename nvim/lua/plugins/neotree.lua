@@ -1,3 +1,4 @@
+-- Neovim plugin to browse the file system and other tree like structures
 return {
   'nvim-neo-tree/neo-tree.nvim',
   cmd = 'Neotree',
@@ -16,7 +17,7 @@ return {
       filesystem = {
         follow_current_file = true,
         hijack_netrw_behavior = 'open_current',
-      }
+      },
     })
-  end
+  end,
 }

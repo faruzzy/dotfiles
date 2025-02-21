@@ -1,3 +1,4 @@
+-- Comment plugin for neovim
 -- "gc" to comment visual regions/lines
 return {
   'numToStr/Comment.nvim',

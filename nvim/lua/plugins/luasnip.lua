@@ -1,3 +1,4 @@
+-- Snippet Engine for Neovim written in Lua
 local function key_map(map)
   local key, fn, args, desc, mode = unpack(map)
 
@@ -28,11 +29,11 @@ return {
     local fmt = require('luasnip.extras.fmt').fmt
 
     require('luasnip.loaders.from_vscode').load({
-      paths = { '~/github/dotfiles/vim-common/' }
+      paths = { '~/github/dotfiles/vim-common/' },
     })
 
     require('luasnip.loaders.from_snipmate').load({
-      paths = { '~/github/dotfiles/config/nvim/snippets/' }
+      paths = { '~/github/dotfiles/config/nvim/snippets/' },
     })
 
     luasnip.config.set_config({
