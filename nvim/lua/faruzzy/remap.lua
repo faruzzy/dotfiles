@@ -102,4 +102,12 @@ nnoremap <leader>? :call <SID>goog(expand("<cWORD>"), 0)<cr>
 nnoremap <leader>! :call <SID>goog(expand("<cWORD>"), 1)<cr>
 xnoremap <leader>? "gy:call <SID>goog(@g, 0)<cr>gv
 xnoremap <leader>! "gy:call <SID>goog(@g, 1)<cr>gv
+
+" Convenient mappings for quickly compiling and running code
+"TODO: Convert this into lua
+autocmd filetype c nnoremap <leader>c :w <CR>:!gcc % -o %:r && ./%:r<CR>
+autocmd filetype java nnoremap <leader>c :w <CR>:!javac % && java %:r<CR>
+autocmd filetype javascript nnoremap <leader>c :w <CR>:!node %<CR>
+autocmd filetype sh nnoremap <leader>c :w <CR>:!bash %<CR>
+autocmd filetype python nnoremap <leader>c :exec '!python' shellescape(@%, 1)<CR>
 ]])
