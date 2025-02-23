@@ -8,10 +8,9 @@ return {
   'norcalli/nvim-colorizer.lua',                                -- A color highlighter for Neovim
 
   -- tmux integration
-  'tmux-plugins/vim-tmux-focus-events',
   'christoomey/vim-tmux-navigator',                             -- Allows navigating seamlessly between vim and tmux splits using a consistent set of hotkeys. Works in conjunction with the same plugin in .tmux.conf
   {
-    'benmills/vimux',
+    'benmills/vimux',                                           -- easily interact with tmux from neovim
     keys = {
       { '<Leader>vr', '<cmd>VimuxPromptCommand<cr>', desc = 'Vimux Prompt Command' },
       { '<Leader>vl', '<cmd>VimuxRunLastCommand<cr>', desc = 'Vimux Run Last Command' },
@@ -59,8 +58,11 @@ return {
   'rcarriga/nvim-notify',                                       -- Notifications library
   'tpope/vim-repeat', keys = { { '.', desc = 'REPEAT' } },      -- Allows you to use the repeat the last native command `.` more than once
   'inkarkat/vim-visualrepeat',                                  -- Defines repetition of Vim built-in normal mode commands via . for visual mode
-  { 'tpope/vim-rsi', event = { 'InsertEnter *', 'CmdlineEnter' } }, -- Extend Readline keybindings to neovim TODO: Replace with linty-org/readline.nvim
-  'AndrewRadev/splitjoin.vim',                                  -- Makes switching between a single-line statement and a multi-line one easy
+  {
+    'tpope/vim-rsi',                                            -- Extend Readline keybindings to neovim TODO: Replace with linty-org/readline.nvim
+    event = { 'InsertEnter *', 'CmdlineEnter' },
+  },
+  'AndrewRadev/splitjoin.vim',                                  -- Makes switching between a single-line statement and a multi-line one easily
   'RRethy/vim-illuminate',                                      -- automatically highlight other uses of the word under the cursor
   'jordwalke/VimSplitBalancer',                                 -- Distributes available space among vertical splits
   'moll/vim-bbye',                                              -- allows you to delete buffers without closing your windows or messing up your layout
