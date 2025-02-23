@@ -19,6 +19,10 @@ TERM = "screen-256color"
 [font]
 size = 16
 
+[font.offset]
+x = 0
+y = 0
+
 [font.bold]
 family = "ComicShannsMono Nerd Font"
 style = "Bold"
@@ -34,10 +38,6 @@ style = "Regular Italic"
 [font.normal]
 family = "ComicShannsMono Nerd Font"
 style = "Regular"
-
-[font.offset]
-x = 0
-y = 1
 
 [mouse]
 hide_when_typing = true
