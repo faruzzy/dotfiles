@@ -30,7 +30,6 @@ return {
       { '<Leader>ga', '<cmd>Git add %:p<cr><cr>', desc = 'Git Add' },
       { '<Leader>gp', '<cmd>Git pull<cr>', desc = 'Git Pull' },
       { '<Leader>pp', '<cmd>Git push origin master<cr>', desc = 'Git Push Master' },
-      { '<Leader>gs', '<cmd>Git<cr>', desc = 'Git Status' },
       { 'g<cr>', '<cmd>Git<cr>', desc = 'Git Status' }, -- find this shorter
       { '<Leader>gc', '<cmd>Git commit<cr>', desc = 'Git Commit' },
       { '<Leader>gd', '<cmd>Gvdiffsplit<cr>', desc = 'Git Diff' },
