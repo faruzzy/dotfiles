@@ -10,55 +10,57 @@ return {
     'RRethy/nvim-treesitter-textsubjects',
   },
   build = ':TSUpdate',
+  init = function()
+    -- Use bash parser for ZSH files
+    vim.treesitter.language.register('bash', 'zsh')
+  end,
 
   config = function()
     require('nvim-ts-autotag').setup()
     ---@diagnostic disable-next-line: missing-fields
     require('nvim-treesitter.configs').setup({
-      -- Add languages to be installed here that you want installed for treesitter
-      ensure_installed = vim
-        .iter({
-          {
-            'html',
-            'c',
-            'cpp',
-            'go',
-            'lua',
-            'python',
-            'rust',
-            'tsx',
-            'javascript',
-            'typescript',
-            'vimdoc',
-            'vim',
-            'bash',
-            'diff',
-            'git_rebase',
-            'git_config',
-          },
-          {
-            'c_sharp',
-            'comment',
-            'cpp',
-            'css',
-            'dockerfile',
-            'go',
-            'graphql',
-            'java',
-            'jsdoc',
-            'json',
-            'toml',
-            'jsonc',
-            'latex',
-            'tmux',
-          },
-          { 'markdown', 'python', 'regex', 'ruby', 'scss', 'vue', 'yaml', 'smithy', 'markdown_inline', 'gitcommit' },
-        })
-        :flatten(),
-
-      -- Autoinstall languages that are not installed. Defaults to false
+      ensure_installed = {
+        'html',
+        'c',
+        'cpp',
+        'go',
+        'lua',
+        'python',
+        'rust',
+        'tsx',
+        'javascript',
+        'typescript',
+        'vimdoc',
+        'vim',
+        'bash',
+        'diff',
+        'git_rebase',
+        'git_config',
+        'gitcommit',
+        'c_sharp',
+        'comment',
+        'cpp',
+        'css',
+        'scss',
+        'dockerfile',
+        'graphql',
+        'java',
+        'jsdoc',
+        'json',
+        'toml',
+        'jsonc',
+        'latex',
+        'tmux',
+        'readline',
+        'markdown',
+        'markdown_inline',
+        'regex',
+        'ruby',
+        'vue',
+        'yaml',
+        'smithy',
+      },
       auto_install = true,
-
       highlight = { enable = true },
       indent = { enable = true },
       incremental_selection = {
@@ -68,6 +70,9 @@ return {
           node_incremental = '<c-n>',
           scope_incremental = '<c-s>',
           node_decremental = '<c-r>',
+          -- init_selection = '<C-Space>',
+          -- node_incremental = '<C-Space>',
+          -- node_decremental = '<BS>',
         },
       },
 
