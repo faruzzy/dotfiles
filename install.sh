@@ -59,6 +59,7 @@ else
   brew install alt-tab
   brew install --cask app-cleaner
   brew install --cask bettertouchtool path-finder
+  brew install --cask firefox@developer-edition
   brew install --cask google-chrome-canary google-chrome firefox
   brew install --cask caffeine
   brew install --cask keka
