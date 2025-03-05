@@ -26,6 +26,7 @@ return {
         'go',
         'lua',
         'python',
+        'pem',
         'rust',
         'tsx',
         'javascript',
