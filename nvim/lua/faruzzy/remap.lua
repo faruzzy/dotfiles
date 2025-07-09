@@ -111,3 +111,23 @@ autocmd filetype javascript nnoremap <leader>c :w <CR>:!node %<CR>
 autocmd filetype sh nnoremap <leader>c :w <CR>:!bash %<CR>
 autocmd filetype python nnoremap <leader>c :exec '!python' shellescape(@%, 1)<CR>
 ]])
+
+vim.cmd([[
+command! CopyFilename         :let @* = expand('%:t') | echo 'Copied to clipboard: ' . @*
+command! CopyPath             :let @* = expand('%:h') | echo 'Copied to clipboard: ' . @*
+command! CopyAbsolutePath     :let @* = expand('%:p:h') | echo 'Copied to clipboard: ' . @*
+command! CopyFilepath         :let @* = expand('%') | echo 'Copied to clipboard: ' . @*
+command! CopyAbsoluteFilepath :let @* = expand('%:p') | echo 'Copied to clipboard: ' . @*
+
+" Copy filename and filepath quick shortcuts.
+nnoremap <leader>yfn  :CopyFilename<CR>
+xnoremap <leader>yfn  :CopyFilename<CR>
+nnoremap <leader>yp   :CopyPath<CR>
+xnoremap <leader>yp   :CopyPath<CR>
+nnoremap <leader>yap  :CopyAbsolutePath<CR>
+xnoremap <leader>yap  :CopyAbsolutePath<CR>
+nnoremap <leader>yfp  :CopyFilepath<CR>
+xnoremap <leader>yfp  :CopyFilepath<CR>
+nnoremap <leader>yafp :CopyAbsoluteFilepath<CR>
+xnoremap <leader>yafp :CopyAbsoluteFilepath<CR>
+]])
