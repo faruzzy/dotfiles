@@ -97,22 +97,22 @@ return {
       { '<Leader>ds', [[<cmd>lua require('fzf-lua').lsp_document_symbols()<CR>]], desc = 'Document Symbols' },
       {
         'gr',
-        [[<cmd>lua require('fzf-lua').lsp_references({ jump_to_single_result = true })<CR>]],
+        [[<cmd>lua require('fzf-lua').lsp_references({ jump1 = true })<CR>]],
         desc = '[G]o to [R]eferences',
       },
       {
         'gd',
-        [[<cmd>lua require('fzf-lua').lsp_definitions({ jump_to_single_result = true })<CR>]],
+        [[<cmd>lua require('fzf-lua').lsp_definitions({ jump1 = true })<CR>]],
         desc = '[G]o to [D]efinition',
       },
       {
         'gi',
-        [[<cmd>lua require('fzf-lua').lsp_implementations({ jump_to_single_result = true })<CR>]],
+        [[<cmd>lua require('fzf-lua').lsp_implementations({ jump1 = true })<CR>]],
         desc = '[G]o to [I]mplementation',
       },
       {
         'D',
-        [[<cmd>lua require('fzf-lua').lsp_implementations({ jump_to_single_result = true })<CR>]],
+        [[<cmd>lua require('fzf-lua').lsp_implementations({ jump1 = true })<CR>]],
         desc = 'Type Definition',
       },
 
@@ -143,11 +143,11 @@ return {
       --     'LspAttach',
       --     callback = function(args)
       --       local maps = {
-      --         gr = 'lsp_references jump_to_single_result=true',
+      --         gr = 'lsp_references jump1=true',
       --         gpr = 'lsp_references',
-      --         gd = 'lsp_definitions jump_to_single_result=true',
+      --         gd = 'lsp_definitions jump1=true',
       --         gpd = 'lsp_definitions',
-      --         gi = 'lsp_implementations jump_to_single_result=true',
+      --         gi = 'lsp_implementations jump1=true',
       --         gpi = 'lsp_implementations',
       --         ['g*'] = 'lsp_finder',
       --       }
@@ -155,7 +155,7 @@ return {
       --       local bsk = utils.buffer_map(args.buf)
       --       for key, cmd in pairs(maps) do
       --         -- bsk('n', key, '<cmd>FzfLua ' .. cmd .. '()<CR>')
-      --         -- bsk('n', key, [[<cmd>lua require('fzf-lua').lsp_references({ jump_to_single_result = true })<CR>]])
+      --         -- bsk('n', key, [[<cmd>lua require('fzf-lua').lsp_references({ jump1 = true })<CR>]])
       --       end
       --     end,
       --   },
