@@ -59,7 +59,9 @@ local active_lsp = {
     local msg = ''
     local buf_ft = vim.api.nvim_get_option_value('filetype', {})
     local clients = vim.lsp.get_clients()
-    if next(clients) == nil then return msg end
+    if next(clients) == nil then
+      return msg
+    end
     for _, client in ipairs(clients) do
       local filetypes = client.config.filetypes
       if filetypes and vim.fn.index(filetypes, buf_ft) ~= -1 then
@@ -81,7 +83,7 @@ local diff_source = function()
     return {
       added = gitsigns.added,
       modified = gitsigns.changed,
-      removed = gitsigns.removed
+      removed = gitsigns.removed,
     }
   end
 end
@@ -154,20 +156,28 @@ local evil_opts = function()
   }
 
   -- Inserts a component in lualine_c at left section
-  local ins_left = function(component) table.insert(config.sections.lualine_c, component) end
+  local ins_left = function(component)
+    table.insert(config.sections.lualine_c, component)
+  end
 
   -- Inserts a component in lualine_x ot right section
-  local ins_right = function(component) table.insert(config.sections.lualine_x, component) end
+  local ins_right = function(component)
+    table.insert(config.sections.lualine_x, component)
+  end
 
   ins_left({
-    function() return '▊' end,
+    function()
+      return '▊'
+    end,
     color = { fg = colors.blue }, -- Sets highlighting of component
     padding = { left = 0, right = 1 }, -- We don't need space before this
   })
 
   ins_left({
     -- mode component
-    function() return '' end,
+    function()
+      return ''
+    end,
     color = function()
       -- auto change color according to neovims mode
       local mode_color = {
@@ -227,7 +237,9 @@ local evil_opts = function()
   -- Insert mid section. You can make any number of sections in neovim :)
   -- for lualine it's any number greater then 2
   ins_left({
-    function() return '%=' end,
+    function()
+      return '%='
+    end,
   })
 
   ins_left(active_lsp)
@@ -266,7 +278,9 @@ local evil_opts = function()
   })
 
   ins_right({
-    function() return '▊' end,
+    function()
+      return '▊'
+    end,
     color = { fg = colors.blue },
     padding = { left = 1 },
   }) -- code
@@ -287,8 +301,10 @@ local norm_opts = {
       {
         'tabs',
         mode = 0,
-        cond = function() return vim.fn.tabpagenr('$') > 1 and true or false end,
-        separator = { left = '', right = ''},
+        cond = function()
+          return vim.fn.tabpagenr('$') > 1 and true or false
+        end,
+        separator = { left = '', right = '' },
       },
       'mode',
     },
@@ -299,21 +315,21 @@ local norm_opts = {
     },
     lualine_c = {
       { 'filename', path = 1 },
-      { 'aerial' }
+      { 'aerial' },
     },
     lualine_x = {
-      {
-        require("noice").api.status.command.get,
-        cond = require("noice").api.status.command.has,
-      },
-      {
-        require("noice").api.status.mode.get,
-        cond = require("noice").api.status.mode.has,
-      },
-      {
-        require("noice").api.status.search.get,
-        cond = require("noice").api.status.search.has,
-      },
+      -- {
+      --   require("noice").api.status.command.get,
+      --   cond = require("noice").api.status.command.has,
+      -- },
+      -- {
+      --   require("noice").api.status.mode.get,
+      --   cond = require("noice").api.status.mode.has,
+      -- },
+      -- {
+      --   require("noice").api.status.search.get,
+      --   cond = require("noice").api.status.search.has,
+      -- },
       {
         'fileformat',
         separator = '',
@@ -327,17 +343,17 @@ local norm_opts = {
       },
       {
         'encoding',
-        fmt = string.upper
+        fmt = string.upper,
       },
     },
     lualine_y = { 'location', 'progress' },
     lualine_z = {
       {
-        require("lazy.status").updates,
-        cond = require("lazy.status").has_updates,
+        require('lazy.status').updates,
+        cond = require('lazy.status').has_updates,
       },
       active_lsp,
-    }
+    },
   },
   inactive_sections = {
     lualine_c = { { 'filename', path = 1 } },
@@ -351,10 +367,17 @@ local norm_opts = {
     ft_extension,
     neogit_extension,
     help_extension,
-  }
+  },
 }
 
 return {
-  { 'nvim-lualine/lualine.nvim', event = 'BufReadPost', opts = norm_opts, config = function(_, opts) require('lualine').setup(opts) end },
+  {
+    'nvim-lualine/lualine.nvim',
+    event = 'BufReadPost',
+    opts = norm_opts,
+    config = function(_, opts)
+      require('lualine').setup(opts)
+    end,
+  },
   { 'edkolev/tmuxline.vim', cmd = 'Tmuxline' }, -- Tmux statusline
 }
