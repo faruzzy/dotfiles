@@ -21,7 +21,7 @@ while true; do sudo -n true; sleep 60; kill -0 "$$" || exit; done 2>/dev/null &
 # sudo defaults write /Library/Preferences/SystemConfiguration/com.apple.smb.server NetBIOSName -string "faruzzy"
 
 ###############################################################################
-# Dock																																				#
+# Dock                                                                        #
 ###############################################################################
 
 # Set the icon size of Dock items to 55 pixels
@@ -78,7 +78,7 @@ sudo systemsetup -setrestartfreeze on
 defaults write -g ApplePersistence -bool no
 
 # go into computer sleep mode after 20min
-#sudo systemsetup -setcomputersleep 20
+# sudo systemsetup -setcomputersleep 20
 
 # Check for software updates daily, not just once per week
 defaults write com.apple.SoftwareUpdate ScheduleFrequency -int 1
