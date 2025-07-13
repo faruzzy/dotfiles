@@ -120,12 +120,17 @@ return {
         end, { 'i', 's' }),
       }),
       sources = {
-        { name = 'nvim_lsp', priority = 1000, keyword_length = 2 },
-        { name = 'nvim_lsp_signature_help', priority = 900, keyword_length = 2 },
-        { name = 'luasnip', priority = 800, keyword_length = 2 },
-        { name = 'emmet', priority = 700, keyword_length = 2 },
-        { name = 'path', priority = 600 },
-        { name = 'buffer', priority = 500, keyword_length = 3, option = { get_bufnrs = vim.api.nvim_list_bufs } },
+        { name = 'nvim_lsp',                priority = 1000, keyword_length = 2 },
+        { name = 'nvim_lsp_signature_help', priority = 900,  keyword_length = 2 },
+        { name = 'luasnip',                 priority = 800,  keyword_length = 2 },
+        { name = 'emmet',                   priority = 700,  keyword_length = 2 },
+        { name = 'path',                    priority = 600 },
+        {
+          name = 'buffer',
+          priority = 500,
+          keyword_length = 3,
+          option = { get_bufnrs = vim.api.nvim_list_bufs },
+        },
         { name = 'lazydev', priority = 900, group_index = 0 },
       },
       window = {
