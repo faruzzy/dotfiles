@@ -1,71 +1,50 @@
 local g = vim.g
-local o = vim.opt
+local opt = vim.opt
 
 g.mapleader = ','
 g.maplocalleader = ','
+g.have_nerd_font = true -- Enable Nerd Font icons for UI
 
-vim.g.have_nerd_font = true
-
-vim.api.nvim_set_option_value('clipboard', 'unnamed', {}) -- Copies to the clipboard
-vim.o.clipboard = 'unnamedplus'
-
-vim.wo.number = true -- Display the real number on the current line
-vim.wo.relativenumber = true -- Display the relative number for everything else
-vim.o.cursorline = true
-vim.o.scrolloff = 5 -- Determines the number of context lines you would like to see above and below the cursor
-
-vim.o.mouse = 'a' -- Enable mouse mode
-
--- Enable true colour support
-vim.o.termguicolors = true
-
-vim.o.linebreak = true
-vim.o.breakindent = true
-
-o.cmdheight = 2
-
--- Save undo history
-vim.o.undofile = true
-
-o.title = true
-
-vim.o.spell = true
-o.spelllang = 'en_us,fr'
-o.display = 'lastline'
-
--- set vim diff options
-vim.o.diffopt = 'internal,filler,closeoff,vertical'
-vim.o.splitright = true
-vim.o.splitbelow = true
-vim.o.splitkeep = 'screen'
-
--- Spaces and Tabs
-o.expandtab = true -- On pressing tab, insert spaces
-o.shiftwidth = 2
--- Show existing tab with 2 spaces width
-o.tabstop = 2
-o.softtabstop = 2
-o.list = true
-vim.opt.backspace = { 'indent', 'eol', 'start' } -- make backspace work properly
-
-o.incsearch = true
-o.hlsearch = true -- Set highlight on search
-o.ignorecase = true -- Case-insensitive searching UNLESS \C or capital in search
-o.smartcase = true
-
-o.gdefault = true
-
-o.backup = false
-o.writebackup = false
-o.swapfile = false
-
-vim.o.completeopt = 'menuone,noselect' -- Set completeopt to have a better completion experience
-
-vim.o.updatetime = 250 -- Decrease update time
-vim.o.timeoutlen = 250 -- Displays which-key popup sooner
-
-vim.wo.signcolumn = 'yes' -- Keep signcolumn on by default
-o.signcolumn = 'yes'
-
-o.matchtime = 2
-vim.o.matchpairs = vim.o.matchpairs .. ',<:>'
+opt.clipboard = 'unnamedplus' -- Sync clipboard with system
+opt.number = true -- Show line numbers
+opt.relativenumber = true -- Show relative line numbers
+opt.cursorline = true -- Highlight current line
+opt.scrolloff = 5 -- Context lines around cursor
+opt.mouse = 'a' -- Enable mouse support
+opt.termguicolors = true -- Enable true color
+opt.linebreak = true -- Break lines at word boundaries
+opt.breakindent = true -- Indent wrapped lines
+opt.cmdheight = 2 -- Command line height
+opt.undofile = true -- Persist undo history
+opt.title = true -- Set window title
+opt.spell = false -- Default off, controlled by autocmd
+opt.spelllang = 'en_us,fr' -- Spell check languages
+opt.display = 'lastline' -- Show last line even if truncated
+opt.diffopt = 'internal,filler,closeoff,vertical' -- Diff settings
+opt.splitright = true -- Vertical splits to the right
+opt.splitbelow = true -- Horizontal splits below
+opt.splitkeep = 'screen' -- Keep screen layout during splits
+opt.expandtab = true -- Use spaces instead of tabs
+opt.shiftwidth = 2 -- Size of indent
+opt.tabstop = 2 -- Width of tabs
+opt.softtabstop = 2 -- Soft tab width
+opt.list = true -- Show invisible character
+opt.backspace = { 'indent', 'eol', 'start' } -- Backspace behavior
+opt.incsearch = true -- Incremental search
+opt.hlsearch = true -- Highlight search matches
+opt.ignorecase = true -- Case-insensitive search
+opt.smartcase = true -- Smart case search
+opt.gdefault = true -- Global substitute by default
+opt.backup = false -- Disable backup files
+opt.writebackup = false -- Disable write backup
+opt.swapfile = false -- Disable swap files
+opt.completeopt = 'menuone,noselect' -- Completion options
+opt.updatetime = 300 -- Update time for LSP/cmp
+opt.timeoutlen = 300 -- Keycode timeout
+opt.signcolumn = 'yes' -- Always show sign column
+opt.matchtime = 2 -- Match highlight duration
+opt.matchpairs:append('<:>') -- Add <> to match pairs
+opt.autoindent = true -- Auto-indent new lines
+opt.smartindent = true -- Smart indenting
+opt.guicursor = 'n-v-c:block,i-ci-ve:ver25,r-cr:hor20,o:hor50' -- Custom cursor shapes
+opt.fillchars = { eob = ' ', vert = '▏' } -- Clean fill characters
