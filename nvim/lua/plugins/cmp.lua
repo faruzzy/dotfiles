@@ -6,8 +6,6 @@
   - Depends on: nvim-cmp, cmp_luasnip, cmp-nvim-lsp, nvim-highlight-colors
 ]]
 
-local colors = require('colors').get_colors()
-
 local border_config = {
   border = { '╭', '─', '╮', '│', '╯', '─', '╰', '│' },
   winhighlight = 'NormalFloat:NormalFloat,FloatBorder:FloatBorder',
@@ -111,7 +109,7 @@ return {
             fallback()
           end
         end, { 'i', 's' }),
-        ['<S-Tab>'] = cmp.mapping(function(fallback)
+        ['<S-Tab>'] = cmp.mapping(function()
           if cmp.visible() then
             cmp.select_prev_item()
           elseif luasnip.locally_jumpable(-1) then
@@ -156,10 +154,6 @@ return {
           end
           vim_item.kind = vim_item.kind .. ' '
 
-          local color = colors[vim_item.abbr]
-          -- if client_name == 'lua_ls' and color then
-          --   vim_item.abbr = vim_item.abbr .. ' ' .. color
-          -- end
           vim_item.abbr = vim_item.abbr:sub(1, 50)
 
           return vim_item
