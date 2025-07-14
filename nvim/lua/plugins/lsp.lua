@@ -1,27 +1,10 @@
-local on_attach = function(_, bufnr)
-  local nmap = function(keys, func, desc)
-    if desc then
-      desc = 'LSP: ' .. desc
-    end
-
-    vim.keymap.set('n', keys, func, { buffer = bufnr, desc = desc })
-  end
-
-  nmap('<leader>rn', vim.lsp.buf.rename, '[R]e[n]ame')
-  nmap('<leader>ca', vim.lsp.buf.code_action, '[C]ode [A]ction')
-
-  -- See `:help K` for why this keymap
-  nmap('K', vim.lsp.buf.hover, 'Hover Documentation')
-  nmap('<C-k>', vim.lsp.buf.signature_help, 'Signature Documentation')
-
-  -- Lesser used LSP functionality
-  nmap('gD', vim.lsp.buf.declaration, '[G]oto [D]eclaration')
-
-  -- Create a command `:Format` local to the LSP buffer
-  vim.api.nvim_buf_create_user_command(bufnr, 'Format', function(_)
-    vim.lsp.buf.format()
-  end, { desc = 'Format current buffer with LSP' })
-end
+--[[
+  LSP configuration for Neovim using nvim-lspconfig and mason.nvim.
+  - Sets up LSP servers with custom keybindings and formatting.
+  - Manages server installation via mason.nvim.
+  - Provides status updates via fidget.nvim.
+  - See lsp/servers.lua for server-specific settings.
+]]
 
 return {
   -- LSP Configuration & Plugins
@@ -33,55 +16,52 @@ return {
     'WhoIsSethDaniel/mason-tool-installer.nvim',
 
     -- Useful status updates for LSP
-    -- NOTE: `opts = {}` is the same as calling `require('fidget').setup({})`
-    { 'j-hui/fidget.nvim', opts = {}, tag = 'legacy' },
+    {
+      'j-hui/fidget.nvim',
+      opts = {
+        notification = {
+          window = {
+            winblend = 0, -- Opaque background
+            align = 'bottom', -- Align notifications at the bottom
+          },
+          progress = {
+            display = {
+              render_limit = 5, -- Limit number of progress messages shown
+            },
+          },
+        },
+      },
+      tag = 'legacy',
+    },
   },
 
   config = function()
-    -- mason-lspconfig requires that these setup functions are called in this order
-    -- before setting up the servers.
     require('mason').setup()
     local servers = require('lsp.servers')
-    local ensure_installed = vim.tbl_keys(servers or {})
-    vim.list_extend(ensure_installed, {
-      'stylua', -- Used to format Lua code
-      'prettierd',
-    })
-    require('mason-tool-installer').setup({ ensure_installed = ensure_installed })
+    local lsp_servers = vim.tbl_keys(servers or {})
 
-    local capabilities = vim.lsp.protocol.make_client_capabilities()
-    capabilities = vim.tbl_deep_extend('force', capabilities, require('cmp_nvim_lsp').default_capabilities())
+    vim.list_extend(lsp_servers, {
+      'stylua', -- Lua formatter
+      'prettierd', -- JavaScript/TypeScript formatter
+    })
+
+    require('mason-tool-installer').setup({
+      ensure_installed = lsp_servers,
+      auto_update = false, -- Prevent automatic updates for reproducibility
+    })
 
     require('mason-lspconfig').setup({
+      ensure_installed = vim.tbl_keys(servers),
       handlers = {
         function(server_name)
+          local capabilities = require('cmp_nvim_lsp').default_capabilities()
           local server = servers[server_name] or {}
-          server.capabilities = vim.tbl_deep_extend('force', {}, capabilities, server.capabilities or {})
-          require('lspconfig')[server_name].setup({
-            server = server,
-            on_attach = on_attach,
-          })
+
+          require('lspconfig')[server_name].setup(vim.tbl_deep_extend('force', {
+            capabilities = capabilities,
+          }, server))
         end,
       },
     })
-    -- capabilities = require('cmp_nvim_lsp').default_capabilities(capabilities)
-
-    -- Ensure the servers above are installed
-    -- local mason_lspconfig = require 'mason-lspconfig'
-
-    -- mason_lspconfig.setup {
-    --   ensure_installed = vim.tbl_keys(servers),
-    -- }
-
-    -- mason_lspconfig.setup_handlers {
-    --   function(server_name)
-    --     require('lspconfig')[server_name].setup {
-    --       capabilities = capabilities,
-    --       on_attach = on_attach,
-    --       settings = servers[server_name],
-    --       filetypes = (servers[server_name] or {}).filetypes,
-    --     }
-    --   end,
-    -- }
   end,
 }
