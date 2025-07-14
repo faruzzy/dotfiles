@@ -56,7 +56,7 @@ vim.keymap.set({ 'n', 'v' }, '<CR>', ':<up>', def_opts) -- Repeat last command
 -- Toggle inlay hints
 vim.keymap.set('n', '<Leader>ti', function()
   local bufnr = 0
-  local clients = vim.lsp.get_active_clients({ bufnr = bufnr })
+  local clients = vim.lsp.get_clients({ bufnr = bufnr })
   if #clients == 0 then
     vim.notify('No LSP client attached to buffer', vim.log.levels.WARN)
     return
