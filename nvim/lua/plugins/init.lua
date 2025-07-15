@@ -44,9 +44,13 @@ return {
   },
 
   {
-    "Fildo7525/pretty_hover",
-    event = "LspAttach",
-    opts = {}
+    "Sebastian-Nielsen/better-type-hover",
+    ft = { "typescript", "typescriptreact" },
+    config = function()
+      require("better-type-hover").setup({
+        openTypeDocKeymap = 'K',
+      })
+    end,
   },
 
   -- Language specifics
