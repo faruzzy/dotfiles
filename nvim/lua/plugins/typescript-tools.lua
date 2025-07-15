@@ -38,11 +38,11 @@ return {
         bsk('n', '<leader>ri', '<cmd>TSToolsRemoveUnusedImports<CR>', { desc = 'Remove unused TypeScript imports' })
 
         if
-            vim.tbl_contains({
-              'javascript',
-              'javascriptreact',
-              'typescriptreact',
-            }, vim.bo.filetype)
+          vim.tbl_contains({
+            'javascript',
+            'javascriptreact',
+            'typescriptreact',
+          }, vim.bo.filetype)
         then
           bsk('i', '>', function()
             local success, result = pcall(function()

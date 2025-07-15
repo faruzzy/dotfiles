@@ -3,10 +3,10 @@ return {
   'nvim-treesitter/nvim-treesitter',
   dependencies = {
     'nvim-treesitter/nvim-treesitter-textobjects',
-    'windwp/nvim-ts-autotag', -- Use treesitter to autoclose and autorename html tags
+    'windwp/nvim-ts-autotag',                  -- Use treesitter to autoclose and autorename html tags
     'nvim-treesitter/nvim-treesitter-context', -- shows the context of the currently visible buffer contents
 
-    'RRethy/nvim-treesitter-endwise', -- plugin that helps to end certain structures automatically.
+    'RRethy/nvim-treesitter-endwise',          -- plugin that helps to end certain structures automatically.
     'RRethy/nvim-treesitter-textsubjects',
   },
   build = ':TSUpdate',
