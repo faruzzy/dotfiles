@@ -43,6 +43,12 @@ return {
     dependencies = "nvim-telescope/telescope.nvim",
   },
 
+  {
+    "Fildo7525/pretty_hover",
+    event = "LspAttach",
+    opts = {}
+  },
+
   -- Language specifics
   'pantharshit00/vim-prisma',                                   -- Provides file detection and syntax highlighting suppor for Prisma files
   'jparise/vim-graphql',                                        -- Provides file detection, syntax highlighting and indentation.
