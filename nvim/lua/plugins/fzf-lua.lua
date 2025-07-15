@@ -69,17 +69,17 @@ return {
         desc = 'files / git files',
       },
       {
-        '<C-f>',
+        '<leader>sg',
         [[<cmd>lua require('fzf-lua').grep_project({ file_icons=false, git_icons=false })<CR>]],
         desc = 'file lines',
       },
       --- Buffer
-      { '<Leader><CR>', [[<cmd>lua require('fzf-lua').buffers()<CR>]], desc = 'buffers' },
-      { '<C-g>', [[<cmd>lua require('fzf-lua').resume()<CR>]], desc = 'resume' },
-      { '<leader>of', [[<cmd>lua require('fzf-lua').oldfiles()<CR>]], desc = '[O]ld [F]iles' },
+      { '<Leader><CR>', [[<cmd>lua require('fzf-lua').buffers()<CR>]],      desc = 'buffers' },
+      { '<C-g>',        [[<cmd>lua require('fzf-lua').resume()<CR>]],       desc = 'resume' },
+      { '<leader>of',   [[<cmd>lua require('fzf-lua').oldfiles()<CR>]],     desc = '[O]ld [F]iles' },
 
       --- Search
-      { '<leader>/', [[<cmd>lua require('fzf-lua').lgrep_curbuf()<CR>]], desc = 'Search current buffer Lines' },
+      { '<leader>/',    [[<cmd>lua require('fzf-lua').lgrep_curbuf()<CR>]], desc = 'Search current buffer Lines' },
       {
         '<leader>fw',
         [[<cmd>lua require('fzf-lua').grep_cword()<CR>]],
@@ -94,7 +94,7 @@ return {
       --- Code Navigation
       { '<Leader>dw', [[<cmd>lua require('fzf-lua').diagnostics_workspace()<CR>]], desc = 'Workspace diagnostics' },
       { '<Leader>ws', [[<cmd>lua require('fzf-lua').lsp_workspace_symbols()<CR>]], desc = 'Workspace Symbols' },
-      { '<Leader>ds', [[<cmd>lua require('fzf-lua').lsp_document_symbols()<CR>]], desc = 'Document Symbols' },
+      { '<Leader>ds', [[<cmd>lua require('fzf-lua').lsp_document_symbols()<CR>]],  desc = 'Document Symbols' },
       {
         'gr',
         [[<cmd>lua require('fzf-lua').lsp_references({ jump1 = true })<CR>]],
@@ -117,22 +117,22 @@ return {
       },
 
       --- Git
-      { '<Leader>gx', [[<cmd>lua require('fzf-lua').git_commits()<CR>]], desc = 'git commits' },
+      { '<Leader>gx', [[<cmd>lua require('fzf-lua').git_commits()<CR>]],  desc = 'git commits' },
       { '<Leader>gX', [[<cmd>lua require('fzf-lua').git_bcommits()<CR>]], desc = 'git buffer commits' },
-      { '<Leader>gS', [[<cmd>lua require('fzf-lua').git_status()<CR>]], desc = 'git status' },
+      { '<Leader>gS', [[<cmd>lua require('fzf-lua').git_status()<CR>]],   desc = 'git status' },
 
       --- Misc
-      { '<Leader>k', [[<cmd>lua require('fzf-lua').keymaps()<CR>]], desc = 'keymaps' },
-      { '<Leader>m', [[<cmd>lua require('fzf-lua').marks()<CR>]], desc = 'marks' },
+      { '<Leader>k',  [[<cmd>lua require('fzf-lua').keymaps()<CR>]],      desc = 'keymaps' },
+      { '<Leader>m',  [[<cmd>lua require('fzf-lua').marks()<CR>]],        desc = 'marks' },
       {
         '<Leader>hi',
         [[<cmd>lua require('fzf-lua').command_history()<CR>]],
         desc = 'command history',
       },
       { [[<Leader>"]], [[<cmd>lua require('fzf-lua').registers()<CR>]], desc = 'registers' },
-      { '<Leader>:', [[<cmd>lua require('fzf-lua').commands()<CR>]], desc = 'vim commands' },
-      { '<leader>sh', [[<cmd>lua require('fzf-lua').help_tags()<CR>]], desc = 'help tags' },
-      { '<leader>au', [[<cmd>lua require('fzf-lua').autocmds()<CR>]], desc = 'autocmds' },
+      { '<Leader>:',   [[<cmd>lua require('fzf-lua').commands()<CR>]],  desc = 'vim commands' },
+      { '<leader>sh',  [[<cmd>lua require('fzf-lua').help_tags()<CR>]], desc = 'help tags' },
+      { '<leader>au',  [[<cmd>lua require('fzf-lua').autocmds()<CR>]],  desc = 'autocmds' },
     },
     init = function()
       local utils = require('utils')

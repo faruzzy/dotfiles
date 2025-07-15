@@ -62,9 +62,9 @@ augroup('document_highlight_attach', {
       local bufnr = args.buf
       local client = vim.lsp.get_client_by_id(args.data.client_id)
       if
-        not client
-        or not client.supports_method('textDocument/documentHighlight')
-        or vim.fn.expand('%:p'):match('^fugitive://')
+          not client
+          or not client.supports_method('textDocument/documentHighlight')
+          or vim.fn.expand('%:p'):match('^fugitive://')
       then
         return
       end
@@ -129,10 +129,10 @@ augroup('lsp_format', {
     pattern = { '*.js', '*.ts', '*.jsx', '*.tsx', '*.lua', '*.py' },
     callback = function(args)
       if
-        vim.g.disable_autoformat
-        or not vim.bo.modifiable
-        or vim.bo.buftype ~= ''
-        or vim.fn.expand('%:p'):match('^fugitive://')
+          vim.g.disable_autoformat
+          or not vim.bo.modifiable
+          or vim.bo.buftype ~= ''
+          or vim.fn.expand('%:p'):match('^fugitive://')
       then
         return
       end
