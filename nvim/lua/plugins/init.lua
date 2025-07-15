@@ -1,96 +1,297 @@
 -- stylua: ignore
 
 return {
-  'mattn/emmet-vim',             -- Provides support for expanding abbreviations similar to emmet
-  'MaxMEllon/vim-jsx-pretty',    -- React syntax highlighting and indenting plugin for vim.
-  -- 'Issafalcon/lsp-overloads.nvim',
-  'farmergreg/vim-lastplace',    -- Intelligently reopen files at your last edit position.
-  'norcalli/nvim-colorizer.lua', -- A color highlighter for Neovim
-
-  -- tmux integration
-  'christoomey/vim-tmux-navigator', -- Allows navigating seamlessly between vim and tmux splits using a consistent set of hotkeys. Works in conjunction with the same plugin in .tmux.conf
+  -- === WEB DEVELOPMENT ===
   {
-    'benmills/vimux',               -- easily interact with tmux from neovim
-    keys = {
-      { '<Leader>vr', '<cmd>VimuxPromptCommand<cr>',   desc = 'Vimux Prompt Command' },
-      { '<Leader>vl', '<cmd>VimuxRunLastCommand<cr>',  desc = 'Vimux Run Last Command' },
-      { '<Leader>vi', '<cmd>VimuxInterruptRunner<cr>', desc = 'Vimux Interrupt Runner' },
-      { '<Leader>vc', '<cmd>VimuxCloseRunner<cr>',     desc = 'Vimux Close Runner' },
-      { '<Leader>vz', '<cmd>VimuxZoomRunner<cr>',      desc = 'Vimux Zoom Runner' },
-      { '<Leader>vt', '<cmd>VimuxTogglePane<cr>',      desc = 'Vimux Toggle Pane' },
-    }
+    'mattn/emmet-vim',
+    ft = { 'html', 'css', 'javascript', 'typescript', 'jsx', 'tsx', 'vue', 'svelte' },
+    desc = 'Emmet abbreviation expansion for web development'
   },
-  'wellle/tmux-complete.vim', -- plugin for insert mode completion of words in adjacent tmux panes
 
-  -- Git related plugins
   {
-    'tpope/vim-fugitive', -- Git wrapper
+    'MaxMEllon/vim-jsx-pretty',
+    ft = { 'javascript', 'typescript', 'jsx', 'tsx' },
+    desc = 'React syntax highlighting and indenting'
+  },
+
+  -- === NAVIGATION & EDITING ===
+  {
+    'farmergreg/vim-lastplace',
+    event = 'BufReadPost',
+    desc = 'Intelligently reopen files at last edit position'
+  },
+
+  {
+    'norcalli/nvim-colorizer.lua',
+    event = 'BufReadPost',
+    desc = 'Color highlighter for CSS/hex colors'
+  },
+
+  -- === TMUX INTEGRATION ===
+  {
+    'christoomey/vim-tmux-navigator',
     keys = {
-      { '<Leader>ga', '<cmd>Git add %:p<cr><cr>',        desc = 'Git Add' },
-      { '<Leader>gp', '<cmd>Git pull<cr>',               desc = 'Git Pull' },
-      { '<Leader>pp', '<cmd>Git push origin master<cr>', desc = 'Git Push Master' },
-      { 'g<cr>',      '<cmd>Git<cr>',                    desc = 'Git Status' }, -- find this shorter
-      { '<Leader>gc', '<cmd>Git commit<cr>',             desc = 'Git Commit' },
-      { '<Leader>gd', '<cmd>Gvdiffsplit<cr>',            desc = 'Git Diff' },
-      { '<Leader>g3', '<cmd>Gdiffsplit!<cr>',            desc = 'Git three way diff' },
+      { '<C-h>', '<cmd>TmuxNavigateLeft<cr>',  desc = 'Navigate Left' },
+      { '<C-j>', '<cmd>TmuxNavigateDown<cr>',  desc = 'Navigate Down' },
+      { '<C-k>', '<cmd>TmuxNavigateUp<cr>',    desc = 'Navigate Up' },
+      { '<C-l>', '<cmd>TmuxNavigateRight<cr>', desc = 'Navigate Right' },
     },
-    dependencies = { 'tpope/vim-rhubarb' }                                  -- Github extension for fugitive
-  },
-  { 'junegunn/gv.vim',           dependencies = { 'tpope/vim-fugitive' } }, -- A git commit browser
-  'rhysd/git-messenger.vim',
-  cmd = 'GitMessenger',                                                     -- reveal the hidden message from Git under the cursor quickly in a popup window
-  {
-    "wintermute-cell/gitignore.nvim",                                       -- plugin for generating .gitignore files in seconds, by allowing you to select from a huge number of different technologies
-    dependencies = "nvim-telescope/telescope.nvim",
+    desc = 'Seamless vim/tmux navigation'
   },
 
   {
-    "Sebastian-Nielsen/better-type-hover", -- Improves lsp hover by actually showing the exact declaration or type
-    ft = { "typescript", "typescriptreact" },
+    'benmills/vimux',
+    keys = {
+      { '<Leader>vr', '<cmd>VimuxPromptCommand<cr>',   desc = 'Vimux: Prompt Command' },
+      { '<Leader>vl', '<cmd>VimuxRunLastCommand<cr>',  desc = 'Vimux: Run Last Command' },
+      { '<Leader>vi', '<cmd>VimuxInterruptRunner<cr>', desc = 'Vimux: Interrupt Runner' },
+      { '<Leader>vc', '<cmd>VimuxCloseRunner<cr>',     desc = 'Vimux: Close Runner' },
+      { '<Leader>vz', '<cmd>VimuxZoomRunner<cr>',      desc = 'Vimux: Zoom Runner' },
+      { '<Leader>vt', '<cmd>VimuxTogglePane<cr>',      desc = 'Vimux: Toggle Pane' },
+    },
+    desc = 'Tmux integration for running commands'
+  },
+
+  {
+    'wellle/tmux-complete.vim',
+    event = 'InsertEnter',
+    desc = 'Insert mode completion from tmux panes'
+  },
+
+  -- === GIT INTEGRATION ===
+  {
+    'tpope/vim-fugitive',
+    dependencies = { 'tpope/vim-rhubarb' },
+    cmd = { 'Git', 'Gstatus', 'Gblame', 'Glog', 'Gcommit' },
+    keys = {
+      { '<Leader>ga', '<cmd>Git add %:p<cr>',       desc = 'Git: Add current file' },
+      { '<Leader>gp', '<cmd>Git pull<cr>',          desc = 'Git: Pull' },
+      { '<Leader>gP', '<cmd>Git push<cr>',          desc = 'Git: Push' },
+      { 'g<cr>',      '<cmd>Git<cr>',               desc = 'Git: Status' },
+      { '<Leader>gc', '<cmd>Git commit<cr>',        desc = 'Git: Commit' },
+      { '<Leader>gd', '<cmd>Gvdiffsplit<cr>',       desc = 'Git: Diff split' },
+      { '<Leader>g3', '<cmd>Gdiffsplit!<cr>',       desc = 'Git: Three-way diff' },
+      { '<Leader>gb', '<cmd>Git blame<cr>',         desc = 'Git: Blame' },
+      { '<Leader>gl', '<cmd>Git log --oneline<cr>', desc = 'Git: Log' },
+    },
+    desc = 'Git wrapper with comprehensive commands'
+  },
+
+  {
+    'junegunn/gv.vim',
+    dependencies = { 'tpope/vim-fugitive' },
+    keys = {
+      { '<Leader>gv', '<cmd>GV<cr>',  desc = 'Git: Commit browser' },
+      { '<Leader>gV', '<cmd>GV!<cr>', desc = 'Git: Commit browser (current file)' },
+    },
+    desc = 'Git commit browser'
+  },
+
+  {
+    'rhysd/git-messenger.vim',
+    cmd = 'GitMessenger',
+    keys = {
+      { '<Leader>gm', '<cmd>GitMessenger<cr>', desc = 'Git: Show commit message' },
+    },
+    desc = 'Show git commit message in popup'
+  },
+
+  {
+    'wintermute-cell/gitignore.nvim',
+    dependencies = { 'nvim-telescope/telescope.nvim' },
+    cmd = 'Gitignore',
+    keys = {
+      { '<Leader>gi', '<cmd>Gitignore<cr>', desc = 'Generate .gitignore' },
+    },
+    desc = 'Generate .gitignore files'
+  },
+
+  -- === LANGUAGE SPECIFIC ===
+  {
+    'Sebastian-Nielsen/better-type-hover',
+    ft = { 'typescript', 'typescriptreact' },
     config = function()
-      require("better-type-hover").setup({
+      require('better-type-hover').setup({
         openTypeDocKeymap = 'K',
       })
     end,
+    desc = 'Improved TypeScript hover documentation'
   },
 
-  -- Language specifics
-  'pantharshit00/vim-prisma', -- Provides file detection and syntax highlighting suppor for Prisma files
-  'jparise/vim-graphql',      -- Provides file detection, syntax highlighting and indentation.
-  'udalov/javap-vim',         -- Allows you to read the decompiled bytecode of a JVM class file
-
-  -- Misc
-  'Pocco81/auto-save.nvim',            -- automatically save your changes so the world doesn't collapse
-  'psliwka/vim-smoothie',              -- Smooth scrolling done right
-  'wesQ3/vim-windowswap',              -- Swap windows without ruining your layout
-  'wellle/visual-split.vim',           -- Control splits with visual selections or text objects
-  'wsdjeg/vim-fetch',                  -- Fetch that line and column, boy!
-  'tpope/vim-sleuth',                  -- Detect tabstop and shiftwidth automatically
-  'rcarriga/nvim-notify',              -- Notifications library
-  'tpope/vim-repeat',
-  keys = { { '.', desc = 'REPEAT' } }, -- Allows you to use the repeat the last native command `.` more than once
-  'inkarkat/vim-visualrepeat',         -- Defines repetition of Vim built-in normal mode commands via . for visual mode
   {
-    'tpope/vim-rsi',                   -- Extend Readline keybindings to neovim TODO: Replace with linty-org/readline.nvim
-    event = { 'InsertEnter *', 'CmdlineEnter' },
+    'pantharshit00/vim-prisma',
+    ft = 'prisma',
+    desc = 'Prisma file detection and syntax highlighting'
   },
-  'AndrewRadev/splitjoin.vim',                                                              -- Makes switching between a single-line statement and a multi-line one easily
-  'RRethy/vim-illuminate',                                                                  -- automatically highlight other uses of the word under the cursor
-  'jordwalke/VimSplitBalancer',                                                             -- Distributes available space among vertical splits
-  'moll/vim-bbye',                                                                          -- allows you to delete buffers without closing your windows or messing up your layout
-  { 'gbprod/stay-in-place.nvim', opts = {} },                                               -- prevent the cursor from moving when using shift and filter actions
-  { 'folke/trouble.nvim',        config = true,                          cmd = 'Trouble' }, -- pretty list for showing diagnostics, quickfix to help solve the trouble
+
   {
-    'fei6409/log-highlight.nvim',                                                           -- Neovim plugin that brings syntax highlighting to generic log files
+    'jparise/vim-graphql',
+    ft = { 'graphql', 'javascript', 'typescript' },
+    desc = 'GraphQL syntax highlighting and indentation'
+  },
+
+  {
+    'udalov/javap-vim',
+    ft = 'java',
+    cmd = 'Javap',
+    desc = 'Java bytecode decompiler'
+  },
+
+  -- === PRODUCTIVITY & UTILITIES ===
+  {
+    'Pocco81/auto-save.nvim',
+    event = { 'InsertLeave', 'TextChanged' },
     config = function()
-      require('log-highlight').setup {}
-    end
+      require('auto-save').setup({
+        enabled = true,
+        execution_message = {
+          message = function()
+            return ('AutoSave: saved at ' .. vim.fn.strftime('%H:%M:%S'))
+          end,
+          dim = 0.18,
+          cleaning_interval = 1250,
+        },
+        trigger_events = { 'InsertLeave', 'TextChanged' },
+        condition = function(buf)
+          -- Don't auto-save for certain filetypes
+          local excluded_ft = { 'oil', 'harpoon', 'alpha', 'dashboard' }
+          return not vim.tbl_contains(excluded_ft, vim.bo[buf].filetype)
+        end,
+      })
+    end,
+    desc = 'Automatic file saving'
   },
-  { -- Pasting with indentation adjusted to destination context
+
+  {
+    'psliwka/vim-smoothie',
+    keys = { '<C-d>', '<C-u>', '<C-f>', '<C-b>' },
+    desc = 'Smooth scrolling'
+  },
+
+  {
+    'wesQ3/vim-windowswap',
+    keys = {
+      { '<Leader>ww', '<cmd>WindowSwap<cr>', desc = 'Window: Swap' },
+    },
+    desc = 'Swap windows without layout disruption'
+  },
+
+  {
+    'wellle/visual-split.vim',
+    keys = {
+      { '<C-w>gr', mode = 'x', desc = 'Split: Visual selection right' },
+      { '<C-w>gb', mode = 'x', desc = 'Split: Visual selection below' },
+      { '<C-w>gR', mode = 'x', desc = 'Split: Visual selection above' },
+      { '<C-w>gL', mode = 'x', desc = 'Split: Visual selection left' },
+    },
+    desc = 'Control splits with visual selections'
+  },
+
+  {
+    'wsdjeg/vim-fetch',
+    event = 'VimEnter',
+    desc = 'Handle file:line:col syntax'
+  },
+
+  {
+    'tpope/vim-sleuth',
+    event = 'BufReadPost',
+    desc = 'Automatic indentation detection'
+  },
+
+  {
+    'rcarriga/nvim-notify',
+    desc = 'Enhanced notification system'
+  },
+
+  -- === EDITING ENHANCEMENTS ===
+  {
+    'tpope/vim-repeat',
+    keys = { { '.', desc = 'Repeat last command' } },
+    desc = 'Enhanced repeat functionality'
+  },
+
+  {
+    'inkarkat/vim-visualrepeat',
+    dependencies = { 'tpope/vim-repeat' },
+    keys = { { '.', mode = 'x', desc = 'Repeat in visual mode' } },
+    desc = 'Visual mode repeat support'
+  },
+
+  {
+    'tpope/vim-rsi',
+    event = { 'InsertEnter', 'CmdlineEnter' },
+    desc = 'Readline keybindings in insert/command mode'
+  },
+
+  {
+    'AndrewRadev/splitjoin.vim',
+    keys = {
+      { 'gS', desc = 'Split: Single to multi-line' },
+      { 'gJ', desc = 'Join: Multi to single-line' },
+    },
+    desc = 'Toggle between single/multi-line statements'
+  },
+
+  {
+    'RRethy/vim-illuminate',
+    event = { 'BufReadPost', 'BufNewFile' },
+    desc = 'Highlight word under cursor'
+  },
+
+  {
+    'jordwalke/VimSplitBalancer',
+    keys = {
+      { '<Leader>=', '<cmd>SplitBalancer<cr>', desc = 'Balance splits' },
+    },
+    desc = 'Distribute space among vertical splits'
+  },
+
+  {
+    'moll/vim-bbye',
+    keys = {
+      { '<Leader>bd', '<cmd>Bdelete<cr>',  desc = 'Delete buffer (preserve layout)' },
+      { '<Leader>bD', '<cmd>Bdelete!<cr>', desc = 'Delete buffer (force)' },
+    },
+    desc = 'Delete buffers without closing windows'
+  },
+
+  {
+    'gbprod/stay-in-place.nvim',
+    event = { 'BufReadPost', 'BufNewFile' },
+    opts = {},
+    desc = 'Prevent cursor movement during shift/filter actions'
+  },
+
+  {
+    'folke/trouble.nvim',
+    cmd = { 'Trouble', 'TroubleToggle' },
+    keys = {
+      { '<Leader>tt', '<cmd>Trouble<cr>',                       desc = 'Trouble: Toggle' },
+      { '<Leader>tw', '<cmd>Trouble workspace_diagnostics<cr>', desc = 'Trouble: Workspace diagnostics' },
+      { '<Leader>tD', '<cmd>Trouble document_diagnostics<cr>',  desc = 'Trouble: Document diagnostics' },
+      { '<Leader>tq', '<cmd>Trouble quickfix<cr>',              desc = 'Trouble: Quickfix' },
+      { '<Leader>tl', '<cmd>Trouble loclist<cr>',               desc = 'Trouble: Location list' },
+      { '<Leader>tr', '<cmd>Trouble lsp_references<cr>',        desc = 'Trouble: LSP references' },
+    },
+    config = true,
+    desc = 'Diagnostics and quickfix list'
+  },
+
+  {
+    'fei6409/log-highlight.nvim',
+    ft = { 'log', 'txt' },
+    opts = {},
+    desc = 'Syntax highlighting for log files'
+  },
+
+  {
     'hrsh7th/nvim-pasta',
+    event = { 'BufReadPost', 'BufNewFile' },
     config = function()
-      vim.keymap.set({ 'n', 'x' }, 'p', require('pasta.mapping').p)
-      vim.keymap.set({ 'n', 'x' }, 'P', require('pasta.mapping').P)
-    end
-  }
+      vim.keymap.set({ 'n', 'x' }, 'p', require('pasta.mapping').p, { desc = 'Paste with context' })
+      vim.keymap.set({ 'n', 'x' }, 'P', require('pasta.mapping').P, { desc = 'Paste before with context' })
+    end,
+    desc = 'Context-aware pasting with indentation'
+  },
 }
