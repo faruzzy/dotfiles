@@ -73,32 +73,60 @@ end, { desc = 'Toggle Inlay Hints' })
 -- Undotree toggle
 vim.keymap.set('n', '<leader>ut', vim.cmd.UndotreeToggle, opts) -- Toggle Undotree
 
+-- Helper function to prompt for changed buffers using vim.ui.input
+-- This function now directly uses the :Bdelete command from vim-bbye
+local function prompt_and_delete_changed_buffer(buf, callback)
+  vim.ui.input({ prompt = 'Buffer ' .. buf.name .. ' has changes. Close anyway? (y/n): ' }, function(input)
+    if input == 'y' or input == 'Y' then
+      vim.cmd('silent! Bdelete! ' .. buf.bufnr)
+    end
+    callback()
+  end)
+end
+
 -- Close all other buffers
 function CloseAllButCurrent()
   local current_buf = vim.fn.bufnr()
-  local current_win = vim.fn.win_getid()
-  local bufs = vim.fn.getbufinfo({ buflisted = 1 })
-  for _, buf in ipairs(bufs) do
-    if buf.bufnr ~= current_buf and buf.changed == 1 then
-      vim.ui.input({ prompt = 'Buffer ' .. buf.name .. ' has changes. Close anyway? (y/n): ' }, function(input)
-        if input == 'y' or input == 'Y' then
-          vim.cmd('silent! Bdelete ' .. buf.bufnr)
-        end
-      end)
-      return -- Wait for user input
-    elseif buf.bufnr ~= current_buf then
-      vim.cmd('silent! Bdelete ' .. buf.bufnr)
+  local bufs_to_process = {}
+
+  local all_listed_bufs = vim.fn.getbufinfo({ buflisted = 1 })
+  for _, buf in ipairs(all_listed_bufs) do
+    if buf.bufnr ~= current_buf then
+      table.insert(bufs_to_process, buf)
     end
   end
-  vim.fn.win_gotoid(current_win)
+
+  local i = 1
+  local function process_next_buffer()
+    if i <= #bufs_to_process then
+      local buf = bufs_to_process[i]
+      if buf.changed == 1 then
+        prompt_and_delete_changed_buffer(buf, function()
+          i = i + 1
+          process_next_buffer()
+        end)
+      else
+        vim.cmd('silent! Bdelete ' .. buf.bufnr)
+        i = i + 1
+        process_next_buffer()
+      end
+    else
+      local current_win_id = vim.fn.bufwinid(current_buf)
+      if current_win_id ~= -1 then
+        vim.fn.win_gotoid(current_win_id)
+      else
+        vim.cmd('normal! <C-w>h')
+      end
+    end
+  end
+
+  process_next_buffer()
+  vim.cmd('only')
 end
 
 vim.keymap.set('n', '<Leader>aq', function()
   CloseAllButCurrent()
 end, { silent = true, desc = 'Close all other buffers except current one.' })
-
--- Delete current buffer
-vim.keymap.set('n', '<Leader>q', ':Bdelete<CR>', opts)
 
 -- Google search
 local function goog(pat, lucky)

@@ -249,6 +249,7 @@ return {
 
   {
     'moll/vim-bbye',
+    lazy = false,
     keys = {
       { '<Leader>bd', '<cmd>Bdelete<cr>',  desc = 'Delete buffer (preserve layout)' },
       { '<Leader>bD', '<cmd>Bdelete!<cr>', desc = 'Delete buffer (force)' },
