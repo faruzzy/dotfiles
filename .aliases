@@ -1,53 +1,120 @@
 #!/usr/bin/env bash
 
+# --- Core Shell Settings & Refresh ---
 alias s='source ~/.bash_profile && tmux source-file ~/.tmux.conf && bind -f ~/.inputrc'
 alias python='python3'
+alias c='clear'
 
-# Easier navigation: .., ..., ~ and -
+# --- Navigation ---
 alias ..='cd ..'
 alias ...='cd ../..'
 alias ....='cd ../../..'
 alias .....='cd ../../../..'
 alias dl='cd ~/Downloads'
 alias dt='cd ~/Desktop'
+alias doc='cd ~/Documents'
 
-alias tmux='tmux -2'
-
-# programs
+# --- Program Launchers ---
 alias xcode='open -a Xcode'
 alias safari='open -a safari'
-alias firefox='open -a firefoxDeveloperEdition'
-alias chrome='open -a google\ chrome'
-alias chromium='open -a google\ chrome\ canary'
+alias firefox='open -a Firefox'
+alias chrome='open -a "Google Chrome"'
+alias chromium='open -a "Google Chrome Canary"'
 alias f='open -a Finder'
+
+# --- File Listing & Searching ---
+alias ls='eza --icons --git --long --header' 
+alias la='eza -a --icons --git --long --header' # 'ls -a' equivalent
+alias ll='eza -l --icons --git --header' # 'ls -l' equivalent
+alias lt='eza -T --icons --git' # Tree view
+
 alias rg='rg --hidden --ignore-case'
 alias ag="ag --path-to-ignore ~/.agignore"
-alias la='eza -all --icons --git'
-alias eza='eza -l --icons --git'
+
+# --- File Operations ---
+alias cp='cp -v'
+alias rm='rm -v'
+alias rm='rm -iv'
+alias rmf="rm -rf" # Be careful with this one!
+alias mkdir='mkdir -pv' # Create parent directories if they don't exist
+
+# --- System Utilities & Information
+alias tmux='tmux -2'
+alias timer='echo "Timer started. Stop with Ctrl-D." && date && time cat && date'
+alias sleep="pmset sleepnow"
 alias k5="kill -9 %%"
 
-# List all files colorized in long format, including dot files
-# alias la="ls -laF ${colorflag}"
+# IP addresses
+alias ip="dig +short myip.opendns.com @resolver.opendns.com" # Use a more common resolver
+alias localip="ipconfig getifaddr en0 || ipconfig getifaddr en1" # Try both common interfaces
+alias ips="ifconfig -a | grep -Eo 'inet (addr:)?([0-9]*\.){3}[0-9]*' | grep -Eo '([0-9]*\.){3}[0-9]*' | grep -v '127.0.0.1'" # More robust
+alias whois="whois -h whois-servers.net"
 
-# List only directories
-# https://www.cyberciti.biz/faq/linux-list-just-directories-or-directory-names/
-alias lsd='ls -ld */'
+# --- Development Tools ---
 
-# List only hidden files
-# https://askubuntu.com/questions/468901/how-to-show-only-hidden-files-in-terminal
-alias lsh='ls -ld .?*'
+## Git
 
-#https://www.reddit.com/r/webdev/comments/4ridy1/most_used_commands_on_your_shell/
-#alias mcmd ="cat ~/.zsh_history|cut -d \';\' -f 2- 2>/dev/null| awk \'{a[$1]++ } END{for(i in a){print a[i] " " i}}\'|sort -rn|head"
+alias g='git'
+alias gpom='git push origin master'
+alias gp='git push'
+alias gl='git pull'
+alias ga='git add .'
+alias gr='_git_root_cd'
 
-# Stopwatch
-alias timer='echo "Timer started. Stop with Ctrl-D." && date && time cat && date'
+_git_root_cd() {
+  local git_root
+  git_root=$(git rev-parse --show-toplevel 2>/dev/null)
+  if [[ -n "$git_root" ]]; then
+    cd "$git_root" || return 1
+  else
+    echo "Not in a Git repository."
+    return 1
+  fi
+}
 
-alias sleep="pmset sleepnow"
+alias gv='v +GV +"autocmd BufWipeout <buffer> qall"'
+
+## Node.js (npm & yarn)
+### npm
+alias npmi='npm install'
+alias npmg='npm install -g'
+alias npmu='npm update'
+alias npmr='npm uninstall'
+alias npmrg='npm uninstall -g'
+alias npmp='npm publish'
+alias npma='npm adduser'
+alias npmru='rm -rf node_modules package-lock.json && npm install' # Reinstall from scratch
+alias nomm='rm -rf node_modules && yarn cache clear && yarn'
+alias npmo='sudo npm install --cache-min 999999999' # npm offline, use with caution
+
+### Yarn
+alias yi='yarn install'
+alias ys='yarn start'
+alias yd='yarn dev'
+alias yadd='yarn add'
+alias yrm='yarn remove'
+alias yru='rm -rf node_modules yarn.lock && yarn install' # Reinstall from scratch
+
+# Clean node modules & cache for both npm and yarn
+alias clean-node='rm -rf node_modules && npm cache clean --force && yarn cache clean'
+
+## Vim/NeoVim
+alias vi=$EDITOR
+alias v='vi'
+alias vim='nvim'
+
+alias curl='curl -v'
+alias chown='chown -v'
+alias chmod='chmod -v'
+
+# Recursively delete `.DS_Store` files
+alias cleanup="find . -name '*.DS_Store' -type f -ls -delete"
+
+# Merge PDF files (macOS specific)
+# Usage: `mergepdf -o output.pdf input{1,2,3}.pdf`
+alias mergepdf='/System/Library/Automator/Combine\ PDF\ Pages.action/Contents/Resources/join.py'
 
 if [[ "$OSTYPE" =~ ^darwin ]]; then
-  alias ls="command ls -G"
-
   # Hide/Show desktop icons
   alias hide-desktop-icons='defaults write com.apple.finder CreateDesktop -bool false && killall Finder'
   alias show-desktop-icons='defaults write com.apple.finder CreateDesktop -bool true && killall Finder'
@@ -55,148 +122,79 @@ if [[ "$OSTYPE" =~ ^darwin ]]; then
   # Hide/Show hidden files in Finder
   alias hide-hidden-files='defaults write com.apple.finder AppleShowAllFiles -bool false && killall Finder'
   alias show-hidden-files='defaults write com.apple.finder AppleShowAllFiles -bool true && killall Finder'
-  alias update='sudo softwareupdate --install --all \
-    && brew update \
-    && brew upgrade --all \
-    && brew cleanup \
-    && npm install -g npm \
-    && npm update -g'
+
+  function update {
+    echo "--- Updating macOS software ---"
+    sudo softwareupdate --install --all --restart # Add --restart if applicable
+    echo "--- Updating Homebrew ---"
+    brew update
+    brew upgrade --all
+    brew cleanup
+    echo "--- Updating npm globally ---"
+    npm install -g npm # Update npm itself
+    npm update -g
+    echo "--- Update complete! ---"
+  }
+
+# Empty Trash and Clear Logs
+alias empty-trash='sudo rm -frv /Volumes/*/.Trashes; \
+                   sudo rm -frv ~/.Trash; \
+                   sudo rm -frv /private/var/log/asl/*.asl; \
+                   sqlite3 ~/Library/Preferences/com.apple.LaunchServices.QuarantineEventsV* "delete from LSQuarantineEvent"'
 
   if command -v 'brew' &> /dev/null; then
     alias brewd='brew doctor'
     alias brewi='brew install'
     alias brewr='brew uninstall'
     alias brews='brew search'
-    alias brewu='brew update \
-      && brew upgrade --all \
-      && brew cleanup \
-      && brew cask cleanup'
+    function brewu {
+      brew update
+      brew upgrade --all
+      brew cleanup
+      brew autoremove # Remove unused dependencies
+      brew doctor
+    }
   fi
+
+  # Spotlight control
+  alias spotoff="sudo mdutil -a -i off"
+  alias spoton="sudo mdutil -a -i on"
+
+  # Kill all the tabs in Chrome to free up memory
+  # [C] explained: http://www.commandlinefu.com/commands/view/402/exclude-grep-from-your-grepped-output-of-ps-alias-included-in-description
+  alias chromekill="ps ux | grep '[C]hrome Helper --type=renderer' | grep -v extension-process | tr -s ' ' | cut -d ' ' -f2 | xargs kill"
 elif [ "$OS" = 'ubuntu' ]; then
-  alias ls="command ls --color"
+  alias ls="command ls --color=auto"
 
   #Hide/Show desktop icons
   alias hide-desktop-icons='gsettings set org.gnome.desktop.background show-desktop-icons false'
   alias show-desktop-icons='gsettings set org.gnome.desktop.background show-desktop-icons true'
-  alias update='sudo apt-get update \
-    && sudo apt-get upgrade \
-    && npm install -g npm \
-    && npm upgrade -g'
+  function update {
+    echo "--- Updating apt packages ---"
+    sudo apt-get update
+    sudo apt-get upgrade -y # Add -y for non-interactive upgrade
+    sudo apt-get autoremove -y # Remove unneeded packages
+    echo "--- Updating npm globally ---"
+    npm install -g npm # Update npm itself
+    npm update -g
+    echo "--- Update complete! ---"
+  }
 
   # Advanced Packaging Tool
   alias apti='sudo apt-get install'
   alias aptr='sudo apt-get remove'
   alias apts='sudo apt-cache search'
-  alias aptu='sudo apt-get update \
-    && sudo apt-get upgrade'
 
-  # Empty the trash, the main HDD and on all mounted volumes
-  # and clear Apple’s system logs to improve shell startup speed
-  alias empty-trash='sudo rm -frv /Volumes/*/.Trashes; \
-    sudo rm -frv ~/.Trash; \
-    sudo rm -frv /private/var/log/asl/*.asl; \
-    sqlite3 ~/Library/Preferences/com.apple.LaunchServices.QuarantineEventsV* "delete from LSQuarantineEvent"'
+  # Use a function for aptu for better logic
+  function aptu {
+    sudo apt-get update
+    sudo apt-get upgrade -y
+    sudo apt-get autoremove -y
+  }
 fi
-
-##### yarn #####
-alias ys='yarn start'
-alias yd='yarn dev'
-
-##### npm #####
-alias npmp='npm publish'
-alias npma='npm adduser'
-alias npmi='npm install'
-alias npmg='npm install -g'
-alias npmu='npm update'
-alias npmr='npm uninstall'
-alias npmrg='npm uninstall -g'
-alias nom='rm -rf node_modules && npm cache clear && npm i'
-alias nomm='rm -rf node_modules && yarn cache clear && yarn'
-
-# npm offline
-# install npm dependencies from cache
-# https://github.com/npm/npm/issues/2568#issuecomment-30626394
-alias npmo='sudo npm install --cache-min 999999999'
-
-##### GIT Stuff #####
-
-alias g="git"
-alias gpom="git push origin master"
-
-# git root
-alias gr='[ ! -z `git rev-parse --show-cdup` ] && cd `git rev-parse --show-cdup || pwd`'
-alias gv='v +GV +"autocmd BufWipeout <buffer> qall"'
-##### GIT Stuff #####
-
-# IP addresses
-alias ip="dig +short myip.opendns.com @resolver1.opendns.com"
-alias localip="ipconfig getifaddr en1"
-alias ips="ifconfig -a | perl -nle'/(\d+\.\d+\.\d+\.\d+)/ && print $1'"
-
-# Enhanced WHOIS lookups
-alias whois="whois -h whois-servers.net"
-
-# Flush Directory Service cache and reset internet
-alias flush="sudo dscacheutil -flushcache && sudo killall -HUP mDNSResponder && sudo ifconfig en0 down && sudo ifconfig en0 up"
-
-# View HTTP traffic
-alias sniff="sudo ngrep -d 'en1' -t '^(GET|POST) ' 'tcp and port 80'"
-alias httpdump="sudo tcpdump -i en1 -n -s 0 -w - | grep -a -o -E \"Host\: .*|GET \/.*\""
-
-##### Vim ######
-
-#alias vim=/usr/local/bin/vim
-alias vi=$EDITOR
-alias v='vi'
-
-##### Vim ######
-
-alias cp='cp -v'
-alias rm='rm -v'
-alias curl='curl -v'
-alias chown='chown -v'
-alias chmod='chmod -v'
-
-# File size
-alias fs="stat -f \"%z bytes\""
-
-# get file permissions in octal (i.e. 0755)
-alias perms="stat -f '%A %a %N' *"
-
-# ROT13-encode text. Works for decoding, too! ;)
-alias rot13='tr a-zA-Z n-za-mN-ZA-M'
-
-####### Clean Up ########
-
-# Recursively delete `.DS_Store` files
-alias cleanup="find . -name '*.DS_Store' -type f -ls -delete"
-
-alias rmf="rm -rf"
-
-# Trim new lines and copy to clipboard
-alias tt="tr -d '\n' | pbcopy"
-
-# Merge PDF files
-# Usage: `mergepdf -o output.pdf input{1,2,3}.pdf`
-alias mergepdf='/System/Library/Automator/Combine\ PDF\ Pages.action/Contents/Resources/join.py'
-
-# Disable Spotlight
-alias spotoff="sudo mdutil -a -i off"
-
-# Enable Spotlight
-alias spoton="sudo mdutil -a -i on"
-
-# PlistBuddy alias, because sometimes `defaults` just doesn’t cut it
-alias plistbuddy="/usr/libexec/PlistBuddy"
 
 # One of @janmoesen’s ProTip™s
 for method in GET HEAD POST PUT DELETE TRACE OPTIONS; do
   alias "$method"="lwp-request -m '$method'"
 done
 
-# Make Grunt print stack traces by default
-command -v grunt > /dev/null && alias grunt="grunt --stack"
-
-# Kill all the tabs in Chrome to free up memory
-# [C] explained: http://www.commandlinefu.com/commands/view/402/exclude-grep-from-your-grepped-output-of-ps-alias-included-in-description
-alias chromekill="ps ux | grep '[C]hrome Helper --type=renderer' | grep -v extension-process | tr -s ' ' | cut -d ' ' -f2 | xargs kill"

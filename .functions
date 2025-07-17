@@ -156,6 +156,12 @@ function dda() {
   DIR=`find ${1:-.} -type d 2> /dev/null | fzf-tmux` && cd "$DIR"
 }
 
+# Function to list directories, can take an argument for depth or path
+function lsd() { find "${1:-.}" -maxdepth "${2:-1}" -type d -not -name '.*'; }
+
+# List only hidden files (using find)
+function lsh() { find "${1:-.}" -maxdepth "${2:-1}" -type f -name '.*'; }
+
 # https://github.com/junegunn/fzf/issues/760
 # Custom fuzzy completion for "docker" command
 #   e.g. docker **<TAB>
