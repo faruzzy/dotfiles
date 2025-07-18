@@ -152,13 +152,15 @@ augroup('lsp_format', {
 -- Handle quitting Fugitive buffers gracefully
 augroup('fugitive_quit', {
   {
-    'BufWinLeave',
+    'BufHidden',
     pattern = 'fugitive://*',
     callback = function()
-      vim.cmd('silent! bdelete!')
-      local bufnr = vim.api.nvim_get_current_buf()
-      pcall(vim.lsp.buf.clear_references, bufnr)
-      pcall(vim.api.nvim_del_augroup_by_name, 'document_highlight_' .. bufnr)
+      vim.schedule(function()
+        vim.cmd('silent! bdelete!')
+        local bufnr = vim.api.nvim_get_current_buf()
+        pcall(vim.lsp.buf.clear_references, bufnr)
+        pcall(vim.api.nvim_del_augroup_by_name, 'document_highlight_' .. bufnr)
+      end)
     end,
   },
 })
