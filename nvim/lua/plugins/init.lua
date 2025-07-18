@@ -241,9 +241,7 @@ return {
 
   {
     'jordwalke/VimSplitBalancer',
-    keys = {
-      { '<Leader>=', '<cmd>SplitBalancer<cr>', desc = 'Balance splits' },
-    },
+    lazy = false,
     desc = 'Distribute space among vertical splits'
   },
 
