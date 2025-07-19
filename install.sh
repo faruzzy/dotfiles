@@ -82,6 +82,7 @@ else
   brew install --cask keepingyouawake visualvm
   brew install --cask vlc
   brew install --cask spotify
+  brew install markdownlint-cli
 
   #Install Java JDK
   brew install --cask java6
