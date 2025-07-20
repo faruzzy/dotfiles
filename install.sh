@@ -52,11 +52,13 @@ else
   /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
   [ -d /opt/homebrew ] && eval "$(/opt/homebrew/bin/brew shellenv)"
   # Graphical App install from Home-brew cask
-  brew install --cask rectangle
   brew install viz
   brew install koekeishiya/formulae/yabai
   brew install koekeishiya/formulae/skhd
   brew install alt-tab
+  brew install markdownlint-cli
+
+  brew install --cask rectangle
   brew install --cask app-cleaner
   brew install --cask bettertouchtool path-finder
   brew install --cask firefox@developer-edition
@@ -75,6 +77,7 @@ else
   brew install --cask colorsnapper
   brew install --cask spectacle
   brew install --cask alacritty
+  brew install --cask ghostty
   brew install --cask karabiner-elements
   brew install --cask maccy
   brew install --cask macfuse
@@ -82,13 +85,12 @@ else
   brew install --cask keepingyouawake visualvm
   brew install --cask vlc
   brew install --cask spotify
-  brew install markdownlint-cli
 
   #Install Java JDK
   brew install --cask java6
   brew install --cask java7
   brew install --cask homebrew/cask-versions/adoptopenjdk8
-  brew install --cask	adoptopenjdk11
+  brew install --cask adoptopenjdk11
 
   brew tap homebrew/cask-fonts
   brew install --cask font-fira-code
