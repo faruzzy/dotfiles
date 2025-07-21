@@ -1,182 +1,186 @@
 --[[
-  nvim-cmp configuration for Neovim autocompletion.
-  - Integrates with LSP, luasnip, buffer, path, and lazydev sources.
-  - Customizes completion UI with Catppuccin-themed borders and icons.
-  - Provides keybindings for completion and snippet navigation.
-  - Depends on: nvim-cmp, cmp_luasnip, cmp-nvim-lsp, nvim-highlight-colors
+  blink.cmp configuration for Neovim autocompletion.
+  - Replaces nvim-cmp with a faster Rust-based completion engine.
+  - Integrates with LSP, snippets, buffer, path, and lazydev sources.
+  - Provides customized keybindings and UI styling.
 ]]
 
-local border_config = {
-  border = { '╭', '─', '╮', '│', '╯', '─', '╰', '│' },
-  winhighlight = 'NormalFloat:NormalFloat,FloatBorder:FloatBorder',
-}
-
-local source_menu_map = {
-  buffer = 'buff',
-  lazydev = 'lazy',
-  luasnip = 'snip',
-  nvim_lsp = 'lsp',
-  nvim_lsp_signature_help = 'sig',
-  path = 'path',
-}
-
+-- Define your LSP kind icons (extracted from your original config)
 local lspkind_icons = {
   Class = '󰠱',
   Color = '󰏘',
   Constant = '󰏿',
-  Constructor = '',
-  Enum = '',
-  EnumMember = '',
-  Event = '',
+  Constructor = '',
+  Enum = '',
+  EnumMember = '',
+  Event = '',
   Field = '󰜢',
   File = '󰈙',
   Folder = '󰉋',
   Function = '󰊕',
-  Interface = '',
+  Interface = '',
   Keyword = '󰌋',
   Method = '󰆧',
-  Module = '',
-  Operator = '',
-  Property = '',
+  Module = '',
+  Operator = '',
+  Property = '',
   Reference = '󰈇',
-  Snippet = '',
+  Snippet = '',
   Struct = '󰙅',
   Text = '󰉿',
-  TypeParameter = '',
-  Unit = '',
+  TypeParameter = '',
+  Unit = '',
   Value = '󰎠',
   Variable = '󰀫',
 }
 
 return {
-  'hrsh7th/nvim-cmp',
+  'saghen/blink.cmp',
+  -- Use cargo build instead of nix for systems without nix
+  build = 'cargo build --release',
+  event = { 'InsertEnter', 'CmdlineEnter' },
   dependencies = {
-    'saadparwaiz1/cmp_luasnip',
-    'hrsh7th/cmp-buffer',
-    'hrsh7th/cmp-cmdline',
-
-    -- Adds LSP completion capabilities
-    'hrsh7th/cmp-nvim-lsp',
-    'hrsh7th/cmp-nvim-lsp-signature-help',
-    'hrsh7th/cmp-path',
-    'folke/lazydev.nvim',
-
-    -- Adds a number of user-friendly snippets
+    -- Optional: for snippet support
+    {
+      'L3MON4D3/LuaSnip',
+      build = 'make install_jsregexp',
+    },
     'rafamadriz/friendly-snippets',
-    -- 'onsails/lspkind.nvim', -- add fancy icons
+    'folke/lazydev.nvim',
   },
-  config = function()
-    local cmp = require('cmp')
-    local ok, luasnip = pcall(require, 'luasnip')
-    if not ok then
-      vim.notify('nvim-cmp: luasnip not found, snippet expansion disabled', vim.log.levels.WARN)
-    else
-      require('luasnip.loaders.from_vscode').lazy_load()
-      luasnip.config.setup({})
-    end
-
-    cmp.setup({
-      snippet = {
-        expand = function(args)
-          if luasnip then
-            luasnip.lsp_expand(args.body)
-          end
-        end,
-      },
+  ---@module 'blink.cmp'
+  ---@type blink.cmp.Config
+  opts = {
+    appearance = {
+      kind_icons = lspkind_icons,
+    },
+    cmdline = {
+      enabled = false,
       completion = {
-        completeopt = 'menu,menuone,noinsert',
+        menu = { auto_show = false },
       },
-      mapping = cmp.mapping.preset.insert({
-        ['<C-n>'] = cmp.mapping.select_next_item(),
-        ['<C-p>'] = cmp.mapping.select_prev_item(),
-        ['<C-d>'] = cmp.mapping.scroll_docs(-4),
-        ['<C-f>'] = cmp.mapping.scroll_docs(4),
-        ['<C-Space>'] = cmp.mapping(
-          cmp.mapping.complete({ config = { sources = { { name = 'nvim_lsp' } } } }),
-          { 'i', 'c' }
-        ),
-        ['<C-e>'] = cmp.mapping.abort(),
-        ['<CR>'] = cmp.mapping.confirm({
-          behavior = cmp.ConfirmBehavior.Insert,
-          select = true,
-        }),
-        ['<Tab>'] = cmp.mapping(function(fallback)
-          if cmp.visible() then
-            cmp.select_next_item()
-          elseif luasnip.expand_or_locally_jumpable() then
-            luasnip.expand_or_jump()
-          else
-            fallback()
-          end
-        end, { 'i', 's' }),
-        ['<S-Tab>'] = cmp.mapping(function()
-          if cmp.visible() then
-            cmp.select_prev_item()
-          elseif luasnip.locally_jumpable(-1) then
-            luasnip.jump(-1)
-          else
-            vim.g.fallback()
-          end
-        end, { 'i', 's' }),
-      }),
-      sources = {
-        { name = 'nvim_lsp',                priority = 1000, keyword_length = 2 },
-        { name = 'nvim_lsp_signature_help', priority = 900,  keyword_length = 2 },
-        { name = 'luasnip',                 priority = 800,  keyword_length = 2 },
-        { name = 'emmet',                   priority = 700,  keyword_length = 2 },
-        { name = 'path',                    priority = 600 },
-        {
-          name = 'buffer',
-          priority = 500,
-          keyword_length = 3,
-          option = { get_bufnrs = vim.api.nvim_list_bufs },
+      keymap = {
+        ['<Tab>'] = { 'select_and_accept' },
+        -- ['<CR>'] = { 'accept' },
+      },
+    },
+    completion = {
+      accept = {
+        auto_brackets = { enabled = true },
+      },
+      documentation = {
+        auto_show = true,
+        auto_show_delay_ms = 500,
+        window = {
+          border = 'rounded',
         },
-        { name = 'lazydev', priority = 900, group_index = 0 },
       },
-      window = {
-        completion = cmp.config.window.bordered(border_config),
-        documentation = cmp.config.window.bordered(border_config),
+      keyword = { range = 'full' },
+      menu = {
+        border = 'rounded',
+        draw = {
+          columns = {
+            { 'kind_icon' },
+            { 'label',      'label_description', gap = 1 },
+            { 'source_name' },
+          },
+          components = {
+            source_name = {
+              text = function(ctx)
+                local source_map = {
+                  buffer = 'buff',
+                  lazydev = 'lazy',
+                  luasnip = 'snip',
+                  lsp = 'lsp',
+                  path = 'path',
+                  snippets = 'snip',
+                }
+                return source_map[ctx.source_name] or ctx.source_name
+              end,
+            },
+          },
+        },
       },
-      formatting = {
-        expandable_indicator = true,
-        fields = { 'kind', 'abbr', 'menu' },
-        format = function(entry, vim_item)
-          local source = entry.source.name
-          vim_item.menu = source_menu_map[source] or source
-          vim_item.menu = vim_item.menu and (' ' .. vim_item.menu) or ''
-
-          local color_item = {}
-          local okay, highlight_colors = pcall(require, 'nvim-highlight-colors')
-          if okay then
-            vim.color_item = highlight_colors.format(entry, { kind = vim_item.kind })
-          end
-          -- local color_item = require('nvim-highlight-colors').format(entry, { kind = vim_item.kind })
-          if color_item.abbr_hl_group then
-            vim_item.kind_hl_group = color_item.abbr_hl_group
-            vim_item.kind = color_item.abbr
+    },
+    fuzzy = {
+      sorts = { 'exact', 'score', 'sort_text' },
+    },
+    keymap = {
+      preset = 'default',
+      -- Disable default Tab/S-Tab to customize them
+      ['<Tab>'] = {
+        function(cmp)
+          if cmp.is_visible() then
+            return cmp.select_next()
           else
-            vim_item.kind = lspkind_icons[vim_item.kind] or ''
+            return cmp.snippet_forward() or false
           end
-          vim_item.kind = vim_item.kind .. ' '
-
-          vim_item.abbr = vim_item.abbr:sub(1, 50)
-
-          return vim_item
+        end,
+        'fallback',
+      },
+      ['<S-Tab>'] = {
+        function(cmp)
+          if cmp.is_visible() then
+            return cmp.select_prev()
+          else
+            return cmp.snippet_backward() or false
+          end
+        end,
+        'fallback',
+      },
+      -- Navigation similar to your original config
+      ['<C-n>'] = { 'select_next', 'fallback' },
+      ['<C-p>'] = { 'select_prev', 'fallback' },
+      ['<C-d>'] = { 'scroll_documentation_up', 'fallback' },
+      ['<C-f>'] = { 'scroll_documentation_down', 'fallback' },
+      ['<C-Space>'] = {
+        function(cmp)
+          cmp.show({ providers = { 'lsp' } })
         end,
       },
-    })
-
-    cmp.setup.cmdline(':', {
-      sources = {
-        { name = 'path' },
-        { name = 'cmdline' },
+      ['<C-e>'] = { 'cancel', 'fallback' },
+      ['<CR>'] = { 'accept', 'fallback' },
+    },
+    signature = {
+      enabled = true,
+      trigger = { enabled = true },
+      window = {
+        show_documentation = true,
+        border = 'rounded',
       },
-    })
-
-    cmp.setup.cmdline('/', {
-      sources = {
-        { name = 'buffer' },
+    },
+    snippets = {
+      preset = 'luasnip',
+    },
+    sources = {
+      default = { 'lazydev', 'lsp', 'path', 'snippets', 'buffer' },
+      providers = {
+        buffer = {
+          name = 'Buffer',
+          opts = {
+            get_bufnrs = function()
+              return vim.api.nvim_list_bufs()
+            end,
+          },
+        },
+        lazydev = {
+          name = 'LazyDev',
+          module = 'lazydev.integrations.blink',
+          score_offset = 100,
+        },
+        lsp = {
+          name = 'LSP',
+        },
+        path = {
+          name = 'Path',
+        },
+        snippets = {
+          name = 'Snippets',
+        },
       },
-    })
+    },
+  },
+  config = function(_, opts)
+    require('blink.cmp').setup(opts)
   end,
 }

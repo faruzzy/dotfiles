@@ -42,6 +42,12 @@ function M.map_table_to_list(fn, tbl)
   return list
 end
 
+---Get the current snippet engine
+---@return 'nvim' | 'luasnip'
+function M.get_snippet_engine()
+  return 'luasnip'
+end
+
 ---Create vim highlight
 ---@param name string
 ---@param highlight_map vim.api.keyset.highlight
@@ -109,6 +115,7 @@ function M.find_git_root()
   end
   return git_root
 end
+
 ---Define vim user command
 ---@param name string
 ---@param command string | function

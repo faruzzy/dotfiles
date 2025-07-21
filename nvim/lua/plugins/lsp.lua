@@ -21,7 +21,7 @@ return {
       opts = {
         notification = {
           window = {
-            winblend = 0, -- Opaque background
+            winblend = 0,     -- Opaque background
             align = 'bottom', -- Align notifications at the bottom
           },
           progress = {
@@ -41,7 +41,7 @@ return {
     local lsp_servers = vim.tbl_keys(servers or {})
 
     vim.list_extend(lsp_servers, {
-      'stylua', -- Lua formatter
+      'stylua',    -- Lua formatter
       'prettierd', -- JavaScript/TypeScript formatter
     })
 
@@ -54,7 +54,13 @@ return {
       ensure_installed = vim.tbl_keys(servers),
       handlers = {
         function(server_name)
-          local capabilities = require('cmp_nvim_lsp').default_capabilities()
+          local capabilities = vim.lsp.protocol.make_client_capabilities()
+
+          local ok, blink = pcall(require, 'blink.cmp')
+          if ok then
+            capabilities = blink.get_lsp_capabilities(capabilities)
+          end
+
           local server = servers[server_name] or {}
 
           require('lspconfig')[server_name].setup(vim.tbl_deep_extend('force', {
