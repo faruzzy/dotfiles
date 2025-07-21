@@ -27,6 +27,8 @@ return {
     desc = 'Color highlighter for CSS/hex colors'
   },
 
+  { "svban/YankAssassin.vim", event = "VeryLazy", desc = "After yank leave cursor in its place" },
+
   -- === TMUX INTEGRATION ===
   {
     'christoomey/vim-tmux-navigator',
