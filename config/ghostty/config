@@ -1,0 +1,41 @@
+# Ghostty configuration file
+# Converted from Alacritty configuration
+
+# Font configuration
+font-family = "ComicShannsMono Nerd Font"
+font-size = 16
+font-style = regular
+font-style-bold = bold
+font-style-italic = italic
+
+# Window configuration
+window-decoration = false
+window-width = 160
+window-height = 48
+window-padding-x = 1
+window-padding-y = 1
+
+# Cursor configuration
+cursor-style = block
+cursor-style-blink = false
+
+# Terminal behavior
+term = screen-256color
+scrollback-limit = 10000
+
+# Mouse configuration
+mouse-hide-while-typing = true
+
+# Selection configuration
+copy-on-select = true
+
+
+# Live reload equivalent
+# config-file-watch = true
+
+theme = catppuccin-mocha.conf
+
+macos-option-as-alt = left
+
+shell-integration = detect
+shell-integration-features = cursor,sudo,title
