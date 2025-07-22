@@ -89,11 +89,6 @@ function M.augroup(group_name, autocmds)
   end
 end
 
-function M.is_git_repo()
-  local is_repo = vim.fn.system('git rev-parse --is-inside-work-tree')
-  return vim.v.shell_error == 0
-end
-
 function M.find_git_root()
   -- Use the current buffer's path as the starting point for the git search
   local current_file = vim.api.nvim_buf_get_name(0)
