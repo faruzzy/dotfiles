@@ -119,6 +119,16 @@ return {
     end,
     desc = 'Improved TypeScript hover documentation'
   },
+  ---@type LazySpec
+  {
+    'dmmulroy/tsc.nvim',
+    cmd = 'TSC',
+    ---@module 'tsc'
+    ---@type Opts
+    opts = {
+      pretty_errors = false,
+    },
+  },
 
   {
     'pantharshit00/vim-prisma',
