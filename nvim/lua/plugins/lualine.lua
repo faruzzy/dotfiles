@@ -57,19 +57,15 @@ local neogit_extension = {
 local active_lsp = {
   function()
     local msg = ''
-    local buf_ft = vim.api.nvim_get_option_value('filetype', {})
-    local clients = vim.lsp.get_clients()
+    local clients = vim.lsp.get_clients({ bufnr = 0 })
     if next(clients) == nil then
       return msg
     end
     for _, client in ipairs(clients) do
-      local filetypes = client.config.filetypes
-      if filetypes and vim.fn.index(filetypes, buf_ft) ~= -1 then
-        if client.name == 'null-ls' then
-          msg = client.name
-        else
-          return client.name
-        end
+      if client.name == 'null-ls' then
+        msg = client.name
+      else
+        return client.name
       end
     end
     return msg
@@ -169,7 +165,7 @@ local evil_opts = function()
     function()
       return '▊'
     end,
-    color = { fg = colors.blue }, -- Sets highlighting of component
+    color = { fg = colors.blue },      -- Sets highlighting of component
     padding = { left = 0, right = 1 }, -- We don't need space before this
   })
 
@@ -246,7 +242,7 @@ local evil_opts = function()
 
   -- Add components to right sections
   ins_right({
-    'o:encoding', -- option component same as &encoding in viml
+    'o:encoding',       -- option component same as &encoding in viml
     fmt = string.upper, -- I'm not sure why it's upper case either ;)
     cond = conditions.hide_in_width,
     color = { fg = colors.green, gui = 'bold' },

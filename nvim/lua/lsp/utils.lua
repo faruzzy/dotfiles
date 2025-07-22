@@ -24,9 +24,9 @@ function M.setup_auto_close_tag(client, bufnr, method)
   local function auto_insert(key)
     return function()
       vim.schedule(function()
-        client.request(
+        client:request(
           method,
-          vim.tbl_extend('force', vim.lsp.util.make_position_params(), { kind = 'autoClose' }),
+          vim.tbl_extend('force', vim.lsp.util.make_position_params(0, client.offset_encoding), { kind = 'autoClose' }),
           function(_, result)
             if result then
               require('utils').snippet_expand(result)
