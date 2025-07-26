@@ -35,8 +35,18 @@ vim.keymap.set('n', '<Leader>o', ':only<cr>', opts)    -- Show only current buff
 vim.keymap.set('n', '<Leader>O', ':!open .<cr>', opts) -- Open current directory in Finder
 
 -- Diagnostic navigation
-vim.keymap.set('n', '[d', vim.diagnostic.goto_prev, { desc = 'Previous Diagnostic' })
-vim.keymap.set('n', ']d', vim.diagnostic.goto_next, { desc = 'Next Diagnostic' })
+vim.keymap.set(
+  'n',
+  '[d',
+  '<cmd> lua vim.diagnostic.jump({ count = -1, severity = vim.diagnostic.severity.ERROR })<CR>',
+  { desc = 'Previous Diagnostic' }
+)
+vim.keymap.set(
+  'n',
+  ']d',
+  '<cmd> lua vim.diagnostic.jump({ count = 1, severity = vim.diagnostic.severity.ERROR })<CR>',
+  { desc = 'Next Diagnostic' }
+)
 vim.keymap.set('n', '<Leader>e', vim.diagnostic.open_float, { desc = 'Open Diagnostic Float' })
 
 -- LSP actions
