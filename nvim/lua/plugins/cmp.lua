@@ -106,7 +106,7 @@ return {
       nerd_font_variant = 'mono',
     },
     cmdline = {
-      enabled = true, -- Enable cmdline completion
+      enabled = false,
       completion = {
         menu = { auto_show = true },
       },
