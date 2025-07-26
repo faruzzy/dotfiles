@@ -27,8 +27,6 @@ return {
     desc = 'Color highlighter for CSS/hex colors'
   },
 
-  { "svban/YankAssassin.vim", event = "VeryLazy", desc = "After yank leave cursor in its place" },
-
   -- === TMUX INTEGRATION ===
   {
     'christoomey/vim-tmux-navigator',
@@ -66,15 +64,15 @@ return {
     dependencies = { 'tpope/vim-rhubarb' },
     cmd = { 'Git', 'Gstatus', 'Gblame', 'Glog', 'Gcommit' },
     keys = {
-      { '<Leader>ga', '<cmd>Git add %:p<cr>',       desc = 'Git: Add current file' },
-      { '<Leader>gp', '<cmd>Git pull<cr>',          desc = 'Git: Pull' },
-      { '<Leader>gP', '<cmd>Git push<cr>',          desc = 'Git: Push' },
-      { 'g<cr>',      '<cmd>Git<cr>',               desc = 'Git: Status' },
-      { '<Leader>gc', '<cmd>Git commit<cr>',        desc = 'Git: Commit' },
-      { '<Leader>gd', '<cmd>Gvdiffsplit<cr>',       desc = 'Git: Diff split' },
-      { '<Leader>g3', '<cmd>Gdiffsplit!<cr>',       desc = 'Git: Three-way diff' },
-      { '<Leader>gb', '<cmd>Git blame<cr>',         desc = 'Git: Blame' },
-      { '<Leader>gl', '<cmd>Git log --oneline<cr>', desc = 'Git: Log' },
+      { '<Leader>ga', '<cmd>execute "silent !git add " . shellescape(expand("%:p"))<CR>', desc = 'Git: Add current file' },
+      { '<Leader>gp', '<cmd>Git pull<cr>',                                                desc = 'Git: Pull' },
+      { '<Leader>gP', '<cmd>Git push<cr>',                                                desc = 'Git: Push' },
+      { 'g<cr>',      '<cmd>Git<cr>',                                                     desc = 'Git: Status' },
+      { '<Leader>gc', '<cmd>Git commit<cr>',                                              desc = 'Git: Commit' },
+      { '<Leader>gd', '<cmd>Gvdiffsplit<cr>',                                             desc = 'Git: Diff split' },
+      { '<Leader>g3', '<cmd>Gdiffsplit!<cr>',                                             desc = 'Git: Three-way diff' },
+      { '<Leader>gb', '<cmd>Git blame<cr>',                                               desc = 'Git: Blame' },
+      { '<Leader>gl', '<cmd>Git log --oneline<cr>',                                       desc = 'Git: Log' },
     },
     desc = 'Git wrapper with comprehensive commands'
   },
@@ -273,6 +271,8 @@ return {
     opts = {},
     desc = 'Prevent cursor movement during shift/filter actions'
   },
+
+  { "svban/YankAssassin.vim", event = "VeryLazy", desc = "After yank leave cursor in its place" },
 
   {
     'folke/trouble.nvim',
