@@ -7,7 +7,6 @@ return {
     'nvim-treesitter/nvim-treesitter-context', -- shows the context of the currently visible buffer contents
 
     'RRethy/nvim-treesitter-endwise',          -- plugin that helps to end certain structures automatically.
-    'RRethy/nvim-treesitter-textsubjects',
   },
   build = ':TSUpdate',
   init = function()
@@ -79,16 +78,6 @@ return {
 
       endwise = {
         enable = true,
-      },
-
-      textsubjects = {
-        enable = true,
-        prev_selection = ',',
-        keymaps = {
-          ['.'] = 'textsubjects-smart',
-          [';'] = 'textsubjects-container-outer',
-          ['i;'] = { 'textsubjects-container-inner', desc = 'Select inside containers (classes, functions, etc.)' },
-        },
       },
 
       textobjects = {
