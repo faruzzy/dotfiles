@@ -28,10 +28,26 @@ local function get_custom_highlights(colors)
     WinBarDiagnosticInfo = { fg = colors.sky, bg = colors.base },
 
     -- Treesitter Highlights
+    ['@label.vimdoc'] = { fg = colors.mauve, style = { 'bold' } },
     ['@markup.link.label.markdown_inline'] = anchor_link,
     ['@markup.quote'] = { fg = colors.subtext1, style = { 'italic' } },
+    ['@markup.raw'] = { fg = colors.lavender },
     ['@markup.raw.markdown_inline'] = inline_code,
     ['@string.special.url'] = anchor_link,
+    ['@markup.raw.vimdoc'] = inline_code,
+
+    -- Plugin Highlights
+    -- blink.cmp
+    BlinkCmpDocBorder = { link = 'FloatBorder' },
+    BlinkCmpLabel = { fg = colors.text },
+    BlinkCmpLabelMatch = { fg = colors.blue },
+    BlinkCmpMenuBorder = { link = 'FloatBorder' },
+    BlinkCmpSignatureHelpBorder = { link = 'FloatBorder' },
+    BlinkCmpSource = { fg = colors.surface2 },
+
+    -- eyeliner.nvim
+    EyelinerPrimary = { fg = colors.sapphire, style = { 'bold', 'underline' } },
+    EyelinerSecondary = { fg = colors.pink, style = { 'underline' } },
 
     -- Plugin Highlights
     -- LuaSnip
