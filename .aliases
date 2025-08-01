@@ -1,7 +1,8 @@
 #!/usr/bin/env zsh
 
 # --- Core Shell Settings & Refresh ---
-alias s='source ~/.bash_profile && tmux source-file ~/.tmux.conf && bind -f ~/.inputrc'
+# alias s='source ~/.bash_profile && tmux source-file ~/.tmux.conf && bind -f ~/.inputrc' # bash specific
+alias s='exec zsh && tmux source-file ~/.tmux.conf'
 alias python='python3'
 alias c='clear'
 
@@ -23,7 +24,7 @@ alias chromium='open -a "Google Chrome Canary"'
 alias f='open -a Finder'
 
 # --- File Listing & Searching ---
-alias ls='eza --icons --git --long --header' 
+alias ls='eza --icons --git --long --header'
 alias la='eza -a --icons --git --long --header' # 'ls -a' equivalent
 alias ll='eza -l --icons --git --header' # 'ls -l' equivalent
 alias lt='eza -T --icons --git' # Tree view
@@ -198,4 +199,3 @@ fi
 for method in GET HEAD POST PUT DELETE TRACE OPTIONS; do
   alias "$method"="lwp-request -m '$method'"
 done
-
