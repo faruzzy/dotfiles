@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/usr/bin/env zsh
 
 # --- Core Shell Settings & Refresh ---
 alias s='source ~/.bash_profile && tmux source-file ~/.tmux.conf && bind -f ~/.inputrc'
