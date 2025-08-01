@@ -1,4 +1,24 @@
 #!/usr/bin/env zsh
+# Oh My Zsh configuration
+export ZSH="$HOME/.oh-my-zsh"
+
+plugins=(
+    git
+    zsh-autosuggestions
+    zsh-syntax-highlighting
+    docker
+    kubectl
+    brew
+)
+
+# Load Oh My Zsh
+source $ZSH/oh-my-zsh.sh
+
+# Override the default g alias to ensure proper completion
+unalias g 2>/dev/null  # Remove any existing alias
+
+# Starship prompt
+eval "$(starship init zsh)"
 
 # Zsh options (equivalent to your .bash_options)
 setopt AUTO_CD              # Automatically cd into typed directory names
@@ -73,18 +93,6 @@ if [[ ! -f ~/.oh-my-zsh/oh-my-zsh.sh ]]; then
     fi
     [[ -f ~/.git-completion.zsh ]] && source ~/.git-completion.zsh
 fi
-
-# Starship prompt
-eval "$(starship init zsh)"
-
-plugins=(
-    git
-    zsh-autosuggestions
-    zsh-syntax-highlighting
-    docker
-    kubectl
-    brew
-)
 
 # History search with arrow keys
 autoload -U up-line-or-beginning-search
