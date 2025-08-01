@@ -27,7 +27,7 @@ $time\
 $line_break$character"""
 
 palette = 'catppuccin_mocha'
-command_timeout = 1000
+command_timeout = 2000
 
 [palettes.gruvbox_dark]
 color_fg0 = '#fbf1c7'
@@ -126,6 +126,17 @@ format = '[[($all_status$ahead_behind )](fg:base bg:green)]($style)'
 symbol = ""
 style = "bg:teal"
 format = '[[ $symbol( $version) ](fg:base bg:teal)]($style)'
+# Only detect Node.js in actual Node.js projects to avoid timeout with lazy NVM
+detect_files = [
+    "package.json",
+    "package-lock.json",
+    "yarn.lock",
+    "pnpm-lock.yaml",
+    ".nvmrc",
+    ".node-version"
+]
+detect_folders = ["node_modules"]
+detect_extensions = []  # Don't detect based on file extensions alone
 
 [c]
 symbol = " "
@@ -166,6 +177,16 @@ format = '[[ $symbol( $version) ](fg:base bg:teal)]($style)'
 symbol = ""
 style = "bg:teal"
 format = '[[ $symbol( $version) ](fg:base bg:teal)]($style)'
+# Optional: Only show Python version in Python projects
+detect_files = [
+    "requirements.txt",
+    "pyproject.toml",
+    "Pipfile",
+    "setup.py",
+    "setup.cfg",
+    "poetry.lock"
+]
+detect_folders = ["venv", ".venv", "env", ".env"]
 
 [docker_context]
 symbol = ""
@@ -185,7 +206,7 @@ disabled = false
 disabled = false
 success_symbol = '[](bold fg:green)'
 error_symbol = '[](bold fg:red)'
-vimcmd_symbol = '[](bold fg:creen)'
+vimcmd_symbol = '[](bold fg:green)'
 vimcmd_replace_one_symbol = '[](bold fg:purple)'
 vimcmd_replace_symbol = '[](bold fg:purple)'
 vimcmd_visual_symbol = '[](bold fg:lavender)'
