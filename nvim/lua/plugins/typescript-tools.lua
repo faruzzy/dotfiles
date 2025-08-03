@@ -11,8 +11,7 @@ return {
       settings = {
         complete_function_calls = false,
         include_completions_with_insert_text = true,
-        -- Disable jsx_close_tag in favor of my own handling, default handling breaks emmet completion
-        jsx_close_tag = { enable = false },
+        jsx_close_tag = { enable = true },
         tsserver_file_preferences = {
           includeInlayEnumMemberValueHints = true,
           includeInlayFunctionLikeReturnTypeHints = false,
@@ -38,11 +37,11 @@ return {
         bsk('n', '<leader>ri', '<cmd>TSToolsRemoveUnusedImports<CR>', { desc = 'Remove unused TypeScript imports' })
 
         if
-          vim.tbl_contains({
-            'javascript',
-            'javascriptreact',
-            'typescriptreact',
-          }, vim.bo.filetype)
+            vim.tbl_contains({
+              'javascript',
+              'javascriptreact',
+              'typescriptreact',
+            }, vim.bo.filetype)
         then
           bsk('i', '>', function()
             local success, result = pcall(function()
