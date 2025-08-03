@@ -1,8 +1,8 @@
 local opts = { silent = true, noremap = true }
 
 -- Buffer navigation
-vim.keymap.set('n', ']b', vim.cmd.bnext, opts)    -- Next buffer
-vim.keymap.set('n', '[b', vim.cmd.bprev, opts)    -- Previous buffer
+vim.keymap.set('n', ']b', vim.cmd.bnext, opts) -- Next buffer
+vim.keymap.set('n', '[b', vim.cmd.bprev, opts) -- Previous buffer
 vim.keymap.set('n', '<Tab>', '<cmd>b#<cr>', opts) -- Switch to last buffer
 
 -- AutoSave toggle
@@ -11,42 +11,32 @@ vim.api.nvim_set_keymap('n', '<leader>as', ':ASToggle<CR>', opts) -- Toggle Auto
 -- Line movement (handles wrap)
 vim.keymap.set('n', 'k', 'v:count == 0 ? \'gk\' : \'k\'', { expr = true, silent = true }) -- Move up with wrap
 vim.keymap.set('n', 'j', 'v:count == 0 ? \'gj\' : \'j\'', { expr = true, silent = true }) -- Move down with wrap
-vim.keymap.set('n', '<A-k>', '<CMD>move .-2<CR>', opts)                                   -- Move line up (NORMAL)
-vim.keymap.set('n', '<A-j>', '<CMD>move .+1<CR>', opts)                                   -- Move line down (NORMAL)
-vim.keymap.set('x', '<A-k>', ':move \'<-2<CR>gv=gv', opts)                                -- Move line up (VISUAL)
-vim.keymap.set('x', '<A-j>', ':move \'>+1<CR>gv=gv', opts)                                -- Move line down (VISUAL)
+vim.keymap.set('n', '<A-k>', '<CMD>move .-2<CR>', opts) -- Move line up (NORMAL)
+vim.keymap.set('n', '<A-j>', '<CMD>move .+1<CR>', opts) -- Move line down (NORMAL)
+vim.keymap.set('x', '<A-k>', ':move \'<-2<CR>gv=gv', opts) -- Move line up (VISUAL)
+vim.keymap.set('x', '<A-j>', ':move \'>+1<CR>gv=gv', opts) -- Move line down (VISUAL)
 
 -- Prevent space key movement
 vim.keymap.set({ 'n', 'v' }, '<Space>', '<Nop>', opts) -- Disable space navigation
 
 -- Insert mode navigation
-vim.keymap.set('i', '<c-h>', '<left>', opts)  -- Move left
+vim.keymap.set('i', '<c-h>', '<left>', opts) -- Move left
 vim.keymap.set('i', '<c-l>', '<right>', opts) -- Move right
 
 -- Save and quit
-vim.keymap.set('n', '<Leader>x', ':x<CR>', opts)    -- Save and quit
+vim.keymap.set('n', '<Leader>x', ':x<CR>', opts) -- Save and quit
 vim.keymap.set('n', '<Leader>X', ':wqa!<CR>', opts) -- Save all and quit forcefully
 
 -- Clear highlighting
 vim.keymap.set('n', '<Leader>n', ':noh<cr>', opts) -- Turn off search highlighting
 
 -- Window management
-vim.keymap.set('n', '<Leader>o', ':only<cr>', opts)    -- Show only current buffer
+vim.keymap.set('n', '<Leader>o', ':only<cr>', opts) -- Show only current buffer
 vim.keymap.set('n', '<Leader>O', ':!open .<cr>', opts) -- Open current directory in Finder
 
 -- Diagnostic navigation
-vim.keymap.set(
-  'n',
-  '[d',
-  '<cmd> lua vim.diagnostic.jump({ count = -1, severity = vim.diagnostic.severity.ERROR })<CR>',
-  { desc = 'Previous Diagnostic' }
-)
-vim.keymap.set(
-  'n',
-  ']d',
-  '<cmd> lua vim.diagnostic.jump({ count = 1, severity = vim.diagnostic.severity.ERROR })<CR>',
-  { desc = 'Next Diagnostic' }
-)
+vim.keymap.set('n', '[d', vim.diagnostic.goto_prev, { desc = 'Previous Diagnostic' })
+vim.keymap.set('n', ']d', vim.diagnostic.goto_next, { desc = 'Next Diagnostic' })
 vim.keymap.set('n', '<Leader>e', vim.diagnostic.open_float, { desc = 'Open Diagnostic Float' })
 
 -- LSP actions
@@ -141,10 +131,10 @@ end, { silent = true, desc = 'Close all other buffers except current one.' })
 -- Google search
 local function goog(pat, lucky)
   local q = '"'
-      .. pat:gsub('["\n]', ' '):gsub('[%p ]', function(c)
-        return string.format('%%%02X', string.byte(c))
-      end)
-      .. '"'
+    .. pat:gsub('["\n]', ' '):gsub('[%p ]', function(c)
+      return string.format('%%%02X', string.byte(c))
+    end)
+    .. '"'
   local url = 'https://www.google.com/search?' .. (lucky and 'btnI&' or '') .. 'q=' .. q
   vim.fn.system('open "' .. url .. '"')
 end
