@@ -4,7 +4,7 @@ return {
   -- === WEB DEVELOPMENT ===
   {
     'mattn/emmet-vim',
-    ft = { 'html', 'css', 'javascript', 'typescript', 'jsx', 'tsx', 'vue', 'svelte' },
+    event = { 'BufRead *.html', 'BufRead *.css', 'BufRead *.js', 'BufRead *.jsx', 'BufRead *.ts', 'BufRead *.tsx', 'BufRead *.vue', 'BufRead *.svelte' },
     desc = 'Emmet abbreviation expansion for web development'
   },
 
