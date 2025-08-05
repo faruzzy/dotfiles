@@ -1,6 +1,8 @@
 # Ghostty configuration file
 # Converted from Alacritty configuration
 
+background-opacity = 0.98
+
 # Font configuration
 font-family = "ComicShannsMono Nerd Font"
 font-size = 16
@@ -20,7 +22,7 @@ window-padding-y = 1
 
 # Cursor configuration
 cursor-style = block
-cursor-style-blink = false
+cursor-style-blink = true
 cursor-color = #827263
 
 # Terminal behavior
@@ -32,7 +34,6 @@ mouse-hide-while-typing = true
 
 # Selection configuration
 copy-on-select = true
-
 
 # Live reload equivalent
 # config-file-watch = true
