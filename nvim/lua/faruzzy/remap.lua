@@ -170,11 +170,11 @@ local function compile_and_run()
   elseif ft == 'sh' then
     vim.fn.system('bash ' .. vim.fn.expand('%'))
   elseif ft == 'python' then
-    vim.fn.system('python ' .. vim.fn.shellescape(vim.fn.expand('%'), 1))
+    vim.fn.system('python ' .. vim.fn.shellescape(vim.fn.expand('%')))
   end
 end
 vim.api.nvim_create_autocmd('FileType', {
-  pattern = { 'c', 'java', 'javascript', 'sh', 'python' },
+  pattern = { 'c', 'java', 'javascript', 'typescript', 'sh', 'python', 'lua' },
   callback = function()
     vim.keymap.set('n', '<leader>c', compile_and_run, { silent = true, buffer = true, desc = 'Compile and Run' })
   end,
