@@ -106,7 +106,6 @@ return {
       nerd_font_variant = 'mono',
     },
     cmdline = {
-      enabled = false,
       completion = {
         menu = { auto_show = true },
       },
@@ -118,23 +117,32 @@ return {
     },
     completion = {
       accept = {
-        auto_brackets = { enabled = true },
+        -- auto_brackets = { enabled = true },
+        auto_brackets = {
+          kind_resolution = {
+            blocked_filetypes = {
+              'typescriptreact',
+              'javascriptreact',
+            },
+          },
+        },
       },
       trigger = {
         show_on_backspace_after_accept = true,
         show_on_insert = true,
-        show_on_trigger_character = true,
+        show_on_trigger_character = false,
       },
       documentation = {
         auto_show = true,
         auto_show_delay_ms = 500,
+        treesitter_highlighting = true,
         window = {
           border = 'rounded',
           min_width = 40,
           max_width = 70,
         },
       },
-      keyword = { range = 'full' },
+      keyword = { range = 'full', min_width = 3 },
       list = {
         selection = { preselect = true, auto_insert = false },
       },
@@ -148,8 +156,8 @@ return {
           padding = 1,
           gap = 3,
           columns = {
-            { 'kind_icon',  gap = 1 },
-            { 'label',      'label_description', gap = 1 },
+            { 'kind_icon', gap = 1 },
+            { 'label', 'label_description', gap = 1 },
             { 'source_name' },
           },
           components = {
@@ -284,8 +292,9 @@ return {
       providers = {
         buffer = {
           name = 'Buffer',
-          max_items = 4,     -- Limit buffer completions to reduce noise
+          max_items = 4, -- Limit buffer completions to reduce noise
           score_offset = -2, -- Lower priority
+          min_keyword_length = 3,
           opts = {
             get_bufnrs = function()
               return vim.api.nvim_list_bufs()
@@ -300,6 +309,7 @@ return {
         },
         lsp = {
           name = 'LSP',
+          score_offset = 0,
         },
         path = {
           name = 'Path',
@@ -311,6 +321,7 @@ return {
         },
         snippets = {
           name = 'Snippets',
+          min_keyword_length = 2,
           should_show_items = function(ctx)
             return ctx.trigger.initial_kind ~= 'trigger_character'
           end,
