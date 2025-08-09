@@ -24,9 +24,6 @@ export HISTIGNORE="cd:cd -:pwd:exit:date:* --help:ls:ll:la:clear:history"
 export CLICOLOR=1
 export TERM='xterm-256color'
 
-# Grep Configuration (deprecated GREP_OPTIONS replaced with alias)
-# Note: GREP_OPTIONS is deprecated, use alias instead in .aliases file
-
 # NodeJS Configuration
 export NODE_REPL_HISTORY=~/.node_history
 export NODE_REPL_HISTORY_SIZE='32768'
@@ -76,13 +73,6 @@ if ! command -v jenv > /dev/null; then
     export JAVA_HOME=$(/usr/libexec/java_home 2>/dev/null)
 fi
 
-# Development Tools Configuration
-# PostgreSQL
-export PSQL="/usr/local/bin"
-
-# Script directory (customize as needed)
-export SCRIPT_HOME="$HOME/scripts"
-
 # PATH Configuration
 # Clean and organize PATH - remove duplicates and ensure proper ordering
 path_dirs=(
@@ -102,8 +92,7 @@ path_dirs=(
     "$SCRIPT_HOME"
 )
 
-
-# Build PATH from array, checking that directories exist
+# Build clean PATH from scratch
 new_path=""
 for dir in "${path_dirs[@]}"; do
     if [[ -d "$dir" && ":$new_path:" != *":$dir:"* ]]; then
@@ -115,11 +104,15 @@ for dir in "${path_dirs[@]}"; do
     fi
 done
 
-# Append any remaining PATH entries that weren't explicitly included
-IFS=':' existing_paths=(${=PATH})
-for dir in "${existing_paths[@]}"; do
-    if [[ -n "$dir" && ":$new_path:" != *":$dir:"* ]]; then
-        new_path="$new_path:$dir"
+# Build PATH from array, checking that directories exist and avoiding duplicates
+new_path=""
+for dir in "${path_dirs[@]}"; do
+    if [[ -d "$dir" && ":$new_path:" != *":$dir:"* ]]; then
+        if [[ -z "$new_path" ]]; then
+            new_path="$dir"
+        else
+            new_path="$new_path:$dir"
+        fi
     fi
 done
 
@@ -134,7 +127,7 @@ export DOTFILES_DIR="$HOME/github/dotfiles"
 command -v exa > /dev/null && export EXA_COLORS="di=1;34:ln=1;36:so=32:pi=33:ex=1;32:bd=34;46:cd=34;43:su=30;41:sg=30;46:tw=30;42:ow=30;43"
 
 # Bat configuration
-export BAT_THEME="Sublime Snazzy"
+# export BAT_THEME="Sublime Snazzy"
 
 # Ripgrep configuration
 export RIPGREP_CONFIG_PATH="$HOME/.ripgreprc"
@@ -142,3 +135,6 @@ export RIPGREP_CONFIG_PATH="$HOME/.ripgreprc"
 # Additional helpful exports
 export HOMEBREW_NO_ANALYTICS=1
 export HOMEBREW_NO_AUTO_UPDATE=1
+
+# Load Rust environment
+[ -s ~/.cargo/env ] && source ~/.cargo/env

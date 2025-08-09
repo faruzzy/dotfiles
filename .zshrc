@@ -47,7 +47,7 @@ zstyle ':completion:*' matcher-list 'm:{a-zA-Z}={A-Za-z}'
 zstyle ':completion:*' matcher-list 'm:{a-zA-Z}={A-Za-z}' 'r:|[._-]=* r:|=*' 'l:|=* r:|=*'
 
 # Load configuration files
-for file in ~/.{zshenv,aliases,functions.zsh,extra}; do
+for file in ~/.{aliases,functions.zsh,extra}; do
   [[ -r "$file" ]] && source "$file"
 done
 unset file
@@ -77,10 +77,6 @@ done
 
 # Rust environment
 [ -s ~/.cargo/env ] && source ~/.cargo/env
-
-# Java environment
-export PATH="$HOME/.jenv/bin:$PATH"
-eval "$(jenv init -)"
 
 # Homebrew
 eval "$(/opt/homebrew/bin/brew shellenv)"
