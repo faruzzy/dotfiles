@@ -123,6 +123,3 @@ export RIPGREP_CONFIG_PATH="$HOME/.ripgreprc"
 # Additional helpful exports
 export HOMEBREW_NO_ANALYTICS=1
 export HOMEBREW_NO_AUTO_UPDATE=1
-
-# Load Rust environment
-[ -s ~/.cargo/env ] && source ~/.cargo/env
