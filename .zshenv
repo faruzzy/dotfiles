@@ -92,18 +92,6 @@ path_dirs=(
     "$SCRIPT_HOME"
 )
 
-# Build clean PATH from scratch
-new_path=""
-for dir in "${path_dirs[@]}"; do
-    if [[ -d "$dir" && ":$new_path:" != *":$dir:"* ]]; then
-        if [[ -z "$new_path" ]]; then
-            new_path="$dir"
-        else
-            new_path="$new_path:$dir"
-        fi
-    fi
-done
-
 # Build PATH from array, checking that directories exist and avoiding duplicates
 new_path=""
 for dir in "${path_dirs[@]}"; do
