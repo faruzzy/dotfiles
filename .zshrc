@@ -6,6 +6,7 @@ plugins=(
     git
     zsh-autosuggestions
     zsh-syntax-highlighting
+    zsh-autocomplete
     docker
     kubectl
     brew
