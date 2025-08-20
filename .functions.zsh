@@ -593,8 +593,8 @@ _fe_widget() {
   file=$(fzf-tmux --preview 'bat -n --color=always {}' --select-1 --exit-0 </dev/tty)
 
   if [ -n "$file" ]; then
-    # Open the file
-    ${EDITOR:-vim} "$file" </dev/tty >/dev/tty 2>&1
+    # Open the file with neovim explicitly
+    nvim "$file" </dev/tty >/dev/tty 2>&1
   fi
 
   # Restore the command line
