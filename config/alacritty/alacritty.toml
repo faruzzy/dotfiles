@@ -61,11 +61,11 @@ decorations = "buttonless"
 dynamic_padding = false
 dynamic_title = true
 option_as_alt = "OnlyLeft"
-opacity = 0.98
+opacity = 1
 
 [window.dimensions]
-columns = 160
-lines = 48
+columns = 260
+lines = 100
 
 [window.padding]
 x = 1

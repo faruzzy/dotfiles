@@ -1,7 +1,7 @@
 # Ghostty configuration file
 # Converted from Alacritty configuration
 
-background-opacity = 0.98
+background-opacity = 1
 
 # Font configuration
 font-family = "ComicShannsMono Nerd Font"
@@ -9,6 +9,7 @@ font-size = 16
 font-style = regular
 font-style-bold = bold
 font-style-italic = italic
+macos-non-native-fullscreen = true
 
 # Auto-start tmux for new windows
 command = zsh -c "tmux new-session -A -s main"
