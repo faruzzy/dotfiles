@@ -27,6 +27,21 @@ return {
     desc = 'Color highlighter for CSS/hex colors'
   },
 
+  {
+    "andythigpen/nvim-coverage",
+    version = "*",
+    config = function()
+      require("coverage").setup({
+        auto_reload = true,
+        commands = {
+          jest = {
+            coverage_file = "./coverage/lcov.info"
+          }
+        }
+      })
+    end,
+  },
+
   -- === TMUX INTEGRATION ===
   {
     'christoomey/vim-tmux-navigator',
