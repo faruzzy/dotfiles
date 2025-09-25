@@ -85,7 +85,7 @@ return {
       { 'g<cr>',      '<cmd>Git<cr>',                                                     desc = 'Git: Status' },
       { '<Leader>gc', '<cmd>Git commit<cr>',                                              desc = 'Git: Commit' },
       { '<Leader>gd', '<cmd>Gvdiffsplit!<cr>',                                            desc = 'Git: Diff split' },
-      { '<Leader>gr', '<cmd>Gdiffsplit! HEAD~1<cr>',                                      desc = 'Git: Reversed diff of most recent commit' },
+      { '<Leader>gr', '<cmd>Gvdiffsplit! HEAD~1<cr>',                                     desc = 'Git: Reversed diff of most recent commit' },
       { '<Leader>gb', '<cmd>Git blame<cr>',                                               desc = 'Git: Blame' },
       { '<Leader>gl', '<cmd>Git log --oneline<cr>',                                       desc = 'Git: Log' },
     },
