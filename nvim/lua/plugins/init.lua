@@ -77,7 +77,7 @@ return {
   {
     'tpope/vim-fugitive',
     dependencies = { 'tpope/vim-rhubarb' },
-    cmd = { 'Git', 'Gstatus', 'Gblame', 'Glog', 'Gcommit' },
+    cmd = { 'Git' },
     keys = {
       { '<Leader>ga', '<cmd>execute "silent !git add " . shellescape(expand("%:p"))<CR>', desc = 'Git: Add current file' },
       { '<Leader>gp', '<cmd>Git pull<cr>',                                                desc = 'Git: Pull' },
