@@ -160,9 +160,6 @@ return {
         border = vim.g.border_style,
         preview = { border = 'border-double', wrap = 'wrap', flip_columns = 160 },
       },
-      previewers = {
-        git_diff = { pager = 'delta --file-style="omit" --hunk-header-style="omit"' },
-      },
       fzf_opts = {
         ['--border'] = 'none',
         ['--cycle'] = true,
