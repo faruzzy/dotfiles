@@ -1,189 +1,531 @@
 #!/usr/bin/env bash
 
-# Configure OSX
-# Credit:
-# https://github.com/junegunn/dotfiles/blob/master/install
-# https://github.com/gcuisinier/MacConfig
+# macOS Development Environment Setup Script
+# Automated setup for development tools, applications, and dotfiles
+set -euo pipefail  # Exit on error, undefined vars, pipe failures
 
-osascript -e 'tell application "System Preferences" to quit'
-sudo -v
-# Keep-alive: update existing `sudo` time stamp until `.macos` has finished
-while true; do sudo -n true; sleep 60; kill -0 "$$" || exit; done 2>/dev/null &
+# Configuration
+readonly SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" &> /dev/null && pwd)"
+readonly LOG_FILE="$HOME/install.log"
 
-# Install Xcode command lines tools cli
-echo 'Making sure Xcode command line tools are installed...'
-if ! command -v xcode-select &> /dev/null
-then
-  echo 'Installing command line tools'
-  xcode-select --install
-  sleep 1
-    osascript <<EOD
-      tell application "System Events"
-        tell process "Install Command Line Developer Tools"
-          keystroke return
-          click button "Agree" of window "License Agreement"
-        end tell
-      end tell
-EOD
-else
-  echo 'Command line tools are already installed'
-fi
+# Color codes for output
+readonly RED='\033[0;31m'
+readonly GREEN='\033[0;32m'
+readonly YELLOW='\033[1;33m'
+readonly BLUE='\033[0;34m'
+readonly NC='\033[0m' # No Color
 
-# Install Homebrew
-echo 'Checking if Homebrew is installed...'
-if [ -x "$(command -v brew)" ]; then
-  echo "Homebrew is already installed! We'll update it and upgrade your packages..."
-  echo "Would you like to update and upgrade your packages?"
-  select yn in "Yes" "No"; do
-    case $yn in
-      Yes)
-	brew update
-	brew upgrade
-	break
-	;;
-      No)
-      echo "Not upgrading/updating brew packages"
-      break
-      ;;
-    esac
-  done
-else
-  echo "Homebrew is not installed, let's change that..."
-  /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-  [ -d /opt/homebrew ] && eval "$(/opt/homebrew/bin/brew shellenv)"
-  # Graphical App install from Home-brew cask
-  brew install viz
-  brew install koekeishiya/formulae/yabai
-  brew install koekeishiya/formulae/skhd
-  brew install alt-tab
-  brew install markdownlint-cli
+# Logging functions
+log_info() { echo -e "${BLUE}[INFO]${NC} $1" | tee -a "$LOG_FILE"; }
+log_success() { echo -e "${GREEN}[SUCCESS]${NC} $1" | tee -a "$LOG_FILE"; }
+log_warning() { echo -e "${YELLOW}[WARNING]${NC} $1" | tee -a "$LOG_FILE"; }
+log_error() { echo -e "${RED}[ERROR]${NC} $1" | tee -a "$LOG_FILE"; }
 
-  brew install --cask rectangle
-  brew install --cask app-cleaner
-  brew install --cask bettertouchtool path-finder
-  brew install --cask firefox@developer-edition
-  brew install --cask google-chrome-canary google-chrome firefox
-  brew install --cask caffeine
-  brew install --cask keka
-  brew install --cask whatsapp
-  brew install --cask skitch
-  brew install --cask kap
-  brew install --cask qbserve
-  brew install --cask 1password
-  brew install --cask google-drive
-  brew install --cask visual-studio-code
-  brew install --cask pdfsam-basic
-  brew install --cask intellij-idea
-  brew install --cask colorsnapper
-  brew install --cask spectacle
-  brew install --cask alacritty
-  brew install --cask ghostty
-  brew install --cask karabiner-elements
-  brew install --cask maccy
-  brew install --cask macfuse
-  brew install --cask nightowl
-  brew install --cask keepingyouawake visualvm
-  brew install --cask vlc
-  brew install --cask spotify
+# Utility functions
+command_exists() { command -v "$1" &> /dev/null; }
 
-  #Install Java JDK
-  brew install --cask java6
-  brew install --cask java7
-  brew install --cask homebrew/cask-versions/adoptopenjdk8
-  brew install --cask adoptopenjdk11
+ask_yes_no() {
+    local prompt="$1"
+    local default="${2:-}"
 
-  brew tap homebrew/cask-fonts
-  brew install --cask font-fira-code
+    while true; do
+        if [[ "$default" == "y" ]]; then
+            read -rp "$prompt [Y/n]: " response
+            response=${response:-y}
+        elif [[ "$default" == "n" ]]; then
+            read -rp "$prompt [y/N]: " response
+            response=${response:-n}
+        else
+            read -rp "$prompt [y/n]: " response
+        fi
 
-  # Brew package
-  brew install mas mkcert nss xquartz
+        case "${response,,}" in
+            y|yes) return 0 ;;
+            n|no) return 1 ;;
+            *) echo "Please answer yes or no." ;;
+        esac
+    done
+}
 
-  # Install zsh
-  # brew install zsh shellcheck autojump
+# System preparation
+prepare_system() {
+    log_info "Preparing system..."
 
-  brew install \
-    ninja cmake gettext curl # NeoVim build dependencies
-    fd ag ripgrep bat gh git-delta cmus \
-    imagemagick gnupg gnu-sed\
-    tree wget jq tig\
-    pyenv xz python python@3.9 \
-    reattach-to-user-namespace bash bash-completion@2 tmux \
-    translate-shell libpq eza jenv maven lua luajit-openresty \
-    perl krb5 luv tree-sitter berkeley-db libevent mpdecimal \
-    readline unibilium ca-certificates msgpack utf8proc libtermkey ncurses vim \
-    libuv ruby xz libvterm openssl@1.1 sqlite gdbm libyaml libffi pcre the_silver_searcher \
-    pcre2 ngrep z ffmpeg youtube-dl cocoapods awscli http-server allure \
+    # Close System Preferences
+    osascript -e 'tell application "System Preferences" to quit' 2>/dev/null || true
 
-  brew install libtool
-  brew link libtool
-  brew install graphviz
-  brew link --overwrite graphviz
+    # Request sudo access
+    sudo -v
 
-  #Install Frontend Development tools
-  brew install yarn --ignore-dependencies
-  # dev tools
-  brew install fzf
-  $(brew --prefix)/opt/fzf/install
+    # Keep sudo alive
+    while true; do
+        sudo -n true
+        sleep 60
+        kill -0 "$$" || exit
+    done 2>/dev/null &
 
-  brew install --HEAD neovim # install the development version of Nvim
-  brew install deno
-fi
+    log_success "System prepared"
+}
 
-# Install NVM
-curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.1/install.sh | bash
-nvm install node #Install the latest available version right away
+# Xcode Command Line Tools
+install_xcode_tools() {
+    log_info "Checking Xcode Command Line Tools..."
 
-# sh -c "$(curl -fsSL https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh)"
-# git clone https://github.com/zsh-users/zsh-syntax-highlighting.git ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting
-# git clone https://github.com/zsh-users/zsh-autosuggestions ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-autosuggestions
-# git clone https://github.com/supercrabtree/k ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/k
+    if command_exists xcode-select; then
+        log_success "Command Line Tools already installed"
+        return 0
+    fi
 
-# Install TPM
-git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
+    log_info "Installing Xcode Command Line Tools..."
+    xcode-select --install
 
-# Install catppuccin for TMUX theme
-git clone --depth 1 --branch yaml https://github.com/catppuccin/alacritty.git ~/.config/alacritty/catppuccin
+    # Wait for installation to complete
+    # NOTE: The automated 'Agree' click from the original script is often unreliable/not recommended.
+    # We will wait for the tool to be available, or the user to manually agree/install.
+    log_warning "Please follow the on-screen prompts to install Command Line Tools."
+    until command_exists xcode-select; do
+        sleep 5
+    done
 
-# mkdir -p $HOME/.shellrc/zshrc.d/
+    log_success "Xcode Command Line Tools installed"
+}
 
-# Install App from Mac App Store
+# Homebrew installation and management
+install_homebrew() {
+    log_info "Checking Homebrew installation..."
 
-# Affinity Photo
-# mas install 824183456
-# Affinity Designer
-# Mas install 824171161
+    if command_exists brew; then
+        log_success "Homebrew already installed"
 
-# Configure Visual Studio Code
-code --install-extension dbaeumer.vscode-eslint
-code --install-extension msjsdiag.debugger-for-chrome
-code --install-extension github.github-vscode-theme
-code --install-extension graphql.vscode-graphql
-code --install-extension wmaurer.vscode-jumpy
-code --install-extension ms-vsliveshare.vsliveshare
-code --install-extension davidanson.vscode-markdownlint
-code --install-extension pkief.material-icon-theme
-code --install-extension christian-kohler.path-intellisense
-code --install-extension esbenp.prettier-vscode
-code --install-extension prisma.prisma
-code --install-extension vscodevim.vim
-code --install-extension nrwl.angular-console
+        if ask_yes_no "Update and upgrade Homebrew packages?" "y"; then
+            log_info "Updating Homebrew..."
+            brew update
+            brew upgrade
+            log_success "Homebrew updated"
+        fi
+        return 0
+    fi
 
-npm install -g typescript
-npm install -g ts-node
-npm install -g aws-cdk
-npm install -g tldr
-npm install -g git-open
-npm install -g pnpm
-# this is needed for UtilSnips
-python3 -m pip install --user --upgrade pynvim
-pip install Pygments
+    log_info "Installing Homebrew..."
+    /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 
-# git-prompt
-if [ ! -e ~/.git-prompt.sh ]; then
-  curl https://raw.githubusercontent.com/git/git/master/contrib/completion/git-prompt.sh -o ~/.git-prompt.sh
-fi
+    # Add Homebrew to PATH for Apple Silicon Macs
+    if [[ -d "/opt/homebrew" ]]; then
+        eval "$(/opt/homebrew/bin/brew shellenv)"
+    fi
 
-#git clone https://github.com/faruzzy/dotfiles
-# for loop for adding symbolic link to the HOME folder
-#tmux source-file ~/.tmux.conf
-#./install-vim
+    log_success "Homebrew installed"
+}
+
+# Install development tools (FORMULAS)
+install_dev_tools() {
+    log_info "Installing development tools (formulas)..."
+
+ local dev_tools=(
+        # Build tools and dependencies
+        ninja cmake gettext curl
+        # Search and file tools
+        fd ag ripgrep bat fzf the_silver_searcher # Added the_silver_searcher
+        # Git tools
+        gh git-delta tig
+        # System tools
+        tree wget jq htop
+        # Programming languages and tools
+        pyenv python python@3.9 xz # Added xz
+        lua luajit-openresty perl
+        # Shell and terminal
+        zsh shellcheck autojump tmux zoxide # Added tmux, zsh, shellcheck, autojump
+        reattach-to-user-namespace bash bash-completion@2 # Added reattach-to-user-namespace, bash, bash-completion@2
+        # Database and networking
+        libpq krb5 berkeley-db libevent mpdecimal openssl@1.1 sqlite gdbm libyaml libffi pcre pcre2 # Added database/networking/library deps
+        # Other utilities
+        imagemagick gnupg gnu-sed translate-shell
+        eza jenv maven
+        luv tree-sitter libtermkey ncurses vim libuv libvterm unibilium ca-certificates msgpack utf8proc # Added Neovim/Vim-related deps
+        ngrep z ffmpeg youtube-dl cocoapods awscli http-server allure # Added networking/utility tools
+        mkcert nss xquartz # Added miscellaneous utilities
+        cmus # Added console media player
+        deno # Added deno from original script's end
+    )
+
+    for tool in "${dev_tools[@]}"; do
+        if ! brew list "$tool" &>/dev/null; then
+            log_info "Installing $tool..."
+            # Use --HEAD for neovim as in the original script
+            if [[ "$tool" == "neovim" ]]; then
+                brew install --HEAD neovim || log_warning "Failed to install $tool"
+            else
+                brew install "$tool" || log_warning "Failed to install $tool"
+            fi
+        fi
+    done
+
+    # Special handling for specific tools
+    brew install libtool && brew link libtool || log_warning "Failed to link libtool"
+    brew install graphviz && brew link --overwrite graphviz || log_warning "Failed to link graphviz"
+    brew install yarn --ignore-dependencies || log_warning "Failed to install yarn"
+
+    # Install fzf shell integration
+    if command_exists fzf; then
+        "$(brew --prefix)"/opt/fzf/install --all --no-bash --no-fish || log_warning "Failed to install fzf shell integration"
+    fi
+
+    log_success "Development tools installed"
+}
+
+# Install GUI applications (CASKS)
+install_gui_apps() {
+    log_info "Installing GUI applications (casks)..."
+
+    # Window management and productivity
+    local productivity_apps=(
+        rectangle spectacle alt-tab
+        bettertouchtool karabiner-elements
+        caffeine keepingyouawake
+        maccy
+        path-finder # Added path-finder
+    )
+
+    # Development tools
+    local dev_apps=(
+        visual-studio-code
+        alacritty ghostty
+        intellij-idea
+        viz # Added viz (original script had it as a formula, but it's often a cask or just a formula)
+    )
+
+    # Media and utilities
+    local utility_apps=(
+        app-cleaner keka
+        skitch kap
+        qbserve pdfsam-basic
+        colorsnapper
+        vlc spotify
+        visualvm # Added visualvm
+    )
+
+    # Browsers
+    local browsers=(
+        firefox@developer-edition
+        google-chrome-canary
+        google-chrome
+        firefox
+    )
+
+    # Other apps
+    local other_apps=(
+        1password
+        whatsapp
+        google-drive
+        macfuse
+        nightowl
+    )
+
+    # Install all cask applications
+    local all_apps=("${productivity_apps[@]}" "${dev_apps[@]}" "${utility_apps[@]}" "${browsers[@]}" "${other_apps[@]}")
+
+    for app in "${all_apps[@]}"; do
+        if ! brew list --cask "$app" &>/dev/null; then
+            log_info "Installing $app..."
+            brew install --cask "$app" || log_warning "Failed to install $app"
+        fi
+    done
+
+    log_success "GUI applications installed"
+}
+
+# Install fonts
+# install_fonts() {
+#     log_info "Installing fonts..."
+
+#     brew tap homebrew/cask-fonts || log_warning "Failed to tap homebrew/cask-fonts"
+
+#     local fonts=(
+#         font-fira-code
+#         font-jetbrains-mono
+#         font-source-code-pro
+#     )
+
+#     for font in "${fonts[@]}"; do
+#         brew install --cask "$font" || log_warning "Failed to install $font"
+#     done
+
+#     log_success "Fonts installed"
+# }
+
+# Install fonts
+install_fonts() {
+    log_info "Installing fonts..."
+
+    # REMOVED: brew tap homebrew/cask-fonts as it's deprecated/not strictly necessary.
+    # The cask should install automatically from the main repository.
+
+    local fonts=(
+        font-fira-code
+        font-jetbrains-mono
+        font-source-code-pro
+    )
+
+    for font in "${fonts[@]}"; do
+        # Use --cask flag for installation
+        brew install --cask "$font" || log_warning "Failed to install $font"
+    done
+
+    log_success "Fonts installed"
+}
+
+# Install Java versions
+install_java() {
+    log_info "Installing Java versions..."
+
+    # Replaced old/deprecated casks with modern Temurin (community-maintained OpenJDK) casks.
+    local java_versions=(
+        temurin8
+        temurin11
+        temurin17
+        temurin21
+    )
+
+    for version in "${java_versions[@]}"; do
+        brew install --cask "$version" || log_warning "Failed to install $version"
+    done
+
+    log_success "Java versions installed"
+}
+
+# Install Node.js via NVM
+install_node() {
+    log_info "Installing Node.js via NVM..."
+
+    if [[ ! -d "$HOME/.nvm" ]]; then
+        curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.1/install.sh | bash || log_warning "Failed to install NVM"
+
+        # Source NVM
+        export NVM_DIR="$HOME/.nvm"
+        [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh" || true
+
+        # Install latest LTS Node
+        if command_exists nvm; then
+            nvm install --lts || log_warning "Failed to install LTS Node"
+            nvm use --lts || log_warning "Failed to use LTS Node"
+            nvm alias default node || log_warning "Failed to set default node version"
+        fi
+    fi
+
+    log_success "Node.js installed via NVM"
+}
+
+# Install global npm packages
+install_npm_packages() {
+    log_info "Installing global npm packages..."
+
+    # Ensure NVM is sourced for npm to be available if NVM was just installed
+    export NVM_DIR="$HOME/.nvm"
+    [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh" || true
+
+    if ! command_exists npm; then
+        log_warning "npm not found. Skipping global npm package installation."
+        return 1
+    fi
+
+    local npm_packages=(
+        typescript ts-node
+        aws-cdk
+        tldr
+        git-open
+        pnpm
+        yarn
+    )
+
+    for package in "${npm_packages[@]}"; do
+        npm install -g "$package" || log_warning "Failed to install $package"
+    done
+
+    log_success "Global npm packages installed"
+}
+
+# Install Oh My Zsh and plugins
+install_oh_my_zsh() {
+    log_info "Installing Oh My Zsh..."
+
+    if [[ ! -d "$HOME/.oh-my-zsh" ]]; then
+        # Use --unattended to avoid the initial shell switch prompt
+        sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended || log_warning "Failed to install Oh My Zsh"
+
+        # Install plugins
+        local zsh_custom="${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}"
+
+        git clone https://github.com/zsh-users/zsh-syntax-highlighting.git "$zsh_custom/plugins/zsh-syntax-highlighting" || log_warning "Failed to clone zsh-syntax-highlighting"
+        git clone https://github.com/zsh-users/zsh-autosuggestions "$zsh_custom/plugins/zsh-autosuggestions" || log_warning "Failed to clone zsh-autosuggestions"
+        git clone https://github.com/supercrabtree/k "$zsh_custom/plugins/k" || log_warning "Failed to clone k plugin"
+    fi
+
+    log_success "Oh My Zsh installed"
+}
+
+# Install tmux plugin manager
+install_tmux_plugins() {
+    log_info "Installing tmux plugins and themes..."
+
+    if [[ ! -d "$HOME/.tmux/plugins/tpm" ]]; then
+        git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm || log_warning "Failed to clone tpm"
+    fi
+
+    # Install Catppuccin Alacritty theme
+    if [[ ! -d "$HOME/.config/alacritty/catppuccin" ]]; then
+        mkdir -p "$HOME/.config/alacritty"
+        git clone --depth 1 --branch yaml https://github.com/catppuccin/alacritty.git "$HOME/.config/alacritty/catppuccin" || log_warning "Failed to clone Catppuccin theme"
+    fi
+
+    log_success "tmux plugins and themes installed"
+}
+
+# Configure VS Code
+configure_vscode() {
+    log_info "Configuring Visual Studio Code extensions..."
+
+    if ! command_exists code; then
+        log_warning "VS Code 'code' command not found. Skipping extension installation."
+        return 1
+    fi
+
+    local vscode_extensions=(
+        dbaeumer.vscode-eslint
+        ms-vscode.vscode-typescript-next # Replaced msjsdiag.debugger-for-chrome with a more general tool
+        github.github-vscode-theme
+        graphql.vscode-graphql
+        ms-vsliveshare.vsliveshare
+        davidanson.vscode-markdownlint
+        pkief.material-icon-theme
+        christian-kohler.path-intellisense
+        esbenp.prettier-vscode
+        prisma.prisma
+        vscodevim.vim
+        ms-python.python
+        nrwl.angular-console # Added back from original list
+        wmaurer.vscode-jumpy # Added back from original list
+    )
+
+    for extension in "${vscode_extensions[@]}"; do
+        code --install-extension "$extension" || log_warning "Failed to install $extension"
+    done
+
+    log_success "VS Code configured"
+}
+
+# Install Python packages
+install_python_packages() {
+    log_info "Installing Python packages..."
+
+    python3 -m pip install --user --upgrade pynvim Pygments || log_warning "Failed to install Python packages"
+
+    log_success "Python packages installed"
+}
+
+# Setup dotfiles
+setup_dotfiles() {
+    log_info "Setting up dotfiles symbolic links..."
+
+    local dotfiles=(
+        ".aliases"
+        ".bash_options"
+        ".bash_profile"
+        ".bash_prompt"
+        ".bashrc"
+        ".eslintrc"
+        ".exports"
+        ".functions"
+        ".functions.zsh"
+        ".gitconfig"
+        ".gitignore_global"
+        ".ideavimrc"
+        ".inputrc"
+        ".osx"
+        ".tmux.conf"
+        ".vimrc"
+        ".zprofile"
+        ".zshenv"
+        ".zshrc"
+    )
+
+    for file in "${dotfiles[@]}"; do
+        if [[ -f "$SCRIPT_DIR/$file" ]]; then
+            if [[ -e "$HOME/$file" || -L "$HOME/$file" ]]; then
+                log_info "Backing up existing $file"
+                mv "$HOME/$file" "$HOME/${file}.backup.$(date +%Y%m%d_%H%M%S)"
+            fi
+
+            log_info "Creating symbolic link for $file"
+            ln -sf "$SCRIPT_DIR/$file" "$HOME/$file"
+        else
+            log_warning "$file not found in dotfiles directory. Skipping link."
+        fi
+    done
+
+    # Handle config directories (e.g., nvim)
+    if [[ -d "$SCRIPT_DIR/nvim" ]]; then
+        mkdir -p "$HOME/.config"
+        if [[ -e "$HOME/.config/nvim" ]]; then
+            log_info "Backing up existing nvim config directory"
+            mv "$HOME/.config/nvim" "$HOME/.config/nvim.backup.$(date +%Y%m%d_%H%M%S)"
+        fi
+        log_info "Creating symbolic link for nvim config"
+        ln -sf "$SCRIPT_DIR/nvim" "$HOME/.config/nvim"
+    fi
+
+    log_success "Dotfiles setup complete"
+}
+
+# Download git-prompt if needed
+setup_git_prompt() {
+    if [[ ! -e "$HOME/.git-prompt.sh" ]]; then
+        log_info "Downloading git-prompt..."
+        curl -fsSL https://raw.githubusercontent.com/git/git/master/contrib/completion/git-prompt.sh -o "$HOME/.git-prompt.sh" || log_warning "Failed to download git-prompt.sh"
+        log_success "git-prompt downloaded"
+    fi
+}
+
+# Main installation flow
+main() {
+    log_info "Starting macOS development environment setup..."
+
+    # System preparation
+    prepare_system
+
+    # Core installations
+    install_xcode_tools
+    install_homebrew
+
+    # Development environment
+    install_dev_tools
+    install_gui_apps
+    install_fonts
+    install_java
+
+    # Node.js and global packages
+    install_node
+    install_npm_packages
+
+    # Shell and terminal setup
+    install_oh_my_zsh
+    install_tmux_plugins
+
+    # Application configuration
+    configure_vscode
+    install_python_packages
+
+    # Dotfiles setup
+    setup_dotfiles
+    setup_git_prompt
+
+    log_success "Installation complete! 🎉"
+    log_info "Please restart your terminal or run 'source ~/.zshrc' to apply changes"
+    log_info "Installation log saved to: $LOG_FILE"
+
+    if ask_yes_no "Would you like to restart your shell now?" "n"; then
+        exec "$SHELL"
+    fi
+}
+
+# Run main function
+main "$@"
