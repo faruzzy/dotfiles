@@ -21,6 +21,8 @@ return {
     desc = 'Intelligently reopen files at last edit position'
   },
 
+  { 'lewis6991/spaceless.nvim' },
+
   {
     'norcalli/nvim-colorizer.lua',
     event = 'BufReadPost',
@@ -288,7 +290,7 @@ return {
     desc = 'Prevent cursor movement during shift/filter actions'
   },
 
-  { "svban/YankAssassin.vim", event = "VeryLazy", desc = "After yank leave cursor in its place" },
+  { "svban/YankAssassin.vim",  event = "VeryLazy", desc = "After yank leave cursor in its place" },
 
   {
     'folke/trouble.nvim',
