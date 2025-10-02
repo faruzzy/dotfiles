@@ -48,9 +48,9 @@ vim.keymap.set('n', '<Leader>ca', vim.lsp.buf.code_action, { desc = 'Code Action
 vim.keymap.set('n', '<leader>gl', '<cmd>diffget //2<cr>', opts) -- Get left diff
 vim.keymap.set('n', '<leader>gr', '<cmd>diffget //3<cr>', opts) -- Get right diff
 
--- Run last command
--- local def_opts = { silent = false, noremap = true }
--- vim.keymap.set({ 'n', 'v' }, '<CR>', ':<up>', def_opts) -- Repeat last command
+-- Run last command easily
+local def_opts = { silent = false, noremap = true }
+vim.keymap.set({ 'n', 'v' }, '<CR>', ':<up><CR>', def_opts)
 
 -- Toggle inlay hints
 vim.keymap.set('n', '<Leader>ti', function()
@@ -82,10 +82,6 @@ local function prompt_and_delete_changed_buffer(buf, callback)
     callback()
   end)
 end
-
--- run last command easily
-local def_opts = { silent = false, noremap = true }
-vim.keymap.set({ 'n', 'v' }, '<CR>', ':<up>', def_opts)
 
 -- Close all other buffers
 function CloseAllButCurrent()
