@@ -100,6 +100,22 @@ augroup('document_highlight_attach', {
   },
 })
 
+-- Set LSP hover border on attach
+augroup('lsp_hover_border', {
+  {
+    'LspAttach',
+    callback = function(args)
+      local client = vim.lsp.get_client_by_id(args.data.client_id)
+      if client then
+        -- Override hover handler with border
+        vim.keymap.set('n', 'K', function()
+          vim.lsp.buf.hover({ border = 'rounded' })
+        end, { buffer = args.buf, desc = 'LSP Hover Documentation' })
+      end
+    end,
+  },
+})
+
 -- Toggle relative/absolute line numbers based on focus and mode
 augroup('numbertoggle', {
   {

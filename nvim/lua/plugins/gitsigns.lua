@@ -11,6 +11,12 @@ return {
       changedelete = { text = '~' },
     },
     on_attach = function(bufnr)
+      require('gitsigns').setup({
+        preview_config = {
+          border = 'single',
+        },
+      })
+
       local gs = package.loaded.gitsigns
 
       local function map(mode, l, r, opts)

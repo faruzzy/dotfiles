@@ -40,7 +40,6 @@ vim.keymap.set('n', ']d', vim.diagnostic.goto_next, { desc = 'Next Diagnostic' }
 vim.keymap.set('n', '<Leader>e', vim.diagnostic.open_float, { desc = 'Open Diagnostic Float' })
 
 -- LSP actions
-vim.keymap.set('n', 'K', vim.lsp.buf.hover, { desc = 'LSP Hover Documentation' })
 vim.keymap.set('n', 'gd', vim.lsp.buf.definition, { desc = 'LSP Go to Definition' })
 vim.keymap.set('n', '<Leader>rn', vim.lsp.buf.rename, { desc = 'Buffer Rename' })
 vim.keymap.set('n', '<Leader>ca', vim.lsp.buf.code_action, { desc = 'Code Action' })
@@ -160,6 +159,18 @@ vim.keymap.set(
   [[:<C-u>lua goog(vim.fn.getreg('g'), true)<CR>gv]],
   { silent = true, desc = 'Google Lucky Search Selection' }
 )
+
+vim.keymap.set('n', '<leader>wf', function()
+  local wins = vim.api.nvim_list_wins()
+  for _, win in ipairs(wins) do
+    local config = vim.api.nvim_win_get_config(win)
+    if config.relative ~= '' then -- it's a floating window
+      vim.api.nvim_set_current_win(win)
+      return
+    end
+  end
+  print('No floating window found')
+end, { desc = 'Jump to floating window' })
 
 -- Compile and run
 local function compile_and_run()
