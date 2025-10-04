@@ -58,9 +58,10 @@ fshow() {
 function fstash() {
   local out q k sha
   while out=$(
-    git stash list --pretty="%C(yellow)%h %>(14)%Cgreen%cr %C(blue)%gs" |
+    git stash list --color=always --format="%C(yellow)%h %C(green)%>(14)%cr %C(blue)%gs" |
     fzf --ansi --no-sort --query="$q" --print-query \
-        --expect=ctrl-d,ctrl-b);
+        --header=$'ENTER (show) ╱ CTRL-D (diff) ╱ CTRL-B (branch) ╱ CTRL-X (drop)\n' \
+        --expect=ctrl-d,ctrl-b,ctrl-x);
   do
     q=$(head -1 <<< "$out")
     k=$(head -2 <<< "$out" | tail -1)
@@ -70,6 +71,9 @@ function fstash() {
         git diff $sha
       elif [ "$k" = 'ctrl-b' ]; then
         git stash branch "stash-$sha" $sha
+        break;
+      elif [ "$k" = 'ctrl-x' ]; then
+        git stash drop $sha
         break;
       else
         git stash show -p $sha
