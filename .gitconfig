@@ -34,6 +34,23 @@
   sshow = "!f() { git stash show stash^{/$*} -p; }; f"
   sapply = "!f() { git stash apply stash^{/$*}; }; f"
 
+  checkpoint = "!f() { \
+      if [ -z \"$1\" ]; then \
+          echo \"Error: Please provide a checkpoint message\"; \
+          return 1; \
+      fi; \
+      if git stash list | head -n 1 | grep -q \"$1\"; then \
+          echo \"Updating existing checkpoint: $1\"; \
+          git stash drop stash@{0} && \
+          git stash push -m \"$1\" && \
+          git stash apply stash@{0}; \
+      else \
+          echo \"Creating new checkpoint: $1\"; \
+          git stash push -m \"$1\" && \
+          git stash apply stash@{0}; \
+      fi; \
+  }; f"
+
   st = status -sb
   c = commit
   nc = commit --no-verify
