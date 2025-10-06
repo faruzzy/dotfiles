@@ -214,7 +214,6 @@ install_gui_apps() {
 
     # Other apps
     local other_apps=(
-        1password
         whatsapp
         google-drive
         macfuse
