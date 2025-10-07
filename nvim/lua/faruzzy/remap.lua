@@ -50,7 +50,7 @@ vim.keymap.set('n', '<leader>gr', '<cmd>diffget //3<cr>', opts) -- Get right dif
 
 -- Run last command easily
 local def_opts = { silent = false, noremap = true }
-vim.keymap.set({ 'n', 'v' }, '<CR>', ':<up><CR>', def_opts)
+vim.keymap.set({ 'n', 'v' }, '<CR>', ':<up>', def_opts)
 
 -- Toggle inlay hints
 vim.keymap.set('n', '<Leader>ti', function()
