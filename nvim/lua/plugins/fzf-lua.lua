@@ -268,6 +268,7 @@ return {
       { '<Leader>gx', [[<cmd>lua require('fzf-lua').git_commits()<CR>]],  desc = 'git commits' },
       { '<Leader>gX', [[<cmd>lua require('fzf-lua').git_bcommits()<CR>]], desc = 'git buffer commits' },
       { '<Leader>gS', [[<cmd>lua require('fzf-lua').git_status()<CR>]],   desc = 'git status' },
+      { '<Leader>gB', [[<cmd>lua require('fzf-lua').git_branches()<CR>]], desc = 'git branches' },
 
       --- Misc
       { '<Leader>k',  [[<cmd>lua require('fzf-lua').keymaps()<CR>]],      desc = 'keymaps' },
