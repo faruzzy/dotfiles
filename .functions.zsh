@@ -37,17 +37,28 @@ function ghrebase1() {
     && git log --oneline --graph --decorate -n 5
 }
 
-# fshow - git commit browser (enter for show, ctrl-m for diff, ` toggles sort)
+# fshow - git commit browser (enter for show, ctrl-d for diff, ctrl-s toggles sort)
 # thanks to https://gist.github.com/junegunn/f4fca918e937e6bf5bad?permalink_comment_id=1666125#gistcomment-1666125
 fshow() {
-  git log --graph --color=always \
-      --format="%C(auto)%h%d %s %C(black)%C(bold)%cr" "$@" |
-  fzf --ansi --no-sort --reverse --tiebreak=index --bind=ctrl-s:toggle-sort \
-      --bind "ctrl-m:execute:
-                (grep -o '[a-f0-9]\{7\}' | head -1 |
-                xargs -I % sh -c 'git show --color=always % | less -R') << 'FZF-EOF'
-                {}
-                FZF-EOF"
+  local out q k sha
+  while out=$(
+    git log --graph --color=always \
+        --format="%C(auto)%h%d %s %C(green)(%cr) %C(bold blue)<%an>%C(reset)" "$@" |
+    fzf --ansi --no-sort --query="$q" --print-query \
+        --header=$'ENTER (show) ╱ CTRL-D (diff) \n' \
+        --bind=ctrl-s:toggle-sort \
+        --expect=ctrl-d);
+  do
+    q=$(head -1 <<< "$out")
+    k=$(head -2 <<< "$out" | tail -1)
+    sha=$(tail -1 <<< "$out" | grep -o '[a-f0-9]\{7\}' | head -1)
+    [ -z "$sha" ] && continue
+    if [ "$k" = 'ctrl-d' ]; then
+      git diff $sha
+    else
+      git show --color=always $sha | less -R
+    fi
+  done
 }
 
 # fstash - easier way to deal with stashes
