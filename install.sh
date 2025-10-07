@@ -121,7 +121,7 @@ install_homebrew() {
 install_dev_tools() {
     log_info "Installing development tools (formulas)..."
 
- local dev_tools=(
+    local dev_tools=(
         # Build tools and dependencies
         ninja cmake gettext curl
         # Search and file tools

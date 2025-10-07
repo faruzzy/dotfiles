@@ -217,7 +217,7 @@ return {
         desc = 'files / git files',
       },
       {
-        '<leader>sg',
+        '<M-f>',
         [[<cmd>lua require('fzf-lua').grep_project({ file_icons=false, git_icons=false })<CR>]],
         desc = 'file lines',
       },
