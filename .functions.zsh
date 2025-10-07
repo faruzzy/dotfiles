@@ -135,15 +135,6 @@ function ftags() {
     -c "silent tag $(cut -f2 <<< "$line")"
 }
 
-# fe [FUZZY PATTERN] - Open the selected file with the default editor
-#   - Bypass fuzzy finder if there's only one match (--select-1)
-#   - Exit if there's no match (--exit-0)
-function fe() {
-  local file
-  file=$(fzf-tmux --preview 'bat -n --color=always {}' --query="$1" --select-1 --exit-0)
-  [ -n "$file" ] && ${EDITOR:-vim} "$file"
-}
-
 # dd - cd to selected directory
 function dd() {
   DIR=`find ${1:-*} -path '*/\.*' -prune -o -type d -print 2> /dev/null | fzf-tmux` \
@@ -191,69 +182,6 @@ function _fzf_complete_docker() {
 if [[ -n "$ZSH_VERSION" ]] && (( $+functions[compdef] )); then
   compdef _fzf_complete_docker docker
 fi
-
-# Modified version where you can press
-#   - CTRL-O to open with `open` command,
-#   - CTRL-E or Enter key to open with the $EDITOR
-function fo() {
-  local out file key
-  IFS=$'\n' read -d '' -r -a out < <(fzf-tmux --query="$1" --exit-0 --expect=ctrl-o,ctrl-e)
-  key=${out[0]}
-  file=${out[1]}
-  if [ -n "$file" ]; then
-    if [ "$key" = ctrl-o ]; then
-      open "$file"
-    else
-      ${EDITOR:-vim} "$file"
-    fi
-  fi
-}
-
-
-if [ -n "$TMUX_PANE" ]; then
-function fzf_tmux_helper() {
-  local sz=$1;  shift
-  local cmd=$1; shift
-  tmux split-window $sz \
-    "bash -c \"\$(tmux send-keys -t $TMUX_PANE \"\$(source ~/.fzf.bash; $cmd)\" $*)\""
-}
-
-# https://github.com/wellle/tmux-complete.vim
-function fzf_tmux_words() {
-  fzf_tmux_helper \
-    '-p 40' \
-    'tmuxwords.rb --all --scroll 500 --min 5 | fzf --multi | paste -sd" " -'
-}
-
-# ftpane - switch pane (@george-b)
-function ftpane() {
-  local panes current_window current_pane target target_window target_pane
-  panes=$(tmux list-panes -s -F '#I:#P - #{pane_current_path} #{pane_current_command}')
-  current_pane=$(tmux display-message -p '#I:#P')
-  current_window=$(tmux display-message -p '#I')
-
-  target=$(echo "$panes" | grep -v "$current_pane" | fzf +m --reverse) || return
-
-  target_window=$(echo $target | awk 'BEGIN{FS=":|-"} {print$1}')
-  target_pane=$(echo $target | awk 'BEGIN{FS=":|-"} {print$2}' | cut -c 1)
-
-  if [[ $current_window -eq $target_window ]]; then
-    tmux select-pane -t ${target_window}.${target_pane}
-  else
-    tmux select-pane -t ${target_window}.${target_pane} &&
-    tmux select-window -t $target_window
-  fi
-}
-
-fi
-
-# Switch tmux-sessions
-function fs() {
-  local session
-  session=$(tmux list-sessions -F "#{session_name}" | \
-    fzf --query="$1" --select-1 --exit-0) &&
-  tmux switch-client -t "$session"
-}
 
 # https://gist.github.com/premek/6e70446cfc913d3c929d7cdbfe896fef
 # Usage: mv oldfilename
@@ -405,15 +333,6 @@ function cdf() { # short for `cdfinder`
   cd "$(osascript -e 'tell app "Finder" to POSIX path of (insertion location as alias)')"
 }
 
-# Start an HTTP server from a directory, optionally specifying the port
-function server() {
-  local port="${1:-8000}"
-  open "http://localhost:${port}/"
-  # Set the default Content-Type to `text/plain` instead of `application/octet-stream`
-  # And serve everything as UTF-8 (although not technically correct, this doesn't break anything for binary files)
-  python -c $'import SimpleHTTPServer;\nmap = SimpleHTTPServer.SimpleHTTPRequestHandler.extensions_map;\nmap[""] = "text/plain";\nfor key, value in map.items():\n\tmap[key] = value + ";charset=UTF-8";\nSimpleHTTPServer.test();' "$port"
-}
-
 # Create a data URL from a file
 function dataurl() {
   local mimeType=$(file -b --mime-type "$1")
@@ -421,56 +340,6 @@ function dataurl() {
     mimeType="${mimeType};charset=utf-8"
   fi
   echo "data:${mimeType};base64,$(openssl base64 -in "$1" | tr -d '\n')"
-}
-
-# A better git clone
-# clones a repository, cds into it, and opens it in my editor.
-#
-# Based on https://github.com/stephenplusplus/dots/blob/master/.bash_profile#L68 by @stephenplusplus
-#
-# Note: subl is already setup as a shortcut to Sublime. Replace with your own editor if different
-#
-# - arg 1 - url|username|repo remote endpoint, username on github, or name of
-#           repository.
-# - arg 2 - (optional) name of repo
-#
-# usage:
-#   $ clone things
-#     .. git clone git@github.com:addyosmani/things.git things
-#     .. cd things
-#     .. subl .
-#
-#   $ clone yeoman generator
-#     .. git clone git@github.com:yeoman/generator.git generator
-#     .. cd generator
-#     .. subl .
-#
-#   $ clone git@github.com:addyosmani/dotfiles.git
-#     .. git clone git@github.com:addyosmani/dotfiles.git dotfiles
-#     .. cd dots
-#     .. subl .
-
-function clone {
-  # customize username to your own
-  local username="faruzzy"
-  local url=$1;
-  local repo=$2;
-
-  if [[ ${url:0:4} == 'http' || ${url:0:3} == 'git' ]]
-  then
-    # just clone this thing.
-    repo=$(echo $url | awk -F/ '{print $NF}' | sed -e 's/.git$//');
-  elif [[ -z $repo ]]
-  then
-    # my own stuff.
-    repo=$url;
-    url="git@github.com:$username/$repo";
-  else
-    # not my own, but I know whose it is.
-    url="git@github.com:$url/$repo.git";
-  fi
-
-  git clone $url $repo && cd $repo && subl .;
 }
 
 # Copy w/ progress
@@ -481,12 +350,6 @@ function cp_p () {
 # prune a set of empty directories
 function prunedir () {
    find $* -type d -empty -print0 | xargs -0r rmdir -p ;
-}
-
-# take this repo and copy it to somewhere else minus the .git stuff.
-function gitexport(){
-  mkdir -p "$1"
-  git archive master | tar -x -C "$1"
 }
 
 # Zoxide integration (replaces the old z function)
@@ -505,6 +368,7 @@ function z() {
     __zoxide_z "$@"
   fi
 }
+
 # This function provides fzf integration with zoxide
 function zi() {
   local result
@@ -514,23 +378,12 @@ function zi() {
   fi
 }
 
-
 # Launch installed browsers for a specific URL
 # Usage: browsers "http://www.google.com"
 function browsers(){
   chrome $1
   firefox $1
   safari $1
-}
-
-# Git add, commit, and push all in one
-# Just add your commit message after invoking gq
-function qg() {
-  message="$*"
-  git add --all
-  # note that -S signs your commit. Remove if you have not set up GPG signatures
-  git commit -S -m $message
-  git push
 }
 
 fzf-down() {
@@ -543,19 +396,7 @@ _gp() {
 }
 
 _gg() {
-  _z -l 2>&1 | fzf --height 40% --nth 2.. --reverse --inline-info --tac | sed 's/^[0-9,.]* *//'
-}
-
-# ripgrep meets fzf
-Rg() {
-  local selected=$(
-    rg --column --line-number --no-heading --color=always --smart-case "$1" |
-      fzf --ansi \
-          --delimiter : \
-          --preview 'bat --style=full --color=always --highlight-line {2} {1}' \
-          --preview-window '~3:+{2}+3/2'
-  )
-  [ -n "$selected" ] && $EDITOR "$selected"
+  zoxide query -l | fzf --height 40% --reverse --inline-info --tac
 }
 
 RG() {
@@ -590,6 +431,8 @@ _gg_widget() {
   if [[ -n "$result" ]]; then
     cd "$result"
     zle reset-prompt
+    zle -R  # Force redraw
+    print -r ""  # Print newline
   fi
 }
 
@@ -618,11 +461,18 @@ _fe_widget() {
   zle redisplay
 }
 
+_rg_widget() {
+  RG ""
+  zle reset-prompt
+}
+
 # ZSH: Create zle widgets and bind keys
 zle -N _gp_widget
 zle -N _gg_widget
 zle -N _fe_widget
+zle -N _rg_widget
 
 bindkey '^G^P' _gp_widget
 bindkey '^G^G' _gg_widget
 bindkey '^P' _fe_widget
+bindkey '^[f' _rg_widget

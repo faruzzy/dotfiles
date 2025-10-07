@@ -217,7 +217,6 @@ return {
 
   {
     'wsdjeg/vim-fetch',
-    event = 'VimEnter',
     desc = 'Handle file:line:col syntax'
   },
 
