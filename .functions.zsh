@@ -410,7 +410,11 @@ RG() {
           --preview 'bat --style=full --color=always --highlight-line {2} {1}' \
           --preview-window '~3:+{2}+3/2'
   )
-  [ -n "$selected" ] && $EDITOR "$selected"
+
+  if [ -n "$selected" ]; then
+    local file_location=$(echo "$selected" | cut -d: -f1-3)
+    $EDITOR "$file_location"
+  fi
 }
 
 # ZSH: Key bindings (converted from bash bind commands)
@@ -430,9 +434,9 @@ _gg_widget() {
   local result=$(_gg)
   if [[ -n "$result" ]]; then
     cd "$result"
+    print -r ""  # Print newline
     zle reset-prompt
     zle -R  # Force redraw
-    print -r ""  # Print newline
   fi
 }
 
