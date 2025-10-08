@@ -78,7 +78,9 @@
   discard = checkout --
   rlc = !git reset --hard HEAD~1                  # Remove last commit
   ulc = reset --soft HEAD~1                       # Undo last commit
-  update = !git fetch origin && git rebase origin/`git rev-parse --abbrev-ref head`
+  update = "!f() { git fetch origin && git rebase origin/${1:-$(git rev-parse --abbrev-ref HEAD)}; }; f"
+  amend = !git add -u && git commit --amend --no-edit
+  amendall = !git add . && git commit --amend --no-edit
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
@@ -113,6 +115,7 @@
       git commit --amend -m \"$(git log -1 --pretty=%B)\n\nClose #$1\"; \
     fi \
   }; f"
+
 [help]
   autocorrect = 10
 
@@ -186,3 +189,5 @@
 
 [init]
   defaultBranch = main
+[advice]
+  skippedCherryPicks = false
