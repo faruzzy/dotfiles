@@ -191,7 +191,7 @@ install_gui_apps() {
         visual-studio-code
         alacritty ghostty
         intellij-idea
-        viz # Added viz (original script had it as a formula, but it's often a cask or just a formula)
+        viz
     )
 
     # Media and utilities

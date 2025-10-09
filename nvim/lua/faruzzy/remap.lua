@@ -49,8 +49,7 @@ vim.keymap.set('n', '<leader>gl', '<cmd>diffget //2<cr>', opts) -- Get left diff
 vim.keymap.set('n', '<leader>gr', '<cmd>diffget //3<cr>', opts) -- Get right diff
 
 -- Run last command easily
-local def_opts = { silent = false, noremap = true }
-vim.keymap.set({ 'n', 'v' }, '<CR>', ':<up>', def_opts)
+vim.keymap.set({ 'n', 'v' }, '<CR>', ':<up>', { silent = false, noremap = true })
 
 -- Toggle inlay hints
 vim.keymap.set('n', '<Leader>ti', function()
@@ -71,6 +70,10 @@ end, { desc = 'Toggle Inlay Hints' })
 
 -- Undotree toggle
 vim.keymap.set('n', '<leader>ut', vim.cmd.UndotreeToggle, opts) -- Toggle Undotree
+
+vim.api.nvim_create_user_command('Stash', function(opts)
+  vim.cmd(string.format('Git stash push -m "%s"', opts.args))
+end, { nargs = 1 })
 
 -- Helper function to prompt for changed buffers using vim.ui.input
 -- This function now directly uses the :Bdelete command from vim-bbye
