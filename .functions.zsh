@@ -101,7 +101,6 @@ function fcs() {
   echo -n $(echo "$commit" | sed "s/ .*//")
 }
 
-
 # fco - checkout git branch/tag
 function fco() {
   local tags branches target
@@ -133,6 +132,44 @@ function ftags() {
     cut -c1-$COLUMNS | fzf --nth=2 --tiebreak=begin
   ) && $EDITOR $(cut -f3 <<< "$line") -c "set nocst" \
     -c "silent tag $(cut -f2 <<< "$line")"
+}
+
+git-fixup() {
+  # Helper: Browse commits with fzf
+  local git-commit-browser() {
+    git log --graph --color=always --format="%C(auto)%h%d %s %C(black)%C(bold)%cr" |
+      fzf --ansi --no-sort --reverse --tiebreak=index \
+        --preview-window=right:60% \
+        --preview \
+        'f() { \
+            set -- $(echo -- "$@" | grep -o "[a-f0-9]\{7\}"); \
+            [ $# -eq 0 ] || git show --color=always --stat --patch $1 ; \
+          }; \
+          f {}' \
+        --bind "j:down,k:up,alt-j:preview-down,alt-k:preview-up,ctrl-f:preview-page-down,ctrl-b:preview-page-up,pgdn:preview-page-down,pgup:preview-page-up,q:abort"
+  }
+
+  # Helper: Find branch ancestor
+  local git-branch-ancestor() {
+    branch_origin=$(git symbolic-ref refs/remotes/origin/HEAD | cut -d'/' -f3)
+    main_branch=$(git symbolic-ref refs/remotes/origin/HEAD | cut -d'/' -f4-)
+    diff -u1 --color=never \
+      <(git rev-list --first-parent "${1:-$branch_origin/$main_branch}") \
+      <(git rev-list --first-parent "${2:-HEAD}") | sed -ne 's/^ //p'
+  }
+
+  # Main logic
+  FIXUP_COMMIT=$(git-commit-browser $(git-branch-ancestor)..HEAD | cut -d' ' -f2)
+
+  if [ -n "$FIXUP_COMMIT" ]; then
+    git commit --fixup "$FIXUP_COMMIT" "$@"
+    git stash
+    git rebase --autosquash "${FIXUP_COMMIT}~1"
+    git stash pop
+  else
+    echo "No fixup commit provided."
+    return 1
+  fi
 }
 
 # dd - cd to selected directory
