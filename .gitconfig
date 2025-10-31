@@ -79,6 +79,7 @@
   rlc = !git reset --hard HEAD~1                  # Remove last commit
   ulc = reset --soft HEAD~1                       # Undo last commit
   update = "!f() { git fetch origin && git rebase origin/${1:-$(git rev-parse --abbrev-ref HEAD)}; }; f"
+  commend = commit --amend --no-edit
   amend = !git add -u && git commit --amend --no-edit
   amendall = !git add . && git commit --amend --no-edit
 
@@ -116,6 +117,75 @@
     fi \
   }; f"
 
+
+lg = !"                                                                                                                                        \
+	function git_log_graph() {                                                                                                                 \
+		set -eo pipefail;                                                                                                                      \
+		cd -- \"${GIT_PREFIX:-.}\";                                                                                                            \
+		git log --color=always --graph --abbrev-commit                                                                                         \
+			--format=format:\"%C(bold blue)%h%C(reset) - %C(bold cyan)%aD%C(dim white) - %an%C(reset) (GPG_%G?) %C(bold green)(%ar)%C(reset)%C(bold yellow)%d%C(reset)%n %C(white)%s%C(reset)\" \"$@\" | \
+		sed -E                                                                                                                                 \
+			-e 's/GPG_G/'\"$(printf '\\033[1;32mG\\033[0m')\"'/g'                                                                              \
+			-e 's/GPG_B/'\"$(printf '\\033[1;41mB\\033[0m')\"'/g'                                                                              \
+			-e 's/GPG_U/'\"$(printf '\\033[1;36mU\\033[0m')\"'/g'                                                                              \
+			-e 's/GPG_X/'\"$(printf '\\033[1;31mX\\033[0m')\"'/g'                                                                              \
+			-e 's/GPG_Y/'\"$(printf '\\033[1;31mY\\033[0m')\"'/g'                                                                              \
+			-e 's/GPG_R/'\"$(printf '\\033[1;31mR\\033[0m')\"'/g'                                                                              \
+			-e 's/GPG_E/'\"$(printf '\\033[1;35mE\\033[0m')\"'/g'                                                                              \
+			-e 's/GPG_N/'\"$(printf '\\033[1;30mN\\033[0m')\"'/g' |                                                                            \
+		less -F -S -R -M -i;                                                                                                                   \
+	};                                                                                                                                         \
+	git_log_graph                                                                                                                              \
+"
+
+	fzf = !"                                                                                                                                 \
+		function git_fzf() {                                                                                                                 \
+			set -o pipefail;                                                                                                                 \
+			cd -- \"${GIT_PREFIX:-.}\" || return 1;                                                                                          \
+			local -a args=( \"$@\" );                                                                                                        \
+			if [[ \"${#args[@]}\" -eq 0 ]]; then                                                                                             \
+				args+=( \"--graph\" --glob=\"refs/heads/*\" );                                                                               \
+			fi;                                                                                                                              \
+			local -a show_filter=();                                                                                                         \
+			local found_separator=0;                                                                                                         \
+			for arg in \"$@\"; do                                                                                                            \
+				if [[ \"$found_separator\" -eq 1 ]]; then                                                                                    \
+					show_filter+=(\"$arg\");                                                                                                 \
+				elif [[ \"$arg\" == \"--\" ]]; then                                                                                          \
+					found_separator=1;                                                                                                       \
+				fi;                                                                                                                          \
+			done;                                                                                                                            \
+			local order_file=\"\";                                                                                                           \
+			if [[ \"${#show_filter[@]}\" -gt 0 ]]; then                                                                                      \
+				order_file=\"$(mktemp -t git_fzf_order.XXXX)\";                                                                              \
+				trap \"rm -f '$order_file'\" EXIT SIGINT SIGTERM;                                                                            \
+				printf '%s\\n' \"${show_filter[@]}\" >\"$order_file\";                                                                       \
+			fi;                                                                                                                              \
+			export LESS='-R -S';                                                                                                             \
+			export BAT_PAGER='less -S -R -M -c -i';                                                                                          \
+			export DELTA_PAGER='less -S -R -M -c -i';                                                                                        \
+			local old_ripgrep_config=\"$RIPGREP_CONFIG_PATH\";                                                                               \
+			unset RIPGREP_CONFIG_PATH;                                                                                                       \
+			git log --color=always --abbrev=7 --format=format:\"%C(bold blue)%h%C(reset) %C(dim white)%an%C(reset)%C(bold yellow)%d%C(reset) %C(white)%s%C(reset) %C(bold green)(%ar)%C(reset)\" \"${args[@]}\" | \
+			fzf --ansi --no-sort --layout=reverse --tiebreak=index                                                                           \
+				--preview=\"H=\\$(echo {} | grep -oE '\\b[a-f0-9]{7,}\\b' | head -1); git show --color=always --format=fuller \\$H 2>/dev/null | delta --line-numbers --side-by-side --width \\${FZF_PREVIEW_COLUMNS:-80}\" \
+				--bind='ctrl-j:preview-down,ctrl-k:preview-up,ctrl-f:preview-page-down,ctrl-b:preview-page-up,ctrl-d:preview-half-page-down,ctrl-u:preview-half-page-up' \
+				--bind=\"ctrl-m:execute(H=\\$(echo {} | grep -oE '\\b[a-f0-9]{7,}\\b' | head -1); git show --color=always \\$H | delta --line-numbers --side-by-side --paging=always)\" \
+				--bind=\"alt-h:execute-silent(H=\\$(echo {} | grep -oE '\\b[a-f0-9]{7,}\\b' | head -1); tmux display -d 3000 \\\"Branches: \\$(git branch --contains \\$H 2>/dev/null | sed 's/^[* ]\\\\+//' | paste -sd, -)\\\")\" \
+				--bind=\"alt-H:execute-silent(H=\\$(echo {} | grep -oE '\\b[a-f0-9]{7,}\\b' | head -1); S=\\$(git show --format='%s' \\$H 2>/dev/null | head -1); tmux display -d 3000 \\\"Branches (Grep): \\$(git log --all --format='%H' -F --grep=\\\"\\$S\\\" 2>/dev/null | xargs -I{} git branch --contains {} 2>/dev/null | sed 's/^[* ]\\\\+//' | sort -u | paste -sd, -)\\\")\" \
+				--bind=\"alt-n:execute-silent(H=\\$(echo {} | grep -oE '\\b[a-f0-9]{7,}\\b' | head -1); tmux display -d 3000 \\\"Tags: \\$(git tag --contains \\$H 2>/dev/null | paste -sd, -)\\\")\" \
+				--bind=\"alt-N:execute-silent(H=\\$(echo {} | grep -oE '\\b[a-f0-9]{7,}\\b' | head -1); S=\\$(git show --format='%s' \\$H 2>/dev/null | head -1); tmux display -d 3000 \\\"Tags (Grep): \\$(git log --all --format='%H' -F --grep=\\\"\\$S\\\" 2>/dev/null | xargs -I{} git tag --contains {} 2>/dev/null | sort -u | paste -sd, -)\\\")\" \
+				--bind=\"ctrl-y:execute-silent(H=\\$(echo {} | grep -oE '\\b[a-f0-9]{7,}\\b' | head -1); echo -n \\$H | pbcopy; tmux display -d 1000 \\\"Yanked: \\$H\\\")\" \
+				--bind=\"alt-y:execute-silent(H=\\$(echo {} | grep -oE '\\b[a-f0-9]{7,}\\b' | head -1); F=\\$(git rev-parse \\$H 2>/dev/null); echo -n \\$F | pbcopy; tmux display -d 1000 \\\"Yanked: \\$F\\\")\" \
+				--bind=\"ctrl-s:execute-silent(H=\\$(echo {} | grep -oE '\\b[a-f0-9]{7,}\\b' | head -1); S=\\$(git show --format='%s' \\$H 2>/dev/null | head -1); echo -n \\\"\\$S\\\" | pbcopy; tmux display -d 1000 \\\"Yanked: \\$S\\\")\" \
+				--bind=\"ctrl-o:execute-silent(H=\\$(echo {} | grep -oE '\\b[a-f0-9]{7,}\\b' | head -1); F=\\$(git rev-parse \\$H 2>/dev/null); gh browse \\$F 2>/dev/null && tmux display -d 1000 \\\"Opened: \\$F\\\")\" \
+				--preview-window='right:60%:wrap';                                                                                           \
+			local fzf_exit=$?;                                                                                                               \
+			[[ -n \"$old_ripgrep_config\" ]] && export RIPGREP_CONFIG_PATH=\"$old_ripgrep_config\";                                         \
+			return $fzf_exit;                                                                                                                \
+		};                                                                                                                                   \
+		git_fzf                                                                                                                              \
+	"
 [help]
   autocorrect = 10
 

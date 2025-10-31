@@ -37,28 +37,249 @@ function ghrebase1() {
     && git log --oneline --graph --decorate -n 5
 }
 
-# fshow - git commit browser (enter for show, ctrl-d for diff, ctrl-s toggles sort)
-# thanks to https://gist.github.com/junegunn/f4fca918e937e6bf5bad?permalink_comment_id=1666125#gistcomment-1666125
+# fshow - git commit browser
+# Thanks to https://gist.github.com/akatrevorjay/9fc061e8371529c4007689a696d33c62
 fshow() {
-  local out q k sha
-  while out=$(
-    git log --graph --color=always \
-        --format="%C(auto)%h%d %s %C(green)(%cr) %C(bold blue)<%an>%C(reset)" "$@" |
-    fzf --ansi --no-sort --query="$q" --print-query \
-        --header=$'ENTER (show) ╱ CTRL-D (diff) \n' \
-        --bind=ctrl-s:toggle-sort \
-        --expect=ctrl-d);
-  do
-    q=$(head -1 <<< "$out")
-    k=$(head -2 <<< "$out" | tail -1)
-    sha=$(tail -1 <<< "$out" | grep -o '[a-f0-9]\{7\}' | head -1)
-    [ -z "$sha" ] && continue
-    if [ "$k" = 'ctrl-d' ]; then
-      git diff $sha
-    else
-      git show --color=always $sha | less -R
-    fi
-  done
+	local g=(
+		git log
+		--graph
+		--format='%C(auto)%h%d %s %C(white)%C(bold)%cr'
+		--color=always
+		"$@"
+	)
+
+	local fzf=(
+		fzf
+		--ansi
+		--reverse
+		--tiebreak=index
+		--no-sort
+		--bind=ctrl-s:toggle-sort
+		--preview 'f() { set -- $(echo -- "$@" | grep -o "[a-f0-9]\{7\}"); [ $# -eq 0 ] || git show --color=always $1; }; f {}'
+	)
+	$g | $fzf
+}
+
+## git-fzf - Fancy git-browser
+# Thanks to https://git.tsundere.moe/Frederick888/frederick-settings/blob/master/.gitconfig
+# git_fzf - Interactive git log browser with fzf
+#
+# A powerful git commit browser with live preview, filtering, and tmux integration.
+# Uses delta for beautiful syntax-highlighted diffs and fzf for fuzzy finding.
+#
+# USAGE:
+#   git_fzf [git-log-options] [-- path...]
+#
+# EXAMPLES:
+#   git_fzf                                    # Browse all local branches
+#   git_fzf --all                              # Browse all branches (including remotes)
+#   git_fzf --author=Alice                     # Show only Alice's commits
+#   git_fzf --since="2 weeks ago"              # Commits from last 2 weeks
+#   git_fzf main..develop                      # Commits in develop but not in main
+#   git_fzf -- src/main.rs                     # Only commits touching src/main.rs
+#   git_fzf --author=Bob -- tests/             # Bob's commits in tests/ directory
+#
+# KEYBINDINGS:
+#   Navigation:
+#     ctrl-j/k       Navigate preview (line by line)
+#     ctrl-f/b       Navigate preview (page by page)
+#     ctrl-d/u       Navigate preview (half-page)
+#
+#   Actions:
+#     ctrl-m (Enter) Open commit in full-screen pager
+#     ctrl-y         Copy short commit hash (7 chars) to clipboard
+#     alt-y          Copy full commit hash (40 chars) to clipboard
+#     ctrl-s         Copy commit summary/message to clipboard
+#     ctrl-o         Open commit in GitHub (requires gh CLI)
+#
+#   Tmux Integration (shows info in tmux status bar):
+#     alt-h          Show branches containing this commit
+#     alt-H          Show branches with same commit summary (find cherry-picks)
+#     alt-n          Show tags containing this commit
+#     alt-N          Show tags with same commit summary (find cherry-picks)
+#
+# REQUIREMENTS:
+#   - fzf          Fuzzy finder
+#   - delta        Syntax-highlighted git diffs
+#   - rg (ripgrep) Fast text search
+#   - git          Obviously
+#   - pbcopy       Clipboard (macOS) - use xclip on Linux
+#   - gh (optional) GitHub CLI for ctrl-o
+#   - tmux (optional) For tmux status bar integration
+#
+# FEATURES:
+#   - Live preview with syntax highlighting via delta
+#   - Side-by-side diff view
+#   - File path filtering with preserved file order
+#   - Cherry-pick detection across branches/tags
+#   - Clipboard integration
+#   - GitHub integration
+#
+gfzf() {
+	set -o pipefail
+
+	cd -- "${GIT_PREFIX:-.}" || return 1
+
+	local -a args=( "$@" )
+	if [[ "${#args[@]}" -eq 0 ]]; then
+		args+=( "--graph" --glob="refs/heads/*" )
+	fi
+
+	# Extract file filters (everything after --)
+	local -a show_filter=()
+	local found_separator=0
+
+	for arg in "$@"; do
+		if [[ "$found_separator" -eq 1 ]]; then
+			show_filter+=( "$arg" )
+		elif [[ "$arg" == "--" ]]; then
+			found_separator=1
+		fi
+	done
+
+	# Only create temp file if we have filters
+	local order_file=""
+	if [[ "${#show_filter[@]}" -gt 0 ]]; then
+		order_file="$(mktemp -t git_fzf_order.XXXX)"
+		trap "rm -f '$order_file' 2>&1 >/dev/null" EXIT SIGINT SIGTERM
+		printf '%s\n' "${show_filter[@]}" >"$order_file"
+	fi
+
+	# Configure pagers
+	export LESS='-R -S'
+	export BAT_PAGER='less -S -R -M -c -i'
+	export DELTA_PAGER='less -S -R -M -c -i'
+
+	# Temporarily unset ripgrep config to avoid issues
+	local old_ripgrep_config="$RIPGREP_CONFIG_PATH"
+	unset RIPGREP_CONFIG_PATH
+
+	git log \
+		--color=always --abbrev=7 \
+		--format=format:"%C(bold blue)%h%C(reset) %C(dim white)%an%C(reset)%C(bold yellow)%d%C(reset) %C(white)%s%C(reset) %C(bold green)(%ar)%C(reset)" \
+		"${args[@]}" |
+	fzf \
+		--ansi --no-sort --layout=reverse --tiebreak=index \
+		--preview="
+			f() {
+				set -- \$(echo -- \"\$@\" | rg -o '\b[a-f0-9]{7,}\b' 2>/dev/null)
+				[ \$# -eq 0 ] && return
+				if [ -n '$order_file' ] && [ -s '$order_file' ]; then
+					git show --color=always --format=fuller -O'$order_file' \$1 -- ${show_filter[@]} 2>/dev/null | delta --line-numbers --side-by-side --width \${FZF_PREVIEW_COLUMNS}
+				else
+					git show --color=always --format=fuller \$1 ${show_filter[@]:+-- ${show_filter[@]}} 2>/dev/null | delta --line-numbers --side-by-side --width \${FZF_PREVIEW_COLUMNS}
+				fi
+			}
+			f {}
+		" \
+		--bind='ctrl-j:preview-down,ctrl-k:preview-up,ctrl-f:preview-page-down,ctrl-b:preview-page-up,ctrl-d:preview-half-page-down,ctrl-u:preview-half-page-up' \
+		--bind="ctrl-m:execute:
+			export COLUMNS=\$(tput cols);
+			(rg -o '\b[a-f0-9]{7,}\b' 2>/dev/null | head -1 |
+			xargs -I % sh -c 'git show --color=always % ${show_filter[@]:+-- ${show_filter[@]}} | delta --line-numbers --side-by-side --width \$COLUMNS --paging=always') << 'FZFEOF'
+			{}
+			FZFEOF
+		" \
+		--bind="alt-h:execute-silent:
+			(f() {
+				set -- \$(rg -o '\b[a-f0-9]{7,}\b' 2>/dev/null | head -1 | tr -d \$'\n')
+				[[ -z \$1 ]] && return
+				[[ -n \"\$TMUX\" ]] && tmux display -d 3000 \"#[bg=blue,italics] Branches #[none,fg=black,bg=default] \$(
+					git branch --contains \$1 2>/dev/null | sed 's/^\*\?\s\+//' | sort | paste -sd, - | sed 's/,/, /g'
+				)\"
+			}; f) << 'FZFEOF'
+			{}
+			FZFEOF
+		" \
+		--bind="alt-H:execute-silent:
+			(f() {
+				set -- \$(rg -o '\b[a-f0-9]{7,}\b' 2>/dev/null | head -1 | tr -d \$'\n')
+				[[ -z \$1 ]] && return
+				SUMMARY=\"\$(git show --format='%s' \$1 2>/dev/null | head -1)\"
+				[[ -n \"\$TMUX\" ]] && tmux display -d 3000 \"#[bg=blue,italics] Branches (Grep) #[none,fg=black,bg=default] \$(
+					git log --all --format='%H' -F --grep=\"\$SUMMARY\" 2>/dev/null |
+					xargs -I{} -- git branch --contains {} 2>/dev/null |
+					sed 's/^\*\?\s\+//' | sort | uniq | paste -sd, - | sed 's/,/, /g'
+				)\"
+			}; f) << 'FZFEOF'
+			{}
+			FZFEOF
+		" \
+		--bind="alt-n:execute-silent:
+			(f() {
+				set -- \$(rg -o '\b[a-f0-9]{7,}\b' 2>/dev/null | head -1 | tr -d \$'\n')
+				[[ -z \$1 ]] && return
+				[[ -n \"\$TMUX\" ]] && tmux display -d 3000 \"#[bg=blue,italics] Tags #[none,fg=black,bg=default] \$(
+					git tag --contains \$1 2>/dev/null | sed 's/^\*\?\s\+//' | sort | paste -sd, - | sed 's/,/, /g'
+				)\"
+			}; f) << 'FZFEOF'
+			{}
+			FZFEOF
+		" \
+		--bind="alt-N:execute-silent:
+			(f() {
+				set -- \$(rg -o '\b[a-f0-9]{7,}\b' 2>/dev/null | head -1 | tr -d \$'\n')
+				[[ -z \$1 ]] && return
+				SUMMARY=\"\$(git show --format='%s' \$1 2>/dev/null | head -1)\"
+				[[ -n \"\$TMUX\" ]] && tmux display -d 3000 \"#[bg=blue,italics] Tags (Grep) #[none,fg=black,bg=default] \$(
+					git log --all --format='%H' -F --grep=\"\$SUMMARY\" 2>/dev/null |
+					xargs -I{} -- git tag --contains {} 2>/dev/null |
+					sed 's/^\*\?\s\+//' | sort | uniq | paste -sd, - | sed 's/,/, /g'
+				)\"
+			}; f) << 'FZFEOF'
+			{}
+			FZFEOF
+		" \
+		--bind="ctrl-y:execute-silent:
+			(f() {
+				set -- \$(rg -o '\b[a-f0-9]{7,}\b' 2>/dev/null | head -1 | tr -d \$'\n')
+				[[ -z \$1 ]] && return
+				printf '%s' \$1 | pbcopy
+				[[ -n \"\$TMUX\" ]] && tmux display -d 1000 \"#[bg=blue,italics] Yanked #[none,fg=black,bg=default] \$1\"
+			}; f) << 'FZFEOF'
+			{}
+			FZFEOF
+		" \
+		--bind="alt-y:execute-silent:
+			(f() {
+				set -- \$(rg -o '\b[a-f0-9]{7,}\b' 2>/dev/null | head -1 | tr -d \$'\n')
+				[[ -z \$1 ]] && return
+				FULL=\$(git rev-parse \$1 2>/dev/null)
+				printf '%s' \"\$FULL\" | pbcopy
+				[[ -n \"\$TMUX\" ]] && tmux display -d 1000 \"#[bg=blue,italics] Yanked #[none,fg=black,bg=default] \$FULL\"
+			}; f) << 'FZFEOF'
+			{}
+			FZFEOF
+		" \
+		--bind="ctrl-s:execute-silent:
+			(f() {
+				set -- \$(rg -o '\b[a-f0-9]{7,}\b' 2>/dev/null | head -1 | tr -d \$'\n')
+				[[ -z \$1 ]] && return
+				SUMMARY=\"\$(git show --format='%s' \$1 2>/dev/null | head -1)\"
+				printf '%s' \"\$SUMMARY\" | pbcopy
+				[[ -n \"\$TMUX\" ]] && tmux display -d 1000 \"#[bg=blue,italics] Yanked #[none,fg=black,bg=default] \$SUMMARY\"
+			}; f) << 'FZFEOF'
+			{}
+			FZFEOF
+		" \
+		--bind="ctrl-o:execute-silent:
+			(f() {
+				set -- \$(rg -o '\b[a-f0-9]{7,}\b' 2>/dev/null | head -1 | tr -d \$'\n')
+				[[ -z \$1 ]] && return
+				FULL=\$(git rev-parse \$1 2>/dev/null)
+				gh browse \$FULL 2>/dev/null && [[ -n \"\$TMUX\" ]] && tmux display -d 1000 \"#[bg=blue,italics] Opened #[none,fg=black,bg=default] \$FULL\"
+			}; f) << 'FZFEOF'
+			{}
+			FZFEOF
+		" \
+		--preview-window='right:60%:wrap'
+
+	local fzf_exit=$?
+
+	# Restore ripgrep config
+	[[ -n "$old_ripgrep_config" ]] && export RIPGREP_CONFIG_PATH="$old_ripgrep_config"
+
+	return $fzf_exit
 }
 
 # fstash - easier way to deal with stashes
