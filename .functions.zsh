@@ -658,7 +658,7 @@ _gg() {
 }
 
 RG() {
-  RG_PREFIX="rg --column --line-number --no-heading --color=always --smart-case "
+  RG_PREFIX="rg --column --line-number --no-heading --color=always --smart-case --hidden "
   INITIAL_QUERY="$1"
   local selected=$(
     FZF_DEFAULT_COMMAND="$RG_PREFIX '$INITIAL_QUERY' || true" \

@@ -73,6 +73,15 @@ for cmd in node npm npx; do
     eval "${cmd}() { echo '🔄 Loading NVM for ${cmd}...'; unset -f nvm node npm npx; export NVM_DIR=\"\$HOME/.nvm\"; [ -s \"\$NVM_DIR/nvm.sh\" ] && \\. \"\$NVM_DIR/nvm.sh\"; [ -s \"\$NVM_DIR/bash_completion\" ] && \\. \"\$NVM_DIR/bash_completion\"; ${cmd} \"\$@\"; }"
 done
 
+# Add npm global bin to PATH for NVM
+export NVM_DIR="$HOME/.nvm"
+if [ -f "$NVM_DIR/alias/default" ]; then
+    DEFAULT_NODE_VERSION=$(cat "$NVM_DIR/alias/default")
+    export PATH="$NVM_DIR/versions/node/$DEFAULT_NODE_VERSION/bin:$PATH"
+elif [ -d "$NVM_DIR/versions/node/v20.19.3" ]; then
+    export PATH="$NVM_DIR/versions/node/v20.19.3/bin:$PATH"
+fi
+
 # UP navigation
 [ -f ~/.config/up/up.sh ] && source ~/.config/up/up.sh
 
