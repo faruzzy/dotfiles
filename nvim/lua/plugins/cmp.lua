@@ -117,15 +117,7 @@ return {
     },
     completion = {
       accept = {
-        -- auto_brackets = { enabled = true },
-        auto_brackets = {
-          kind_resolution = {
-            blocked_filetypes = {
-              'typescriptreact',
-              'javascriptreact',
-            },
-          },
-        },
+        auto_brackets = { enabled = false },
       },
       trigger = {
         show_on_backspace_after_accept = true,
@@ -144,7 +136,7 @@ return {
       },
       keyword = { range = 'full', min_width = 3 },
       list = {
-        selection = { preselect = true, auto_insert = false },
+        selection = { preselect = false, auto_insert = false },
       },
       menu = {
         border = 'rounded',
