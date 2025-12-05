@@ -8,6 +8,46 @@ augroup('no_auto_comment', {
   },
 })
 
+-- Re-enable comment continuation for JavaScript/TypeScript to support JSDoc
+augroup('jsdoc_comment_continuation', {
+  {
+    'FileType',
+    pattern = { 'javascript', 'javascriptreact', 'typescript', 'typescriptreact' },
+    callback = function()
+      vim.opt_local.formatoptions:append('ro')
+      vim.opt_local.comments = 'sO:* -,mO:*  ,exO:*/,s1:/*,mb:*,ex:*/,://'
+
+      -- JSDoc auto-expansion on Enter after /**
+      vim.keymap.set('i', '<CR>', function()
+        local line = vim.api.nvim_get_current_line()
+        local row = vim.api.nvim_win_get_cursor(0)[1]
+        local col = vim.api.nvim_win_get_cursor(0)[2]
+        local before_cursor = line:sub(1, col)
+
+        -- Check if we just typed /**
+        if before_cursor:match('^%s*/%*%*$') then
+          local indent = before_cursor:match('^(%s*)')
+
+          -- Schedule the buffer modification
+          vim.schedule(function()
+            -- Insert the JSDoc structure
+            vim.api.nvim_buf_set_lines(0, row, row, false, {
+              indent .. ' * ',
+              indent .. ' */'
+            })
+            -- Position cursor at the end of the first inserted line
+            vim.api.nvim_win_set_cursor(0, {row + 1, #indent + 3})
+          end)
+          return ''
+        end
+
+        -- Otherwise use autopairs CR
+        return require('nvim-autopairs').autopairs_cr()
+      end, { buffer = true, expr = true, replace_keycodes = false })
+    end,
+  },
+})
+
 -- Highlight yanked text briefly
 augroup('YankHighlight', {
   {
