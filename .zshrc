@@ -73,13 +73,18 @@ for cmd in node npm npx; do
     eval "${cmd}() { echo '🔄 Loading NVM for ${cmd}...'; unset -f nvm node npm npx; export NVM_DIR=\"\$HOME/.nvm\"; [ -s \"\$NVM_DIR/nvm.sh\" ] && \\. \"\$NVM_DIR/nvm.sh\"; [ -s \"\$NVM_DIR/bash_completion\" ] && \\. \"\$NVM_DIR/bash_completion\"; ${cmd} \"\$@\"; }"
 done
 
-# Add npm global bin to PATH for NVM
+# Ensure NVM's current node version bin is in PATH
 export NVM_DIR="$HOME/.nvm"
+# Find the currently active or default node version
 if [ -f "$NVM_DIR/alias/default" ]; then
-    DEFAULT_NODE_VERSION=$(cat "$NVM_DIR/alias/default")
-    export PATH="$NVM_DIR/versions/node/$DEFAULT_NODE_VERSION/bin:$PATH"
-elif [ -d "$NVM_DIR/versions/node/v20.19.3" ]; then
-    export PATH="$NVM_DIR/versions/node/v20.19.3/bin:$PATH"
+    NVM_DEFAULT_VERSION=$(cat "$NVM_DIR/alias/default")
+elif [ -d "$NVM_DIR/versions/node" ]; then
+    # Use the first (and likely only) installed version
+    NVM_DEFAULT_VERSION=$(ls "$NVM_DIR/versions/node" | head -n 1)
+fi
+
+if [ -n "$NVM_DEFAULT_VERSION" ] && [ -d "$NVM_DIR/versions/node/$NVM_DEFAULT_VERSION/bin" ]; then
+    export PATH="$NVM_DIR/versions/node/$NVM_DEFAULT_VERSION/bin:$PATH"
 fi
 
 # UP navigation
