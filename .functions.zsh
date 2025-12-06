@@ -563,7 +563,7 @@ function rule() {
 
 # Create a new directory and enter it
 function md() {
-  mkdir -p "$@" && cd "$@"
+  command mkdir -p "$@" && cd "${@[-1]}"
 }
 
 # find shorthand
