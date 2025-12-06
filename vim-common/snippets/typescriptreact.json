@@ -26,7 +26,7 @@
   "React Function Component": {
     "prefix": "rfc",
     "body": [
-      "export default function ${1:$TM_FILENAME_BASE}(): JSX.Element {",
+      "export default function ${1:$TM_FILENAME_BASE}() {",
       "\treturn (",
       "\t\t${2:<div />}",
       "\t);",
@@ -36,7 +36,7 @@
   "React Hook Component": {
     "prefix": "rhc",
     "body": [
-      "export const ${1:$TM_FILENAME_BASE} = (): JSX.Element => {",
+      "export const ${1:$TM_FILENAME_BASE} = () => {",
       "\treturn (",
       "\t\t${2:<div />}",
       "\t);",
@@ -50,7 +50,7 @@
       "\t${2}",
       "};",
       "",
-      "export default function $1(${3:props}: $1Props): JSX.Element {",
+      "export default function $1(${3:props}: $1Props) {",
       "\treturn (",
       "\t\t${4:<div />}",
       "\t);",
@@ -68,7 +68,7 @@
       "",
       "const $1 = createContext<$1State>(${3});",
       "",
-      "export function ${4}Provider({ children }: { children: ReactNode }): JSX.Element {",
+      "export function ${4}Provider({ children }: { children: ReactNode }) {",
       "\t${5}",
       "",
       "\treturn <$1.Provider value={${6}}>{children}</$1.Provider>",
