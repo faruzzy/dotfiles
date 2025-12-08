@@ -253,7 +253,7 @@ snippet ctime "console.time ... console.timeEnd"
 	console.timeEnd("$1");
 snippet ctimestamp "console.timeStamp"
 	console.timeStamp("${1:label}");
-snippet ca "console.assert"
+snippet cass "console.assert"
 	console.assert(${1:expression}, ${0:obj});
 snippet cclear "console.clear"
 	console.clear();
@@ -323,12 +323,12 @@ snippet fun*
 	}
 snippet c=>
 	const ${1:function_name} = (${2}) => {
-		${0:${VISUAL}}
-	}
+		${0}
+	};
 snippet ca=>
 	const ${1:function_name} = async (${2}) => {
-		${0:${VISUAL}}
-	}
+		${0}
+	};
 snippet caf
 	const ${1:function_name} = (${2}) => {
 		${0:${VISUAL}}

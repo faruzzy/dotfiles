@@ -97,7 +97,7 @@ local config = function()
 
   apair.add_rules(end_lua)
   apair.add_rules(add_space_paren)
-  apair.add_rules(add_space_equal)
+  -- apair.add_rules(add_space_equal)  -- Disabled: conflicts with snippet triggers like c=>
   -- apair.add_rules(add_arrow_js)
 
 end
