@@ -119,19 +119,23 @@ return {
       accept = {
         auto_brackets = { enabled = false },
       },
+      ghost_text = {
+        enabled = true,
+      },
       trigger = {
         show_on_backspace_after_accept = true,
-        show_on_insert = true,
-        show_on_trigger_character = false,
+        show_on_insert = false,
+        show_on_trigger_character = true,
       },
       documentation = {
         auto_show = true,
-        auto_show_delay_ms = 500,
+        auto_show_delay_ms = 200,
         treesitter_highlighting = true,
         window = {
           border = 'rounded',
           min_width = 40,
           max_width = 70,
+          max_height = 20,
         },
       },
       keyword = { range = 'full', min_width = 3 },
@@ -142,6 +146,7 @@ return {
         border = 'rounded',
         min_width = 34,
         max_height = 10,
+        max_items = 200,
         draw = {
           treesitter = { 'lsp' },
           align_to = 'cursor',
@@ -217,7 +222,9 @@ return {
       },
     },
     fuzzy = {
-      sorts = { 'exact', 'score', 'sort_text' },
+      use_frecency = true,
+      use_proximity = true,
+      sorts = { 'score', 'sort_text' },
     },
     keymap = {
       preset = 'default',
@@ -225,9 +232,9 @@ return {
       ['<Tab>'] = {
         function(cmp)
           if cmp.snippet_active() then
-            return cmp.accept()
+            return cmp.snippet_forward()
           elseif cmp.is_visible() then
-            return cmp.select_and_accept()
+            return cmp.select_next()
           else
             return cmp.snippet_forward() or false
           end
@@ -236,7 +243,9 @@ return {
       },
       ['<S-Tab>'] = {
         function(cmp)
-          if cmp.is_visible() then
+          if cmp.snippet_active() then
+            return cmp.snippet_backward()
+          elseif cmp.is_visible() then
             return cmp.select_prev()
           else
             return cmp.snippet_backward() or false
@@ -244,7 +253,7 @@ return {
         end,
         'fallback',
       },
-      -- Navigation similar to your original config
+      -- Navigation
       ['<C-n>'] = { 'select_next', 'fallback' },
       ['<C-p>'] = { 'select_prev', 'fallback' },
       ['<C-d>'] = { 'scroll_documentation_up', 'fallback' },
@@ -284,12 +293,17 @@ return {
       providers = {
         buffer = {
           name = 'Buffer',
-          max_items = 4, -- Limit buffer completions to reduce noise
-          score_offset = -2, -- Lower priority
+          max_items = 4,
+          score_offset = -2,
           min_keyword_length = 3,
           opts = {
             get_bufnrs = function()
-              return vim.api.nvim_list_bufs()
+              -- Only search visible buffers instead of all buffers
+              local bufs = {}
+              for _, win in ipairs(vim.api.nvim_list_wins()) do
+                bufs[vim.api.nvim_win_get_buf(win)] = true
+              end
+              return vim.tbl_keys(bufs)
             end,
           },
         },
@@ -314,7 +328,14 @@ return {
         snippets = {
           name = 'Snippets',
           min_keyword_length = 2,
+          score_offset = -1,
           should_show_items = function(ctx)
+            -- Don't show snippets when completing object properties
+            local line = vim.api.nvim_get_current_line()
+            local col = vim.api.nvim_win_get_cursor(0)[2]
+            if line:sub(col, col):match('[.:]') then
+              return false
+            end
             return ctx.trigger.initial_kind ~= 'trigger_character'
           end,
         },
