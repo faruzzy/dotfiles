@@ -64,14 +64,13 @@
   logr3 = log --stat -M -3
   logit = log --stat -M
   l = log --stat -C
-  lol = log --color --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit --all
+  lgl = log --color --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit --all
   lola = log --graph --decorate --pretty=oneline --abbrev-commit --all
   ls = ls-files
   ign = ls-files -o -i --exclude-standard          # Show files ignored by git
   p = push
   np = push --no-verify
   shoot = push origin --delete
-  up = pull
   unstage = reset HEAD --
   hardrs = reset --hard HEAD
   prev = checkout -
@@ -116,7 +115,6 @@
       git commit --amend -m \"$(git log -1 --pretty=%B)\n\nClose #$1\"; \
     fi \
   }; f"
-
 
 lg = !"                                                                                                                                        \
 	function git_log_graph() {                                                                                                                 \
