@@ -63,11 +63,35 @@ return {
 
           local server = servers[server_name] or {}
 
-          require('lspconfig')[server_name].setup(vim.tbl_deep_extend('force', {
+          local config = {
             capabilities = capabilities,
-          }, server))
+          }
+
+          -- Call the config function if it exists
+          if server.config and type(server.config) == 'function' then
+            config = server.config(config)
+          end
+
+          require('lspconfig')[server_name].setup(config)
         end,
       },
     })
+
+    -- Explicitly setup servers with custom configs (in case handlers didn't fire)
+    for server_name, server_config in pairs(servers) do
+      if server_config.config and type(server_config.config) == 'function' then
+        local capabilities = vim.lsp.protocol.make_client_capabilities()
+        local ok, blink = pcall(require, 'blink.cmp')
+        if ok then
+          capabilities = blink.get_lsp_capabilities(capabilities)
+        end
+
+        local config = { capabilities = capabilities }
+        config = server_config.config(config)
+
+        -- Force re-setup with correct config
+        require('lspconfig')[server_name].setup(config)
+      end
+    end
   end,
 }

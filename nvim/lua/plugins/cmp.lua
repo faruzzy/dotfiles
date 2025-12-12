@@ -124,7 +124,7 @@ return {
       },
       trigger = {
         show_on_backspace_after_accept = true,
-        show_on_insert = false,
+        show_on_insert = true,
         show_on_trigger_character = true,
       },
       documentation = {
@@ -138,7 +138,7 @@ return {
           max_height = 20,
         },
       },
-      keyword = { range = 'full', min_width = 3 },
+      keyword = { range = 'full' },
       list = {
         selection = { preselect = false, auto_insert = false },
       },
@@ -146,7 +146,6 @@ return {
         border = 'rounded',
         min_width = 34,
         max_height = 10,
-        max_items = 200,
         draw = {
           treesitter = { 'lsp' },
           align_to = 'cursor',

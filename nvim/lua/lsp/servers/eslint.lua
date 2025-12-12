@@ -23,19 +23,23 @@ return {
       './node_modules/eslint'
     ) or vim.fn.getcwd()
 
-    local main_on_attach = require('path.to.main.config').on_attach
     config.on_attach = function(client, bufnr)
-      main_on_attach(client, bufnr)
       if vim.fn.exists(':EslintFixAll') == 1 then
         require('utils').buffer_map(bufnr)('n', '<leader>ef', vim.cmd.EslintFixAll)
-      else
-        vim.notify('LSP: EslintFixAll command not available', vim.log.levels.WARN)
       end
       if client.server_capabilities.inlayHintProvider then
         vim.lsp.inlay_hint.enable(true, { bufnr = bufnr })
       end
     end
+
     config.handlers = {
+      -- Suppress "Unable to find ESLint library" warning
+      ['window/showMessageRequest'] = function(_, result)
+        if result and result.message and result.message:find('Unable to find ESLint library') then
+          return vim.NIL
+        end
+        return vim.lsp.handlers['window/showMessageRequest'](_, result)
+      end,
       ['textDocument/diagnostic'] = function(err, result, ctx)
         if result and result.items then
           for _, item in ipairs(result.items) do
