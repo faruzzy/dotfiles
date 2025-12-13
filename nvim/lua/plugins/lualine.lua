@@ -61,6 +61,35 @@ local active_lsp = {
     if next(clients) == nil then
       return msg
     end
+
+    -- Prioritize main language servers over auxiliary ones
+    local priority_servers = {
+      'typescript-tools',
+      'ts_ls',
+      'lua_ls',
+      'pyright',
+      'rust_analyzer',
+      'gopls',
+      'clangd',
+      'svelte',
+      'cssls',
+      'html',
+      'graphql',
+      'jsonls',
+      'yamlls',
+      'vimls',
+    }
+
+    -- First, try to find a priority server
+    for _, priority in ipairs(priority_servers) do
+      for _, client in ipairs(clients) do
+        if client.name == priority then
+          return client.name
+        end
+      end
+    end
+
+    -- Fall back to first non-null-ls client
     for _, client in ipairs(clients) do
       if client.name == 'null-ls' then
         msg = client.name
