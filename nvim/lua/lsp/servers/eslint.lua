@@ -64,5 +64,4 @@ return {
 
     return config
   end,
-  install = { 'npm', '@eslint/lsp' },
 }

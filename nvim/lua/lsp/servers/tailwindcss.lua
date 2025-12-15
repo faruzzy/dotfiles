@@ -6,5 +6,4 @@ return {
 
 		return config
 	end,
-	install = { "npm", "@tailwindcss/language-server" },
 }

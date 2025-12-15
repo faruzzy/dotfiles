@@ -51,6 +51,4 @@ return {
     config.capabilities.textDocument.inlayHint = { dynamicRegistration = true }
     return config
   end,
-  install = { 'brew', 'install', 'lua-language-server@3.9.0' },       -- Pin version
-  fallback = { 'npm', 'install', '-g', 'lua-language-server@3.9.0' }, -- Fallback
 }

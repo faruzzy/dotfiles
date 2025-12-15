@@ -67,6 +67,4 @@ return {
 
     return config
   end,
-  install = { 'npm', 'install', '-g', 'vscode-langservers-extracted@4.8.0' }, -- Pin version
-  fallback = { 'yarn', 'global', 'add', 'vscode-langservers-extracted' },     -- Fallback
 }

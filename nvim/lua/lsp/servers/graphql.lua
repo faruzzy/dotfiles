@@ -4,5 +4,4 @@ return {
 		config.filetypes = { "graphql" }
 		return config
 	end,
-	install = { "npm", "graphql-language-service-cli" },
 }
