@@ -2,16 +2,30 @@
 
 return {
   'pmizio/typescript-tools.nvim',
-  enabled = true,
-  lazy = false,
+  ft = { 'typescript', 'typescriptreact', 'javascript', 'javascriptreact' },
   dependencies = { 'nvim-lua/plenary.nvim', 'neovim/nvim-lspconfig' },
   config = function()
     require('typescript-tools').setup({
-      capabilities = require('lsp.capabilities')(),
+      capabilities = (function()
+        local capabilities = vim.lsp.protocol.make_client_capabilities()
+        local ok, blink = pcall(require, 'blink.cmp')
+        if ok then
+          capabilities = blink.get_lsp_capabilities(capabilities)
+        end
+        return capabilities
+      end)(),
       settings = {
+        separate_diagnostic_server = true,
+        publish_diagnostic_on = 'insert_leave',
         complete_function_calls = false,
         include_completions_with_insert_text = true,
         jsx_close_tag = { enable = true },
+        expose_as_code_action = {
+          'fix_all',
+          'add_missing_imports',
+          'remove_unused',
+          'organize_imports',
+        },
         tsserver_file_preferences = {
           includeInlayEnumMemberValueHints = true,
           includeInlayFunctionLikeReturnTypeHints = false,
@@ -32,19 +46,16 @@ return {
       on_attach = function(client, bufnr)
         local bsk = require('utils').buffer_map(bufnr)
 
-        bsk('n', '<leader>oi', '<cmd>TSToolsOrganizeImports<CR>', { desc = 'Organize TypeScript imports' })
+        bsk('n', '<leader>io', '<cmd>TSToolsOrganizeImports<CR>', { desc = 'Organize TypeScript imports' })
         bsk('n', '<leader>ia', '<cmd>TSToolsAddMissingImports<CR>', { desc = 'Add missing TypeScript imports' })
-        bsk('n', '<leader>ri', '<cmd>TSToolsRemoveUnusedImports<CR>', { desc = 'Remove unused TypeScript imports' })
+        bsk('n', '<leader>ir', '<cmd>TSToolsRemoveUnusedImports<CR>', { desc = 'Remove unused TypeScript imports' })
 
-        if
-            vim.tbl_contains({
-              'javascript',
-              'javascriptreact',
-              'typescriptreact',
-            }, vim.bo.filetype)
-        then
+        local is_jsx_file =
+            vim.tbl_contains({ 'javascript', 'javascriptreact', 'typescriptreact' }, vim.bo[bufnr].filetype)
+
+        if is_jsx_file then
           bsk('i', '>', function()
-            local success, result = pcall(function()
+            pcall(function()
               require('typescript-tools.api').jsx_close_tag(
                 bufnr,
                 vim.lsp.util.make_position_params(0, client.offset_encoding or 'utf-16'),
@@ -52,9 +63,6 @@ return {
                 nil
               )
             end)
-            if not success and debug then
-              print('jsx_close_tag failed: ' .. tostring(result))
-            end
             return '>'
           end, { expr = true, desc = 'Auto-close JSX/TSX tags' })
         end
