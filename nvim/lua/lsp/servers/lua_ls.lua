@@ -47,8 +47,7 @@ return {
         },
       },
     }
-    -- Request inlay hint capability
-    config.capabilities = vim.lsp.protocol.make_client_capabilities()
+    -- Request inlay hint capability (merge with existing capabilities)
     config.capabilities.textDocument.inlayHint = { dynamicRegistration = true }
     return config
   end,

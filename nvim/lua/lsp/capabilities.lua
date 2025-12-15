@@ -1,13 +1,10 @@
 return function()
-  local ok, cmp_nvim_lsp = pcall(require, 'cmp_nvim_lsp')
+  local capabilities = vim.lsp.protocol.make_client_capabilities()
 
+  local ok, blink = pcall(require, 'blink.cmp')
   if ok then
-    return vim.tbl_deep_extend(
-      'force',
-      vim.lsp.protocol.make_client_capabilities(),
-      cmp_nvim_lsp.default_capabilities()
-    )
+    capabilities = blink.get_lsp_capabilities(capabilities)
   end
 
-  return vim.lsp.protocol.make_client_capabilities()
+  return capabilities
 end
