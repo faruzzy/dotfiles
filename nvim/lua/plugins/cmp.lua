@@ -86,8 +86,6 @@ end
 return {
   'saghen/blink.cmp',
   version = '1.*',
-  -- Use cargo build instead of nix for systems without nix
-  build = 'cargo build --release',
   event = { 'InsertEnter', 'CmdlineEnter' },
   dependencies = {
     -- Optional: for snippet support
@@ -123,9 +121,7 @@ return {
         enabled = true,
       },
       trigger = {
-        show_on_backspace_after_accept = true,
-        show_on_insert = true,
-        show_on_trigger_character = true,
+        show_in_snippet = true,
       },
       documentation = {
         auto_show = true,
@@ -152,8 +148,8 @@ return {
           padding = 1,
           gap = 3,
           columns = {
-            { 'kind_icon', gap = 1 },
-            { 'label', 'label_description', gap = 1 },
+            { 'kind_icon',  gap = 1 },
+            { 'label',      'label_description', gap = 1 },
             { 'source_name' },
           },
           components = {
@@ -221,7 +217,7 @@ return {
       },
     },
     fuzzy = {
-      use_frecency = true,
+      frecency = { enabled = true },
       use_proximity = true,
       sorts = { 'score', 'sort_text' },
     },

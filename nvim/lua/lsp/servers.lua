@@ -17,7 +17,8 @@ local servers = {
   tailwindcss = require('lsp.servers.tailwindcss'),
   -- ["typescript-tools"] = require("lsp.servers.typescript-tools"),
   rust_analyzer = {},
-  jsonls = require('lsp.servers.jsonls'),
+  -- jsonls is manually configured in lua/plugins/lsp.lua
+  jsonls = {},
   lua_ls = require('lsp.servers.lua_ls'),
   cssls = {},
   -- ts_ls = {},

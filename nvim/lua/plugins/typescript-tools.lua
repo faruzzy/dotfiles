@@ -44,6 +44,11 @@ return {
         }),
       },
       on_attach = function(client, bufnr)
+        -- Enable inlay hints if supported
+        if client.server_capabilities.inlayHintProvider then
+          vim.lsp.inlay_hint.enable(true, { bufnr = bufnr })
+        end
+
         local bsk = require('utils').buffer_map(bufnr)
 
         bsk('n', '<leader>io', '<cmd>TSToolsOrganizeImports<CR>', { desc = 'Organize TypeScript imports' })

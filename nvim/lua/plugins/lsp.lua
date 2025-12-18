@@ -15,6 +15,9 @@ return {
     'williamboman/mason-lspconfig.nvim',
     'WhoIsSethDaniel/mason-tool-installer.nvim',
 
+    -- JSON schemas for better completion
+    'b0o/schemastore.nvim',
+
     -- Useful status updates for LSP
     {
       'j-hui/fidget.nvim',
@@ -50,10 +53,19 @@ return {
       ensure_installed = vim.tbl_keys(servers),
       handlers = {
         function(server_name)
+          -- Skip jsonls - it's manually configured below
+          if server_name == 'jsonls' then
+            return
+          end
+
           local capabilities = require('lsp.capabilities')()
+          local on_attach = require('lsp.on_attach')
           local server = servers[server_name] or {}
 
-          local config = { capabilities = capabilities }
+          local config = {
+            capabilities = capabilities,
+            on_attach = on_attach,
+          }
 
           -- Call the config function if it exists
           if server.config and type(server.config) == 'function' then
@@ -62,6 +74,38 @@ return {
 
           require('lspconfig')[server_name].setup(config)
         end,
+      },
+    })
+
+    -- Manually setup jsonls (handlers don't run for already-installed servers)
+    local capabilities = require('lsp.capabilities')()
+    local on_attach = require('lsp.on_attach')
+    local ok, schemastore = pcall(require, 'schemastore')
+
+    require('lspconfig').jsonls.setup({
+      capabilities = capabilities,
+      on_attach = on_attach,
+      single_file_support = true,
+      settings = {
+        json = {
+          schemas = ok and schemastore.json.schemas() or {
+            -- Fallback schemas if schemastore not available
+            {
+              fileMatch = { 'package.json' },
+              url = 'https://json.schemastore.org/package.json',
+            },
+            {
+              fileMatch = { 'tsconfig*.json' },
+              url = 'https://json.schemastore.org/tsconfig.json',
+            },
+            {
+              fileMatch = { 'jsconfig*.json' },
+              url = 'https://json.schemastore.org/jsconfig.json',
+            },
+          },
+          validate = { enable = true },
+          format = { enable = true },
+        },
       },
     })
   end,
