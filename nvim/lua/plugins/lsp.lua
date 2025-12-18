@@ -82,10 +82,13 @@ return {
     local on_attach = require('lsp.on_attach')
     local ok, schemastore = pcall(require, 'schemastore')
 
-    require('lspconfig').jsonls.setup({
+    vim.lsp.config('jsonls', {
+      cmd = { 'vscode-json-language-server', '--stdio' },
+      filetypes = { 'json', 'jsonc' },
+      root_markers = { '.git' },
+      single_file_support = true,
       capabilities = capabilities,
       on_attach = on_attach,
-      single_file_support = true,
       settings = {
         json = {
           schemas = ok and schemastore.json.schemas() or {
@@ -108,5 +111,8 @@ return {
         },
       },
     })
+
+    -- Enable jsonls for json/jsonc files
+    vim.lsp.enable('jsonls')
   end,
 }
