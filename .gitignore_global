@@ -189,3 +189,7 @@ local.properties
 
 # Code Recommenders
 .recommenders/
+
+# Next.js build output
+.next/
+out/
