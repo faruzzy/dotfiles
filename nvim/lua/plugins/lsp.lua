@@ -53,14 +53,14 @@ return {
       ensure_installed = vim.tbl_keys(servers),
       handlers = {
         function(server_name)
-          -- Skip jsonls - it's manually configured below
-          if server_name == 'jsonls' then
+          -- Only setup servers explicitly listed in lsp/servers.lua
+          local server = servers[server_name]
+          if not server or server_name == 'jsonls' then
             return
           end
 
           local capabilities = require('lsp.capabilities')()
           local on_attach = require('lsp.on_attach')
-          local server = servers[server_name] or {}
 
           local config = {
             capabilities = capabilities,

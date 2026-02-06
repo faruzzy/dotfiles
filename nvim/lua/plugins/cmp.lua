@@ -219,7 +219,7 @@ return {
     fuzzy = {
       frecency = { enabled = true },
       use_proximity = true,
-      sorts = { 'score', 'sort_text' },
+      sorts = { 'score', 'kind', 'sort_text' },
     },
     keymap = {
       preset = 'default',

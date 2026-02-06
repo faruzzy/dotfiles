@@ -15,7 +15,7 @@ return {
         return capabilities
       end)(),
       settings = {
-        separate_diagnostic_server = true,
+        separate_diagnostic_server = false,
         publish_diagnostic_on = 'insert_leave',
         complete_function_calls = false,
         include_completions_with_insert_text = true,

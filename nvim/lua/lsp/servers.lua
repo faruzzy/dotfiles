@@ -21,7 +21,7 @@ local servers = {
   jsonls = {},
   lua_ls = require('lsp.servers.lua_ls'),
   cssls = {},
-  -- ts_ls = {},
+  -- ts_ls = {}, -- Disabled: using typescript-tools instead
   vimls = {},
   yamlls = {},
 }
