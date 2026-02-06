@@ -193,3 +193,6 @@ local.properties
 # Next.js build output
 .next/
 out/
+
+# Claude
+.claude/
