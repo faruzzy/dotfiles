@@ -394,7 +394,7 @@ git-fixup() {
 }
 
 # dd - cd to selected directory
-function dd() {
+function fdd() {
   DIR=`find ${1:-*} -path '*/\.*' -prune -o -type d -print 2> /dev/null | fzf-tmux` \
     && cd "$DIR"
 }

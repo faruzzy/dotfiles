@@ -1,7 +1,4 @@
-#!/usr/bin/env zsh
-
 # --- Core Shell Settings & Refresh ---
-# alias s='source ~/.bash_profile && tmux source-file ~/.tmux.conf && bind -f ~/.inputrc' # bash specific
 alias s='exec zsh && tmux source-file ~/.tmux.conf'
 alias python='python3'
 alias c='clear'
@@ -34,7 +31,6 @@ alias ag="ag --path-to-ignore ~/.agignore"
 
 # --- File Operations ---
 alias cp='cp -v'
-alias rm='rm -v'
 alias rm='rm -iv'
 alias rmf="rm -rf" # Be careful with this one!
 alias mkdir='mkdir -pv' # Create parent directories if they don't exist
@@ -42,7 +38,7 @@ alias mkdir='mkdir -pv' # Create parent directories if they don't exist
 # --- System Utilities & Information
 alias tmux='tmux -2'
 alias timer='echo "Timer started. Stop with Ctrl-D." && date && time cat && date'
-alias sleep="pmset sleepnow"
+alias gotosleep="pmset sleepnow"
 alias k5="kill -9 %%"
 
 # IP addresses
@@ -87,7 +83,7 @@ alias npmp='npm publish'
 alias npma='npm adduser'
 alias npmru='rm -rf node_modules package-lock.json && npm install' # Reinstall from scratch
 alias nomm='rm -rf node_modules && yarn cache clear && yarn'
-alias npmo='sudo npm install --cache-min 999999999' # npm offline, use with caution
+alias npmo='npm install --cache-min 999999999' # npm offline
 
 ### Yarn
 alias yi='yarn install'
@@ -105,7 +101,7 @@ alias vi=$EDITOR
 alias v='vi'
 alias vim='nvim'
 
-alias curl='curl -v'
+alias curlv='curl -v'
 alias chown='chown -v'
 alias chmod='chmod -v'
 
@@ -130,7 +126,7 @@ if [[ "$OSTYPE" =~ ^darwin ]]; then
     sudo softwareupdate --install --all --restart # Add --restart if applicable
     echo "--- Updating Homebrew ---"
     brew update
-    brew upgrade --all
+    brew upgrade
     brew cleanup
     echo "--- Updating npm globally ---"
     npm install -g npm # Update npm itself
@@ -151,7 +147,7 @@ alias empty-trash='sudo rm -frv /Volumes/*/.Trashes; \
     alias brews='brew search'
     function brewu {
       brew update
-      brew upgrade --all
+      brew upgrade
       brew cleanup
       brew autoremove # Remove unused dependencies
       brew doctor

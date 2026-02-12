@@ -88,8 +88,6 @@ path_dirs=(
     "/bin"
     "/sbin"
     "/usr/local/opt/libpq/bin"
-    "$PSQL"
-    "$SCRIPT_HOME"
 )
 
 # Build PATH from array, checking that directories exist and avoiding duplicates
@@ -101,6 +99,14 @@ for dir in "${path_dirs[@]}"; do
         else
             new_path="$new_path:$dir"
         fi
+    fi
+done
+
+# Append any remaining PATH entries that weren't explicitly listed
+IFS=':' read -rA existing_paths <<< "$PATH"
+for dir in "${existing_paths[@]}"; do
+    if [[ -n "$dir" && ":$new_path:" != *":$dir:"* ]]; then
+        new_path="$new_path:$dir"
     fi
 done
 

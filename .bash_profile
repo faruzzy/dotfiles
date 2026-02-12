@@ -42,7 +42,7 @@ fi
 [ -f  /usr/local/etc/bash_completion ] && . /usr/local/etc/bash_completion
 
 export PATH="$HOME/.jenv/bin:$PATH"
-eval "$(jenv init -)"
+command -v jenv > /dev/null && eval "$(jenv init -)"
 
 [[ -s ~/.bashrc ]] && source ~/.bashrc
 

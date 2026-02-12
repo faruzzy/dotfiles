@@ -40,12 +40,10 @@ setopt CORRECT_ALL          # Auto correct mistakes in arguments
 setopt complete_in_word
 setopt always_to_end
 
-# Zsh-specific enhancements
-autoload -Uz compinit && compinit  # Enable completion system
+# Zsh-specific enhancements (compinit already called by oh-my-zsh)
 zstyle ':completion:*' menu select # Better completion menu
 zstyle ':completion:*' list-suffixes
 zstyle ':completion:*' expand prefix suffix
-zstyle ':completion:*' matcher-list 'm:{a-zA-Z}={A-Za-z}'
 zstyle ':completion:*' matcher-list 'm:{a-zA-Z}={A-Za-z}' 'r:|[._-]=* r:|=*' 'l:|=* r:|=*'
 
 # Load configuration files
@@ -124,19 +122,3 @@ zstyle ':completion:*' list-colors "${(s.:.)LS_COLORS}"
 zstyle ':completion:*:*:kill:*:processes' list-colors '=(#b) #([0-9]#) ([0-9a-z-]#)*=01;34=0=01'
 
 eval "$(zoxide init zsh)"
-
-# Zoxide integration (replaces the old z function)
-# Override zoxide's z function to provide interactive behavior when called without arguments
-function z() {
-  if [[ $# -eq 0 ]]; then
-    # No arguments - show interactive directory selection
-    local result
-    result=$(zoxide query -l | fzf --height 40% --reverse --inline-info +s --tac)
-    if [[ -n "$result" ]]; then
-      cd "$result"
-    fi
-  else
-    # Arguments provided - use zoxide's normal behavior
-    __zoxide_z "$@"
-  fi
-}

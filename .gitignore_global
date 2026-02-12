@@ -37,7 +37,6 @@ npm-debug.log
 .Spotlight-V100
 .Trashes
 Icon
-.Spotlight-V100
 .DocumentRevisions-V100
 .TemporaryItems
 Thumbs.db
@@ -192,7 +191,6 @@ local.properties
 
 # Next.js build output
 .next/
-out/
 
 # Claude
 .claude/
