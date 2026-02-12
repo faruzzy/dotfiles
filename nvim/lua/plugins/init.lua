@@ -293,14 +293,14 @@ return {
 
   {
     'folke/trouble.nvim',
-    cmd = { 'Trouble', 'TroubleToggle' },
+    cmd = 'Trouble',
     keys = {
-      { '<Leader>tt', '<cmd>Trouble<cr>',                       desc = 'Trouble: Toggle' },
-      { '<Leader>tw', '<cmd>Trouble workspace_diagnostics<cr>', desc = 'Trouble: Workspace diagnostics' },
-      { '<Leader>tD', '<cmd>Trouble document_diagnostics<cr>',  desc = 'Trouble: Document diagnostics' },
-      { '<Leader>tq', '<cmd>Trouble quickfix<cr>',              desc = 'Trouble: Quickfix' },
-      { '<Leader>tl', '<cmd>Trouble loclist<cr>',               desc = 'Trouble: Location list' },
-      { '<Leader>tr', '<cmd>Trouble lsp_references<cr>',        desc = 'Trouble: LSP references' },
+      { '<Leader>tt', '<cmd>Trouble diagnostics toggle<cr>',                        desc = 'Trouble: Toggle' },
+      { '<Leader>tw', '<cmd>Trouble diagnostics toggle<cr>',                        desc = 'Trouble: Workspace diagnostics' },
+      { '<Leader>tD', '<cmd>Trouble diagnostics toggle filter.buf=0<cr>',           desc = 'Trouble: Document diagnostics' },
+      { '<Leader>tq', '<cmd>Trouble qflist toggle<cr>',                             desc = 'Trouble: Quickfix' },
+      { '<Leader>tl', '<cmd>Trouble loclist toggle<cr>',                            desc = 'Trouble: Location list' },
+      { '<Leader>tr', '<cmd>Trouble lsp toggle focus=false win.position=right<cr>', desc = 'Trouble: LSP references' },
     },
     config = true,
     desc = 'Diagnostics and quickfix list'

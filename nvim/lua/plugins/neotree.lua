@@ -2,7 +2,7 @@
 return {
   'nvim-neo-tree/neo-tree.nvim',
   cmd = 'Neotree',
-  branch = 'v2.x',
+  branch = 'v3.x',
   keys = {
     { '<C-c>', '<cmd>Neotree toggle<cr>', desc = 'Neotree' },
   },
@@ -15,7 +15,7 @@ return {
     require('neo-tree').setup({
       close_if_last_window = true,
       filesystem = {
-        follow_current_file = true,
+        follow_current_file = { enabled = true },
         hijack_netrw_behavior = 'open_current',
       },
     })
