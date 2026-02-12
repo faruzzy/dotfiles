@@ -134,7 +134,7 @@ local function smart_definitions()
     if #final_locations == 1 then
       -- Jump directly if only one result after filtering
       -- vim.lsp.util.jump_to_location(final_locations[1], 'utf-8')
-      vim.lsp.util.show_document(final_locations, 'utf-8', { focus = true })
+      vim.lsp.util.show_document(final_locations[1], 'utf-8', { focus = true })
       return
     end
 

@@ -193,7 +193,7 @@ augroup('lsp_format', {
         return
       end
       local bufnr = args.buf
-      local client = vim.lsp.get_active_clients({ bufnr = bufnr })[1]
+      local client = vim.lsp.get_clients({ bufnr = bufnr })[1]
       if client and client.supports_method('textDocument/formatting') then
         vim.lsp.buf.format({ bufnr = bufnr, async = false })
       elseif vim.bo.filetype == 'javascript' or vim.bo.filetype == 'typescript' then
