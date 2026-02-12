@@ -42,7 +42,6 @@ return {
         'gitcommit',
         'c_sharp',
         'comment',
-        'cpp',
         'css',
         'scss',
         'dockerfile',
