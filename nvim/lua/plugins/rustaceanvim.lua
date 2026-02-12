@@ -20,9 +20,6 @@ return {
       server = {
         on_attach = function(client, bufnr)
           require('lsp.on_attach')(client, bufnr)
-          -- Disable Neovim's built-in inlay hints for Rust to avoid
-          -- 'Invalid col: out of range' errors (Neovim 0.11.x bug)
-          vim.lsp.inlay_hint.enable(false, { bufnr = bufnr })
         end,
         settings = {
           ['rust-analyzer'] = {

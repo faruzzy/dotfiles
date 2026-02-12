@@ -9,8 +9,6 @@ return function(client, bufnr)
   bsk('n', '<Leader>rn', vim.lsp.buf.rename, { desc = 'LSP Rename' })
   bsk('n', '<Leader>ca', vim.lsp.buf.code_action, { desc = 'LSP Code Action' })
 
-  -- Enable inlay hints if supported
-  if client.server_capabilities.inlayHintProvider then
-    vim.lsp.inlay_hint.enable(true, { bufnr = bufnr })
-  end
+  -- Inlay hints available but not auto-enabled due to Neovim 0.11.x
+  -- rendering bug (Invalid 'col': out of range). Use <Leader>ti to toggle.
 end
