@@ -1,16 +1,12 @@
 -- Distraction-free writing for Neovim
 local M = {
   'Pocco81/true-zen.nvim',
-  config = function()
-    require('true-zen').setup({
-      -- your config goes here
-      -- or just leave it empty :)
-    })
-  end,
 }
 
 function M.config()
   local truezen = require('true-zen')
+  truezen.setup({})
+
   vim.keymap.set('n', '<leader>za', truezen.ataraxis, { noremap = true })
   vim.keymap.set('n', '<leader>zf', truezen.focus, { noremap = true })
 
