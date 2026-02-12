@@ -1,3 +1,29 @@
+local function smart_definitions_fzf()
+  vim.lsp.buf.definition({
+    on_list = function(options)
+      local seen = {}
+      local items = {}
+      for _, item in ipairs(options.items) do
+        local key = item.filename .. ':' .. item.lnum
+        if not seen[key] then
+          seen[key] = true
+          table.insert(items, item)
+        end
+      end
+
+      if #items == 0 then
+        vim.notify('No definitions found', vim.log.levels.WARN)
+      elseif #items == 1 then
+        vim.cmd('edit ' .. vim.fn.fnameescape(items[1].filename))
+        vim.api.nvim_win_set_cursor(0, { items[1].lnum, (items[1].col or 1) - 1 })
+      else
+        vim.fn.setqflist({}, 'r', { title = options.title, items = items })
+        require('fzf-lua').quickfix({ prompt = 'Definitions> ' })
+      end
+    end,
+  })
+end
+
 local function smart_references_fzf()
   local current_file = vim.fn.expand('%:p')
   local current_pos = vim.api.nvim_win_get_cursor(0)
@@ -157,7 +183,7 @@ return {
       },
       {
         'gd',
-        [[<cmd>lua require('fzf-lua').lsp_definitions({ jump1 = true })<CR>]],
+        smart_definitions_fzf,
         desc = '[G]o to [D]efinition',
       },
       {
