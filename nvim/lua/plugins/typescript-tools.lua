@@ -6,14 +6,7 @@ return {
   dependencies = { 'nvim-lua/plenary.nvim', 'neovim/nvim-lspconfig' },
   config = function()
     require('typescript-tools').setup({
-      capabilities = (function()
-        local capabilities = vim.lsp.protocol.make_client_capabilities()
-        local ok, blink = pcall(require, 'blink.cmp')
-        if ok then
-          capabilities = blink.get_lsp_capabilities(capabilities)
-        end
-        return capabilities
-      end)(),
+      capabilities = require('lsp.capabilities')(),
       settings = {
         separate_diagnostic_server = false,
         publish_diagnostic_on = 'insert_leave',
@@ -44,10 +37,7 @@ return {
         }),
       },
       on_attach = function(client, bufnr)
-        -- Enable inlay hints if supported
-        if client.server_capabilities.inlayHintProvider then
-          vim.lsp.inlay_hint.enable(true, { bufnr = bufnr })
-        end
+        require('lsp.on_attach')(client, bufnr)
 
         local bsk = require('utils').buffer_map(bufnr)
 

@@ -5,8 +5,7 @@
 return function(client, bufnr)
   local bsk = require('utils').buffer_map(bufnr)
 
-  -- LSP actions
-  bsk('n', 'gd', vim.lsp.buf.definition, { desc = 'LSP Go to Definition' })
+  -- LSP actions (gd is handled by fzf-lua with jump-on-single-result)
   bsk('n', '<Leader>rn', vim.lsp.buf.rename, { desc = 'LSP Rename' })
   bsk('n', '<Leader>ca', vim.lsp.buf.code_action, { desc = 'LSP Code Action' })
 

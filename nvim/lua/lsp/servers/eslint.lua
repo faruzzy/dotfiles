@@ -24,11 +24,9 @@ return {
     ) or vim.fn.getcwd()
 
     config.on_attach = function(client, bufnr)
+      require('lsp.on_attach')(client, bufnr)
       if vim.fn.exists(':EslintFixAll') == 1 then
         require('utils').buffer_map(bufnr)('n', '<leader>ef', vim.cmd.EslintFixAll)
-      end
-      if client.server_capabilities.inlayHintProvider then
-        vim.lsp.inlay_hint.enable(true, { bufnr = bufnr })
       end
     end
 

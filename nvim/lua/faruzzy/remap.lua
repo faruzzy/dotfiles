@@ -39,11 +39,6 @@ vim.keymap.set('n', '[d', vim.diagnostic.goto_prev, { desc = 'Previous Diagnosti
 vim.keymap.set('n', ']d', vim.diagnostic.goto_next, { desc = 'Next Diagnostic' })
 vim.keymap.set('n', '<Leader>e', vim.diagnostic.open_float, { desc = 'Open Diagnostic Float' })
 
--- LSP actions
-vim.keymap.set('n', 'gd', vim.lsp.buf.definition, { desc = 'LSP Go to Definition' })
-vim.keymap.set('n', '<Leader>rn', vim.lsp.buf.rename, { desc = 'Buffer Rename' })
-vim.keymap.set('n', '<Leader>ca', vim.lsp.buf.code_action, { desc = 'Code Action' })
-
 -- Diff management
 vim.keymap.set('n', '<leader>gl', '<cmd>diffget //2<cr>', opts) -- Get left diff
 vim.keymap.set('n', '<leader>gr', '<cmd>diffget //3<cr>', opts) -- Get right diff
