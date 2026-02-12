@@ -10,14 +10,11 @@ return {
       topdelete = { text = '‾' },
       changedelete = { text = '~' },
     },
+    preview_config = {
+      border = 'single',
+    },
     on_attach = function(bufnr)
-      require('gitsigns').setup({
-        preview_config = {
-          border = 'single',
-        },
-      })
-
-      local gs = package.loaded.gitsigns
+      local gs = require('gitsigns')
 
       local function map(mode, l, r, opts)
         opts = opts or {}
