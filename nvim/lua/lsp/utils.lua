@@ -29,7 +29,7 @@ function M.setup_auto_close_tag(client, bufnr, method)
           vim.tbl_extend('force', vim.lsp.util.make_position_params(0, client.offset_encoding), { kind = 'autoClose' }),
           function(_, result)
             if result then
-              require('utils').snippet_expand(result)
+              vim.snippet.expand(result)
             end
           end,
           bufnr

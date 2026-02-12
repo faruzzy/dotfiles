@@ -19,14 +19,7 @@ return {
       },
       server = {
         on_attach = function(client, bufnr)
-          -- Only use Neovim's built-in inlay hints
-          if vim.lsp.inlay_hint and client.supports_method('textDocument/inlayHint') then
-            vim.lsp.inlay_hint.enable(false, { bufnr = bufnr })
-          end
-
-          local opts = { buffer = bufnr }
-          vim.keymap.set('n', 'gd', vim.lsp.buf.definition, opts)
-          vim.keymap.set('n', 'K', vim.lsp.buf.hover, opts)
+          require('lsp.on_attach')(client, bufnr)
         end,
         settings = {
           ['rust-analyzer'] = {
