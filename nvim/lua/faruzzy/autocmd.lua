@@ -146,8 +146,9 @@ augroup('lsp_hover_border', {
     'LspAttach',
     callback = function(args)
       local client = vim.lsp.get_client_by_id(args.data.client_id)
-      if client then
-        -- Override hover handler with border
+      -- Skip for filetypes where better-type-hover handles K
+      local ft = vim.bo[args.buf].filetype
+      if client and not vim.tbl_contains({ 'typescript', 'typescriptreact' }, ft) then
         vim.keymap.set('n', 'K', function()
           vim.lsp.buf.hover({ border = 'rounded' })
         end, { buffer = args.buf, desc = 'LSP Hover Documentation' })
@@ -173,33 +174,6 @@ augroup('numbertoggle', {
     callback = function()
       if vim.o.number then
         vim.opt.relativenumber = false
-      end
-    end,
-  },
-})
-
--- Auto-format LSP-supported files on save
-augroup('lsp_format', {
-  {
-    'BufWritePre',
-    pattern = { '*.js', '*.ts', '*.jsx', '*.tsx', '*.lua', '*.py' },
-    callback = function(args)
-      if
-          vim.g.disable_autoformat
-          or not vim.bo.modifiable
-          or vim.bo.buftype ~= ''
-          or vim.fn.expand('%:p'):match('^fugitive://')
-      then
-        return
-      end
-      local bufnr = args.buf
-      local client = vim.lsp.get_clients({ bufnr = bufnr })[1]
-      if client and client.supports_method('textDocument/formatting') then
-        vim.lsp.buf.format({ bufnr = bufnr, async = false })
-      elseif vim.bo.filetype == 'javascript' or vim.bo.filetype == 'typescript' then
-        if vim.fn.exists(':EslintFixAll') == 1 then
-          vim.cmd.EslintFixAll()
-        end
       end
     end,
   },
