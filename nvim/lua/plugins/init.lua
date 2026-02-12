@@ -1,19 +1,6 @@
 -- stylua: ignore
 
 return {
-  -- === WEB DEVELOPMENT ===
-  {
-    'mattn/emmet-vim',
-    event = { 'BufRead *.html', 'BufRead *.css', 'BufRead *.js', 'BufRead *.jsx', 'BufRead *.ts', 'BufRead *.tsx', 'BufRead *.vue', 'BufRead *.svelte' },
-    desc = 'Emmet abbreviation expansion for web development'
-  },
-
-  {
-    'MaxMEllon/vim-jsx-pretty',
-    ft = { 'javascript', 'typescript', 'jsx', 'tsx' },
-    desc = 'React syntax highlighting and indenting'
-  },
-
   -- === NAVIGATION & EDITING ===
   {
     'farmergreg/vim-lastplace',
@@ -22,12 +9,6 @@ return {
   },
 
   { 'lewis6991/spaceless.nvim' },
-
-  {
-    'norcalli/nvim-colorizer.lua',
-    event = 'BufReadPost',
-    desc = 'Color highlighter for CSS/hex colors'
-  },
 
   {
     "andythigpen/nvim-coverage",
