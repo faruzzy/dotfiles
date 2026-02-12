@@ -141,18 +141,14 @@ end, { silent = true, desc = 'Google Search' })
 vim.keymap.set('n', '<leader>!', function()
   goog(vim.fn.expand('<cWORD>'), true)
 end, { silent = true, desc = 'Google Lucky Search' })
-vim.keymap.set(
-  'x',
-  '<leader>?',
-  [[:<C-u>lua goog(vim.fn.getreg('g'), false)<CR>gv]],
-  { silent = true, desc = 'Google Search Selection' }
-)
-vim.keymap.set(
-  'x',
-  '<leader>!',
-  [[:<C-u>lua goog(vim.fn.getreg('g'), true)<CR>gv]],
-  { silent = true, desc = 'Google Lucky Search Selection' }
-)
+vim.keymap.set('x', '<leader>?', function()
+  vim.cmd('noautocmd normal! "gy')
+  goog(vim.fn.getreg('g'), false)
+end, { silent = true, desc = 'Google Search Selection' })
+vim.keymap.set('x', '<leader>!', function()
+  vim.cmd('noautocmd normal! "gy')
+  goog(vim.fn.getreg('g'), true)
+end, { silent = true, desc = 'Google Lucky Search Selection' })
 
 vim.keymap.set('n', '<leader>wf', function()
   local wins = vim.api.nvim_list_wins()
@@ -170,16 +166,20 @@ end, { desc = 'Jump to floating window' })
 local function compile_and_run()
   vim.cmd('w')
   local ft = vim.bo.filetype
+  local cmd
   if ft == 'c' then
-    vim.fn.system('gcc ' .. vim.fn.expand('%') .. ' -o ' .. vim.fn.expand('%:r') .. ' && ./' .. vim.fn.expand('%:r'))
+    cmd = 'gcc ' .. vim.fn.expand('%') .. ' -o ' .. vim.fn.expand('%:r') .. ' && ./' .. vim.fn.expand('%:r')
   elseif ft == 'java' then
-    vim.fn.system('javac ' .. vim.fn.expand('%') .. ' && java ' .. vim.fn.expand('%:r'))
+    cmd = 'javac ' .. vim.fn.expand('%') .. ' && java ' .. vim.fn.expand('%:r')
   elseif ft == 'javascript' then
-    vim.fn.system('node ' .. vim.fn.expand('%'))
+    cmd = 'node ' .. vim.fn.expand('%')
   elseif ft == 'sh' then
-    vim.fn.system('bash ' .. vim.fn.expand('%'))
+    cmd = 'bash ' .. vim.fn.expand('%')
   elseif ft == 'python' then
-    vim.fn.system('python ' .. vim.fn.shellescape(vim.fn.expand('%')))
+    cmd = 'python ' .. vim.fn.shellescape(vim.fn.expand('%'))
+  end
+  if cmd then
+    vim.cmd('!' .. cmd)
   end
 end
 vim.api.nvim_create_autocmd('FileType', {

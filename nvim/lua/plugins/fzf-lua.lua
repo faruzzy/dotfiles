@@ -56,99 +56,6 @@ local function smart_references_fzf()
   })
 end
 
--- Smart LSP definitions that prioritizes class over constructor
-local function smart_definitions()
-  local params = vim.lsp.util.make_position_params(0, 'utf-8')
-
-  vim.lsp.buf_request(0, 'textDocument/definition', params, function(err, result)
-    if err then
-      vim.notify('LSP definition error: ' .. err.message, vim.log.levels.ERROR)
-      return
-    end
-
-    if not result or vim.tbl_isempty(result) then
-      vim.notify('No definition found', vim.log.levels.WARN)
-      return
-    end
-
-    -- Normalize result (can be Location or Location[])
-    local locations = {}
-    if result.uri then
-      locations = { result }
-    else
-      locations = result
-    end
-
-    if #locations == 1 then
-      -- Jump directly if only one result
-      -- vim.lsp.util.jump_to_location(locations[1], 'utf-8')
-      vim.lsp.util.show_document(locations[1], 'utf-8', { focus = true })
-      return
-    end
-
-    -- Filter and prioritize definitions
-    local class_definitions = {}
-    local other_definitions = {}
-
-    for _, location in ipairs(locations) do
-      local uri = location.uri or location.targetUri
-      local file_path = vim.uri_to_fname(uri)
-      local line_num = (location.range or location.targetRange).start.line + 1
-
-      -- Read the line to check what kind of definition it is
-      local ok, lines = pcall(vim.fn.readfile, file_path, '', line_num)
-
-      if ok and lines[line_num] then
-        local line_content = lines[line_num]
-
-        -- Check if it's a class definition
-        if
-            line_content:match('%s*class%s+%w+')
-            or line_content:match('%s*export%s+class%s+%w+')
-            or line_content:match('%s*export%s+default%s+class%s+%w+')
-        then
-          table.insert(class_definitions, location)
-          -- Skip constructor definitions
-        elseif not line_content:match('%s*constructor%s*%(') then
-          table.insert(other_definitions, location)
-        end
-      else
-        -- If we can't read the file, include it in other_definitions
-        table.insert(other_definitions, location)
-      end
-    end
-
-    -- Prioritize class definitions
-    local final_locations = {}
-    if #class_definitions > 0 then
-      final_locations = class_definitions
-    else
-      final_locations = other_definitions
-    end
-
-    if #final_locations == 0 then
-      vim.notify('No class definitions found', vim.log.levels.WARN)
-      return
-    end
-
-    if #final_locations == 1 then
-      -- Jump directly if only one result after filtering
-      -- vim.lsp.util.jump_to_location(final_locations[1], 'utf-8')
-      vim.lsp.util.show_document(final_locations[1], 'utf-8', { focus = true })
-      return
-    end
-
-    -- Convert locations to quickfix format for fzf-lua
-    local qf_items = vim.lsp.util.locations_to_items(final_locations, 'utf-8')
-
-    -- Use fzf-lua's quickfix list interface
-    require('fzf-lua').quickfix({
-      list = qf_items,
-      prompt = 'Definitions (classes prioritized)> ',
-    })
-  end)
-end
-
 return {
   {
     'ibhagwan/fzf-lua',
@@ -200,13 +107,13 @@ return {
           ['ctrl-f'] = 'preview-page-down',
           ['ctrl-b'] = 'preview-page-up',
         },
-        lsp = {
-          code_actions = { previewer = 'codeaction_native' },
-          ignore_current_line = true,
-          includeDeclaration = false,
-        },
-        oldfiles = { cwd_only = true },
       },
+      lsp = {
+        code_actions = { previewer = 'codeaction_native' },
+        ignore_current_line = true,
+        includeDeclaration = false,
+      },
+      oldfiles = { cwd_only = true },
     },
     keys = {
       {
@@ -260,7 +167,7 @@ return {
       },
       {
         'D',
-        [[<cmd>lua require('fzf-lua').lsp_implementations({ jump1 = true })<CR>]],
+        [[<cmd>lua require('fzf-lua').lsp_typedefs({ jump1 = true })<CR>]],
         desc = 'Type Definition',
       },
 
