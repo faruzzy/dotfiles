@@ -157,6 +157,35 @@ augroup('lsp_hover_border', {
   },
 })
 
+-- Cursorline only in focused window
+augroup('cursorline_focus', {
+  {
+    'WinLeave',
+    callback = function()
+      vim.opt_local.cursorline = false
+    end,
+  },
+  {
+    'WinEnter',
+    callback = function()
+      if not vim.tbl_contains({ 'alpha', 'dashboard' }, vim.bo.filetype) then
+        vim.opt_local.cursorline = true
+      end
+    end,
+  },
+})
+
+-- Disable undo for temporary and commit files
+augroup('disable_undo', {
+  {
+    'BufWritePre',
+    pattern = { '/tmp/*', 'COMMIT_EDITMSG', 'MERGE_MSG', '*.tmp', '*.bak' },
+    callback = function()
+      vim.opt_local.undofile = false
+    end,
+  },
+})
+
 -- Toggle relative/absolute line numbers based on focus and mode
 augroup('numbertoggle', {
   {
