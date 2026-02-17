@@ -63,6 +63,13 @@ vim.keymap.set('n', '<Leader>ti', function()
   end
 end, { desc = 'Toggle Inlay Hints' })
 
+-- Toggle conceal (hide/show class attribute values)
+vim.keymap.set('n', '<Leader>tc', function()
+  local level = vim.opt_local.conceallevel:get()
+  vim.opt_local.conceallevel = level == 0 and 2 or 0
+  vim.notify('Conceal ' .. (level == 0 and 'enabled' or 'disabled'))
+end, { desc = 'Toggle Conceal' })
+
 -- Undotree toggle
 vim.keymap.set('n', '<leader>ut', vim.cmd.UndotreeToggle, opts) -- Toggle Undotree
 

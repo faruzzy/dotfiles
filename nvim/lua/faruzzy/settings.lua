@@ -47,4 +47,5 @@ opt.matchpairs:append('<:>') -- Add <> to match pairs
 opt.autoindent = true -- Auto-indent new lines
 opt.smartindent = true -- Smart indenting
 opt.guicursor = 'n-v-c:block,i-ci-ve:ver25,r-cr:hor20,o:hor50' -- Custom cursor shapes
+opt.conceallevel = 2 -- Hide concealable text (e.g. class attributes)
 opt.fillchars = { eob = ' ', vert = '▏' } -- Clean fill characters
