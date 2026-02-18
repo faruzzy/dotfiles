@@ -209,7 +209,11 @@ return {
                   path = 'path',
                   snippets = 'snip',
                 }
-                return source_map[ctx.source_name] or ctx.source_name
+                local name = source_map[ctx.source_name] or ctx.source_name
+                if ctx.item.client_name then
+                  name = name .. '[' .. ctx.item.client_name .. ']'
+                end
+                return name
               end,
             },
           },
@@ -219,7 +223,17 @@ return {
     fuzzy = {
       frecency = { enabled = true },
       use_proximity = true,
-      sorts = { 'score', 'kind', 'sort_text' },
+      sorts = {
+        function(a, b)
+          if (a.client_name == nil or b.client_name == nil) or (a.client_name == b.client_name) then
+            return
+          end
+          return b.client_name == 'emmet_language_server'
+        end,
+        'score',
+        'kind',
+        'sort_text',
+      },
     },
     keymap = {
       preset = 'default',
@@ -283,8 +297,11 @@ return {
           return { 'buffer' } -- Only buffer completions in comments
         end
 
-        return { 'lazydev', 'lsp', 'path', 'snippets', 'buffer' }
+        return { 'lsp', 'path', 'snippets', 'buffer' }
       end,
+      per_filetype = {
+        lua = { inherit_defaults = true, 'lazydev' },
+      },
       providers = {
         buffer = {
           name = 'Buffer',
