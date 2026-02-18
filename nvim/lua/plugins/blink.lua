@@ -338,6 +338,9 @@ return {
     },
   },
   config = function(_, opts)
-    require('blink.cmp').setup(opts)
+    local blink = require('blink.cmp')
+    blink.setup(opts)
+    blink.add_filetype_source('gitcommit', 'buffer')
+    blink.add_filetype_source('markdown', 'buffer')
   end,
 }
