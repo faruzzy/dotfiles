@@ -148,8 +148,8 @@ return {
           padding = 1,
           gap = 3,
           columns = {
-            { 'kind_icon',  gap = 1 },
-            { 'label',      'label_description', gap = 1 },
+            { 'kind_icon', gap = 1 },
+            { 'label', 'label_description', gap = 1 },
             { 'source_name' },
           },
           components = {
@@ -307,7 +307,6 @@ return {
           name = 'Buffer',
           max_items = 4,
           score_offset = -2,
-          min_keyword_length = 3,
           opts = {
             get_bufnrs = function()
               -- Only search visible buffers instead of all buffers
