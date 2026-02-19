@@ -33,10 +33,10 @@ augroup('jsdoc_comment_continuation', {
             -- Insert the JSDoc structure
             vim.api.nvim_buf_set_lines(0, row, row, false, {
               indent .. ' * ',
-              indent .. ' */'
+              indent .. ' */',
             })
             -- Position cursor at the end of the first inserted line
-            vim.api.nvim_win_set_cursor(0, {row + 1, #indent + 3})
+            vim.api.nvim_win_set_cursor(0, { row + 1, #indent + 3 })
           end)
           return ''
         end
@@ -102,9 +102,9 @@ augroup('document_highlight_attach', {
       local bufnr = args.buf
       local client = vim.lsp.get_client_by_id(args.data.client_id)
       if
-          not client
-          or not client.supports_method('textDocument/documentHighlight')
-          or vim.fn.expand('%:p'):match('^fugitive://')
+        not client
+        or not client.supports_method('textDocument/documentHighlight')
+        or vim.fn.expand('%:p'):match('^fugitive://')
       then
         return
       end
@@ -114,7 +114,10 @@ augroup('document_highlight_attach', {
           { 'CursorHold', 'CursorHoldI' },
           callback = function()
             vim.schedule(function()
-              pcall(vim.lsp.buf.document_highlight, bufnr)
+              local clients = vim.lsp.get_clients({ bufnr = bufnr, method = 'textDocument/documentHighlight' })
+              if #clients > 0 then
+                pcall(vim.lsp.buf.document_highlight)
+              end
             end)
           end,
           buffer = bufnr,
@@ -122,7 +125,7 @@ augroup('document_highlight_attach', {
         {
           { 'CursorMoved', 'InsertEnter', 'BufLeave' },
           callback = function()
-            pcall(vim.lsp.buf.clear_references, bufnr)
+            pcall(vim.lsp.buf.clear_references)
           end,
           buffer = bufnr,
         },
@@ -130,7 +133,7 @@ augroup('document_highlight_attach', {
           'LspDetach',
           callback = function(detach_args)
             if detach_args.buf == bufnr then
-              pcall(vim.lsp.buf.clear_references, bufnr)
+              pcall(vim.lsp.buf.clear_references)
               pcall(vim.api.nvim_del_augroup_by_name, 'document_highlight_' .. bufnr)
             end
           end,
@@ -217,7 +220,7 @@ augroup('fugitive_quit', {
       vim.schedule(function()
         vim.cmd('silent! bdelete!')
         local bufnr = vim.api.nvim_get_current_buf()
-        pcall(vim.lsp.buf.clear_references, bufnr)
+        pcall(vim.lsp.buf.clear_references)
         pcall(vim.api.nvim_del_augroup_by_name, 'document_highlight_' .. bufnr)
       end)
     end,
