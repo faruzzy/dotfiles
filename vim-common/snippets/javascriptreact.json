@@ -1,4 +1,28 @@
 {
+  "Use Effect": {
+    "prefix": "ue",
+    "body": [
+      "useEffect(() => {",
+      "\t${1}",
+      "}, [${2}]);"
+    ]
+  },
+  "Use Callback": {
+    "prefix": "uc",
+    "body": [
+      "const ${1} = useCallback((${2}) => {",
+      "\t${3}",
+      "}, [${4}]);"
+    ]
+  },
+  "Use Memo": {
+    "prefix": "um",
+    "body": [
+      "const ${1} = useMemo(() => {",
+      "\t${2}",
+      "}, [${3}]);"
+    ]
+  },
   "React Function Component": {
     "prefix": "rfc",
     "body": [
@@ -21,6 +45,26 @@
       ");",
       "",
       "export default $1;"
+    ]
+  },
+  "React Hook Component": {
+    "prefix": "rhc",
+    "body": [
+      "export const ${1:$TM_FILENAME_BASE} = () => {",
+      "\treturn (",
+      "\t\t${2:<div />}",
+      "\t);",
+      "}"
+    ]
+  },
+  "React Hook Component with Props": {
+    "prefix": "rhcp",
+    "body": [
+      "export const ${1:$TM_FILENAME_BASE} = (${2:props}) => {",
+      "\treturn (",
+      "\t\t${3:<div />}",
+      "\t);",
+      "}"
     ]
   },
   "Enzyme Test Setup": {
