@@ -17,10 +17,6 @@
       {
         "language": ["typescript", "typescriptreact"],
         "path": "./snippets/typescript.json"
-      },
-      {
-        "language": "cs",
-        "path": "./snippets/unity.json"
       }
     ]
   }
