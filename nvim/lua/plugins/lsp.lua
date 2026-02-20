@@ -77,6 +77,18 @@ return {
       },
     })
 
+    -- Apply lua_ls settings via vim.lsp.config so they merge with lazydev
+    local lua_ls_server = servers['lua_ls']
+    if lua_ls_server and lua_ls_server.config then
+      local lua_ls_config = lua_ls_server.config({
+        capabilities = require('lsp.capabilities')(),
+        on_attach = require('lsp.on_attach'),
+      })
+      vim.lsp.config('lua_ls', {
+        settings = lua_ls_config.settings,
+      })
+    end
+
     -- Manually setup jsonls (handlers don't run for already-installed servers)
     local capabilities = require('lsp.capabilities')()
     local on_attach = require('lsp.on_attach')
