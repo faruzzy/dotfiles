@@ -3,7 +3,7 @@ return {
   'levouh/tint.nvim',
   opts = function()
     return {
-      tint = vim.o.background == 'dark' and -45 or 60,
+      tint = vim.o.background == 'dark' and -65 or 60,
       saturation = 0.6,
       highlight_ignore_patterns = {
         '@comment',
