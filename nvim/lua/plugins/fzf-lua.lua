@@ -8,14 +8,15 @@ vim.api.nvim_create_autocmd('BufWinLeave', {
 })
 
 local function file_switch_or_edit(selected, opts)
-  if not selected or not selected[1] then return end
+  if not selected or not selected[1] then
+    return
+  end
 
   local stripped = require('fzf-lua.utils').strip_ansi_coloring(selected[1])
   local fullpath = vim.fn.fnamemodify(stripped:match('^%s*(.-)%s*$'), ':p')
   local bufnr = vim.fn.bufnr(fullpath)
 
   if bufnr ~= -1 then
-    -- Buffer is visible in a window, jump there
     local winid = vim.fn.bufwinid(bufnr)
     if winid ~= -1 then
       vim.api.nvim_set_current_win(winid)
@@ -35,7 +36,9 @@ local function file_switch_or_edit(selected, opts)
 end
 
 local function buf_switch_or_edit(selected, opts)
-  if not selected or not selected[1] then return end
+  if not selected or not selected[1] then
+    return
+  end
 
   local stripped = require('fzf-lua.utils').strip_ansi_coloring(selected[1])
   local bufnr = tonumber(stripped:match('%[(%d+)%]'))
@@ -105,10 +108,10 @@ local function smart_references_fzf()
           -- Skip import lines
           local line = item.text or ''
           if
-              not line:match('^%s*import%s')
-              and not line:match('^%s*export%s')
-              and not line:match('^%s*from%s')
-              and not line:match('^%s*type%s.*=')
+            not line:match('^%s*import%s')
+            and not line:match('^%s*export%s')
+            and not line:match('^%s*from%s')
+            and not line:match('^%s*type%s.*=')
           then
             table.insert(filtered_items, item)
           end
@@ -227,11 +230,11 @@ return {
         end,
         desc = 'buffers',
       },
-      { '<C-g>',        [[<cmd>lua require('fzf-lua').resume()<CR>]],       desc = 'resume' },
-      { '<leader>of',   [[<cmd>lua require('fzf-lua').oldfiles()<CR>]],     desc = '[O]ld [F]iles' },
+      { '<C-g>', [[<cmd>lua require('fzf-lua').resume()<CR>]], desc = 'resume' },
+      { '<leader>of', [[<cmd>lua require('fzf-lua').oldfiles()<CR>]], desc = '[O]ld [F]iles' },
 
       --- Search
-      { '<leader>/',    [[<cmd>lua require('fzf-lua').lgrep_curbuf()<CR>]], desc = 'Search current buffer Lines' },
+      { '<leader>/', [[<cmd>lua require('fzf-lua').lgrep_curbuf()<CR>]], desc = 'Search current buffer Lines' },
       {
         '<leader>fw',
         [[<cmd>lua require('fzf-lua').grep_cword()<CR>]],
@@ -246,7 +249,7 @@ return {
       --- Code Navigation
       { '<Leader>dw', [[<cmd>lua require('fzf-lua').diagnostics_workspace()<CR>]], desc = 'Workspace diagnostics' },
       { '<Leader>ws', [[<cmd>lua require('fzf-lua').lsp_workspace_symbols()<CR>]], desc = 'Workspace Symbols' },
-      { '<Leader>ds', [[<cmd>lua require('fzf-lua').lsp_document_symbols()<CR>]],  desc = 'Document Symbols' },
+      { '<Leader>ds', [[<cmd>lua require('fzf-lua').lsp_document_symbols()<CR>]], desc = 'Document Symbols' },
       {
         'gr',
         smart_references_fzf,
@@ -269,23 +272,23 @@ return {
       },
 
       --- Git
-      { '<Leader>gx', [[<cmd>lua require('fzf-lua').git_commits()<CR>]],  desc = 'git commits' },
+      { '<Leader>gx', [[<cmd>lua require('fzf-lua').git_commits()<CR>]], desc = 'git commits' },
       { '<Leader>gX', [[<cmd>lua require('fzf-lua').git_bcommits()<CR>]], desc = 'git buffer commits' },
-      { '<Leader>gS', [[<cmd>lua require('fzf-lua').git_status()<CR>]],   desc = 'git status' },
+      { '<Leader>gS', [[<cmd>lua require('fzf-lua').git_status()<CR>]], desc = 'git status' },
       { '<Leader>gB', [[<cmd>lua require('fzf-lua').git_branches()<CR>]], desc = 'git branches' },
 
       --- Misc
-      { '<Leader>k',  [[<cmd>lua require('fzf-lua').keymaps()<CR>]],      desc = 'keymaps' },
-      { '<Leader>m',  [[<cmd>lua require('fzf-lua').marks()<CR>]],        desc = 'marks' },
+      { '<Leader>k', [[<cmd>lua require('fzf-lua').keymaps()<CR>]], desc = 'keymaps' },
+      { '<Leader>m', [[<cmd>lua require('fzf-lua').marks()<CR>]], desc = 'marks' },
       {
         '<Leader>hi',
         [[<cmd>lua require('fzf-lua').command_history()<CR>]],
         desc = 'command history',
       },
       { [[<Leader>"]], [[<cmd>lua require('fzf-lua').registers()<CR>]], desc = 'registers' },
-      { '<Leader>:',   [[<cmd>lua require('fzf-lua').commands()<CR>]],  desc = 'vim commands' },
-      { '<leader>sh',  [[<cmd>lua require('fzf-lua').help_tags()<CR>]], desc = 'help tags' },
-      { '<leader>au',  [[<cmd>lua require('fzf-lua').autocmds()<CR>]],  desc = 'autocmds' },
+      { '<Leader>:', [[<cmd>lua require('fzf-lua').commands()<CR>]], desc = 'vim commands' },
+      { '<leader>sh', [[<cmd>lua require('fzf-lua').help_tags()<CR>]], desc = 'help tags' },
+      { '<leader>au', [[<cmd>lua require('fzf-lua').autocmds()<CR>]], desc = 'autocmds' },
     },
   },
 }
