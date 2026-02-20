@@ -1,3 +1,46 @@
+-- Prepend NVM node to PATH so Neovim uses it instead of Homebrew's node
+do
+  local nvm_dir = vim.env.NVM_DIR or vim.fn.expand('~/.nvm')
+  local node_dir = nvm_dir .. '/versions/node'
+  if vim.uv.fs_stat(node_dir) then
+    local version_hint
+    -- Check for project-level .nvmrc or .node-version first
+    for _, f in ipairs({ '.nvmrc', '.node-version' }) do
+      if vim.uv.fs_stat(f) then
+        version_hint = vim.trim(vim.fn.readfile(f)[1] or '')
+        break
+      end
+    end
+    -- Fall back to NVM default alias
+    if not version_hint then
+      local default_file = nvm_dir .. '/alias/default'
+      if vim.uv.fs_stat(default_file) then
+        version_hint = vim.trim(vim.fn.readfile(default_file)[1] or '')
+      end
+    end
+    -- Try matching the hint as a version number
+    local node_path
+    if version_hint and version_hint:match('^%d') then
+      local matches = vim.fn.glob(node_dir .. '/v' .. version_hint .. '*', false, true)
+      if #matches > 0 then
+        table.sort(matches)
+        node_path = matches[#matches] .. '/bin'
+      end
+    end
+    -- Fallback: use the latest installed version
+    if not node_path then
+      local all = vim.fn.glob(node_dir .. '/v*', false, true)
+      if #all > 0 then
+        table.sort(all)
+        node_path = all[#all] .. '/bin'
+      end
+    end
+    if node_path then
+      vim.env.PATH = node_path .. ':' .. vim.env.PATH
+    end
+  end
+end
+
 require('config_variables')
 require('faruzzy.settings')
 require('faruzzy.remap')
