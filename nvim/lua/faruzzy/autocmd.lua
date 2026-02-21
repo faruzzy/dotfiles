@@ -53,9 +53,7 @@ augroup('YankHighlight', {
   {
     'TextYankPost',
     callback = function()
-      if vim.bo.buftype == '' then
-        vim.highlight.on_yank({ higroup = 'IncSearch', timeout = 200 })
-      end
+      if vim.bo.buftype == '' then vim.highlight.on_yank({ higroup = 'IncSearch', timeout = 200 }) end
     end,
     pattern = '*',
   },
@@ -115,18 +113,14 @@ augroup('document_highlight_attach', {
           callback = function()
             vim.schedule(function()
               local clients = vim.lsp.get_clients({ bufnr = bufnr, method = 'textDocument/documentHighlight' })
-              if #clients > 0 then
-                pcall(vim.lsp.buf.document_highlight)
-              end
+              if #clients > 0 then pcall(vim.lsp.buf.document_highlight) end
             end)
           end,
           buffer = bufnr,
         },
         {
           { 'CursorMoved', 'InsertEnter', 'BufLeave' },
-          callback = function()
-            pcall(vim.lsp.buf.clear_references)
-          end,
+          callback = function() pcall(vim.lsp.buf.clear_references) end,
           buffer = bufnr,
         },
         {
@@ -152,9 +146,12 @@ augroup('lsp_hover_border', {
       -- Skip for filetypes where better-type-hover handles K
       local ft = vim.bo[args.buf].filetype
       if client and not vim.tbl_contains({ 'typescript', 'typescriptreact' }, ft) then
-        vim.keymap.set('n', 'K', function()
-          vim.lsp.buf.hover({ border = 'rounded' })
-        end, { buffer = args.buf, desc = 'LSP Hover Documentation' })
+        vim.keymap.set(
+          'n',
+          'K',
+          function() vim.lsp.buf.hover({ border = 'rounded' }) end,
+          { buffer = args.buf, desc = 'LSP Hover Documentation' }
+        )
       end
     end,
   },
@@ -164,16 +161,12 @@ augroup('lsp_hover_border', {
 augroup('cursorline_focus', {
   {
     'WinLeave',
-    callback = function()
-      vim.opt_local.cursorline = false
-    end,
+    callback = function() vim.opt_local.cursorline = false end,
   },
   {
     'WinEnter',
     callback = function()
-      if not vim.tbl_contains({ 'alpha', 'dashboard' }, vim.bo.filetype) then
-        vim.opt_local.cursorline = true
-      end
+      if not vim.tbl_contains({ 'alpha', 'dashboard' }, vim.bo.filetype) then vim.opt_local.cursorline = true end
     end,
   },
 })
@@ -183,9 +176,7 @@ augroup('disable_undo', {
   {
     'BufWritePre',
     pattern = { '/tmp/*', 'COMMIT_EDITMSG', 'MERGE_MSG', '*.tmp', '*.bak' },
-    callback = function()
-      vim.opt_local.undofile = false
-    end,
+    callback = function() vim.opt_local.undofile = false end,
   },
 })
 
@@ -204,9 +195,7 @@ augroup('numbertoggle', {
     { 'BufLeave', 'FocusLost', 'InsertEnter', 'CmdlineEnter', 'WinLeave' },
     pattern = '*',
     callback = function()
-      if vim.o.number then
-        vim.opt.relativenumber = false
-      end
+      if vim.o.number then vim.opt.relativenumber = false end
     end,
   },
 })

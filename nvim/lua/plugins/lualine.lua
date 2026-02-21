@@ -53,9 +53,7 @@ local opts = {
       {
         'tabs',
         mode = 0,
-        cond = function()
-          return vim.fn.tabpagenr('$') > 1
-        end,
+        cond = function() return vim.fn.tabpagenr('$') > 1 end,
         separator = { left = '', right = '' },
       },
       'mode',
@@ -114,9 +112,7 @@ return {
     'nvim-lualine/lualine.nvim',
     event = 'BufReadPost',
     opts = opts,
-    config = function(_, opts)
-      require('lualine').setup(opts)
-    end,
+    config = function(_, opts) require('lualine').setup(opts) end,
   },
   { 'edkolev/tmuxline.vim', cmd = 'Tmuxline' },
 }
