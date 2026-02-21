@@ -1,4 +1,5 @@
-local augroup = require('utils').augroup
+local utils = require('utils')
+local augroup = utils.augroup
 
 -- Prevent auto-commenting on Enter or o/O
 augroup('no_auto_comment', {
@@ -13,12 +14,13 @@ augroup('jsdoc_comment_continuation', {
   {
     'FileType',
     pattern = { 'javascript', 'javascriptreact', 'typescript', 'typescriptreact' },
-    callback = function()
+    callback = function(args)
+      local bmap = utils.buffer_map(args.buf)
       vim.opt_local.formatoptions:append('ro')
       vim.opt_local.comments = 'sO:* -,mO:*  ,exO:*/,s1:/*,mb:*,ex:*/,://'
 
       -- JSDoc auto-expansion on Enter after /**
-      vim.keymap.set('i', '<CR>', function()
+      bmap('i', '<CR>', function()
         local line = vim.api.nvim_get_current_line()
         local row = vim.api.nvim_win_get_cursor(0)[1]
         local col = vim.api.nvim_win_get_cursor(0)[2]
@@ -43,7 +45,7 @@ augroup('jsdoc_comment_continuation', {
 
         -- Otherwise use autopairs CR
         return require('nvim-autopairs').autopairs_cr()
-      end, { buffer = true, expr = true, replace_keycodes = false })
+      end, { expr = true, replace_keycodes = false })
     end,
   },
 })
@@ -142,16 +144,12 @@ augroup('lsp_hover_border', {
   {
     'LspAttach',
     callback = function(args)
+      local bmap = utils.buffer_map(args.buf)
       local client = vim.lsp.get_client_by_id(args.data.client_id)
       -- Skip for filetypes where better-type-hover handles K
       local ft = vim.bo[args.buf].filetype
       if client and not vim.tbl_contains({ 'typescript', 'typescriptreact' }, ft) then
-        vim.keymap.set(
-          'n',
-          'K',
-          function() vim.lsp.buf.hover({ border = 'rounded' }) end,
-          { buffer = args.buf, desc = 'LSP Hover Documentation' }
-        )
+        bmap('n', 'K', function() vim.lsp.buf.hover({ border = 'rounded' }) end, { desc = 'LSP Hover Documentation' })
       end
     end,
   },

@@ -1,53 +1,53 @@
-local opts = { silent = true, noremap = true }
+local map = require('utils').map
 
 -- Buffer navigation
-vim.keymap.set('n', ']b', vim.cmd.bnext, opts)    -- Next buffer
-vim.keymap.set('n', '[b', vim.cmd.bprev, opts)    -- Previous buffer
-vim.keymap.set('n', '<Tab>', '<cmd>b#<cr>', opts) -- Switch to last buffer
+map('n', ']b', vim.cmd.bnext, { desc = 'Next buffer' })
+map('n', '[b', vim.cmd.bprev, { desc = 'Previous buffer' })
+map('n', '<Tab>', '<cmd>b#<cr>', { desc = 'Switch to last buffer' })
 
 -- AutoSave toggle
-vim.api.nvim_set_keymap('n', '<leader>as', ':ASToggle<CR>', opts) -- Toggle AutoSave
+map('n', '<leader>as', '<cmd>ASToggle<cr>', { desc = 'Toggle AutoSave' })
 
 -- Line movement (handles wrap)
-vim.keymap.set('n', 'k', 'v:count == 0 ? \'gk\' : \'k\'', { expr = true, silent = true }) -- Move up with wrap
-vim.keymap.set('n', 'j', 'v:count == 0 ? \'gj\' : \'j\'', { expr = true, silent = true }) -- Move down with wrap
-vim.keymap.set('n', '<A-k>', '<CMD>move .-2<CR>', opts)                                   -- Move line up (NORMAL)
-vim.keymap.set('n', '<A-j>', '<CMD>move .+1<CR>', opts)                                   -- Move line down (NORMAL)
-vim.keymap.set('x', '<A-k>', ':move \'<-2<CR>gv=gv', opts)                                -- Move line up (VISUAL)
-vim.keymap.set('x', '<A-j>', ':move \'>+1<CR>gv=gv', opts)                                -- Move line down (VISUAL)
+map('n', 'k', "v:count == 0 ? 'gk' : 'k'", { expr = true, desc = 'Move up with wrap' })
+map('n', 'j', "v:count == 0 ? 'gj' : 'j'", { expr = true, desc = 'Move down with wrap' })
+map('n', '<A-k>', '<cmd>move .-2<cr>', { desc = 'Move line up' })
+map('n', '<A-j>', '<cmd>move .+1<cr>', { desc = 'Move line down' })
+map('x', '<A-k>', ":move '<-2<cr>gv=gv", { desc = 'Move selection up' })
+map('x', '<A-j>', ":move '>+1<cr>gv=gv", { desc = 'Move selection down' })
 
 -- Prevent space key movement
-vim.keymap.set({ 'n', 'v' }, '<Space>', '<Nop>', opts) -- Disable space navigation
+map({ 'n', 'v' }, '<Space>', '<Nop>')
 
 -- Insert mode navigation
-vim.keymap.set('i', '<c-h>', '<left>', opts)  -- Move left
-vim.keymap.set('i', '<c-l>', '<right>', opts) -- Move right
+map('i', '<c-h>', '<left>')
+map('i', '<c-l>', '<right>')
 
 -- Save and quit
-vim.keymap.set('n', '<Leader>x', ':x<CR>', opts)    -- Save and quit
-vim.keymap.set('n', '<Leader>X', ':wqa!<CR>', opts) -- Save all and quit forcefully
+map('n', '<Leader>x', '<cmd>x<cr>', { desc = 'Save and quit' })
+map('n', '<Leader>X', '<cmd>wqa!<cr>', { desc = 'Save all and quit forcefully' })
 
 -- Clear highlighting
-vim.keymap.set('n', '<Leader>n', ':noh<cr>', opts) -- Turn off search highlighting
+map('n', '<Leader>n', '<cmd>noh<cr>', { desc = 'Turn off search highlighting' })
 
 -- Window management
-vim.keymap.set('n', '<Leader>o', ':only<cr>', opts)    -- Show only current buffer
-vim.keymap.set('n', '<Leader>O', ':!open .<cr>', opts) -- Open current directory in Finder
+map('n', '<Leader>o', '<cmd>only<cr>', { desc = 'Show only current buffer' })
+map('n', '<Leader>O', '<cmd>!open .<cr>', { desc = 'Open current directory in Finder' })
 
 -- Diagnostic navigation
-vim.keymap.set('n', '[d', vim.diagnostic.goto_prev, { desc = 'Previous Diagnostic' })
-vim.keymap.set('n', ']d', vim.diagnostic.goto_next, { desc = 'Next Diagnostic' })
-vim.keymap.set('n', '<Leader>e', vim.diagnostic.open_float, { desc = 'Open Diagnostic Float' })
+map('n', '[d', vim.diagnostic.goto_prev, { desc = 'Previous Diagnostic' })
+map('n', ']d', vim.diagnostic.goto_next, { desc = 'Next Diagnostic' })
+map('n', '<Leader>e', vim.diagnostic.open_float, { desc = 'Open Diagnostic Float' })
 
 -- Diff management
-vim.keymap.set('n', '<leader>gl', '<cmd>diffget //2<cr>', opts) -- Get left diff
-vim.keymap.set('n', '<leader>gr', '<cmd>diffget //3<cr>', opts) -- Get right diff
+map('n', '<leader>gl', '<cmd>diffget //2<cr>', { desc = 'Get left diff' })
+map('n', '<leader>gr', '<cmd>diffget //3<cr>', { desc = 'Get right diff' })
 
 -- Run last command easily
-vim.keymap.set({ 'n', 'v' }, '<CR>', ':<up>', { silent = false, noremap = true })
+map({ 'n', 'v' }, '<CR>', ':<up>', { silent = false, desc = 'Run last command' })
 
 -- Toggle inlay hints
-vim.keymap.set('n', '<Leader>ti', function()
+map('n', '<Leader>ti', function()
   local bufnr = 0
   local clients = vim.lsp.get_clients({ bufnr = bufnr })
   if #clients == 0 then
@@ -64,14 +64,14 @@ vim.keymap.set('n', '<Leader>ti', function()
 end, { desc = 'Toggle Inlay Hints' })
 
 -- Toggle conceal (hide/show class attribute values)
-vim.keymap.set('n', '<Leader>tc', function()
+map('n', '<Leader>tc', function()
   local level = vim.opt_local.conceallevel:get()
   vim.opt_local.conceallevel = level == 0 and 2 or 0
   vim.notify('Conceal ' .. (level == 0 and 'enabled' or 'disabled'))
 end, { desc = 'Toggle Conceal' })
 
 -- Undotree toggle
-vim.keymap.set('n', '<leader>ut', vim.cmd.UndotreeToggle, opts) -- Toggle Undotree
+map('n', '<leader>ut', '<cmd>UndotreeToggle<cr>', { desc = 'Toggle Undotree' })
 
 vim.api.nvim_create_user_command('Stash', function(opts)
   vim.cmd(string.format('Git stash push -m "%s"', opts.args))
@@ -128,9 +128,57 @@ function CloseAllButCurrent()
   vim.cmd('only')
 end
 
-vim.keymap.set('n', '<Leader>aq', function()
+map('n', '<Leader>aq', function()
   CloseAllButCurrent()
-end, { silent = true, desc = 'Close all other buffers except current one.' })
+end, { desc = 'Close all other buffers' })
+
+-- Open GitHub Pull Request for current branch
+local function github_pull_request()
+  local file_dir = vim.fn.expand('%:p:h')
+  if file_dir == '' then
+    vim.notify('Current buffer has no file path', vim.log.levels.ERROR)
+    return
+  end
+
+  local remotes = vim.fn.system('git -C ' .. vim.fn.shellescape(file_dir) .. ' remote -v')
+  if vim.v.shell_error ~= 0 then
+    vim.notify('Not a git repository', vim.log.levels.ERROR)
+    return
+  end
+
+  local branch = vim.fn.system('git -C ' .. vim.fn.shellescape(file_dir) .. ' symbolic-ref --short -q HEAD'):gsub('[\r\n]', '')
+  if vim.v.shell_error ~= 0 then
+    vim.notify('Could not determine current branch', vim.log.levels.ERROR)
+    return
+  end
+
+  local domain, repo
+  if remotes:find('https') then
+    domain = remotes:match('https://([^/]+)/')
+    repo = remotes:match('https://[^/]+/([^%s]+)')
+  else
+    domain = remotes:match('@([^:/]+)[:/]')
+    repo = remotes:match('@[^:/]+[:/]([^%s]+)')
+  end
+
+  if repo then
+    repo = repo:gsub('%.git$', '')
+  end
+
+  if not domain or not repo or domain == '' or repo == '' then
+    vim.notify('Could not determine Git repo name for current file!', vim.log.levels.ERROR)
+    return
+  end
+
+  local url = ('https://%s/%s/compare/%s?expand=1'):format(domain, repo, branch)
+  vim.fn.system('open ' .. vim.fn.shellescape(url))
+  if vim.v.shell_error ~= 0 then
+    vim.notify('Failed to open URL: ' .. url, vim.log.levels.ERROR)
+  end
+end
+
+vim.api.nvim_create_user_command('PR', github_pull_request, {})
+map('n', '<leader>pr', github_pull_request, { desc = 'Open GitHub Pull Request' })
 
 -- Google search
 local function goog(pat, lucky)
@@ -140,24 +188,27 @@ local function goog(pat, lucky)
       end)
       .. '"'
   local url = 'https://www.google.com/search?' .. (lucky and 'btnI&' or '') .. 'q=' .. q
-  vim.fn.system('open "' .. url .. '"')
+  vim.fn.system('open ' .. vim.fn.shellescape(url))
+  if vim.v.shell_error ~= 0 then
+    vim.notify('Failed to open Google Search', vim.log.levels.ERROR)
+  end
 end
-vim.keymap.set('n', '<leader>?', function()
+map('n', '<leader>?', function()
   goog(vim.fn.expand('<cWORD>'), false)
-end, { silent = true, desc = 'Google Search' })
-vim.keymap.set('n', '<leader>!', function()
+end, { desc = 'Google Search' })
+map('n', '<leader>!', function()
   goog(vim.fn.expand('<cWORD>'), true)
-end, { silent = true, desc = 'Google Lucky Search' })
-vim.keymap.set('x', '<leader>?', function()
+end, { desc = 'Google Lucky Search' })
+map('x', '<leader>?', function()
   vim.cmd('noautocmd normal! "gy')
   goog(vim.fn.getreg('g'), false)
-end, { silent = true, desc = 'Google Search Selection' })
-vim.keymap.set('x', '<leader>!', function()
+end, { desc = 'Google Search Selection' })
+map('x', '<leader>!', function()
   vim.cmd('noautocmd normal! "gy')
   goog(vim.fn.getreg('g'), true)
-end, { silent = true, desc = 'Google Lucky Search Selection' })
+end, { desc = 'Google Lucky Search Selection' })
 
-vim.keymap.set('n', '<leader>wf', function()
+map('n', '<leader>wf', function()
   local wins = vim.api.nvim_list_wins()
   for _, win in ipairs(wins) do
     local config = vim.api.nvim_win_get_config(win)
@@ -171,7 +222,12 @@ end, { desc = 'Jump to floating window' })
 
 -- Compile and run
 local function compile_and_run()
-  vim.cmd('w')
+  local ok, err = pcall(vim.cmd, 'w')
+  if not ok then
+    vim.notify('Failed to save file: ' .. err, vim.log.levels.ERROR)
+    return
+  end
+
   local ft = vim.bo.filetype
   local cmd
   if ft == 'c' then
@@ -192,7 +248,7 @@ end
 vim.api.nvim_create_autocmd('FileType', {
   pattern = { 'c', 'java', 'javascript', 'typescript', 'sh', 'python', 'lua' },
   callback = function()
-    vim.keymap.set('n', '<leader>c', compile_and_run, { silent = true, buffer = true, desc = 'Compile and Run' })
+    map('n', '<leader>c', compile_and_run, { buffer = true, desc = 'Compile and Run' })
   end,
 })
 
@@ -217,13 +273,13 @@ end, {})
 vim.api.nvim_create_user_command('CopyAbsoluteFilepath', function()
   copy_to_clipboard('%:p')
 end, {})
-vim.keymap.set('n', '<leader>yfn', ':CopyFilename<CR>', { silent = true, desc = 'Copy Filename' })
-vim.keymap.set('x', '<leader>yfn', ':CopyFilename<CR>', { silent = true, desc = 'Copy Filename' })
-vim.keymap.set('n', '<leader>yp', ':CopyPath<CR>', { silent = true, desc = 'Copy Path' })
-vim.keymap.set('x', '<leader>yp', ':CopyPath<CR>', { silent = true, desc = 'Copy Path' })
-vim.keymap.set('n', '<leader>yap', ':CopyAbsolutePath<CR>', { silent = true, desc = 'Copy Absolute Path' })
-vim.keymap.set('x', '<leader>yap', ':CopyAbsolutePath<CR>', { silent = true, desc = 'Copy Absolute Path' })
-vim.keymap.set('n', '<leader>yfp', ':CopyFilepath<CR>', { silent = true, desc = 'Copy Filepath' })
-vim.keymap.set('x', '<leader>yfp', ':CopyFilepath<CR>', { silent = true, desc = 'Copy Filepath' })
-vim.keymap.set('n', '<leader>yafp', ':CopyAbsoluteFilepath<CR>', { silent = true, desc = 'Copy Absolute Filepath' })
-vim.keymap.set('x', '<leader>yafp', ':CopyAbsoluteFilepath<CR>', { silent = true, desc = 'Copy Absolute Filepath' })
+map('n', '<leader>yfn', '<cmd>CopyFilename<cr>', { desc = 'Copy Filename' })
+map('x', '<leader>yfn', '<cmd>CopyFilename<cr>', { desc = 'Copy Filename' })
+map('n', '<leader>yp', '<cmd>CopyPath<cr>', { desc = 'Copy Path' })
+map('x', '<leader>yp', '<cmd>CopyPath<cr>', { desc = 'Copy Path' })
+map('n', '<leader>yap', '<cmd>CopyAbsolutePath<cr>', { desc = 'Copy Absolute Path' })
+map('x', '<leader>yap', '<cmd>CopyAbsolutePath<cr>', { desc = 'Copy Absolute Path' })
+map('n', '<leader>yfp', '<cmd>CopyFilepath<cr>', { desc = 'Copy Filepath' })
+map('x', '<leader>yfp', '<cmd>CopyFilepath<cr>', { desc = 'Copy Filepath' })
+map('n', '<leader>yafp', '<cmd>CopyAbsoluteFilepath<cr>', { desc = 'Copy Absolute Filepath' })
+map('x', '<leader>yafp', '<cmd>CopyAbsoluteFilepath<cr>', { desc = 'Copy Absolute Filepath' })
