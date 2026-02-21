@@ -55,7 +55,7 @@ return {
         function(server_name)
           -- Only setup servers explicitly listed in lsp/servers.lua
           local server = servers[server_name]
-          if not server or server_name == 'jsonls' or server_name == 'rust_analyzer' then
+          if not server or server_name == 'rust_analyzer' then
             return
           end
 
@@ -88,43 +88,5 @@ return {
         settings = lua_ls_config.settings,
       })
     end
-
-    -- Manually setup jsonls (handlers don't run for already-installed servers)
-    local capabilities = require('lsp.capabilities')()
-    local on_attach = require('lsp.on_attach')
-    local ok, schemastore = pcall(require, 'schemastore')
-
-    vim.lsp.config('jsonls', {
-      cmd = { 'vscode-json-language-server', '--stdio' },
-      filetypes = { 'json', 'jsonc' },
-      root_markers = { '.git' },
-      single_file_support = true,
-      capabilities = capabilities,
-      on_attach = on_attach,
-      settings = {
-        json = {
-          schemas = ok and schemastore.json.schemas() or {
-            -- Fallback schemas if schemastore not available
-            {
-              fileMatch = { 'package.json' },
-              url = 'https://json.schemastore.org/package.json',
-            },
-            {
-              fileMatch = { 'tsconfig*.json' },
-              url = 'https://json.schemastore.org/tsconfig.json',
-            },
-            {
-              fileMatch = { 'jsconfig*.json' },
-              url = 'https://json.schemastore.org/jsconfig.json',
-            },
-          },
-          validate = { enable = true },
-          format = { enable = true },
-        },
-      },
-    })
-
-    -- Enable jsonls for json/jsonc files
-    vim.lsp.enable('jsonls')
   end,
 }
