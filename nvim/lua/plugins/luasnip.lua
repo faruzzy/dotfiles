@@ -28,6 +28,8 @@ return {
     local insert_node = luasnip.insert_node
     local text_node = luasnip.text_node
     local fmt = require('luasnip.extras.fmt').fmt
+    local function_node = luasnip.function_node
+    local rep = require('luasnip.extras').rep
 
     require('luasnip.loaders.from_vscode').load({
       paths = { '~/github/dotfiles/vim-common/' },
@@ -145,6 +147,44 @@ useEffect(() => {{
           type = insert_node(3, 'type'),
           init = insert_node(4),
         })
+      ),
+      snippet(
+        { trig = 'comp', name = 'React Component', dscr = 'Component with treesitter-powered prop destructuring' },
+        fmt(
+          [[
+{}interface {}Props {{
+  {}
+}}
+{}function {}({{{}}}: {}Props) {{
+  {}
+}}
+]],
+          {
+            insert_node(1, 'export '),
+            -- Initialize component name from filename
+            dynamic_node(2, function(_, snip)
+              return snippet_node(nil, {
+                insert_node(1, vim.fn.substitute(snip.env.TM_FILENAME, '\\..*', '', 'g')),
+              })
+            end, { 1 }),
+            insert_node(3, '// props'),
+            rep(1),
+            rep(2),
+            -- Parse interface props text and auto-fill destructured params
+            function_node(function(args)
+              local prop_names = {}
+              for _, line in ipairs(args[1]) do
+                local prop_name = line:match('^%s*([%w_]+)%s*[?]?%s*:')
+                if prop_name then
+                  prop_names[#prop_names + 1] = prop_name
+                end
+              end
+              return table.concat(prop_names, ', ')
+            end, { 3 }),
+            rep(2),
+            insert_node(4, 'return <div></div>'),
+          }
+        )
       ),
     })
   end,
