@@ -34,7 +34,7 @@ return {
     })
 
     require('luasnip.loaders.from_snipmate').load({
-      paths = { '~/github/dotfiles/config/nvim/snippets/' },
+      paths = { '~/github/dotfiles/nvim/snippets/' },
     })
 
     luasnip.config.set_config({
