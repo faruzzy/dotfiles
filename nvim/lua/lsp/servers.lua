@@ -18,7 +18,7 @@ local servers = {
   -- ["typescript-tools"] = require("lsp.servers.typescript-tools"),
   rust_analyzer = {},
   -- jsonls is manually configured in lua/plugins/lsp.lua
-  jsonls = {},
+  jsonls = require('lsp.servers.jsonls'),
   lua_ls = require('lsp.servers.lua_ls'),
   cssls = {},
   -- ts_ls = {}, -- Disabled: using typescript-tools instead
@@ -27,8 +27,8 @@ local servers = {
 }
 
 local supported_servers = {}
-if vim.g.supported_servers then
-  for _, server_name in ipairs(vim.g.supported_servers) do
+if MY_CONFIG and not vim.tbl_isempty(MY_CONFIG.supported_servers) then
+  for _, server_name in ipairs(MY_CONFIG.supported_servers) do
     if servers[server_name] then
       supported_servers[server_name] = servers[server_name]
     end

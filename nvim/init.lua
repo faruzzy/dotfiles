@@ -41,7 +41,7 @@ do
   end
 end
 
-require('config_variables')
+_G.MY_CONFIG = require('config_variables')
 require('faruzzy.settings')
 require('faruzzy.remap')
 require('faruzzy.autocmd')

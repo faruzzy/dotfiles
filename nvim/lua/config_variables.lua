@@ -15,7 +15,7 @@
 ---@field custom_gx_handlers GxHandler[]
 
 ---@class MyConfig
-MY_CONFIG = {
+local MY_CONFIG = {
   is_personal_machine = false,
   additional_servers = {},
   supported_servers = {},
@@ -25,3 +25,5 @@ MY_CONFIG = {
   border_style = 'rounded',
   custom_gx_handlers = {},
 }
+
+return MY_CONFIG
