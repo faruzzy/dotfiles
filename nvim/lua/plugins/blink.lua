@@ -46,12 +46,8 @@ local lspkind_icons = {
 
 -- Enhanced LSP completion context function
 local function get_lsp_completion_context(completion)
-  local ok, source_name = pcall(function()
-    return vim.lsp.get_client_by_id(completion.client_id).name
-  end)
-  if not ok then
-    return nil
-  end
+  local ok, source_name = pcall(function() return vim.lsp.get_client_by_id(completion.client_id).name end)
+  if not ok then return nil end
 
   if source_name == 'ts_ls' or source_name == 'typescript-tools' then
     return completion.detail
@@ -61,23 +57,17 @@ local function get_lsp_completion_context(completion)
     return completion.detail
   elseif source_name == 'clangd' then
     local doc = completion.documentation
-    if doc == nil then
-      return
-    end
+    if doc == nil then return end
 
     local import_str = doc.value
     import_str = import_str:gsub('[\n]+', '')
 
     local str
     str = import_str:match('<(.-)>')
-    if str then
-      return '<' .. str .. '>'
-    end
+    if str then return '<' .. str .. '>' end
 
     str = import_str:match('["\'](.-)["\']')
-    if str then
-      return '"' .. str .. '"'
-    end
+    if str then return '"' .. str .. '"' end
 
     return nil
   end
@@ -155,21 +145,15 @@ return {
           components = {
             kind_icon = {
               ellipsis = false,
-              text = function(ctx)
-                return ctx.kind_icon
-              end,
-              highlight = function(ctx)
-                return 'BlinkCmpKind' .. ctx.kind
-              end,
+              text = function(ctx) return ctx.kind_icon end,
+              highlight = function(ctx) return 'BlinkCmpKind' .. ctx.kind end,
             },
             label = {
               width = {
                 fill = true,
                 max = 60,
               },
-              text = function(ctx)
-                return ctx.label .. (ctx.label_detail or '')
-              end,
+              text = function(ctx) return ctx.label .. (ctx.label_detail or '') end,
               highlight = function(ctx)
                 local highlights = {
                   {
@@ -194,9 +178,7 @@ return {
               end,
             },
             label_description = {
-              text = function(ctx)
-                return get_lsp_completion_context(ctx.item)
-              end,
+              text = function(ctx) return get_lsp_completion_context(ctx.item) end,
               highlight = 'BlinkCmpLabelDescription',
             },
             source_name = {
@@ -210,9 +192,7 @@ return {
                   snippets = 'snip',
                 }
                 local name = source_map[ctx.source_name] or ctx.source_name
-                if ctx.item.client_name then
-                  name = name .. '[' .. ctx.item.client_name .. ']'
-                end
+                if ctx.item.client_name then name = name .. '[' .. ctx.item.client_name .. ']' end
                 return name
               end,
             },
@@ -224,12 +204,6 @@ return {
       frecency = { enabled = true },
       use_proximity = true,
       sorts = {
-        function(a, b)
-          if (a.client_name == nil or b.client_name == nil) or (a.client_name == b.client_name) then
-            return
-          end
-          return b.client_name == 'emmet_language_server'
-        end,
         'score',
         'kind',
         'sort_text',
@@ -268,9 +242,7 @@ return {
       ['<C-d>'] = { 'scroll_documentation_up', 'fallback' },
       ['<C-f>'] = { 'scroll_documentation_down', 'fallback' },
       ['<C-Space>'] = {
-        function(cmp)
-          cmp.show({ providers = { 'lsp' } })
-        end,
+        function(cmp) cmp.show({ providers = { 'lsp' } }) end,
       },
       ['<C-e>'] = { 'cancel', 'fallback' },
       ['<CR>'] = { 'accept', 'fallback' },
@@ -331,9 +303,7 @@ return {
         path = {
           name = 'Path',
           opts = {
-            get_cwd = function(_)
-              return vim.fn.getcwd()
-            end,
+            get_cwd = function(_) return vim.fn.getcwd() end,
           },
         },
         snippets = {
@@ -344,9 +314,7 @@ return {
             -- Don't show snippets when completing object properties
             local line = vim.api.nvim_get_current_line()
             local col = vim.api.nvim_win_get_cursor(0)[2]
-            if line:sub(col, col):match('[.:]') then
-              return false
-            end
+            if line:sub(col, col):match('[.:]') then return false end
             return ctx.trigger.initial_kind ~= 'trigger_character'
           end,
         },
