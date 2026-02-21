@@ -930,18 +930,15 @@ noremap <leader>W :StripTrailingWhitespaces<CR>:w !sudo tee % > /dev/null<CR>
 " Exit the vimdiff buffer regardless of whether you're on the diff buffer or not
 nnoremap <Leader>D <c-w>h<c-w>c
 
-" Easy creation of Github Pull Request for current branch against master.
+" Easy creation of Github Pull Request for current branch.
 " credit: https://github.com/arkwright/dotfiles/blob/master/vimrc
 function! s:GithubPullRequest()
-	let l:placeholderRegex = '\v\C\{0\}'
 	let l:httpsDomainRegex = '\v\Chttps:\/\/\zs[^\/]+\ze\/.+'
-	let l:httpsRepoRegex   = '\v\Chttps:\/\/.+\/\zs.+\/.+\ze\.git'
+	let l:httpsRepoRegex   = '\v\Chttps:\/\/[^\/]+\/\zs[^\/]+\/[^\/[:space:]]+\ze'
 	let l:sshDomainRegex   = '\v\C^.+\@\zs[^:\/]+\ze'
-	let l:sshRepoRegex     = '\v\C^.+\@.[^:\/]+:\zs[^.]+\ze\.git'
-	let l:urlTemplate      = system('echo $VIM_GITHUB_PR_URL')
+	let l:sshRepoRegex     = '\v\C^.+\@.[^:\/]+:\zs[^[:space:]]+\ze'
 	let l:remotes          = system('cd ' . expand('%:p:h') . '; git remote -v')
 	let l:branch           = substitute(system('cd ' . expand('%:p:h') . '; git symbolic-ref --short -q HEAD'), '\v[\r\n]', '', 'g')
-	let l:urlTemplate      = 'https://{domain}/{repo}/compare/{branch}?expand=1'
 
 	if match(l:remotes, 'https') !=# -1
 		let l:domain = matchstr(l:remotes, l:httpsDomainRegex)
@@ -951,16 +948,17 @@ function! s:GithubPullRequest()
 		let l:repo   = matchstr(l:remotes, l:sshRepoRegex)
 	endif
 
+	" Strip trailing .git if present
+	let l:repo = substitute(l:repo, '\.git$', '', '')
+
 	if l:domain ==# '' || l:repo ==# ''
-		echoe 'Could not determine Git repo name for current file!'
+		echoerr 'Could not determine Git repo name for current file!'
+		return
 	endif
 
-	let l:prUrl = l:urlTemplate
-	let l:prUrl = substitute(l:prUrl, '\v\C\{domain\}', l:domain, '')
-	let l:prUrl = substitute(l:prUrl, '\v\C\{repo\}', l:repo, '')
-	let l:prUrl = substitute(l:prUrl, '\v\C\{branch\}', l:branch, '')
+	let l:prUrl = 'https://' . l:domain . '/' . l:repo . '/compare/' . l:branch . '?expand=1'
 
-	silent exec "!open '" . shellescape(l:prUrl, 1) . "'"
+	silent exec "!open " . shellescape(l:prUrl, 1)
 endfunction
 command! PR :call s:GithubPullRequest()function! s:tag_line_handler(l)
 
