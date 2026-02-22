@@ -245,7 +245,7 @@ return {
         function(cmp) cmp.show({ providers = { 'lsp' } }) end,
       },
       ['<C-e>'] = { 'cancel', 'fallback' },
-      ['<CR>'] = { 'accept', 'fallback' },
+      ['<CR>'] = { 'select_and_accept', 'fallback' },
       -- Disable arrow keys to encourage better habits
       ['<Up>'] = { 'fallback' },
       ['<Down>'] = { 'fallback' },
