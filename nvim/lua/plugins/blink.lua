@@ -126,7 +126,7 @@ return {
       },
       keyword = { range = 'full' },
       list = {
-        selection = { preselect = true, auto_insert = false },
+        selection = { preselect = false, auto_insert = false },
       },
       menu = {
         border = 'rounded',
@@ -245,7 +245,7 @@ return {
         function(cmp) cmp.show({ providers = { 'lsp' } }) end,
       },
       ['<C-e>'] = { 'cancel', 'fallback' },
-      ['<CR>'] = { 'select_and_accept', 'fallback' },
+      ['<CR>'] = { 'accept', 'fallback' },
       -- Disable arrow keys to encourage better habits
       ['<Up>'] = { 'fallback' },
       ['<Down>'] = { 'fallback' },
