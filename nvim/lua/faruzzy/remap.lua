@@ -242,7 +242,7 @@ local function compile_and_run()
     cmd = 'python ' .. vim.fn.shellescape(vim.fn.expand('%'))
   end
   if cmd then
-    vim.cmd('!' .. cmd)
+    vim.cmd('split | terminal ' .. cmd)
   end
 end
 vim.api.nvim_create_autocmd('FileType', {
