@@ -41,7 +41,6 @@ copy-on-select = true
 
 theme = catppuccin-mocha.conf
 
-macos-non-native-fullscreen = true
 macos-option-as-alt = left
 
 shell-integration = detect
