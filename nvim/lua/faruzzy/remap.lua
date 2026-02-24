@@ -221,11 +221,16 @@ map('n', '<leader>wf', function()
 end, { desc = 'Jump to floating window' })
 
 -- Compile and run
+local compile_run_buf = nil
 local function compile_and_run()
   local ok, err = pcall(vim.cmd, 'w')
   if not ok then
     vim.notify('Failed to save file: ' .. err, vim.log.levels.ERROR)
     return
+  end
+
+  if compile_run_buf and vim.api.nvim_buf_is_valid(compile_run_buf) then
+    vim.api.nvim_buf_delete(compile_run_buf, { force = true })
   end
 
   local ft = vim.bo.filetype
@@ -243,6 +248,7 @@ local function compile_and_run()
   end
   if cmd then
     vim.cmd('split | terminal ' .. cmd)
+    compile_run_buf = vim.api.nvim_get_current_buf()
   end
 end
 vim.api.nvim_create_autocmd('FileType', {
