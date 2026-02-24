@@ -1,11 +1,15 @@
 ---@type LspServer
 return {
-	display = "emmet-ls",
+	display = "emmet-language-server",
 	config = function(config)
-		config.init_options = {
-			includeLanguages = {
-				javascriptreact = 'html',
-			},
+		config.filetypes = {
+			'css',
+			'html',
+			'javascriptreact',
+			'less',
+			'sass',
+			'scss',
+			'typescriptreact',
 		}
 		return config
 	end,
