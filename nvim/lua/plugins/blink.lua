@@ -299,6 +299,17 @@ return {
         lsp = {
           name = 'LSP',
           score_offset = 0,
+          transform_items = function(_, items)
+            local seen = {}
+            return vim.tbl_filter(function(item)
+              local key = item.label .. (item.kind or '')
+              if seen[key] then
+                return false
+              end
+              seen[key] = true
+              return true
+            end, items)
+          end,
         },
         path = {
           name = 'Path',
