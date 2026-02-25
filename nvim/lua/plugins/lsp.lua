@@ -88,5 +88,17 @@ return {
         settings = lua_ls_config.settings,
       })
     end
+
+    -- Apply jsonls settings via vim.lsp.config so schemas are registered
+    local jsonls_server = servers['jsonls']
+    if jsonls_server and jsonls_server.config then
+      local jsonls_config = jsonls_server.config({
+        capabilities = require('lsp.capabilities')(),
+        on_attach = require('lsp.on_attach'),
+      })
+      vim.lsp.config('jsonls', {
+        settings = jsonls_config.settings,
+      })
+    end
   end,
 }
