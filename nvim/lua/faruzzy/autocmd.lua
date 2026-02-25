@@ -198,6 +198,26 @@ augroup('numbertoggle', {
   },
 })
 
+-- Create jsconfig.json at the nearest package.json root
+vim.api.nvim_create_user_command('JsConfig', function()
+  local root = vim.fs.root(0, 'package.json')
+  if not root then
+    vim.notify('No package.json found', vim.log.levels.WARN)
+    return
+  end
+  local path = root .. '/jsconfig.json'
+  if vim.uv.fs_stat(path) then
+    vim.notify('jsconfig.json already exists at ' .. path, vim.log.levels.WARN)
+    return
+  end
+  local config = vim.fn.json_encode({
+    compilerOptions = { jsx = 'react-jsx', checkJs = true },
+    include = { 'src/**/*' },
+  })
+  vim.fn.writefile({ config }, path)
+  vim.notify('Created ' .. path)
+end, { desc = 'Create jsconfig.json at project root' })
+
 -- Handle quitting Fugitive buffers gracefully
 augroup('fugitive_quit', {
   {
