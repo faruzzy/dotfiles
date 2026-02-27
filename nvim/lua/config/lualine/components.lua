@@ -106,6 +106,23 @@ M.spell_indicator = {
   color = { fg = '#7aa2f7' },
 }
 
+-- Tmux zoom indicator
+M.tmux_zoomed = {
+  function()
+    if vim.env.TMUX then
+      local zoomed = vim.fn.system("tmux display-message -p '#{window_zoomed_flag}'")
+      if vim.trim(zoomed) == '1' then
+        return 'ZOOMED'
+      end
+    end
+    return ''
+  end,
+  cond = function()
+    return vim.env.TMUX ~= nil
+  end,
+  color = { fg = '#1a1b26', bg = '#f7768e', gui = 'bold' },
+}
+
 -- Smart filename with path shortening
 M.filename = {
   'filename',

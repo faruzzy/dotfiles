@@ -68,6 +68,7 @@ local opts = {
       { 'aerial' },
     },
     lualine_x = {
+      components.tmux_zoomed,
       components.macro_recording,
       components.search_result,
       components.spell_indicator,
