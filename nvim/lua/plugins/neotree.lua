@@ -10,6 +10,11 @@ return {
     'nvim-lua/plenary.nvim',
     'nvim-tree/nvim-web-devicons', -- not strictly required, but recommended
     'MunifTanjim/nui.nvim',
+    {
+      'antosha417/nvim-lsp-file-operations',
+      dependencies = { 'nvim-lua/plenary.nvim' },
+      opts = {},
+    },
   },
   config = function()
     require('neo-tree').setup({
