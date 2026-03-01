@@ -71,8 +71,13 @@ prepare_system() {
 install_xcode_tools() {
     log_info "Checking Xcode Command Line Tools..."
 
-    if command_exists xcode-select; then
+    if xcode-select -p &>/dev/null; then
         log_success "Command Line Tools already installed"
+        return 0
+    fi
+
+    if ! command_exists xcode-select; then
+        log_warning "xcode-select command not found. Cannot install Command Line Tools automatically."
         return 0
     fi
 
@@ -83,7 +88,7 @@ install_xcode_tools() {
     # NOTE: The automated 'Agree' click from the original script is often unreliable/not recommended.
     # We will wait for the tool to be available, or the user to manually agree/install.
     log_warning "Please follow the on-screen prompts to install Command Line Tools."
-    until command_exists xcode-select; do
+    until xcode-select -p &>/dev/null; do
         sleep 5
     done
 
@@ -296,20 +301,22 @@ install_java() {
 install_node() {
     log_info "Installing Node.js via NVM..."
 
-    if [[ ! -d "$HOME/.nvm" ]]; then
+    if [[ ! -s "$HOME/.nvm/nvm.sh" ]]; then
         curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.1/install.sh | bash || log_warning "Failed to install NVM"
-
-        # Source NVM
-        export NVM_DIR="$HOME/.nvm"
-        [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh" || true
-
-        # Install latest LTS Node
-        if command_exists nvm; then
-            nvm install --lts || log_warning "Failed to install LTS Node"
-            nvm use --lts || log_warning "Failed to use LTS Node"
-            nvm alias default node || log_warning "Failed to set default node version"
-        fi
     fi
+
+    # Source NVM and ensure an LTS Node version is installed/active.
+    export NVM_DIR="$HOME/.nvm"
+    [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh" || true
+
+    if ! command_exists nvm; then
+        log_warning "nvm is not available after installation attempt. Skipping Node.js setup."
+        return 0
+    fi
+
+    nvm install --lts || log_warning "Failed to install LTS Node"
+    nvm use --lts || log_warning "Failed to use LTS Node"
+    nvm alias default node || log_warning "Failed to set default node version"
 
     log_success "Node.js installed via NVM"
 }
@@ -323,8 +330,14 @@ install_npm_packages() {
     [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh" || true
 
     if ! command_exists npm; then
-        log_warning "npm not found. Skipping global npm package installation."
-        return 1
+        log_warning "npm not found. Attempting to install Node.js before retrying..."
+        install_node
+        [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh" || true
+    fi
+
+    if ! command_exists npm; then
+        log_warning "npm still not available after retry. Skipping global npm package installation."
+        return 0
     fi
 
     local npm_packages=(
@@ -383,9 +396,23 @@ install_tmux_plugins() {
 configure_vscode() {
     log_info "Configuring Visual Studio Code extensions..."
 
+    # Make the bundled VS Code CLI available in this shell session when present.
+    if [[ -d "/Applications/Visual Studio Code.app/Contents/Resources/app/bin" ]]; then
+        export PATH="/Applications/Visual Studio Code.app/Contents/Resources/app/bin:$PATH"
+    fi
+
     if ! command_exists code; then
-        log_warning "VS Code 'code' command not found. Skipping extension installation."
-        return 1
+        log_warning "VS Code 'code' command not found. Attempting to install Visual Studio Code..."
+        brew install --cask visual-studio-code || log_warning "Failed to install Visual Studio Code"
+
+        if [[ -d "/Applications/Visual Studio Code.app/Contents/Resources/app/bin" ]]; then
+            export PATH="/Applications/Visual Studio Code.app/Contents/Resources/app/bin:$PATH"
+        fi
+    fi
+
+    if ! command_exists code; then
+        log_warning "VS Code 'code' command still not found after retry. Skipping extension installation."
+        return 0
     fi
 
     local vscode_extensions=(
