@@ -111,7 +111,13 @@ return {
         enabled = true,
       },
       trigger = {
+        show_on_keyword = true,
+        show_on_trigger_character = false,
+        show_on_accept_on_trigger_character = false,
+        show_on_insert_on_trigger_character = false,
         show_in_snippet = true,
+        show_on_blocked_trigger_characters = { ' ', '\n', '\t' },
+        show_on_x_blocked_trigger_characters = { '\'', '"', '(', '{', '[' },
       },
       documentation = {
         auto_show = true,
@@ -126,7 +132,7 @@ return {
       },
       keyword = { range = 'full' },
       list = {
-        selection = { preselect = false, auto_insert = false },
+        selection = { preselect = true, auto_insert = false },
       },
       menu = {
         border = 'rounded',
@@ -303,9 +309,7 @@ return {
             local seen = {}
             return vim.tbl_filter(function(item)
               local key = item.label .. (item.kind or '')
-              if seen[key] then
-                return false
-              end
+              if seen[key] then return false end
               seen[key] = true
               return true
             end, items)
