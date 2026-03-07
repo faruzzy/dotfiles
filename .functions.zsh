@@ -557,13 +557,9 @@ function webmify() {
   ffmpeg -i $1 -vcodec libvpx -acodec libvorbis -isync -copyts -aq 80 -threads 3 -qmax 30 -y $2 $1.webm
 }
 
-function rule() {
-  printf "%$(tput cols)s\n"|tr " " "-"
-}
-
 # Create a new directory and enter it
 function md() {
-  command mkdir -p "$@" && cd "${@[-1]}"
+  command mkdir -p "$@" && cd "${@: -1}"
 }
 
 # find shorthand
