@@ -17,6 +17,7 @@ opt.breakindent = true -- Indent wrapped lines
 opt.cmdheight = 0 -- Command line height
 opt.undofile = true -- Persist undo history
 opt.title = true -- Set window title
+opt.titlestring = '%t - Nvim'
 opt.spell = false -- Default off, controlled by autocmd
 opt.spelllang = 'en_us,fr' -- Spell check languages
 opt.display = 'lastline' -- Show last line even if truncated
