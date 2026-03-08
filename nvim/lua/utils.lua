@@ -6,9 +6,7 @@ local M = {}
 ---@type map_fn
 function M.map(mode, lhs, rhs, opts)
   local options = { silent = true }
-  if opts then
-    options = vim.tbl_extend('force', options, opts)
-  end
+  if opts then options = vim.tbl_extend('force', options, opts) end
   vim.keymap.set(mode, lhs, rhs, options)
 end
 
@@ -18,9 +16,7 @@ end
 function M.buffer_map(bufnr)
   return function(mode, lhs, rhs, opts)
     local options = { buffer = bufnr }
-    if opts then
-      options = vim.tbl_extend('force', options, opts)
-    end
+    if opts then options = vim.tbl_extend('force', options, opts) end
     M.map(mode, lhs, rhs, options)
   end
 end
@@ -44,16 +40,12 @@ end
 
 ---Get the current snippet engine
 ---@return 'nvim' | 'luasnip'
-function M.get_snippet_engine()
-  return 'luasnip'
-end
+function M.get_snippet_engine() return 'luasnip' end
 
 ---Create vim highlight
 ---@param name string
 ---@param highlight_map vim.api.keyset.highlight
-function M.highlight(name, highlight_map)
-  vim.api.nvim_set_hl(0, name, highlight_map)
-end
+function M.highlight(name, highlight_map) vim.api.nvim_set_hl(0, name, highlight_map) end
 
 ---@class AutoCmdCallbackArgs
 ---@field id number
@@ -117,9 +109,7 @@ end
 ---@param opts? vim.api.keyset.user_command
 function M.user_command(name, command, opts)
   local options = { force = true }
-  if opts then
-    options = vim.tbl_extend('force', options, opts)
-  end
+  if opts then options = vim.tbl_extend('force', options, opts) end
   vim.api.nvim_create_user_command(name, command, options)
 end
 

@@ -62,7 +62,7 @@ local function get_mode_highlight_name(mode_label, highlight_name)
 end
 
 ---@param mode_color string
----@return table<string, CtpHighlight>
+---@return table<string, table>
 local function get_highlight_maps(mode_color)
 	local colors = require("colors").get_colors()
 
@@ -91,8 +91,8 @@ end
 
 ---Returns a table linking all defined highlight names to the corresponding mode color
 ---Also sets up an initial link for each highlight name to normal mode
----@param colors CtpColors
----@return table<string, CtpHighlight>
+---@param colors table
+---@return table<string, table>
 function M.get_initial_highlights(colors)
 	local highlights = {}
 
