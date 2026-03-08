@@ -1,8 +1,5 @@
----@class ClientConfig: lspconfig.Config
----@field root_dir string | function
-
----@class (exact) LspServer
----@field config? fun(config: ClientConfig): ClientConfig
+---@class LspServer
+---@field config? fun(config: table): table
 ---@field display? string
 ---@field skip_lspconfig? boolean
 

@@ -103,7 +103,7 @@ augroup('document_highlight_attach', {
       local client = vim.lsp.get_client_by_id(args.data.client_id)
       if
         not client
-        or not client.supports_method('textDocument/documentHighlight')
+        or not client:supports_method('textDocument/documentHighlight')
         or vim.fn.expand('%:p'):match('^fugitive://')
       then
         return

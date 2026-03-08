@@ -1,10 +1,10 @@
 ---Common LSP on_attach function
 ---Sets up buffer-local keymaps and settings for LSP
----@param client vim.lsp.Client
----@param bufnr number
 
 local lightbulb_ns = vim.api.nvim_create_namespace('lightbulb')
 
+---@param client vim.lsp.Client
+---@param bufnr number
 return function(client, bufnr)
   local bsk = require('utils').buffer_map(bufnr)
 
@@ -15,12 +15,13 @@ return function(client, bufnr)
   -- Inlay hints available but not auto-enabled due to Neovim 0.11.x
   -- rendering bug (Invalid 'col': out of range). Use <Leader>ti to toggle.
 
-  if client.supports_method('textDocument/codeAction') then
+  if client:supports_method('textDocument/codeAction', bufnr) then
     require('utils').augroup('lightbulb_' .. bufnr, {
       {
         { 'CursorHold', 'CursorHoldI' },
         callback = function()
-          local params = vim.lsp.util.make_range_params()
+          local params = vim.lsp.util.make_range_params(0, client.offset_encoding)
+          ---@diagnostic disable-next-line: inject-field
           params.context = { diagnostics = vim.diagnostic.get(bufnr, { lnum = params.range.start.line }) }
 
           vim.lsp.buf_request_all(bufnr, 'textDocument/codeAction', params, function(response)
