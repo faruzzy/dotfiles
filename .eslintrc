@@ -1,18 +1,17 @@
 {
   "extends": "eslint:recommended",
   "env": {
-    "amd": true,
     "browser": true,
-    "es6": true,
+    "es2024": true,
     "node": true
   },
   "parserOptions": {
-  "ecmaVersion": 6,
+  "ecmaVersion": "latest",
     "sourceType": "module"
   },
   "rules": {
     "no-console": "off",
-    "indent":[2, "tab"],
+    "indent": [2, 2],
     "max-len": ["error", 120, {
       "ignoreComments": true,
       "ignoreUrls": true,
