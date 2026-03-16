@@ -151,17 +151,15 @@ install_dev_tools() {
         mkcert nss xquartz # Added miscellaneous utilities
         cmus # Added console media player
         deno # Added deno from original script's end
+        bob # Neovi version manager
+        # Misc formulas
+        viz readline ruby mas markdownlint-cli
     )
 
     for tool in "${dev_tools[@]}"; do
         if ! brew list "$tool" &>/dev/null; then
             log_info "Installing $tool..."
-            # Use --HEAD for neovim as in the original script
-            if [[ "$tool" == "neovim" ]]; then
-                brew install --HEAD neovim || log_warning "Failed to install $tool"
-            else
-                brew install "$tool" || log_warning "Failed to install $tool"
-            fi
+            brew install "$tool" || log_warning "Failed to install $tool"
         fi
     done
 
@@ -196,7 +194,6 @@ install_gui_apps() {
         visual-studio-code
         alacritty ghostty
         intellij-idea
-        viz
     )
 
     # Media and utilities
