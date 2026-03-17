@@ -5,7 +5,8 @@
 set -euo pipefail  # Exit on error, undefined vars, pipe failures
 
 # Configuration
-readonly SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" &> /dev/null && pwd)"
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" &> /dev/null && pwd)"
+readonly SCRIPT_DIR
 readonly LOG_FILE="$HOME/install.log"
 
 # Color codes for output
@@ -164,8 +165,16 @@ install_dev_tools() {
     done
 
     # Special handling for specific tools
-    brew install libtool && brew link libtool || log_warning "Failed to link libtool"
-    brew install graphviz && brew link --overwrite graphviz || log_warning "Failed to link graphviz"
+    if brew install libtool; then
+        brew link libtool || log_warning "Failed to link libtool"
+    else
+        log_warning "Failed to install libtool"
+    fi
+    if brew install graphviz; then
+        brew link --overwrite graphviz || log_warning "Failed to link graphviz"
+    else
+        log_warning "Failed to install graphviz"
+    fi
     brew install yarn --ignore-dependencies || log_warning "Failed to install yarn"
 
     # Install fzf shell integration
