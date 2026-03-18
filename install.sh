@@ -40,7 +40,7 @@ ask_yes_no() {
             read -rp "$prompt [y/n]: " response
         fi
 
-        case "${response,,}" in
+        case "$(echo "$response" | tr '[:upper:]' '[:lower:]')" in
             y|yes) return 0 ;;
             n|no) return 1 ;;
             *) echo "Please answer yes or no." ;;
@@ -61,7 +61,7 @@ prepare_system() {
     # Keep sudo alive
     while true; do
         sudo -n true
-        sleep 60
+        sleep 10
         kill -0 "$$" || exit
     done 2>/dev/null &
 
@@ -165,17 +165,23 @@ install_dev_tools() {
     done
 
     # Special handling for specific tools
-    if brew install libtool; then
-        brew link libtool || log_warning "Failed to link libtool"
-    else
-        log_warning "Failed to install libtool"
+    if ! brew list libtool &>/dev/null; then
+        if brew install libtool; then
+            brew link libtool || log_warning "Failed to link libtool"
+        else
+            log_warning "Failed to install libtool"
+        fi
     fi
-    if brew install graphviz; then
-        brew link --overwrite graphviz || log_warning "Failed to link graphviz"
-    else
-        log_warning "Failed to install graphviz"
+    if ! brew list graphviz &>/dev/null; then
+        if brew install graphviz; then
+            brew link --overwrite graphviz || log_warning "Failed to link graphviz"
+        else
+            log_warning "Failed to install graphviz"
+        fi
     fi
-    brew install yarn --ignore-dependencies || log_warning "Failed to install yarn"
+    if ! brew list yarn &>/dev/null; then
+        brew install yarn --ignore-dependencies || log_warning "Failed to install yarn"
+    fi
 
     # Install fzf shell integration
     if command_exists fzf; then
@@ -218,7 +224,7 @@ install_gui_apps() {
     # Browsers
     local browsers=(
         firefox@developer-edition
-        google-chrome-canary
+        google-chrome@canary
         google-chrome
         firefox
     )
@@ -277,8 +283,9 @@ install_fonts() {
     )
 
     for font in "${fonts[@]}"; do
-        # Use --cask flag for installation
-        brew install --cask "$font" || log_warning "Failed to install $font"
+        if ! brew list --cask "$font" &>/dev/null; then
+            brew install --cask "$font" || log_warning "Failed to install $font"
+        fi
     done
 
     log_success "Fonts installed"
@@ -297,7 +304,9 @@ install_java() {
     )
 
     for version in "${java_versions[@]}"; do
-        brew install --cask "$version" || log_warning "Failed to install $version"
+        if ! brew list --cask "$version" &>/dev/null; then
+            brew install --cask "$version" || log_warning "Failed to install $version"
+        fi
     done
 
     log_success "Java versions installed"
@@ -356,7 +365,9 @@ install_npm_packages() {
     )
 
     for package in "${npm_packages[@]}"; do
-        npm install -g "$package" || log_warning "Failed to install $package"
+        if ! npm list -g "$package" &>/dev/null; then
+            npm install -g "$package" || log_warning "Failed to install $package"
+        fi
     done
 
     log_success "Global npm packages installed"
@@ -438,8 +449,13 @@ configure_vscode() {
         wmaurer.vscode-jumpy # Added back from original list
     )
 
+    local installed_extensions
+    installed_extensions="$(code --list-extensions 2>/dev/null || true)"
+
     for extension in "${vscode_extensions[@]}"; do
-        code --install-extension "$extension" || log_warning "Failed to install $extension"
+        if ! echo "$installed_extensions" | grep -qi "^${extension}$"; then
+            code --install-extension "$extension" || log_warning "Failed to install $extension"
+        fi
     done
 
     log_success "VS Code configured"
@@ -449,7 +465,14 @@ configure_vscode() {
 install_python_packages() {
     log_info "Installing Python packages..."
 
-    python3 -m pip install --user --upgrade pynvim Pygments || log_warning "Failed to install Python packages"
+    local pip_packages=(pynvim Pygments)
+    for package in "${pip_packages[@]}"; do
+        local pkg_lower
+        pkg_lower="$(echo "$package" | tr '[:upper:]' '[:lower:]')"
+        if ! python3 -c "import $pkg_lower" &>/dev/null; then
+            python3 -m pip install --user "$package" || log_warning "Failed to install $package"
+        fi
+    done
 
     log_success "Python packages installed"
 }
@@ -482,6 +505,11 @@ setup_dotfiles() {
 
     for file in "${dotfiles[@]}"; do
         if [[ -f "$SCRIPT_DIR/$file" ]]; then
+            if [[ "$(readlink "$HOME/$file" 2>/dev/null)" == "$SCRIPT_DIR/$file" ]]; then
+                log_info "$file already linked correctly. Skipping."
+                continue
+            fi
+
             if [[ -e "$HOME/$file" || -L "$HOME/$file" ]]; then
                 log_info "Backing up existing $file"
                 mv "$HOME/$file" "$HOME/${file}.backup.$(date +%Y%m%d_%H%M%S)"
@@ -496,13 +524,17 @@ setup_dotfiles() {
 
     # Handle config directories (e.g., nvim)
     if [[ -d "$SCRIPT_DIR/nvim" ]]; then
-        mkdir -p "$HOME/.config"
-        if [[ -e "$HOME/.config/nvim" ]]; then
-            log_info "Backing up existing nvim config directory"
-            mv "$HOME/.config/nvim" "$HOME/.config/nvim.backup.$(date +%Y%m%d_%H%M%S)"
+        if [[ "$(readlink "$HOME/.config/nvim" 2>/dev/null)" == "$SCRIPT_DIR/nvim" ]]; then
+            log_info "nvim config already linked correctly. Skipping."
+        else
+            mkdir -p "$HOME/.config"
+            if [[ -e "$HOME/.config/nvim" ]]; then
+                log_info "Backing up existing nvim config directory"
+                mv "$HOME/.config/nvim" "$HOME/.config/nvim.backup.$(date +%Y%m%d_%H%M%S)"
+            fi
+            log_info "Creating symbolic link for nvim config"
+            ln -sf "$SCRIPT_DIR/nvim" "$HOME/.config/nvim"
         fi
-        log_info "Creating symbolic link for nvim config"
-        ln -sf "$SCRIPT_DIR/nvim" "$HOME/.config/nvim"
     fi
 
     log_success "Dotfiles setup complete"
