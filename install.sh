@@ -143,7 +143,7 @@ install_dev_tools() {
         zsh shellcheck autojump tmux zoxide # Added tmux, zsh, shellcheck, autojump
         reattach-to-user-namespace bash bash-completion@2 # Added reattach-to-user-namespace, bash, bash-completion@2
         # Database and networking
-        libpq krb5 berkeley-db libevent mpdecimal openssl@1.1 sqlite gdbm libyaml libffi pcre pcre2 # Added database/networking/library deps
+        libpq krb5 berkeley-db libevent mpdecimal openssl@3.5 sqlite gdbm libyaml libffi pcre pcre2 # Added database/networking/library deps
         # Other utilities
         imagemagick gnupg gnu-sed translate-shell
         eza jenv maven
@@ -185,8 +185,9 @@ install_dev_tools() {
     fi
 
     # Install fzf shell integration
-    if command_exists fzf; then
-        "$(brew --prefix)"/opt/fzf/install --all --no-bash --no-fish || log_warning "Failed to install fzf shell integration"
+    local fzf_install="$(brew --prefix)/opt/fzf/install"
+    if [[ -x "$fzf_install" ]]; then
+        "$fzf_install" --all --no-bash --no-fish || log_warning "Failed to install fzf shell integration"
     fi
 
     log_success "Development tools installed"
@@ -381,15 +382,24 @@ install_oh_my_zsh() {
     if [[ ! -d "$HOME/.oh-my-zsh" ]]; then
         # Use --unattended to avoid the initial shell switch prompt
         sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended || log_warning "Failed to install Oh My Zsh"
-
-        # Install plugins
-        local zsh_custom="${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}"
-
-        git clone https://github.com/zsh-users/zsh-syntax-highlighting.git "$zsh_custom/plugins/zsh-syntax-highlighting" || log_warning "Failed to clone zsh-syntax-highlighting"
-        git clone https://github.com/zsh-users/zsh-autosuggestions "$zsh_custom/plugins/zsh-autosuggestions" || log_warning "Failed to clone zsh-autosuggestions"
-        git clone https://github.com/marlonrichert/zsh-autocomplete.git "$zsh_custom/plugins/zsh-autocomplete" || log_warning "Failed to clone zsh-autocomplete"
-        git clone https://github.com/supercrabtree/k "$zsh_custom/plugins/k" || log_warning "Failed to clone k plugin"
     fi
+
+    # Install plugins (always check, even if oh-my-zsh was already installed)
+    local zsh_custom="${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}"
+
+    local plugins=(
+        "zsh-users/zsh-syntax-highlighting"
+        "zsh-users/zsh-autosuggestions"
+        "marlonrichert/zsh-autocomplete"
+        "supercrabtree/k"
+    )
+
+    for plugin in "${plugins[@]}"; do
+        local plugin_name="${plugin##*/}"
+        if [[ ! -d "$zsh_custom/plugins/$plugin_name" ]]; then
+            git clone "https://github.com/$plugin.git" "$zsh_custom/plugins/$plugin_name" || log_warning "Failed to clone $plugin_name"
+        fi
+    done
 
     log_success "Oh My Zsh installed"
 }
@@ -467,14 +477,15 @@ configure_vscode() {
 install_python_packages() {
     log_info "Installing Python packages..."
 
-    local pip_packages=(pynvim Pygments)
-    for package in "${pip_packages[@]}"; do
-        local pkg_lower
-        pkg_lower="$(echo "$package" | tr '[:upper:]' '[:lower:]')"
-        if ! python3 -c "import $pkg_lower" &>/dev/null; then
-            python3 -m pip install --user "$package" || log_warning "Failed to install $package"
-        fi
-    done
+    # Use a dedicated venv for Neovim's Python dependencies
+    local nvim_venv="$HOME/.config/nvim/venv"
+    if [[ ! -d "$nvim_venv" ]]; then
+        python3 -m venv "$nvim_venv" || log_warning "Failed to create Neovim Python venv"
+    fi
+
+    if [[ -d "$nvim_venv" ]]; then
+        "$nvim_venv/bin/pip" install --upgrade pynvim Pygments || log_warning "Failed to install Python packages"
+    fi
 
     log_success "Python packages installed"
 }
