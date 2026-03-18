@@ -152,7 +152,8 @@ install_dev_tools() {
         mkcert nss xquartz # Added miscellaneous utilities
         cmus # Added console media player
         deno # Added deno from original script's end
-        bob # Neovi version manager
+        bob # Neovim version manager
+        starship # Cross-shell prompt
         # Misc formulas
         viz readline ruby mas markdownlint-cli
     )
@@ -386,6 +387,7 @@ install_oh_my_zsh() {
 
         git clone https://github.com/zsh-users/zsh-syntax-highlighting.git "$zsh_custom/plugins/zsh-syntax-highlighting" || log_warning "Failed to clone zsh-syntax-highlighting"
         git clone https://github.com/zsh-users/zsh-autosuggestions "$zsh_custom/plugins/zsh-autosuggestions" || log_warning "Failed to clone zsh-autosuggestions"
+        git clone https://github.com/marlonrichert/zsh-autocomplete.git "$zsh_custom/plugins/zsh-autocomplete" || log_warning "Failed to clone zsh-autocomplete"
         git clone https://github.com/supercrabtree/k "$zsh_custom/plugins/k" || log_warning "Failed to clone k plugin"
     fi
 
