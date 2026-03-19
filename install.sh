@@ -102,13 +102,10 @@ install_homebrew() {
 
     if command_exists brew; then
         log_success "Homebrew already installed"
-
-        if ask_yes_no "Update and upgrade Homebrew packages?" "y"; then
-            log_info "Updating Homebrew..."
-            brew update
-            brew upgrade
-            log_success "Homebrew updated"
-        fi
+        log_info "Updating Homebrew..."
+        brew update
+        brew upgrade
+        log_success "Homebrew updated"
         return 0
     fi
 
@@ -599,6 +596,13 @@ main() {
     # Dotfiles setup
     setup_dotfiles
     setup_git_prompt
+
+    # Apply macOS system preferences
+    if [[ -f "$SCRIPT_DIR/.osx" ]]; then
+        log_info "Applying macOS system preferences..."
+        bash "$SCRIPT_DIR/.osx" || log_warning "Failed to apply macOS preferences"
+        log_success "macOS system preferences applied"
+    fi
 
     log_success "Installation complete! 🎉"
     log_info "Please restart your terminal or run 'source ~/.zshrc' to apply changes"
