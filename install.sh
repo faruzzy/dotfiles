@@ -552,6 +552,21 @@ setup_dotfiles() {
         fi
     fi
 
+    # Handle config files (e.g., starship.toml)
+    if [[ -f "$SCRIPT_DIR/config/starship.toml" ]]; then
+        if [[ "$(readlink "$HOME/.config/starship.toml" 2>/dev/null)" == "$SCRIPT_DIR/config/starship.toml" ]]; then
+            log_info "starship.toml already linked correctly. Skipping."
+        else
+            mkdir -p "$HOME/.config"
+            if [[ -e "$HOME/.config/starship.toml" ]]; then
+                log_info "Backing up existing starship.toml"
+                mv "$HOME/.config/starship.toml" "$HOME/.config/starship.toml.backup.$(date +%Y%m%d_%H%M%S)"
+            fi
+            log_info "Creating symbolic link for starship.toml"
+            ln -sf "$SCRIPT_DIR/config/starship.toml" "$HOME/.config/starship.toml"
+        fi
+    fi
+
     log_success "Dotfiles setup complete"
 }
 
