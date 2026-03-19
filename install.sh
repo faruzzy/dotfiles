@@ -17,10 +17,10 @@ readonly BLUE='\033[0;34m'
 readonly NC='\033[0m' # No Color
 
 # Logging functions
-log_info() { echo -e "${BLUE}[INFO]${NC} $1" | tee -a "$LOG_FILE"; }
-log_success() { echo -e "${GREEN}[SUCCESS]${NC} $1" | tee -a "$LOG_FILE"; }
-log_warning() { echo -e "${YELLOW}[WARNING]${NC} $1" | tee -a "$LOG_FILE"; }
-log_error() { echo -e "${RED}[ERROR]${NC} $1" | tee -a "$LOG_FILE"; }
+log_info() { printf '%b\n' "${BLUE}[INFO]${NC} $1" | tee -a "$LOG_FILE"; }
+log_success() { printf '%b\n' "${GREEN}[SUCCESS]${NC} $1" | tee -a "$LOG_FILE"; }
+log_warning() { printf '%b\n' "${YELLOW}[WARNING]${NC} $1" | tee -a "$LOG_FILE"; }
+log_error() { printf '%b\n' "${RED}[ERROR]${NC} $1" | tee -a "$LOG_FILE"; }
 
 # Utility functions
 command_exists() { command -v "$1" &> /dev/null; }
@@ -184,10 +184,10 @@ install_dev_tools() {
         brew install yarn --ignore-dependencies || log_warning "Failed to install yarn"
     fi
 
-    # Install fzf shell integration
+    # Install fzf shell integration (clear FZF_DEFAULT_OPTS_FILE to avoid errors from missing config on fresh installs)
     local fzf_install="$(brew --prefix)/opt/fzf/install"
     if [[ -x "$fzf_install" ]]; then
-        "$fzf_install" --all --no-bash --no-fish || log_warning "Failed to install fzf shell integration"
+        FZF_DEFAULT_OPTS_FILE="" "$fzf_install" --all --no-bash --no-fish || log_warning "Failed to install fzf shell integration"
     fi
 
     log_success "Development tools installed"
@@ -297,7 +297,11 @@ install_fonts() {
 install_java() {
     log_info "Installing Java versions..."
 
-    # Replaced old/deprecated casks with modern Temurin (community-maintained OpenJDK) casks.
+    # Ensure Rosetta 2 is installed (required for x86 JDKs like temurin@8 on Apple Silicon)
+    if [[ "$(uname -m)" == "arm64" ]] && ! /usr/bin/pgrep -q oahd; then
+        softwareupdate --install-rosetta --agree-to-license || log_warning "Failed to install Rosetta 2"
+    fi
+
     local java_versions=(
         temurin@8
         temurin@11
@@ -307,6 +311,7 @@ install_java() {
 
     for version in "${java_versions[@]}"; do
         if ! brew list --cask "$version" &>/dev/null; then
+            sudo -v  # Refresh sudo before each installer-based cask
             brew install --cask "$version" || log_warning "Failed to install $version"
         fi
     done
