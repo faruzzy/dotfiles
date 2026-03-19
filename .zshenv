@@ -29,8 +29,9 @@ export NODE_REPL_HISTORY=~/.node_history
 export NODE_REPL_HISTORY_SIZE='32768'
 export NODE_REPL_MODE='sloppy'
 
-# FZF Configuration
-export FZF_DEFAULT_OPTS_FILE="$HOME/github/dotfiles/fzfrc"
+# FZF Configuration (resolve dotfiles dir from this symlinked file)
+DOTFILES_DIR="$(dirname "$(readlink -f "${(%):-%x}")" 2>/dev/null)"
+export FZF_DEFAULT_OPTS_FILE="${DOTFILES_DIR:-$HOME/github/dotfiles}/fzfrc"
 
 # FZF Command Configuration (with fallback chain)
 if command -v fd > /dev/null; then
@@ -114,7 +115,7 @@ export PATH="$new_path"
 
 # Development Environment Shortcuts
 export PROJECTS_DIR="$HOME/projects"
-export DOTFILES_DIR="$HOME/github/dotfiles"
+export DOTFILES_DIR="${DOTFILES_DIR:-$HOME/github/dotfiles}"
 
 # Modern CLI Tools Configuration
 # Use modern alternatives if available

@@ -148,7 +148,7 @@ install_dev_tools() {
         imagemagick gnupg gnu-sed translate-shell
         eza jenv maven
         luv tree-sitter libtermkey ncurses vim libuv libvterm unibilium ca-certificates msgpack utf8proc # Added Neovim/Vim-related deps
-        ngrep z ffmpeg youtube-dl cocoapods awscli http-server allure # Added networking/utility tools
+        ngrep z ffmpeg yt-dlp cocoapods awscli http-server allure # Added networking/utility tools
         mkcert nss xquartz # Added miscellaneous utilities
         cmus # Added console media player
         deno # Added deno from original script's end
@@ -199,7 +199,7 @@ install_gui_apps() {
 
     # Window management and productivity
     local productivity_apps=(
-        rectangle spectacle alt-tab
+        rectangle alt-tab
         bettertouchtool karabiner-elements
         caffeine keepingyouawake
         maccy
@@ -216,7 +216,7 @@ install_gui_apps() {
     # Media and utilities
     local utility_apps=(
         app-cleaner keka
-        skitch kap
+        kap
         qbserve pdfsam-basic
         colorsnapper
         vlc spotify
@@ -236,7 +236,7 @@ install_gui_apps() {
         whatsapp
         google-drive
         macfuse
-        nightowl
+        nightfall
     )
 
     # Install all cask applications
@@ -299,10 +299,10 @@ install_java() {
 
     # Replaced old/deprecated casks with modern Temurin (community-maintained OpenJDK) casks.
     local java_versions=(
-        temurin8
-        temurin11
-        temurin17
-        temurin21
+        temurin@8
+        temurin@11
+        temurin@17
+        temurin@21
     )
 
     for version in "${java_versions[@]}"; do
