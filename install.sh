@@ -2,6 +2,12 @@
 
 # macOS Development Environment Setup Script
 # Automated setup for development tools, applications, and dotfiles
+
+# Ensure script runs under bash (not sh) since we use bashisms
+if [ -z "${BASH_VERSION:-}" ]; then
+    exec bash "$0" "$@"
+fi
+
 set -euo pipefail  # Exit on error, undefined vars, pipe failures
 
 # Configuration

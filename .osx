@@ -229,6 +229,15 @@ defaults write NSGlobalDomain WebKitDeveloperExtras -bool true
 # Only use UTF-8 in Terminal.app
 defaults write com.apple.terminal StringEncodings -array 4
 
+# Set Terminal.app font to a Nerd Font so glyphs render correctly
+osascript -e '
+tell application "Terminal"
+    set font name of settings set "Basic" to "ComicShannsMono Nerd Font"
+    set font size of settings set "Basic" to 16
+    set default settings to settings set "Basic"
+end tell
+'
+
 # Don’t display the annoying prompt when quitting iTerm
 defaults write com.googlecode.iterm2 PromptOnQuit -bool false
 
