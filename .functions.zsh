@@ -738,6 +738,22 @@ ftpane() {
   tmux select-window -t "$target_window" && tmux select-pane -t "$target_pane"
 }
 
+# tmux_words - pick words from tmux panes via fzf and send to target pane
+tmux_words() {
+  local pane_id="$1"
+  local result
+  result=$(tmuxwords.rb --all --scroll 1000 --min 5 | fzf --multi | paste -sd ' ' -) || return
+  tmux send-keys -t "$pane_id" "$result"
+}
+
+# tmux_fzf_files - pick files via fd+fzf and send to target pane
+tmux_fzf_files() {
+  local pane_id="$1"
+  local result
+  result=$(fd . / --type f 2>/dev/null | fzf -m | paste -sd ' ' -) || return
+  tmux send-keys -t "$pane_id" "$result"
+}
+
 # ZSH: Create zle widgets and bind keys
 zle -N _gp_widget
 zle -N _gg_widget
