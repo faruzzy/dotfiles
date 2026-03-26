@@ -1,5 +1,5 @@
 -- Auto-close inactive buffers after a timeout
----@type LazySpec
+---@type table
 return {
   'chrisgrieser/nvim-early-retirement',
   config = function()

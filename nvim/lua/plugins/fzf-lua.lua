@@ -2,15 +2,11 @@
 local buf_last_win = {}
 vim.api.nvim_create_autocmd('BufWinLeave', {
   group = vim.api.nvim_create_augroup('BufWinTracker', { clear = true }),
-  callback = function(args)
-    buf_last_win[args.buf] = vim.api.nvim_get_current_win()
-  end,
+  callback = function(args) buf_last_win[args.buf] = vim.api.nvim_get_current_win() end,
 })
 
 local function file_switch_or_edit(selected, opts)
-  if not selected or not selected[1] then
-    return
-  end
+  if not selected or not selected[1] then return end
 
   local stripped = require('fzf-lua.utils').strip_ansi_coloring(selected[1])
   local fullpath = vim.fn.fnamemodify(stripped:match('^%s*(.-)%s*$'), ':p')
@@ -36,9 +32,7 @@ local function file_switch_or_edit(selected, opts)
 end
 
 local function buf_switch_or_edit(selected, opts)
-  if not selected or not selected[1] then
-    return
-  end
+  if not selected or not selected[1] then return end
 
   local stripped = require('fzf-lua.utils').strip_ansi_coloring(selected[1])
   local bufnr = tonumber(stripped:match('%[(%d+)%]'))

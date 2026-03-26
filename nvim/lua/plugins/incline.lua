@@ -20,9 +20,7 @@ return {
       },
       render = function(props)
         local bufname = vim.api.nvim_buf_get_name(props.buf)
-        if bufname == '' then
-          return '[No name]'
-        end
+        if bufname == '' then return '[No name]' end
 
         local icon, color = devicons.get_icon_color(bufname, nil, { default = true })
         local parts = vim.split(vim.fn.fnamemodify(bufname, ':.'), '/')

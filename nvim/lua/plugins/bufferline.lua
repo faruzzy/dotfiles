@@ -32,9 +32,7 @@ return {
           local symbols = { error = ' ', warning = ' ' }
           local result = {}
           for name, count in pairs(diagnostics) do
-            if symbols[name] and count > 0 then
-              table.insert(result, symbols[name] .. count)
-            end
+            if symbols[name] and count > 0 then table.insert(result, symbols[name] .. count) end
           end
           local res = table.concat(result, ' ')
           return #res > 0 and res or ''
@@ -55,30 +53,22 @@ return {
             {
               name = 'rs',
               highlight = { sp = '#AE403F' },
-              matcher = function(buf)
-                return vim.fn.fnamemodify(buf.path, ':e') == 'rs'
-              end,
+              matcher = function(buf) return vim.fn.fnamemodify(buf.path, ':e') == 'rs' end,
             },
             {
               name = 'py',
               highlight = { sp = '#8FAA54' },
-              matcher = function(buf)
-                return vim.fn.fnamemodify(buf.path, ':e') == 'py'
-              end,
+              matcher = function(buf) return vim.fn.fnamemodify(buf.path, ':e') == 'py' end,
             },
             {
               name = 'go',
               highlight = { sp = '#689FB6' },
-              matcher = function(buf)
-                return vim.fn.fnamemodify(buf.path, ':e') == 'go'
-              end,
+              matcher = function(buf) return vim.fn.fnamemodify(buf.path, ':e') == 'go' end,
             },
             {
               name = 'lua',
               highlight = { sp = '#F09F17' },
-              matcher = function(buf)
-                return vim.fn.fnamemodify(buf.path, ':e') == 'lua'
-              end,
+              matcher = function(buf) return vim.fn.fnamemodify(buf.path, ':e') == 'lua' end,
             },
             {
               name = 'js',
