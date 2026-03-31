@@ -70,8 +70,9 @@ command -v blsd > /dev/null && export FZF_ALT_C_COMMAND='blsd'
 
 # Java Configuration
 # Only set JAVA_HOME if jenv is not managing Java versions
+# Default to JDK 21 (latest LTS), fall back to any available version
 if ! command -v jenv > /dev/null; then
-    export JAVA_HOME=$(/usr/libexec/java_home 2>/dev/null)
+    export JAVA_HOME=$(/usr/libexec/java_home -v 21 2>/dev/null || /usr/libexec/java_home 2>/dev/null)
 fi
 
 # PATH Configuration

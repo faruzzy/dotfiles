@@ -123,3 +123,10 @@ zstyle ':completion:*' list-colors "${(s.:.)LS_COLORS}"
 zstyle ':completion:*:*:kill:*:processes' list-colors '=(#b) #([0-9]#) ([0-9a-z-]#)*=01;34=0=01'
 
 eval "$(zoxide init zsh)"
+
+# jenv (Java version manager)
+if command -v jenv > /dev/null; then
+    export PATH="$HOME/.jenv/bin:$PATH"
+    eval "$(jenv init -)"
+    export JAVA_HOME="$(jenv javahome 2>/dev/null)"
+fi
