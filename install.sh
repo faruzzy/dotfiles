@@ -108,9 +108,16 @@ install_homebrew() {
 
     if command_exists brew; then
         log_success "Homebrew already installed"
+        # Remove deprecated taps
+        if brew tap | grep -q "^homebrew/cask-fonts$"; then
+            log_info "Removing deprecated homebrew/cask-fonts tap..."
+            brew untap homebrew/cask-fonts || log_warning "Failed to untap homebrew/cask-fonts"
+        fi
+
         log_info "Updating Homebrew..."
         brew update
         brew upgrade
+        brew upgrade --cask --greedy --force
         log_success "Homebrew updated"
         return 0
     fi
@@ -605,9 +612,9 @@ main() {
 
     # Development environment
     install_dev_tools
+    install_java
     install_gui_apps
     install_fonts
-    install_java
 
     # Node.js and global packages
     install_node
