@@ -14,6 +14,12 @@ return {
   {
     'RRethy/vim-illuminate',
     event = { 'BufReadPost', 'BufNewFile' },
+    opts = {
+      providers = { 'lsp', 'regex' },
+    },
+    config = function(_, opts)
+      require('illuminate').configure(opts)
+    end,
     desc = 'Highlight word under cursor'
   },
 
