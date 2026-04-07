@@ -709,7 +709,8 @@ _fe_widget() {
   file=$(fzf-tmux --preview 'bat -n --color=always {}' --select-1 --exit-0 </dev/tty)
 
   if [ -n "$file" ]; then
-    # Open the file with neovim explicitly
+    # Ensure zle is cleaned up before handing the terminal to nvim
+    zle -I
     nvim "$file" </dev/tty >/dev/tty 2>&1
   fi
 
