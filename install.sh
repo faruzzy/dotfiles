@@ -157,7 +157,7 @@ install_dev_tools() {
         # Other utilities
         imagemagick gnupg gnu-sed translate-shell
         eza jenv maven
-        luv tree-sitter libtermkey ncurses vim libuv libvterm unibilium ca-certificates msgpack utf8proc # Added Neovim/Vim-related deps
+        luv tree-sitter tree-sitter-cli libtermkey ncurses vim libuv libvterm unibilium ca-certificates msgpack utf8proc # Added Neovim/Vim-related deps
         ngrep z ffmpeg yt-dlp cocoapods awscli http-server allure # Added networking/utility tools
         mkcert nss xquartz # Added miscellaneous utilities
         cmus # Added console media player

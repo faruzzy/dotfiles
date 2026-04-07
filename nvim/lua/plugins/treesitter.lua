@@ -1,27 +1,15 @@
 return {
-  -- Highlight, edit, and navigate code
-  'nvim-treesitter/nvim-treesitter',
-  dependencies = {
-    'nvim-treesitter/nvim-treesitter-textobjects',
-    'windwp/nvim-ts-autotag',                  -- Use treesitter to autoclose and autorename html tags
-    'nvim-treesitter/nvim-treesitter-context', -- shows the context of the currently visible buffer contents
-
-    'RRethy/nvim-treesitter-endwise',          -- plugin that helps to end certain structures automatically.
-  },
-  build = ':TSUpdate',
-  init = function()
-    -- Use bash parser for ZSH files
-    vim.treesitter.language.register('bash', 'zsh')
-  end,
-
-  config = function()
-    require('nvim-ts-autotag').setup()
-
-    require('treesitter-context').setup({ enable = true })
-
-    ---@diagnostic disable-next-line: missing-fields
-    require('nvim-treesitter.configs').setup({
-      ensure_installed = {
+  {
+    -- Parser management and highlighting
+    'nvim-treesitter/nvim-treesitter',
+    branch = 'main',
+    lazy = false,
+    build = ':TSUpdate',
+    init = function()
+      vim.treesitter.language.register('bash', 'zsh')
+    end,
+    config = function()
+      require('nvim-treesitter').install {
         'html',
         'c',
         'cpp',
@@ -50,7 +38,6 @@ return {
         'jsdoc',
         'json',
         'toml',
-        'jsonc',
         'latex',
         'tmux',
         'readline',
@@ -61,70 +48,69 @@ return {
         'vue',
         'yaml',
         'smithy',
-      },
-      auto_install = true,
-      highlight = { enable = true },
-      indent = { enable = true },
-      incremental_selection = {
-        enable = true,
-        keymaps = {
-          init_selection = '<c-n>',
-          node_incremental = '<c-n>',
-          scope_incremental = '<c-s>',
-          node_decremental = '<c-r>',
-          -- init_selection = '<C-Space>',
-          -- node_incremental = '<C-Space>',
-          -- node_decremental = '<BS>',
-        },
-      },
+      }
 
-      endwise = {
-        enable = true,
-      },
+      -- Enable treesitter highlighting for all filetypes with a parser
+      vim.api.nvim_create_autocmd('FileType', {
+        callback = function(args)
+          pcall(vim.treesitter.start, args.buf)
+        end,
+      })
+    end,
+  },
 
-      textobjects = {
+  {
+    -- Textobjects: select, move, swap
+    'nvim-treesitter/nvim-treesitter-textobjects',
+    branch = 'main',
+    config = function()
+      require('nvim-treesitter-textobjects').setup {
         select = {
-          enable = true,
-          lookahead = true, -- Automatically jump forward to textobj, similar to targets.vim
-          keymaps = {
-            ['aa'] = '@parameter.outer',
-            ['ia'] = '@parameter.inner',
-            ['af'] = '@function.outer',
-            ['if'] = '@function.inner',
-            ['ac'] = '@class.outer',
-            ['ic'] = '@class.inner',
-          },
+          lookahead = true,
         },
         move = {
-          enable = true,
-          set_jumps = true, -- whether to set jumps in the jumplist
-          goto_next_start = {
-            [']f'] = '@function.outer',
-            [']]'] = '@class.outer',
-          },
-          goto_next_end = {
-            [']F'] = '@function.outer',
-            [']['] = '@class.outer',
-          },
-          goto_previous_start = {
-            ['[f'] = '@function.outer',
-            ['[['] = '@class.outer',
-          },
-          goto_previous_end = {
-            ['[F'] = '@function.outer',
-            ['[]'] = '@class.outer',
-          },
+          set_jumps = true,
         },
-        swap = {
-          enable = true,
-          swap_next = {
-            ['<leader>a'] = '@parameter.inner',
-          },
-          swap_previous = {
-            ['<leader>A'] = '@parameter.inner',
-          },
-        },
-      },
-    })
-  end,
+      }
+
+      -- Select keymaps
+      local select = require('nvim-treesitter-textobjects.select')
+      vim.keymap.set({ 'x', 'o' }, 'aa', function() select.select_textobject('@parameter.outer', 'textobjects') end)
+      vim.keymap.set({ 'x', 'o' }, 'ia', function() select.select_textobject('@parameter.inner', 'textobjects') end)
+      vim.keymap.set({ 'x', 'o' }, 'af', function() select.select_textobject('@function.outer', 'textobjects') end)
+      vim.keymap.set({ 'x', 'o' }, 'if', function() select.select_textobject('@function.inner', 'textobjects') end)
+      vim.keymap.set({ 'x', 'o' }, 'ac', function() select.select_textobject('@class.outer', 'textobjects') end)
+      vim.keymap.set({ 'x', 'o' }, 'ic', function() select.select_textobject('@class.inner', 'textobjects') end)
+
+      -- Move keymaps
+      local move = require('nvim-treesitter-textobjects.move')
+      vim.keymap.set({ 'n', 'x', 'o' }, ']f', function() move.goto_next_start('@function.outer', 'textobjects') end)
+      vim.keymap.set({ 'n', 'x', 'o' }, ']]', function() move.goto_next_start('@class.outer', 'textobjects') end)
+      vim.keymap.set({ 'n', 'x', 'o' }, ']F', function() move.goto_next_end('@function.outer', 'textobjects') end)
+      vim.keymap.set({ 'n', 'x', 'o' }, '][', function() move.goto_next_end('@class.outer', 'textobjects') end)
+      vim.keymap.set({ 'n', 'x', 'o' }, '[f', function() move.goto_previous_start('@function.outer', 'textobjects') end)
+      vim.keymap.set({ 'n', 'x', 'o' }, '[[', function() move.goto_previous_start('@class.outer', 'textobjects') end)
+      vim.keymap.set({ 'n', 'x', 'o' }, '[F', function() move.goto_previous_end('@function.outer', 'textobjects') end)
+      vim.keymap.set({ 'n', 'x', 'o' }, '[]', function() move.goto_previous_end('@class.outer', 'textobjects') end)
+
+      -- Swap keymaps
+      local swap = require('nvim-treesitter-textobjects.swap')
+      vim.keymap.set('n', '<leader>a', function() swap.swap_next('@parameter.inner') end)
+      vim.keymap.set('n', '<leader>A', function() swap.swap_previous('@parameter.inner') end)
+    end,
+  },
+
+  -- Context (shows function/class context at top of buffer)
+  {
+    'nvim-treesitter/nvim-treesitter-context',
+    config = function()
+      require('treesitter-context').setup({ enable = true })
+    end,
+  },
+
+  -- Autoclose and autorename HTML tags
+  { 'windwp/nvim-ts-autotag', config = true },
+
+  -- Auto-end structures (do/end, if/end, etc.)
+  { 'RRethy/nvim-treesitter-endwise' },
 }
