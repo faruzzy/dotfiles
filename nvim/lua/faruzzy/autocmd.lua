@@ -50,6 +50,17 @@ augroup('jsdoc_comment_continuation', {
   },
 })
 
+-- Use cindent for JS/TS to avoid broken indent in JSDoc blocks
+augroup('jsts_cindent', {
+  {
+    'FileType',
+    pattern = { 'javascript', 'javascriptreact', 'typescript', 'typescriptreact' },
+    callback = function()
+      vim.bo.indentexpr = ''
+    end,
+  },
+})
+
 -- Highlight yanked text briefly
 augroup('YankHighlight', {
   {
