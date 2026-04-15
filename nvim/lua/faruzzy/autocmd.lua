@@ -17,7 +17,7 @@ augroup('jsdoc_comment_continuation', {
     callback = function(args)
       local bmap = utils.buffer_map(args.buf)
       vim.opt_local.formatoptions:append('ro')
-      vim.opt_local.comments = 'sO:* -,mO:*  ,exO:*/,s1:/*,mb:*,ex:*/,://'
+      vim.opt_local.comments = 'sO:* -,mO:*  ,exO:*/,s1:/*,mb:*,ex:*/'
 
       -- JSDoc auto-expansion on Enter after /**
       bmap('i', '<CR>', function()
@@ -57,6 +57,7 @@ augroup('jsts_cindent', {
     pattern = { 'javascript', 'javascriptreact', 'typescript', 'typescriptreact' },
     callback = function()
       vim.bo.indentexpr = ''
+      vim.bo.cindent = true
     end,
   },
 })
