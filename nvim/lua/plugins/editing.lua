@@ -36,7 +36,9 @@ return {
         },
         trigger_events = { 'InsertLeave', 'TextChanged' },
         condition = function(buf)
-          -- Don't auto-save for certain filetypes
+          if not vim.api.nvim_buf_is_valid(buf) then
+            return false
+          end
           local excluded_ft = { 'oil', 'harpoon', 'alpha', 'dashboard' }
           return not vim.tbl_contains(excluded_ft, vim.bo[buf].filetype)
         end,
