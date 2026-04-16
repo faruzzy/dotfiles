@@ -14,7 +14,15 @@ return {
       { '<Leader>gb', '<cmd>Git blame<cr>',                                               desc = 'Git: Blame' },
       { '<Leader>gl', '<cmd>Git log --oneline<cr>',                                       desc = 'Git: Log' },
     },
-    desc = 'Git wrapper with comprehensive commands'
+    desc = 'Git wrapper with comprehensive commands',
+    config = function()
+      vim.api.nvim_create_autocmd('User', {
+        pattern = 'FugitiveChanged',
+        callback = function()
+          require('gitsigns').refresh()
+        end,
+      })
+    end,
   },
 
   {
