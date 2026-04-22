@@ -107,16 +107,13 @@ return {
       accept = {
         auto_brackets = { enabled = false },
       },
-      ghost_text = {
-        enabled = true,
-      },
       trigger = {
         show_on_keyword = true,
         show_on_trigger_character = true,
         show_on_accept_on_trigger_character = false,
         show_on_insert_on_trigger_character = false,
         show_in_snippet = true,
-        show_on_blocked_trigger_characters = { ' ', '\n', '\t' },
+        show_on_blocked_trigger_characters = { ' ', '\n', '\t', '(', '{', '<' },
         show_on_x_blocked_trigger_characters = { '\'', '"', '(', '{', '[' },
       },
       documentation = {
@@ -135,6 +132,16 @@ return {
         selection = { preselect = true, auto_insert = false },
       },
       menu = {
+        auto_show = function(ctx)
+          -- Don't auto-show completion right after ( or { with no keyword typed
+          local col = ctx.cursor[2]
+          if col > 0 then
+            local line = vim.api.nvim_get_current_line()
+            local char_before = line:sub(col, col)
+            if char_before == '(' or char_before == '{' then return false end
+          end
+          return true
+        end,
         border = 'rounded',
         min_width = 34,
         max_height = 10,
@@ -251,14 +258,16 @@ return {
         function(cmp) cmp.show({ providers = { 'lsp' } }) end,
       },
       ['<C-e>'] = { 'cancel', 'fallback' },
-      ['<CR>'] = { 'accept', 'fallback' },
+      ['<CR>'] = { 'select_and_accept', 'fallback' },
       -- Disable arrow keys to encourage better habits
       ['<Up>'] = { 'fallback' },
       ['<Down>'] = { 'fallback' },
     },
     signature = {
       enabled = true,
-      trigger = { enabled = true },
+      trigger = {
+        enabled = false,
+      },
       window = {
         show_documentation = true,
         border = 'rounded',
@@ -306,8 +315,30 @@ return {
           name = 'LSP',
           score_offset = 0,
           transform_items = function(_, items)
+            -- Filter out emmet completions when cursor is not in a JSX/HTML markup context
+            -- Must be inside JSX but NOT inside a {expression} (which is JS code)
+            local in_markup = false
+            local success, node = pcall(vim.treesitter.get_node)
+            if success and node then
+              local in_jsx = false
+              local in_expr = false
+              local current = node ---@type TSNode?
+              while current do
+                local ntype = current:type()
+                if ntype == 'jsx_expression' then
+                  in_expr = true
+                elseif ntype:match('^jsx_') or ntype == 'html' then
+                  in_jsx = true
+                end
+                current = current:parent()
+              end
+              in_markup = in_jsx and not in_expr
+            end
+
             local seen = {}
             return vim.tbl_filter(function(item)
+              -- Drop emmet items outside JSX markup
+              if not in_markup and item.client_name == 'emmet_language_server' then return false end
               local key = item.label .. (item.kind or '')
               if seen[key] then return false end
               seen[key] = true

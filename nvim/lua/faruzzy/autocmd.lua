@@ -21,6 +21,12 @@ augroup('jsdoc_comment_continuation', {
 
       -- JSDoc auto-expansion on Enter after /**
       bmap('i', '<CR>', function()
+        -- Let blink handle CR when completion menu is visible
+        local blink_ok, blink = pcall(require, 'blink.cmp')
+        if blink_ok and blink.is_visible() then
+          return blink.select_and_accept() and '' or require('nvim-autopairs').autopairs_cr()
+        end
+
         local line = vim.api.nvim_get_current_line()
         local row = vim.api.nvim_win_get_cursor(0)[1]
         local col = vim.api.nvim_win_get_cursor(0)[2]
