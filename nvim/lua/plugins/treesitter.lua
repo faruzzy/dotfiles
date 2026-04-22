@@ -109,7 +109,43 @@ return {
   },
 
   -- Autoclose and autorename HTML tags
-  { 'windwp/nvim-ts-autotag', config = true },
+  {
+    'windwp/nvim-ts-autotag',
+    config = function()
+      require('nvim-ts-autotag').setup({})
+
+      -- Prevent autotag from closing generic type parameters as JSX tags
+      -- (e.g. useRef<HTMLInputElement> should not become useRef<HTMLInputElement></HTMLInputElement>)
+      local type_nodes = { 'type_arguments', 'type_parameters', 'type_annotation' }
+      local function in_type_context()
+        local ok, node = pcall(vim.treesitter.get_node)
+        if not ok or not node then return false end
+        while node do
+          if vim.tbl_contains(type_nodes, node:type()) then return true end
+          node = node:parent()
+        end
+        return false
+      end
+
+      vim.api.nvim_create_autocmd('FileType', {
+        pattern = { 'typescriptreact', 'javascriptreact' },
+        callback = function(args)
+          -- Override autotag's > mapping to skip close_tag in type contexts
+          vim.keymap.set('i', '>', function()
+            local row, col = unpack(vim.api.nvim_win_get_cursor(0))
+            local bufnr = args.buf
+            vim.api.nvim_buf_set_text(bufnr, row - 1, col, row - 1, col, { '>' })
+            vim.api.nvim_win_set_cursor(0, { row, col + 1 })
+            if not in_type_context() then
+              vim.schedule(function()
+                require('nvim-ts-autotag.internal').close_tag()
+              end)
+            end
+          end, { buffer = args.buf, noremap = true, silent = true })
+        end,
+      })
+    end,
+  },
 
   -- Auto-end structures (do/end, if/end, etc.)
   { 'RRethy/nvim-treesitter-endwise' },
