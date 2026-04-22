@@ -23,6 +23,20 @@
       "}, [${4}]);"
     ]
   },
+  "Arrow Function": {
+    "prefix": "af",
+    "body": [
+      "const ${1:name} = (${2}) => {",
+      "\t${3}",
+      "};"
+    ]
+  },
+  "Arrow Function One-liner": {
+    "prefix": "afl",
+    "body": [
+      "const ${1:name} = (${2}) => ${3};"
+    ]
+  },
   "React Function Component": {
     "prefix": "rfc",
     "body": [
