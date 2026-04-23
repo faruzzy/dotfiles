@@ -56,6 +56,7 @@ return {
           pcall(vim.treesitter.start, args.buf)
         end,
       })
+
     end,
   },
 

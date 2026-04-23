@@ -130,6 +130,22 @@ return {
   { 'svban/YankAssassin.vim', event = 'VeryLazy', desc = 'After yank leave cursor in its place' },
 
   {
+    'andymass/vim-matchup',
+    event = 'BufReadPost',
+    config = function()
+      require('match-up').setup({
+        matchparen = {
+          offscreen = { method = 'popup' },
+        },
+        treesitter = {
+          enabled = true,
+        },
+      })
+    end,
+    desc = 'Extended % matching for HTML/JSX/TSX tags and language constructs',
+  },
+
+  {
     'hrsh7th/nvim-pasta',
     event = { 'BufReadPost', 'BufNewFile' },
     config = function()
