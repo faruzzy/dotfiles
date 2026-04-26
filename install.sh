@@ -117,7 +117,7 @@ install_homebrew() {
         log_info "Updating Homebrew..."
         brew update
         brew upgrade
-        brew upgrade --cask --greedy --force
+        brew upgrade --cask --greedy
         log_success "Homebrew updated"
         return 0
     fi
@@ -138,34 +138,46 @@ install_dev_tools() {
     log_info "Installing development tools (formulas)..."
 
     local dev_tools=(
-        # Build tools and dependencies
+        # Build tools
         ninja cmake gettext curl
+
         # Search and file tools
-        fd ag ripgrep bat fzf the_silver_searcher # Added the_silver_searcher
+        fd the_silver_searcher ripgrep bat fzf
+
         # Git tools
         gh git-delta tig
-        # System tools
-        tree wget jq htop
-        # Programming languages and tools
-        pyenv python python@3.9 xz # Added xz
-        lua luajit-openresty perl
+
+        # System utilities
+        tree wget jq htop ngrep z
+
+        # Programming languages and runtimes
+        pyenv python python@3.9
+        lua luajit-openresty perl ruby deno
+
         # Shell and terminal
-        zsh shellcheck autojump tmux zoxide # Added tmux, zsh, shellcheck, autojump
-        reattach-to-user-namespace bash bash-completion@2 # Added reattach-to-user-namespace, bash, bash-completion@2
-        # Database and networking
-        libpq krb5 berkeley-db libevent mpdecimal openssl@3.5 sqlite gdbm libyaml libffi pcre pcre2 # Added database/networking/library deps
-        # Other utilities
-        imagemagick gnupg gnu-sed translate-shell
-        eza jenv maven
-        luv tree-sitter tree-sitter-cli libtermkey ncurses vim libuv libvterm unibilium ca-certificates msgpack utf8proc # Added Neovim/Vim-related deps
-        ngrep z ffmpeg yt-dlp cocoapods awscli http-server allure # Added networking/utility tools
-        mkcert nss xquartz # Added miscellaneous utilities
-        cmus # Added console media player
-        deno # Added deno from original script's end
-        bob # Neovim version manager
-        starship # Cross-shell prompt
-        # Misc formulas
-        viz readline ruby mas markdownlint-cli
+        zsh bash bash-completion@2 shellcheck
+        tmux reattach-to-user-namespace
+        autojump zoxide starship
+
+        # Editors and Neovim tooling
+        vim bob tree-sitter tree-sitter-cli
+
+        # Media and conversion
+        ffmpeg yt-dlp gallery-dl cmus imagemagick
+
+        # Networking and security
+        mkcert nss gnupg libpq
+
+        # Cloud and mobile
+        awscli cocoapods
+
+        # Java and JVM
+        jenv maven
+
+        # Other CLI tools
+        eza gnu-sed translate-shell
+        markdownlint-cli http-server allure
+        viz mas xquartz
     )
 
     for tool in "${dev_tools[@]}"; do
@@ -261,25 +273,6 @@ install_gui_apps() {
 
     log_success "GUI applications installed"
 }
-
-# Install fonts
-# install_fonts() {
-#     log_info "Installing fonts..."
-
-#     brew tap homebrew/cask-fonts || log_warning "Failed to tap homebrew/cask-fonts"
-
-#     local fonts=(
-#         font-fira-code
-#         font-jetbrains-mono
-#         font-source-code-pro
-#     )
-
-#     for font in "${fonts[@]}"; do
-#         brew install --cask "$font" || log_warning "Failed to install $font"
-#     done
-
-#     log_success "Fonts installed"
-# }
 
 # Install fonts
 install_fonts() {
@@ -437,7 +430,7 @@ install_tmux_plugins() {
     if [[ ! -x /usr/local/bin/tmuxwords.rb ]]; then
         sudo curl -o /usr/local/bin/tmuxwords.rb https://raw.githubusercontent.com/kiooss/dotmagic/master/bin/tmuxwords.rb \
             && sudo chmod +x /usr/local/bin/tmuxwords.rb \
-            || log_warning "Failed to install tmuxwords.rb"
+           || log_warning "Failed to install tmuxwords.rb"
     fi
 
     log_success "tmux plugins and themes installed"
