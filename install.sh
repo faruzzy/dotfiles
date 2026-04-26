@@ -334,7 +334,7 @@ install_node() {
     log_info "Installing Node.js via NVM..."
 
     if [[ ! -s "$HOME/.nvm/nvm.sh" ]]; then
-        curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.1/install.sh | bash || log_warning "Failed to install NVM"
+        curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.4/install.sh | bash || log_warning "Failed to install NVM"
     fi
 
     # Source NVM and ensure an LTS Node version is installed/active.
