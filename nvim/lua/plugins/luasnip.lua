@@ -41,6 +41,11 @@ return {
 
     luasnip.config.set_config({
       updateevents = 'TextChanged,TextChangedI',
+      -- Prevent snippet jumps from polluting the jump list
+      -- so <C-o> reliably returns to the previous editing location
+      history = false,
+      region_check_events = 'InsertEnter',
+      delete_check_events = 'InsertLeave',
     })
 
     -- React snippets for both JS and TS (hooks only - components come from VSCode snippets)
