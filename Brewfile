@@ -31,7 +31,7 @@ brew "ngrep"
 brew "z"
 
 # --- Programming languages and runtimes ---
-brew "pyenv"
+brew "mise"
 brew "python"
 brew "python@3.9"
 brew "lua"
@@ -75,7 +75,6 @@ brew "awscli"
 brew "cocoapods"
 
 # --- Java and JVM ---
-brew "jenv"
 brew "maven"
 
 # --- Other CLI tools ---

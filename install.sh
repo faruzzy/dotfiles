@@ -164,42 +164,33 @@ install_brew_packages() {
     log_success "Homebrew packages installed"
 }
 
-# Install Node.js via NVM
-install_node() {
-    log_info "Installing Node.js via NVM..."
+# Install language runtimes via mise
+install_mise_runtimes() {
+    log_info "Installing language runtimes via mise..."
 
-    if [[ ! -s "$HOME/.nvm/nvm.sh" ]]; then
-        curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.4/install.sh | bash || log_warning "Failed to install NVM"
-    fi
-
-    # Source NVM and ensure an LTS Node version is installed/active.
-    export NVM_DIR="$HOME/.nvm"
-    [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh" || true
-
-    if ! command_exists nvm; then
-        log_warning "nvm is not available after installation attempt. Skipping Node.js setup."
+    if ! command_exists mise; then
+        log_warning "mise not found. Runtimes cannot be installed automatically."
         return 0
     fi
 
-    nvm install --lts || log_warning "Failed to install LTS Node"
-    nvm use --lts || log_warning "Failed to use LTS Node"
-    nvm alias default node || log_warning "Failed to set default node version"
+    # Install LTS Node.js
+    log_info "Installing LTS Node.js via mise..."
+    mise use --global node@lts || log_warning "Failed to install LTS Node via mise"
 
-    log_success "Node.js installed via NVM"
+    # Install latest Java (LTS)
+    log_info "Installing latest Java via mise..."
+    mise use --global java@latest || log_warning "Failed to install Java via mise"
+
+    log_success "Language runtimes installed via mise"
 }
 
 # Install global npm packages
 install_npm_packages() {
     log_info "Installing global npm packages..."
 
-    # Ensure NVM is sourced for npm to be available if NVM was just installed
-    export NVM_DIR="$HOME/.nvm"
-    [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh" || true
-
     if ! command_exists npm; then
-        log_warning "npm not found. Attempting to install Node.js before retrying..."
-        install_node
-        [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh" || true
+        log_warning "npm not found. Attempting to install language runtimes before retrying..."
+        install_mise_runtimes
     fi
 
     if ! command_exists npm; then
@@ -448,8 +439,8 @@ main() {
     # Development environment (formulas, casks, fonts, Java)
     install_brew_packages
 
-    # Node.js and global packages
-    install_node
+    # Language runtimes and global packages
+    install_mise_runtimes
     install_npm_packages
 
     # Shell and terminal setup

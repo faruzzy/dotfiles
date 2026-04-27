@@ -80,57 +80,10 @@ unset file
 [ -f ~/.fzf/shell/key-bindings.zsh ] && source ~/.fzf/shell/key-bindings.zsh
 [ -f ~/.fzf/shell/completion.zsh ] && source ~/.fzf/shell/completion.zsh
 
-# Lazy load NVM (same as bash version but for zsh)
-nvm() {
-    echo "🔄 Loading NVM (first run)..."
-    unset -f nvm node npm npx
-    export NVM_DIR="$HOME/.nvm"
-    [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
-    [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"
-    nvm "$@"
-}
-
-# Lazy load functions for Node commands
-for cmd in node npm npx; do
-    eval "${cmd}() { echo '🔄 Loading NVM for ${cmd}...'; unset -f nvm node npm npx; export NVM_DIR=\"\$HOME/.nvm\"; [ -s \"\$NVM_DIR/nvm.sh\" ] && \\. \"\$NVM_DIR/nvm.sh\"; [ -s \"\$NVM_DIR/bash_completion\" ] && \\. \"\$NVM_DIR/bash_completion\"; ${cmd} \"\$@\"; }"
-done
-
-# Ensure NVM's current node version bin is in PATH
-export NVM_DIR="$HOME/.nvm"
-# Find the currently active or default node version
-if [ -f "$NVM_DIR/alias/default" ]; then
-    NVM_DEFAULT_VERSION=$(cat "$NVM_DIR/alias/default")
-elif [ -d "$NVM_DIR/versions/node" ]; then
-    # Use the first (and likely only) installed version
-    NVM_DEFAULT_VERSION=$(ls "$NVM_DIR/versions/node" | head -n 1)
+# Mise (Language runtime manager)
+if command -v mise > /dev/null; then
+    eval "$(mise activate zsh)"
 fi
-
-if [ -n "$NVM_DEFAULT_VERSION" ] && [ -d "$NVM_DIR/versions/node/$NVM_DEFAULT_VERSION/bin" ]; then
-    export PATH="$NVM_DIR/versions/node/$NVM_DEFAULT_VERSION/bin:$PATH"
-fi
-
-# Auto-switch Node version when entering a directory with .nvmrc or .node-version
-_auto_nvm_use() {
-    local nvmrc_file
-    if [[ -f .nvmrc ]]; then
-        nvmrc_file=".nvmrc"
-    elif [[ -f .node-version ]]; then
-        nvmrc_file=".node-version"
-    fi
-
-    if [[ -n "$nvmrc_file" ]]; then
-        local required_version
-        required_version=$(<"$nvmrc_file")
-        local current_version
-        current_version=$(node -v 2>/dev/null)
-        if [[ "$current_version" != "v${required_version#v}" ]]; then
-            # Calling nvm will trigger lazy-load if not yet loaded
-            nvm use "$required_version"
-        fi
-    fi
-}
-autoload -U add-zsh-hook
-add-zsh-hook chpwd _auto_nvm_use
 
 # UP navigation
 [ -f ~/.config/up/up.sh ] && source ~/.config/up/up.sh
@@ -165,10 +118,3 @@ zstyle ':completion:*' list-colors "${(s.:.)LS_COLORS}"
 zstyle ':completion:*:*:kill:*:processes' list-colors '=(#b) #([0-9]#) ([0-9a-z-]#)*=01;34=0=01'
 
 eval "$(zoxide init zsh)"
-
-# jenv (Java version manager)
-if command -v jenv > /dev/null; then
-    export PATH="$HOME/.jenv/bin:$PATH"
-    eval "$(jenv init -)"
-    export JAVA_HOME="$(jenv javahome 2>/dev/null)"
-fi

@@ -222,7 +222,7 @@ Use [which-key.nvim](https://github.com/folke/which-key.nvim) to discover all av
 
 ### Notable Extras
 
-*   **NVM auto-detection** -- reads `.nvmrc` / `.node-version` to use the correct Node version inside Neovim
+*   **mise auto-detection** -- reads `.nvmrc` / `.node-version` / `.java-version` to use the correct runtime versions automatically
 *   **Code action lightbulb** -- shows a hint when code actions are available
 *   **Treesitter** -- 40+ parsers with text objects (`af`/`if` for functions, `ac`/`ic` for classes), auto-tag closing, and sticky context
 *   **vim-tmux-navigator** -- seamless `<C-h/j/k/l>` navigation between Neovim splits and tmux panes
