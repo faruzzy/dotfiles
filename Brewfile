@@ -50,6 +50,7 @@ brew "reattach-to-user-namespace"
 brew "autojump"
 brew "zoxide"
 brew "starship"
+brew "antidote"
 
 # --- Editors and Neovim tooling ---
 brew "vim"

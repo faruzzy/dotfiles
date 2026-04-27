@@ -216,33 +216,22 @@ install_npm_packages() {
     log_success "Global npm packages installed"
 }
 
-# Install Oh My Zsh and plugins
-install_oh_my_zsh() {
-    log_info "Installing Oh My Zsh..."
+# Setup Antidote and plugins
+setup_antidote() {
+    log_info "Setting up Antidote plugins..."
 
-    if [[ ! -d "$HOME/.oh-my-zsh" ]]; then
-        # Use --unattended to avoid the initial shell switch prompt
-        sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended || log_warning "Failed to install Oh My Zsh"
+    if ! command_exists antidote; then
+        log_warning "antidote not found. Skipping plugin setup."
+        return 0
     fi
 
-    # Install plugins (always check, even if oh-my-zsh was already installed)
-    local zsh_custom="${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}"
-
-    local plugins=(
-        "zsh-users/zsh-syntax-highlighting"
-        "zsh-users/zsh-autosuggestions"
-        "marlonrichert/zsh-autocomplete"
-        "supercrabtree/k"
-    )
-
-    for plugin in "${plugins[@]}"; do
-        local plugin_name="${plugin##*/}"
-        if [[ ! -d "$zsh_custom/plugins/$plugin_name" ]]; then
-            git clone "https://github.com/$plugin.git" "$zsh_custom/plugins/$plugin_name" || log_warning "Failed to clone $plugin_name"
-        fi
-    done
-
-    log_success "Oh My Zsh installed"
+    # Generate the static plugins file
+    if [[ -f "$HOME/.zsh_plugins.txt" ]]; then
+        antidote bundle < "$HOME/.zsh_plugins.txt" > "$HOME/.zsh_plugins.zsh"
+        log_success "Antidote plugins bundled"
+    else
+        log_warning ".zsh_plugins.txt not found. Cannot bundle plugins."
+    fi
 }
 
 # Install tmux plugin manager
@@ -361,7 +350,8 @@ setup_dotfiles() {
         ".vimrc"
         ".zprofile"
         ".zshenv"
-        ".zshrc"
+        ".zshrc",
+        ".zsh_plugins.txt"
     )
 
     for file in "${dotfiles[@]}"; do
@@ -444,7 +434,6 @@ main() {
     install_npm_packages
 
     # Shell and terminal setup
-    install_oh_my_zsh
     install_tmux_plugins
 
     # Application configuration
@@ -453,6 +442,7 @@ main() {
 
     # Dotfiles setup
     setup_dotfiles
+    setup_antidote
     setup_git_prompt
 
     # Apply macOS system preferences

@@ -2,22 +2,17 @@
 # Profiling: run `zsh-profile` to see startup bottlenecks
 [[ -n "$ZSH_PROFILE" ]] && zmodload zsh/zprof
 
-# Oh My Zsh configuration
-export ZSH="$HOME/.oh-my-zsh"
-ZSH_THEME=""
-
-# Skip compaudit security check (saves ~20ms per shell)
-ZSH_DISABLE_COMPFIX=true
-
-plugins=(
-    git
-    zsh-autosuggestions
-    zsh-syntax-highlighting
-    zsh-autocomplete
-)
-
-# Load Oh My Zsh
-source $ZSH/oh-my-zsh.sh
+# --- Antidote Plugin Manager ---
+# Install antidote if not already present: brew install antidote
+ANTIDOTE_DIR="/opt/homebrew/opt/antidote/share/antidote"
+if [[ -d "$ANTIDOTE_DIR" ]]; then
+    source "$ANTIDOTE_DIR/antidote.zsh"
+    # Generate a static plugin file if it doesn't exist or is older than the plugins list
+    if [[ ! -f ~/.zsh_plugins.zsh || ~/.zsh_plugins.txt -nt ~/.zsh_plugins.zsh ]]; then
+        antidote bundle < ~/.zsh_plugins.txt > ~/.zsh_plugins.zsh
+    fi
+    source ~/.zsh_plugins.zsh
+fi
 
 # Override the default g alias to ensure proper completion
 unalias g 2>/dev/null  # Remove any existing alias

@@ -1,0 +1,8 @@
+# Oh My Zsh Library & Plugins
+ohmyzsh/ohmyzsh path:lib
+ohmyzsh/ohmyzsh path:plugins/git
+
+# Third-party plugins
+zsh-users/zsh-autosuggestions
+zsh-users/zsh-syntax-highlighting
+marlonrichert/zsh-autocomplete
