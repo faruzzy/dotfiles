@@ -13,33 +13,33 @@ local lspkind_icons = {
   Class = '󰠱 ',
   Color = '󰏘 ',
   Constant = '󰏿 ',
-  Constructor = ' ',
-  Enum = ' ',
-  EnumMember = ' ',
-  Event = ' ',
+  Constructor = '',
+  Enum = '',
+  EnumMember = '',
+  Event = '',
   Field = '󰜢 ',
   File = '󰈙 ',
   Folder = '󰉋 ',
   Function = '󰊕 ',
-  Interface = ' ',
+  Interface = '',
   Key = '󰌋 ',
   Keyword = '󰌋 ',
   Method = '󰆧 ',
-  Module = ' ',
+  Module = '',
   Namespace = '󰌗 ',
   Null = '󰟢 ',
   Number = '󰎠 ',
   Object = '󰅩 ',
-  Operator = ' ',
+  Operator = '',
   Package = '󰏗 ',
-  Property = ' ',
+  Property = '',
   Reference = '󰈇 ',
   Snippet = ' ',
   String = '󰉿 ',
   Struct = '󰙅 ',
   Text = '󰉿 ',
-  TypeParameter = ' ',
-  Unit = ' ',
+  TypeParameter = '',
+  Unit = '',
   Value = '󰎠 ',
   Variable = '󰀫 ',
 }
@@ -98,14 +98,17 @@ return {
         menu = { auto_show = true },
       },
       keymap = {
+        preset = 'inherit',
         ['<Tab>'] = { 'select_and_accept' },
-        ['<C-p>'] = { 'select_prev', 'fallback' },
-        ['<C-n>'] = { 'select_next', 'fallback' },
       },
     },
     completion = {
       accept = {
-        auto_brackets = { enabled = false },
+        auto_brackets = {
+          semantic_token_resolution = {
+            blocked_filetypes = { 'typescriptreact', 'typescript' },
+          },
+        },
       },
       trigger = {
         show_on_keyword = true,
@@ -113,8 +116,8 @@ return {
         show_on_accept_on_trigger_character = false,
         show_on_insert_on_trigger_character = false,
         show_in_snippet = true,
-        show_on_blocked_trigger_characters = { ' ', '\n', '\t', '(', '{', '<' },
-        show_on_x_blocked_trigger_characters = { '\'', '"', '(', '{', '[' },
+        show_on_blocked_trigger_characters = { ' ', '\n', '\t', '{', '<' },
+        show_on_x_blocked_trigger_characters = { '\'', '{' },
       },
       documentation = {
         auto_show = true,
@@ -138,7 +141,7 @@ return {
           if col > 0 then
             local line = vim.api.nvim_get_current_line()
             local char_before = line:sub(col, col)
-            if char_before == '(' or char_before == '{' then return false end
+            if char_before == '(' or char_before == '{' or char_before == '>' then return false end
           end
           return true
         end,
@@ -214,6 +217,7 @@ return {
       },
     },
     fuzzy = {
+      implementation = 'rust',
       frecency = { enabled = true },
       use_proximity = true,
       sorts = {
@@ -269,7 +273,7 @@ return {
         enabled = false,
       },
       window = {
-        show_documentation = true,
+        show_documentation = false,
         border = 'rounded',
       },
     },
@@ -315,24 +319,28 @@ return {
           name = 'LSP',
           score_offset = 0,
           transform_items = function(_, items)
-            -- Filter out emmet completions when cursor is not in a JSX/HTML markup context
-            -- Must be inside JSX but NOT inside a {expression} (which is JS code)
+            -- Filter out emmet completions when cursor is not in a JSX/HTML markup context.
+            -- Strategy: walk up the tree and find the *nearest* JSX-related ancestor.
+            -- If it's jsx_expression we're in JS code — suppress emmet.
+            -- If it's any other jsx_* node we're in markup — allow emmet.
+            -- If no JSX ancestor is found, check the filetype as a fallback.
             local in_markup = false
             local success, node = pcall(vim.treesitter.get_node)
             if success and node then
-              local in_jsx = false
-              local in_expr = false
               local current = node ---@type TSNode?
               while current do
                 local ntype = current:type()
                 if ntype == 'jsx_expression' then
-                  in_expr = true
+                  in_markup = false
+                  break
                 elseif ntype:match('^jsx_') or ntype == 'html' then
-                  in_jsx = true
+                  in_markup = true
+                  break
                 end
                 current = current:parent()
               end
-              in_markup = in_jsx and not in_expr
+              -- If no jsx ancestor found, allow emmet for HTML files
+              if current == nil then in_markup = vim.bo.filetype == 'html' end
             end
 
             local seen = {}
