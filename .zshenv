@@ -15,14 +15,11 @@ export LANG=en_US.UTF-8
 
 # History Configuration
 export HISTSIZE=10000           # Commands in memory
-export HISTFILESIZE=32768       # Commands in history file
-export HISTCONTROL=ignoreboth:erasedups  # Ignore duplicates and commands starting with space
-export HISTTIMEFORMAT="%Y/%m/%d %H:%M:%S:   "
-export HISTIGNORE="cd:cd -:pwd:exit:date:* --help:ls:ll:la:clear:history"
+export SAVEHIST=32768           # Commands in history file (zsh equivalent of HISTFILESIZE)
+export HISTORY_IGNORE="(cd|cd -|pwd|exit|date|* --help|ls|ll|la|clear|history)"
 
 # Terminal Configuration
 export CLICOLOR=1
-export TERM='xterm-256color'
 
 # NodeJS Configuration
 export NODE_REPL_HISTORY=~/.node_history
@@ -119,8 +116,7 @@ export PROJECTS_DIR="$HOME/projects"
 export DOTFILES_DIR="${DOTFILES_DIR:-$HOME/github/dotfiles}"
 
 # Modern CLI Tools Configuration
-# Use modern alternatives if available
-command -v exa > /dev/null && export EXA_COLORS="di=1;34:ln=1;36:so=32:pi=33:ex=1;32:bd=34;46:cd=34;43:su=30;41:sg=30;46:tw=30;42:ow=30;43"
+command -v eza > /dev/null && export EZA_COLORS="di=1;34:ln=1;36:so=32:pi=33:ex=1;32:bd=34;46:cd=34;43:su=30;41:sg=30;46:tw=30;42:ow=30;43"
 
 # Bat configuration
 # export BAT_THEME="Sublime Snazzy"
