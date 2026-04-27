@@ -8,7 +8,7 @@ return {
     require('typescript-tools').setup({
       capabilities = require('lsp.capabilities')(),
       settings = {
-        separate_diagnostic_server = false,
+        separate_diagnostic_server = true,
         publish_diagnostic_on = 'insert_leave',
         complete_function_calls = false,
         include_completions_with_insert_text = true,
