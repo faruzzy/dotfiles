@@ -14,9 +14,14 @@ if [[ -d "$ANTIDOTE_DIR" ]]; then
     source ~/.zsh_plugins.zsh
 fi
 
-# Initialize completion system
+# Initialize completion system (optimized)
 autoload -Uz compinit
-compinit
+# Only regenerate .zcompdump if it's older than 24h or doesn't exist
+if [[ -n ~/.zcompdump(#qN.m-24) ]]; then
+    compinit -C
+else
+    compinit
+fi
 
 # Override the default g alias to ensure proper completion
 unalias g 2>/dev/null  # Remove any existing alias
