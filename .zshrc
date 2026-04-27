@@ -14,6 +14,10 @@ if [[ -d "$ANTIDOTE_DIR" ]]; then
     source ~/.zsh_plugins.zsh
 fi
 
+# Initialize completion system
+autoload -Uz compinit
+compinit
+
 # Override the default g alias to ensure proper completion
 unalias g 2>/dev/null  # Remove any existing alias
 unalias md 2>/dev/null  # Remove Oh-My-Zsh md alias to allow our function to work
