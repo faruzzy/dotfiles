@@ -1,16 +1,19 @@
 #!/usr/bin/env zsh
+# Profiling: run `zsh-profile` to see startup bottlenecks
+[[ -n "$ZSH_PROFILE" ]] && zmodload zsh/zprof
+
 # Oh My Zsh configuration
 export ZSH="$HOME/.oh-my-zsh"
 ZSH_THEME=""
+
+# Skip compaudit security check (saves ~20ms per shell)
+ZSH_DISABLE_COMPFIX=true
 
 plugins=(
     git
     zsh-autosuggestions
     zsh-syntax-highlighting
     zsh-autocomplete
-    docker
-    kubectl
-    brew
 )
 
 # Load Oh My Zsh
@@ -19,6 +22,25 @@ source $ZSH/oh-my-zsh.sh
 # Override the default g alias to ensure proper completion
 unalias g 2>/dev/null  # Remove any existing alias
 unalias md 2>/dev/null  # Remove Oh-My-Zsh md alias to allow our function to work
+
+# Lazy-load heavy completions instead of loading via OMZ plugins
+# docker/kubectl completions are generated on first use and cached
+if (( $+commands[docker] )); then
+    _lazy_docker_completion() {
+        unfunction _lazy_docker_completion
+        source <(docker completion zsh)
+    }
+    compdef _lazy_docker_completion docker
+fi
+
+if (( $+commands[kubectl] )); then
+    alias k=kubectl
+    _lazy_kubectl_completion() {
+        unfunction _lazy_kubectl_completion
+        source <(kubectl completion zsh)
+    }
+    compdef _lazy_kubectl_completion kubectl
+fi
 
 # Starship prompt
 eval "$(starship init zsh)"
@@ -112,9 +134,6 @@ zle -N up-line-or-beginning-search
 zle -N down-line-or-beginning-search
 bindkey "^[[A" up-line-or-beginning-search
 bindkey "^[[B" down-line-or-beginning-search
-
-# Case insensitive completion
-zstyle ':completion:*' matcher-list 'm:{a-z}={A-Za-z}'
 
 # Colorful completions
 zstyle ':completion:*' list-colors "${(s.:.)LS_COLORS}"

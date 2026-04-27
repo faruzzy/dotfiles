@@ -1,5 +1,5 @@
 # --- Core Shell Settings & Refresh ---
-alias s='exec zsh && tmux source-file ~/.tmux.conf'
+alias s='tmux source-file ~/.tmux.conf 2>/dev/null; exec zsh'
 alias python='python3'
 alias c='clear'
 
@@ -32,12 +32,14 @@ alias ag="ag --path-to-ignore ~/.agignore"
 # --- File Operations ---
 alias cp='cp -v'
 alias rm='rm -iv'
-alias rmf="rm -rf" # Be careful with this one!
+alias rmf='command rm -rf' # Bypass rm -iv alias
 alias mkdir='mkdir -pv' # Create parent directories if they don't exist
 
 # --- System Utilities & Information
 alias tmux='tmux -2'
 alias timer='echo "Timer started. Stop with Ctrl-D." && date && time cat && date'
+alias zsh-time='time zsh -i -c exit'
+alias zsh-profile='ZSH_PROFILE=1 zsh -i -c "zprof" | head -30'
 alias gotosleep="pmset sleepnow"
 alias k5="kill -9 %%"
 
