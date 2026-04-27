@@ -1,7 +1,6 @@
 [user]
   name = Roland Pangu
   email = faruzzy@gmail.com
-  signingKey = FEF9C627
 
 [core]
   ; whitespace = trailing-space,space-before-tab,indent-with-non-tab
