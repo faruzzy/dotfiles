@@ -459,7 +459,7 @@ function mv() {
   # ZSH: Use vared instead of read -e for line editing
   local newfilename="$1"
   vared -p "New filename: " newfilename
-  mv -v "$1" "$newfilename"
+  command mv -v "$1" "$newfilename"
 }
 
 # Create a .tart.gz archive, using zopfli, pigz or gzip for compression
@@ -528,6 +528,10 @@ function extract() {
         *.tgz) tar xzf "$fullpath" ;;
         *.txz) tar Jxvf "$fullpath" ;;
         *.zip) unzip "$fullpath" ;;
+        *.zst) zstd -d "$fullpath" ;;
+        *.tar.zst) tar --zstd -xf "$fullpath" ;;
+        *.7z) 7z x "$fullpath" ;;
+        *.rar) unrar x "$fullpath" ;;
         *) echo "'$1' cannot be extracted via extract()" && cd .. && ! $didfolderexist && rm -r "$foldername" ;;
       esac
   else
@@ -563,7 +567,7 @@ function md() {
 }
 
 # find shorthand
-function f() {
+function ff() {
   find . -name "$1"
 }
 
