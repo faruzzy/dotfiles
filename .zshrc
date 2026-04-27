@@ -109,6 +109,29 @@ if [ -n "$NVM_DEFAULT_VERSION" ] && [ -d "$NVM_DIR/versions/node/$NVM_DEFAULT_VE
     export PATH="$NVM_DIR/versions/node/$NVM_DEFAULT_VERSION/bin:$PATH"
 fi
 
+# Auto-switch Node version when entering a directory with .nvmrc or .node-version
+_auto_nvm_use() {
+    local nvmrc_file
+    if [[ -f .nvmrc ]]; then
+        nvmrc_file=".nvmrc"
+    elif [[ -f .node-version ]]; then
+        nvmrc_file=".node-version"
+    fi
+
+    if [[ -n "$nvmrc_file" ]]; then
+        local required_version
+        required_version=$(<"$nvmrc_file")
+        local current_version
+        current_version=$(node -v 2>/dev/null)
+        if [[ "$current_version" != "v${required_version#v}" ]]; then
+            # Calling nvm will trigger lazy-load if not yet loaded
+            nvm use "$required_version"
+        fi
+    fi
+}
+autoload -U add-zsh-hook
+add-zsh-hook chpwd _auto_nvm_use
+
 # UP navigation
 [ -f ~/.config/up/up.sh ] && source ~/.config/up/up.sh
 
