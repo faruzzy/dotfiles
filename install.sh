@@ -133,193 +133,35 @@ install_homebrew() {
     log_success "Homebrew installed"
 }
 
-# Install development tools (FORMULAS)
-install_dev_tools() {
-    log_info "Installing development tools (formulas)..."
+# Install all Homebrew packages via Brewfile
+install_brew_packages() {
+    log_info "Installing Homebrew packages from Brewfile..."
 
-    local dev_tools=(
-        # Build tools
-        ninja cmake gettext curl
-
-        # Search and file tools
-        fd the_silver_searcher ripgrep bat fzf
-
-        # Git tools
-        gh git-delta tig
-
-        # System utilities
-        tree wget jq htop ngrep z
-
-        # Programming languages and runtimes
-        pyenv python python@3.9
-        lua luajit-openresty perl ruby deno
-
-        # Shell and terminal
-        zsh bash bash-completion@2 shellcheck
-        tmux reattach-to-user-namespace
-        autojump zoxide starship
-
-        # Editors and Neovim tooling
-        vim bob tree-sitter tree-sitter-cli
-
-        # Media and conversion
-        ffmpeg yt-dlp gallery-dl cmus imagemagick
-
-        # Networking and security
-        mkcert nss gnupg libpq
-
-        # Cloud and mobile
-        awscli cocoapods
-
-        # Java and JVM
-        jenv maven
-
-        # Other CLI tools
-        eza gnu-sed translate-shell
-        markdownlint-cli http-server allure
-        viz mas xquartz
-    )
-
-    for tool in "${dev_tools[@]}"; do
-        if ! brew list "$tool" &>/dev/null; then
-            log_info "Installing $tool..."
-            brew install "$tool" || log_warning "Failed to install $tool"
-        fi
-    done
-
-    # Special handling for specific tools
-    if ! brew list libtool &>/dev/null; then
-        if brew install libtool; then
-            brew link libtool || log_warning "Failed to link libtool"
-        else
-            log_warning "Failed to install libtool"
-        fi
+    if [[ ! -f "$SCRIPT_DIR/Brewfile" ]]; then
+        log_error "Brewfile not found at $SCRIPT_DIR/Brewfile"
+        return 1
     fi
-    if ! brew list graphviz &>/dev/null; then
-        if brew install graphviz; then
-            brew link --overwrite graphviz || log_warning "Failed to link graphviz"
-        else
-            log_warning "Failed to install graphviz"
-        fi
-    fi
-    if ! brew list yarn &>/dev/null; then
-        brew install yarn --ignore-dependencies || log_warning "Failed to install yarn"
-    fi
-
-    # Install fzf shell integration (clear FZF_DEFAULT_OPTS_FILE to avoid errors from missing config on fresh installs)
-    local fzf_install="$(brew --prefix)/opt/fzf/install"
-    if [[ -x "$fzf_install" ]]; then
-        FZF_DEFAULT_OPTS_FILE="" "$fzf_install" --all --no-bash --no-fish || log_warning "Failed to install fzf shell integration"
-    fi
-
-    log_success "Development tools installed"
-}
-
-# Install GUI applications (CASKS)
-install_gui_apps() {
-    log_info "Installing GUI applications (casks)..."
-
-    # Window management and productivity
-    local productivity_apps=(
-        rectangle alt-tab
-        bettertouchtool karabiner-elements
-        caffeine keepingyouawake
-        maccy
-        path-finder # Added path-finder
-    )
-
-    # Development tools
-    local dev_apps=(
-        visual-studio-code
-        alacritty ghostty
-        intellij-idea
-    )
-
-    # Media and utilities
-    local utility_apps=(
-        app-cleaner keka
-        kap
-        qbserve pdfsam-basic
-        colorsnapper
-        vlc spotify
-        visualvm # Added visualvm
-    )
-
-    # Browsers
-    local browsers=(
-        firefox@developer-edition
-        google-chrome@canary
-        google-chrome
-        firefox
-    )
-
-    # Other apps
-    local other_apps=(
-        whatsapp
-        google-drive
-        macfuse
-        nightfall
-    )
-
-    # Install all cask applications
-    local all_apps=("${productivity_apps[@]}" "${dev_apps[@]}" "${utility_apps[@]}" "${browsers[@]}" "${other_apps[@]}")
-
-    for app in "${all_apps[@]}"; do
-        if ! brew list --cask "$app" &>/dev/null; then
-            log_info "Installing $app..."
-            brew install --cask "$app" || log_warning "Failed to install $app"
-        fi
-    done
-
-    log_success "GUI applications installed"
-}
-
-# Install fonts
-install_fonts() {
-    log_info "Installing fonts..."
-
-    # REMOVED: brew tap homebrew/cask-fonts as it's deprecated/not strictly necessary.
-    # The cask should install automatically from the main repository.
-
-    local fonts=(
-        font-fira-code
-        font-jetbrains-mono
-        font-source-code-pro
-    )
-
-    for font in "${fonts[@]}"; do
-        if ! brew list --cask "$font" &>/dev/null; then
-            brew install --cask "$font" || log_warning "Failed to install $font"
-        fi
-    done
-
-    log_success "Fonts installed"
-}
-
-# Install Java versions
-install_java() {
-    log_info "Installing Java versions..."
 
     # Ensure Rosetta 2 is installed (required for x86 JDKs like temurin@8 on Apple Silicon)
     if [[ "$(uname -m)" == "arm64" ]] && ! /usr/bin/pgrep -q oahd; then
         softwareupdate --install-rosetta --agree-to-license || log_warning "Failed to install Rosetta 2"
     fi
 
-    local java_versions=(
-        temurin@8
-        temurin@11
-        temurin@17
-        temurin@21
-    )
+    sudo -v  # Refresh sudo for casks that need it
 
-    for version in "${java_versions[@]}"; do
-        if ! brew list --cask "$version" &>/dev/null; then
-            sudo -v  # Refresh sudo before each installer-based cask
-            brew install --cask "$version" || log_warning "Failed to install $version"
-        fi
-    done
+    brew bundle --file="$SCRIPT_DIR/Brewfile" || log_warning "Some Brewfile entries failed to install"
 
-    log_success "Java versions installed"
+    # Post-install: link tools that need it
+    brew link libtool 2>/dev/null || true
+    brew link --overwrite graphviz 2>/dev/null || true
+
+    # Install fzf shell integration
+    local fzf_install="$(brew --prefix)/opt/fzf/install"
+    if [[ -x "$fzf_install" ]]; then
+        FZF_DEFAULT_OPTS_FILE="" "$fzf_install" --all --no-bash --no-fish || log_warning "Failed to install fzf shell integration"
+    fi
+
+    log_success "Homebrew packages installed"
 }
 
 # Install Node.js via NVM
@@ -603,11 +445,8 @@ main() {
     install_xcode_tools
     install_homebrew
 
-    # Development environment
-    install_dev_tools
-    install_java
-    install_gui_apps
-    install_fonts
+    # Development environment (formulas, casks, fonts, Java)
+    install_brew_packages
 
     # Node.js and global packages
     install_node
