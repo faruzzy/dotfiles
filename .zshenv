@@ -13,11 +13,6 @@ export LESSOPEN='|bat --color=always %s 2>/dev/null || cat %s'  # Syntax highlig
 export LC_ALL=en_US.UTF-8
 export LANG=en_US.UTF-8
 
-# History Configuration
-export HISTSIZE=10000           # Commands in memory
-export SAVEHIST=32768           # Commands in history file (zsh equivalent of HISTFILESIZE)
-export HISTORY_IGNORE="(cd|cd -|pwd|exit|date|* --help|ls|ll|la|clear|history)"
-
 # Terminal Configuration
 export CLICOLOR=1
 

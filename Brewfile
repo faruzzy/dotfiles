@@ -51,6 +51,7 @@ brew "autojump"
 brew "zoxide"
 brew "starship"
 brew "antidote"
+brew "atuin"
 
 # --- Editors and Neovim tooling ---
 brew "vim"

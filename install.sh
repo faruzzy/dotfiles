@@ -216,6 +216,49 @@ install_npm_packages() {
     log_success "Global npm packages installed"
 }
 
+# Setup Atuin (shell history)
+setup_atuin() {
+    log_info "Setting up Atuin shell history..."
+
+    if ! command_exists atuin; then
+        log_warning "atuin not found. Skipping Atuin setup."
+        return 0
+    fi
+
+    # Import existing zsh history into atuin
+    if [[ -f "$HOME/.zsh_history" ]]; then
+        log_info "Importing existing zsh history into Atuin..."
+        atuin import auto || log_warning "Failed to import shell history into Atuin"
+    fi
+
+    # Configure atuin for local-only mode (no sync)
+    local atuin_config_dir="$HOME/.config/atuin"
+    local atuin_config="$atuin_config_dir/config.toml"
+    if [[ ! -f "$atuin_config" ]]; then
+        mkdir -p "$atuin_config_dir"
+        cat > "$atuin_config" << 'ATUIN_EOF'
+## Atuin configuration
+## See https://docs.atuin.sh/configuration/config/ for all options
+
+# Disable sync (local-only mode)
+sync_address = ""
+auto_sync = false
+
+# Search settings
+search_mode = "fuzzy"
+filter_mode = "global"
+style = "auto"
+inline_height = 0
+show_preview = true
+ATUIN_EOF
+        log_success "Atuin configured for local-only mode"
+    else
+        log_info "Atuin config already exists. Skipping config generation."
+    fi
+
+    log_success "Atuin setup complete"
+}
+
 # Setup Antidote and plugins
 setup_antidote() {
     log_info "Setting up Antidote plugins..."
@@ -443,6 +486,7 @@ main() {
     # Dotfiles setup
     setup_dotfiles
     setup_antidote
+    setup_atuin
     setup_git_prompt
 
     # Apply macOS system preferences

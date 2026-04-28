@@ -53,13 +53,6 @@ eval "$(starship init zsh)"
 setopt AUTO_CD              # Automatically cd into typed directory names
 setopt GLOB_DOTS            # Include dotfiles in globbing
 setopt EXTENDED_GLOB        # Extended globbing patterns
-setopt HIST_IGNORE_DUPS     # Don't record duplicates in history
-setopt HIST_IGNORE_ALL_DUPS # Remove older duplicate entries from history
-setopt HIST_REDUCE_BLANKS   # Remove superfluous blanks from history
-setopt HIST_VERIFY          # Show command with history expansion before running
-setopt SHARE_HISTORY        # Share history between all sessions
-setopt APPEND_HISTORY       # Append to history file rather than replace
-setopt INC_APPEND_HISTORY   # Write to history file immediately, not when shell exits
 setopt CORRECT              # Auto correct mistakes in commands
 setopt CORRECT_ALL          # Auto correct mistakes in arguments
 
@@ -107,13 +100,10 @@ if [[ ! -f ~/.oh-my-zsh/oh-my-zsh.sh ]]; then
     [[ -f ~/.git-completion.zsh ]] && source ~/.git-completion.zsh
 fi
 
-# History search with arrow keys
-autoload -U up-line-or-beginning-search
-autoload -U down-line-or-beginning-search
-zle -N up-line-or-beginning-search
-zle -N down-line-or-beginning-search
-bindkey "^[[A" up-line-or-beginning-search
-bindkey "^[[B" down-line-or-beginning-search
+# Atuin (shell history)
+if command -v atuin > /dev/null; then
+    eval "$(atuin init zsh)"
+fi
 
 # Colorful completions
 zstyle ':completion:*' list-colors "${(s.:.)LS_COLORS}"
