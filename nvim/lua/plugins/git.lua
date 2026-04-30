@@ -2,25 +2,30 @@ return {
   {
     'tpope/vim-fugitive',
     dependencies = { 'tpope/vim-rhubarb' },
-    cmd = { 'Git' },
+    cmd = { 'Git', 'Gvdiffsplit', 'Gread', 'Gwrite', 'GBrowse' },
     keys = {
-      { '<Leader>ga', '<cmd>execute "silent !git add " . shellescape(expand("%:p"))<CR>', desc = 'Git: Add current file' },
-      { '<Leader>gp', '<cmd>Git pull<cr>',                                                desc = 'Git: Pull' },
-      { '<Leader>gP', '<cmd>Git push<cr>',                                                desc = 'Git: Push' },
-      { 'g<cr>',      '<cmd>Git<cr>',                                                     desc = 'Git: Status' },
-      { '<Leader>gc', '<cmd>Git commit<cr>',                                              desc = 'Git: Commit' },
-      { '<Leader>gd', '<cmd>Gvdiffsplit!<cr>',                                            desc = 'Git: Diff split' },
-      { '<Leader>gr', '<cmd>Gvdiffsplit! HEAD~1<cr>',                                     desc = 'Git: Reversed diff of most recent commit' },
-      { '<Leader>gb', '<cmd>Git blame<cr>',                                               desc = 'Git: Blame' },
-      { '<Leader>gl', '<cmd>Git log --oneline<cr>',                                       desc = 'Git: Log' },
+      {
+        '<Leader>ga',
+        '<cmd>execute "silent !git add " . shellescape(expand("%:p"))<CR>',
+        desc = 'Git: Add current file',
+      },
+      { '<Leader>gp', '<cmd>Git pull<cr>', desc = 'Git: Pull' },
+      { '<Leader>gP', '<cmd>Git push<cr>', desc = 'Git: Push' },
+      { 'g<cr>', '<cmd>Git<cr>', desc = 'Git: Status' },
+      { '<Leader>gc', '<cmd>Git commit<cr>', desc = 'Git: Commit' },
+      { '<Leader>gd', '<cmd>Gvdiffsplit!<cr>', desc = 'Git: Diff split' },
+      {
+        '<Leader>gr',
+        '<cmd>Gvdiffsplit! HEAD~1<cr>',
+        desc = 'Git: Reversed diff of most recent commit',
+      },
+      { '<Leader>gb', '<cmd>Git blame<cr>', desc = 'Git: Blame' },
     },
     desc = 'Git wrapper with comprehensive commands',
     config = function()
       vim.api.nvim_create_autocmd('User', {
         pattern = 'FugitiveChanged',
-        callback = function()
-          require('gitsigns').refresh()
-        end,
+        callback = function() require('gitsigns').refresh() end,
       })
     end,
   },
@@ -29,10 +34,10 @@ return {
     'junegunn/gv.vim',
     dependencies = { 'tpope/vim-fugitive' },
     keys = {
-      { '<Leader>gv', '<cmd>GV<cr>',  desc = 'Git: Commit browser' },
+      { '<Leader>gv', '<cmd>GV<cr>', desc = 'Git: Commit browser' },
       { '<Leader>gV', '<cmd>GV!<cr>', desc = 'Git: Commit browser (current file)' },
     },
-    desc = 'Git commit browser'
+    desc = 'Git commit browser',
   },
 
   {
@@ -41,7 +46,7 @@ return {
     keys = {
       { '<Leader>gm', '<cmd>GitMessenger<cr>', desc = 'Git: Show commit message' },
     },
-    desc = 'Show git commit message in popup'
+    desc = 'Show git commit message in popup',
   },
 
   {
@@ -51,6 +56,6 @@ return {
     keys = {
       { '<Leader>gi', '<cmd>Gitignore<cr>', desc = 'Generate .gitignore' },
     },
-    desc = 'Generate .gitignore files'
+    desc = 'Generate .gitignore files',
   },
 }
