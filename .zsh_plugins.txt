@@ -1,8 +1,12 @@
-# Oh My Zsh Library & Plugins
-ohmyzsh/ohmyzsh path:lib
+# Oh My Zsh Library (only what we need — Starship handles prompt, Atuin handles history)
+ohmyzsh/ohmyzsh path:lib/clipboard.zsh
+ohmyzsh/ohmyzsh path:lib/completion.zsh
+ohmyzsh/ohmyzsh path:lib/directories.zsh
+ohmyzsh/ohmyzsh path:lib/key-bindings.zsh
+
+# Oh My Zsh Plugins
 ohmyzsh/ohmyzsh path:plugins/git
 
 # Third-party plugins
 zsh-users/zsh-autosuggestions
 zsh-users/zsh-syntax-highlighting
-marlonrichert/zsh-autocomplete
