@@ -164,42 +164,33 @@ install_brew_packages() {
     log_success "Homebrew packages installed"
 }
 
-# Install Node.js via NVM
-install_node() {
-    log_info "Installing Node.js via NVM..."
+# Install language runtimes via mise
+install_mise_runtimes() {
+    log_info "Installing language runtimes via mise..."
 
-    if [[ ! -s "$HOME/.nvm/nvm.sh" ]]; then
-        curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.4/install.sh | bash || log_warning "Failed to install NVM"
-    fi
-
-    # Source NVM and ensure an LTS Node version is installed/active.
-    export NVM_DIR="$HOME/.nvm"
-    [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh" || true
-
-    if ! command_exists nvm; then
-        log_warning "nvm is not available after installation attempt. Skipping Node.js setup."
+    if ! command_exists mise; then
+        log_warning "mise not found. Runtimes cannot be installed automatically."
         return 0
     fi
 
-    nvm install --lts || log_warning "Failed to install LTS Node"
-    nvm use --lts || log_warning "Failed to use LTS Node"
-    nvm alias default node || log_warning "Failed to set default node version"
+    # Install LTS Node.js
+    log_info "Installing LTS Node.js via mise..."
+    mise use --global node@lts || log_warning "Failed to install LTS Node via mise"
 
-    log_success "Node.js installed via NVM"
+    # Install latest Java (LTS)
+    log_info "Installing latest Java via mise..."
+    mise use --global java@latest || log_warning "Failed to install Java via mise"
+
+    log_success "Language runtimes installed via mise"
 }
 
 # Install global npm packages
 install_npm_packages() {
     log_info "Installing global npm packages..."
 
-    # Ensure NVM is sourced for npm to be available if NVM was just installed
-    export NVM_DIR="$HOME/.nvm"
-    [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh" || true
-
     if ! command_exists npm; then
-        log_warning "npm not found. Attempting to install Node.js before retrying..."
-        install_node
-        [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh" || true
+        log_warning "npm not found. Attempting to install language runtimes before retrying..."
+        install_mise_runtimes
     fi
 
     if ! command_exists npm; then
@@ -225,33 +216,65 @@ install_npm_packages() {
     log_success "Global npm packages installed"
 }
 
-# Install Oh My Zsh and plugins
-install_oh_my_zsh() {
-    log_info "Installing Oh My Zsh..."
+# Setup Atuin (shell history)
+setup_atuin() {
+    log_info "Setting up Atuin shell history..."
 
-    if [[ ! -d "$HOME/.oh-my-zsh" ]]; then
-        # Use --unattended to avoid the initial shell switch prompt
-        sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended || log_warning "Failed to install Oh My Zsh"
+    if ! command_exists atuin; then
+        log_warning "atuin not found. Skipping Atuin setup."
+        return 0
     fi
 
-    # Install plugins (always check, even if oh-my-zsh was already installed)
-    local zsh_custom="${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}"
+    # Import existing zsh history into atuin
+    if [[ -f "$HOME/.zsh_history" ]]; then
+        log_info "Importing existing zsh history into Atuin..."
+        atuin import auto || log_warning "Failed to import shell history into Atuin"
+    fi
 
-    local plugins=(
-        "zsh-users/zsh-syntax-highlighting"
-        "zsh-users/zsh-autosuggestions"
-        "marlonrichert/zsh-autocomplete"
-        "supercrabtree/k"
-    )
+    # Configure atuin for local-only mode (no sync)
+    local atuin_config_dir="$HOME/.config/atuin"
+    local atuin_config="$atuin_config_dir/config.toml"
+    if [[ ! -f "$atuin_config" ]]; then
+        mkdir -p "$atuin_config_dir"
+        cat > "$atuin_config" << 'ATUIN_EOF'
+## Atuin configuration
+## See https://docs.atuin.sh/configuration/config/ for all options
 
-    for plugin in "${plugins[@]}"; do
-        local plugin_name="${plugin##*/}"
-        if [[ ! -d "$zsh_custom/plugins/$plugin_name" ]]; then
-            git clone "https://github.com/$plugin.git" "$zsh_custom/plugins/$plugin_name" || log_warning "Failed to clone $plugin_name"
-        fi
-    done
+# Disable sync (local-only mode)
+sync_address = ""
+auto_sync = false
 
-    log_success "Oh My Zsh installed"
+# Search settings
+search_mode = "fuzzy"
+filter_mode = "global"
+style = "auto"
+inline_height = 0
+show_preview = true
+ATUIN_EOF
+        log_success "Atuin configured for local-only mode"
+    else
+        log_info "Atuin config already exists. Skipping config generation."
+    fi
+
+    log_success "Atuin setup complete"
+}
+
+# Setup Antidote and plugins
+setup_antidote() {
+    log_info "Setting up Antidote plugins..."
+
+    if ! command_exists antidote; then
+        log_warning "antidote not found. Skipping plugin setup."
+        return 0
+    fi
+
+    # Generate the static plugins file
+    if [[ -f "$HOME/.zsh_plugins.txt" ]]; then
+        antidote bundle < "$HOME/.zsh_plugins.txt" > "$HOME/.zsh_plugins.zsh"
+        log_success "Antidote plugins bundled"
+    else
+        log_warning ".zsh_plugins.txt not found. Cannot bundle plugins."
+    fi
 }
 
 # Install tmux plugin manager
@@ -371,6 +394,7 @@ setup_dotfiles() {
         ".zprofile"
         ".zshenv"
         ".zshrc"
+        ".zsh_plugins.txt"
     )
 
     for file in "${dotfiles[@]}"; do
@@ -448,12 +472,11 @@ main() {
     # Development environment (formulas, casks, fonts, Java)
     install_brew_packages
 
-    # Node.js and global packages
-    install_node
+    # Language runtimes and global packages
+    install_mise_runtimes
     install_npm_packages
 
     # Shell and terminal setup
-    install_oh_my_zsh
     install_tmux_plugins
 
     # Application configuration
@@ -462,6 +485,8 @@ main() {
 
     # Dotfiles setup
     setup_dotfiles
+    setup_antidote
+    setup_atuin
     setup_git_prompt
 
     # Apply macOS system preferences

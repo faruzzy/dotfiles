@@ -28,7 +28,7 @@ return {
 
   {
     'jparise/vim-graphql',
-    ft = { 'graphql', 'javascript', 'typescript' },
+    ft = 'graphql',
     desc = 'GraphQL syntax highlighting and indentation'
   },
 

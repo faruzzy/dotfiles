@@ -32,9 +32,9 @@ return {
     {
       '<leader>nf',
       function()
-        require('neogen').generate()
+        require('neogen').generate({ type = 'func' })
       end,
-      desc = 'Generate annotation',
+      desc = 'Generate function annotation',
     },
     {
       '<leader>nc',

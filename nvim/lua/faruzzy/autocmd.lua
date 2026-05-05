@@ -49,9 +49,34 @@ augroup('jsdoc_comment_continuation', {
           return ''
         end
 
+        -- Continue block comment with aligned " * " (bypasses smartindent
+        -- which mis-indents after lines containing { like @param {type})
+        if before_cursor:match('^%s*%*') then
+          local prefix = line:match('^(%s*%*)')
+          vim.schedule(function()
+            vim.api.nvim_buf_set_lines(0, row, row, false, { prefix .. ' ' })
+            vim.api.nvim_win_set_cursor(0, { row + 1, #prefix + 1 })
+          end)
+          return ''
+        end
+
         -- Otherwise use autopairs CR
         return require('nvim-autopairs').autopairs_cr()
       end, { expr = true, replace_keycodes = false })
+
+      -- Same fix for 'o' in normal mode: bypass smartindent inside block comments
+      bmap('n', 'o', function()
+        local line = vim.api.nvim_get_current_line()
+        if line:match('^%s*%*') then
+          local prefix = line:match('^(%s*%*)')
+          local row = vim.api.nvim_win_get_cursor(0)[1]
+          vim.api.nvim_buf_set_lines(0, row, row, false, { prefix .. ' ' })
+          vim.api.nvim_win_set_cursor(0, { row + 1, #prefix + 1 })
+          vim.cmd('startinsert!')
+          return
+        end
+        vim.api.nvim_feedkeys('o', 'n', false)
+      end)
     end,
   },
 })

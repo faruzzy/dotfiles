@@ -41,9 +41,6 @@ fi
 # See: https://github.com/bobthecow/git-flow-completion/wiki/Install-Bash-git-completion
 [ -f  /usr/local/etc/bash_completion ] && . /usr/local/etc/bash_completion
 
-export PATH="$HOME/.jenv/bin:$PATH"
-command -v jenv > /dev/null && eval "$(jenv init -)"
-
 [[ -s ~/.bashrc ]] && source ~/.bashrc
 
 export MANPATH="/opt/local/share/man:$MANPATH"
