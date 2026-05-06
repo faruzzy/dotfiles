@@ -1,6 +1,9 @@
 return {
   {
     'christoomey/vim-tmux-navigator',
+    init = function()
+      vim.g.tmux_navigator_no_mappings = 1
+    end,
     keys = {
       { '<C-h>', '<cmd>TmuxNavigateLeft<cr>',  mode = 'n', desc = 'Navigate Left' },
       { '<C-j>', '<cmd>TmuxNavigateDown<cr>',  mode = 'n', desc = 'Navigate Down' },
