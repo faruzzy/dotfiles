@@ -5,6 +5,7 @@ g.mapleader = ','
 g.maplocalleader = ','
 g.have_nerd_font = true -- Enable Nerd Font icons for UI
 
+
 opt.clipboard = 'unnamedplus' -- Sync clipboard with system
 opt.number = true -- Show line numbers
 opt.relativenumber = true -- Show relative line numbers
@@ -29,13 +30,13 @@ opt.expandtab = true -- Use spaces instead of tabs
 opt.shiftwidth = 2 -- Size of indent
 opt.tabstop = 2 -- Width of tabs
 opt.softtabstop = 2 -- Soft tab width
-opt.list = true -- Show invisible character
+opt.list = true -- Show invisible characters
+opt.listchars = { tab = '» ', trail = '·', nbsp = '␣' }
 opt.backspace = { 'indent', 'eol', 'start' } -- Backspace behavior
 opt.incsearch = true -- Incremental search
 opt.hlsearch = true -- Highlight search matches
 opt.ignorecase = true -- Case-insensitive search
 opt.smartcase = true -- Smart case search
-opt.gdefault = true -- Global substitute by default
 opt.backup = false -- Disable backup files
 opt.writebackup = false -- Disable write backup
 opt.swapfile = false -- Disable swap files
