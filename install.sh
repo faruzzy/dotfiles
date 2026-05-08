@@ -156,7 +156,8 @@ install_brew_packages() {
     brew link --overwrite graphviz 2>/dev/null || true
 
     # Install fzf shell integration
-    local fzf_install="$(brew --prefix)/opt/fzf/install"
+    local fzf_install
+    fzf_install="$(brew --prefix)/opt/fzf/install"
     if [[ -x "$fzf_install" ]]; then
         FZF_DEFAULT_OPTS_FILE="" "$fzf_install" --all --no-bash --no-fish || log_warning "Failed to install fzf shell integration"
     fi
@@ -293,9 +294,11 @@ install_tmux_plugins() {
 
     # Install tmuxwords.rb for fzf-based tmux word completion
     if [[ ! -x /usr/local/bin/tmuxwords.rb ]]; then
-        sudo curl -o /usr/local/bin/tmuxwords.rb https://raw.githubusercontent.com/kiooss/dotmagic/master/bin/tmuxwords.rb \
-            && sudo chmod +x /usr/local/bin/tmuxwords.rb \
-           || log_warning "Failed to install tmuxwords.rb"
+        if sudo curl -o /usr/local/bin/tmuxwords.rb https://raw.githubusercontent.com/kiooss/dotmagic/master/bin/tmuxwords.rb; then
+            sudo chmod +x /usr/local/bin/tmuxwords.rb || log_warning "Failed to make tmuxwords.rb executable"
+        else
+            log_warning "Failed to install tmuxwords.rb"
+        fi
     fi
 
     log_success "tmux plugins and themes installed"
@@ -374,6 +377,32 @@ install_python_packages() {
 setup_dotfiles() {
     log_info "Setting up dotfiles symbolic links..."
 
+    link_dotfile() {
+        local source_path="$1"
+        local target_path="$2"
+        local label="$3"
+
+        if [[ ! -e "$source_path" && ! -L "$source_path" ]]; then
+            log_warning "$label not found at $source_path. Skipping link."
+            return 0
+        fi
+
+        if [[ "$(readlink "$target_path" 2>/dev/null)" == "$source_path" ]]; then
+            log_info "$label already linked correctly. Skipping."
+            return 0
+        fi
+
+        mkdir -p "$(dirname "$target_path")"
+
+        if [[ -e "$target_path" || -L "$target_path" ]]; then
+            log_info "Backing up existing $label"
+            mv "$target_path" "$target_path.backup.$(date +%Y%m%d_%H%M%S)"
+        fi
+
+        log_info "Creating symbolic link for $label"
+        ln -sf "$source_path" "$target_path"
+    }
+
     local dotfiles=(
         ".aliases"
         ".bash_options"
@@ -398,53 +427,25 @@ setup_dotfiles() {
     )
 
     for file in "${dotfiles[@]}"; do
-        if [[ -f "$SCRIPT_DIR/$file" ]]; then
-            if [[ "$(readlink "$HOME/$file" 2>/dev/null)" == "$SCRIPT_DIR/$file" ]]; then
-                log_info "$file already linked correctly. Skipping."
-                continue
-            fi
-
-            if [[ -e "$HOME/$file" || -L "$HOME/$file" ]]; then
-                log_info "Backing up existing $file"
-                mv "$HOME/$file" "$HOME/${file}.backup.$(date +%Y%m%d_%H%M%S)"
-            fi
-
-            log_info "Creating symbolic link for $file"
-            ln -sf "$SCRIPT_DIR/$file" "$HOME/$file"
-        else
-            log_warning "$file not found in dotfiles directory. Skipping link."
-        fi
+        link_dotfile "$SCRIPT_DIR/$file" "$HOME/$file" "$file"
     done
 
-    # Handle config directories (e.g., nvim)
-    if [[ -d "$SCRIPT_DIR/nvim" ]]; then
-        if [[ "$(readlink "$HOME/.config/nvim" 2>/dev/null)" == "$SCRIPT_DIR/nvim" ]]; then
-            log_info "nvim config already linked correctly. Skipping."
-        else
-            mkdir -p "$HOME/.config"
-            if [[ -e "$HOME/.config/nvim" ]]; then
-                log_info "Backing up existing nvim config directory"
-                mv "$HOME/.config/nvim" "$HOME/.config/nvim.backup.$(date +%Y%m%d_%H%M%S)"
-            fi
-            log_info "Creating symbolic link for nvim config"
-            ln -sf "$SCRIPT_DIR/nvim" "$HOME/.config/nvim"
-        fi
-    fi
+    link_dotfile "$SCRIPT_DIR/nvim" "$HOME/.config/nvim" "nvim config"
 
-    # Handle config files (e.g., starship.toml)
-    if [[ -f "$SCRIPT_DIR/config/starship.toml" ]]; then
-        if [[ "$(readlink "$HOME/.config/starship.toml" 2>/dev/null)" == "$SCRIPT_DIR/config/starship.toml" ]]; then
-            log_info "starship.toml already linked correctly. Skipping."
-        else
-            mkdir -p "$HOME/.config"
-            if [[ -e "$HOME/.config/starship.toml" ]]; then
-                log_info "Backing up existing starship.toml"
-                mv "$HOME/.config/starship.toml" "$HOME/.config/starship.toml.backup.$(date +%Y%m%d_%H%M%S)"
-            fi
-            log_info "Creating symbolic link for starship.toml"
-            ln -sf "$SCRIPT_DIR/config/starship.toml" "$HOME/.config/starship.toml"
-        fi
-    fi
+    local config_dirs=(
+        "alacritty"
+        "bat"
+        "ghostty"
+        "skhd"
+        "up"
+        "yabai"
+    )
+
+    for config_dir in "${config_dirs[@]}"; do
+        link_dotfile "$SCRIPT_DIR/config/$config_dir" "$HOME/.config/$config_dir" "$config_dir config"
+    done
+
+    link_dotfile "$SCRIPT_DIR/config/starship.toml" "$HOME/.config/starship.toml" "starship.toml"
 
     log_success "Dotfiles setup complete"
 }
