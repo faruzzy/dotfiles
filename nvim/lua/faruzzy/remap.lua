@@ -3,8 +3,6 @@ local map = require('utils').map
 -- Switch to last buffer
 map('n', '<Tab>', '<cmd>b#<cr>', { desc = 'Switch to last buffer' })
 
--- AutoSave toggle
-map('n', '<leader>as', '<cmd>ASToggle<cr>', { desc = 'Toggle AutoSave' })
 
 -- Line movement (handles wrap)
 map('n', 'k', 'v:count == 0 ? \'gk\' : \'k\'', { expr = true, desc = 'Move up with wrap' })
@@ -21,8 +19,53 @@ map({ 'n', 'v' }, '<Space>', '<Nop>')
 map('i', '<c-h>', '<left>')
 map('i', '<c-l>', '<right>')
 
--- Save and quit
-map('n', '<Leader>x', '<cmd>x<cr>', { desc = 'Save and quit' })
+-- Smart quit: close fugitive diff view if active, otherwise save and quit
+map('n', '<Leader>x', function()
+  -- Check if we're in a fugitive diff context
+  local in_fugitive = false
+  for _, buf in ipairs(vim.api.nvim_list_bufs()) do
+    if vim.api.nvim_buf_is_loaded(buf) then
+      local name = vim.api.nvim_buf_get_name(buf)
+      local ft = vim.bo[buf].filetype
+      if name:match('^fugitive://') or ft == 'fugitive' then
+        in_fugitive = true
+        break
+      end
+    end
+  end
+
+  if in_fugitive then
+    -- Find the working file buffer to return to
+    local target_buf
+    for _, buf in ipairs(vim.api.nvim_list_bufs()) do
+      if vim.api.nvim_buf_is_loaded(buf) and vim.api.nvim_buf_is_valid(buf) then
+        local name = vim.api.nvim_buf_get_name(buf)
+        local bt = vim.bo[buf].buftype
+        if not name:match('^fugitive://') and bt == '' and name ~= '' then
+          target_buf = buf
+        end
+      end
+    end
+
+    vim.cmd('diffoff!')
+    for _, buf in ipairs(vim.api.nvim_list_bufs()) do
+      if vim.api.nvim_buf_is_valid(buf) then
+        local name = vim.api.nvim_buf_get_name(buf)
+        local ft = vim.bo[buf].filetype
+        if name:match('^fugitive://') or ft == 'fugitive' then
+          vim.api.nvim_buf_delete(buf, { force = true })
+        end
+      end
+    end
+
+    vim.cmd('only')
+    if target_buf and vim.api.nvim_buf_is_valid(target_buf) then
+      vim.api.nvim_set_current_buf(target_buf)
+    end
+  else
+    vim.cmd('x')
+  end
+end, { desc = 'Smart quit (close fugitive diff or save+quit)' })
 map('n', '<Leader>X', '<cmd>wqa!<cr>', { desc = 'Save all and quit forcefully' })
 
 -- Clear highlighting
