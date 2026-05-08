@@ -100,6 +100,7 @@ return {
       keymap = {
         preset = 'inherit',
         ['<Tab>'] = { 'select_and_accept' },
+        ['<CR>'] = { 'fallback' },
       },
     },
     completion = {
