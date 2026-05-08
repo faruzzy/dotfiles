@@ -1,8 +1,6 @@
 local map = require('utils').map
 
--- Buffer navigation
-map('n', ']b', vim.cmd.bnext, { desc = 'Next buffer' })
-map('n', '[b', vim.cmd.bprev, { desc = 'Previous buffer' })
+-- Switch to last buffer
 map('n', '<Tab>', '<cmd>b#<cr>', { desc = 'Switch to last buffer' })
 
 -- AutoSave toggle
@@ -43,8 +41,14 @@ map('n', '<Leader>e', vim.diagnostic.open_float, { desc = 'Open Diagnostic Float
 map('n', '<leader>gl', '<cmd>diffget //2<cr>', { desc = 'Get left diff' })
 map('n', '<leader>gr', '<cmd>diffget //3<cr>', { desc = 'Get right diff' })
 
--- Run last command easily
-map({ 'n', 'v' }, '<CR>', ':<up>', { silent = false, desc = 'Run last command' })
+-- Run last command easily (skip special buffers where CR has native meaning)
+map({ 'n', 'v' }, '<CR>', function()
+  local bt = vim.bo.buftype
+  if bt == 'quickfix' or bt == 'help' or bt == 'nofile' or bt == 'prompt' then
+    return '<CR>'
+  end
+  return ':<up>'
+end, { expr = true, silent = false, desc = 'Run last command' })
 
 -- Toggle inlay hints
 map('n', '<Leader>ti', function()
@@ -75,7 +79,7 @@ map('n', '<leader>ut', '<cmd>UndotreeToggle<cr>', { desc = 'Toggle Undotree' })
 
 vim.api.nvim_create_user_command(
   'Stash',
-  function(opts) vim.cmd(string.format('Git stash push -m "%s"', opts.args)) end,
+  function(opts) vim.cmd('Git stash push -m ' .. vim.fn.shellescape(opts.args)) end,
   { nargs = 1 }
 )
 
@@ -113,6 +117,7 @@ function CloseAllButCurrent()
         process_next_buffer()
       end
     else
+      vim.cmd('only')
       local current_win_id = vim.fn.bufwinid(current_buf)
       if current_win_id ~= -1 then
         vim.fn.win_gotoid(current_win_id)
@@ -123,7 +128,6 @@ function CloseAllButCurrent()
   end
 
   process_next_buffer()
-  vim.cmd('only')
 end
 
 map('n', '<Leader>aq', function() CloseAllButCurrent() end, { desc = 'Close all other buffers' })
@@ -219,17 +223,23 @@ local function compile_and_run()
   end
 
   local ft = vim.bo.filetype
+  local file = vim.fn.shellescape(vim.fn.expand('%'))
+  local base = vim.fn.shellescape(vim.fn.expand('%:r'))
   local cmd
   if ft == 'c' then
-    cmd = 'gcc ' .. vim.fn.expand('%') .. ' -o ' .. vim.fn.expand('%:r') .. ' && ./' .. vim.fn.expand('%:r')
+    cmd = 'gcc ' .. file .. ' -o ' .. base .. ' && ./' .. base
   elseif ft == 'java' then
-    cmd = 'javac ' .. vim.fn.expand('%') .. ' && java ' .. vim.fn.expand('%:r')
+    cmd = 'javac ' .. file .. ' && java ' .. base
   elseif ft == 'javascript' then
-    cmd = 'node ' .. vim.fn.expand('%')
+    cmd = 'node ' .. file
   elseif ft == 'sh' then
-    cmd = 'bash ' .. vim.fn.expand('%')
+    cmd = 'bash ' .. file
   elseif ft == 'python' then
-    cmd = 'python ' .. vim.fn.shellescape(vim.fn.expand('%'))
+    cmd = 'python ' .. file
+  elseif ft == 'typescript' then
+    cmd = 'npx tsx ' .. file
+  elseif ft == 'lua' then
+    cmd = 'lua ' .. file
   end
   if cmd then
     vim.cmd('split | terminal ' .. cmd)
