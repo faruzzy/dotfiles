@@ -22,8 +22,8 @@ return {
         tsserver_file_preferences = {
           includeInlayEnumMemberValueHints = true,
           includeInlayFunctionLikeReturnTypeHints = false,
-          includeInlayFunctionParameterTypeHints = true,
-          includeInlayParameterNameHints = 'all',
+          includeInlayFunctionParameterTypeHints = false,
+          includeInlayParameterNameHints = 'literals',
           includeInlayParameterNameHintsWhenArgumentMatchesName = false,
           includeInlayPropertyDeclarationTypeHints = true,
           includeInlayVariableTypeHints = false,

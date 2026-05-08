@@ -43,7 +43,7 @@ return {
       },
     },
     log_level = vim.log.levels.TRACE,
-    format_after_save = function(bufnr)
+    format_on_save = function(bufnr)
       if vim.b[bufnr].disable_autoformat then return end
       return { timeout_ms = 5000, lsp_format = 'fallback' }
     end,

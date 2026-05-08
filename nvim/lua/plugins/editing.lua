@@ -5,7 +5,7 @@ return {
     desc = 'Intelligently reopen files at last edit position',
   },
 
-  { 'lewis6991/spaceless.nvim' },
+  { 'lewis6991/spaceless.nvim', event = 'BufReadPost' },
 
   {
     'andythigpen/nvim-coverage',
@@ -23,7 +23,7 @@ return {
   },
 
   {
-    event = { 'InsertLeave', 'TextChanged' },
+    event = { 'FocusLost', 'BufLeave' },
     'Pocco81/auto-save.nvim',
     desc = 'Automatic file saving',
     config = function()
@@ -34,7 +34,7 @@ return {
           dim = 0.18,
           cleaning_interval = 1250,
         },
-        trigger_events = { 'InsertLeave', 'TextChanged' },
+        trigger_events = { 'FocusLost', 'BufLeave' },
         condition = function(buf)
           if not vim.api.nvim_buf_is_valid(buf) then
             return false
@@ -106,7 +106,7 @@ return {
 
   {
     'jordwalke/VimSplitBalancer',
-    lazy = false,
+    event = 'WinNew',
     desc = 'Distribute space among vertical splits',
   },
 
