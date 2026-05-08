@@ -87,7 +87,7 @@ augroup('YankHighlight', {
   {
     'TextYankPost',
     callback = function()
-      if vim.bo.buftype == '' then vim.highlight.on_yank({ higroup = 'IncSearch', timeout = 200 }) end
+      if vim.bo.buftype == '' then vim.hl.on_yank({ higroup = 'IncSearch', timeout = 200 }) end
     end,
     pattern = '*',
   },

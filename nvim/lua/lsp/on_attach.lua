@@ -12,17 +12,26 @@ return function(client, bufnr)
   bsk('n', '<Leader>rn', vim.lsp.buf.rename, { desc = 'LSP Rename' })
   bsk('n', '<Leader>ca', vim.lsp.buf.code_action, { desc = 'LSP Code Action' })
 
-  -- Inlay hints available but not auto-enabled due to Neovim 0.11.x
-  -- rendering bug (Invalid 'col': out of range). Use <Leader>ti to toggle.
+  if client:supports_method('textDocument/inlayHint', bufnr) then
+    vim.lsp.inlay_hint.enable(true, { bufnr = bufnr })
+  end
 
   if client:supports_method('textDocument/codeAction', bufnr) then
+    local last_lightbulb_line = -1
+    local last_lightbulb_tick = -1
     require('utils').augroup('lightbulb_' .. bufnr, {
       {
-        { 'CursorHold', 'CursorHoldI' },
+        'CursorHold',
         callback = function()
+          local line = vim.api.nvim_win_get_cursor(0)[1] - 1
+          local tick = vim.api.nvim_buf_get_changedtick(bufnr)
+          if line == last_lightbulb_line and tick == last_lightbulb_tick then return end
+          last_lightbulb_line = line
+          last_lightbulb_tick = tick
+
           local params = vim.lsp.util.make_range_params(0, client.offset_encoding)
           ---@diagnostic disable-next-line: inject-field
-          params.context = { diagnostics = vim.diagnostic.get(bufnr, { lnum = params.range.start.line }) }
+          params.context = { diagnostics = vim.diagnostic.get(bufnr, { lnum = line }) }
 
           vim.lsp.buf_request_all(bufnr, 'textDocument/codeAction', params, function(response)
             vim.api.nvim_buf_clear_namespace(bufnr, lightbulb_ns, 0, -1)
@@ -32,7 +41,7 @@ return function(client, bufnr)
             end, response) > 0
 
             if has_code_actions then
-              vim.api.nvim_buf_set_extmark(bufnr, lightbulb_ns, params.range.start.line, -1, {
+              vim.api.nvim_buf_set_extmark(bufnr, lightbulb_ns, line, -1, {
                 virt_text = { { '💡' } },
                 hl_mode = 'combine',
               })

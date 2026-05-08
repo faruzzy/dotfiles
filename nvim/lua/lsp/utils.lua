@@ -10,9 +10,7 @@ end
 ---Return lsp server display name or default server name
 ---@param server_name string
 ---@return string
-function M.get_server_display_name(server_name)
-  return require('lsp.servers')[server_name].display or server_name
-end
+function M.get_server_display_name(server_name) return require('lsp.servers')[server_name].display or server_name end
 
 ---Configure auto-close tag support for HTML & Svelte servers
 ---@param client vim.lsp.Client
@@ -28,9 +26,7 @@ function M.setup_auto_close_tag(client, bufnr, method)
           method,
           vim.tbl_extend('force', vim.lsp.util.make_position_params(0, client.offset_encoding), { kind = 'autoClose' }),
           function(_, result)
-            if result then
-              vim.snippet.expand(result)
-            end
+            if result then vim.snippet.expand(result) end
           end,
           bufnr
         )
