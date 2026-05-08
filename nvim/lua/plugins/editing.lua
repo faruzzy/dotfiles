@@ -22,29 +22,6 @@ return {
     end,
   },
 
-  {
-    event = { 'FocusLost', 'BufLeave' },
-    'Pocco81/auto-save.nvim',
-    desc = 'Automatic file saving',
-    config = function()
-      require('auto-save').setup({
-        enabled = true,
-        execution_message = {
-          message = function() return ('AutoSave: saved at ' .. vim.fn.strftime('%H:%M:%S')) end,
-          dim = 0.18,
-          cleaning_interval = 1250,
-        },
-        trigger_events = { 'FocusLost', 'BufLeave' },
-        condition = function(buf)
-          if not vim.api.nvim_buf_is_valid(buf) then
-            return false
-          end
-          local excluded_ft = { 'oil', 'harpoon', 'alpha', 'dashboard' }
-          return not vim.tbl_contains(excluded_ft, vim.bo[buf].filetype)
-        end,
-      })
-    end,
-  },
 
   {
     'wesQ3/vim-windowswap',

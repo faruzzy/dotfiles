@@ -81,7 +81,6 @@ augroup('jsdoc_comment_continuation', {
   },
 })
 
-
 -- Highlight yanked text briefly
 augroup('YankHighlight', {
   {
@@ -231,12 +230,29 @@ augroup('numbertoggle', {
   },
 })
 
+-- Auto-save on focus lost or buffer leave
+local autosave_excluded = { 'oil', 'harpoon', 'alpha', 'dashboard', 'fugitive' }
+augroup('auto_save', {
+  {
+    { 'FocusLost', 'BufLeave' },
+    callback = function(args)
+      local buf = args.buf
+      if
+        vim.bo[buf].modified
+        and vim.bo[buf].buftype == ''
+        and vim.api.nvim_buf_get_name(buf) ~= ''
+        and not vim.tbl_contains(autosave_excluded, vim.bo[buf].filetype)
+      then
+        vim.api.nvim_buf_call(buf, function() vim.cmd('silent! write') end)
+      end
+    end,
+  },
+})
+
 -- Create jsconfig.json at the nearest project root
 vim.api.nvim_create_user_command('JsConfig', function()
   local root = vim.fs.root(0, { 'package.json', '.git' })
-  if not root then
-    root = vim.fn.getcwd()
-  end
+  if not root then root = vim.fn.getcwd() end
   local path = root .. '/jsconfig.json'
   if vim.uv.fs_stat(path) then
     vim.notify('jsconfig.json already exists at ' .. path, vim.log.levels.WARN)
