@@ -231,12 +231,11 @@ augroup('numbertoggle', {
   },
 })
 
--- Create jsconfig.json at the nearest package.json root
+-- Create jsconfig.json at the nearest project root
 vim.api.nvim_create_user_command('JsConfig', function()
-  local root = vim.fs.root(0, 'package.json')
+  local root = vim.fs.root(0, { 'package.json', '.git' })
   if not root then
-    vim.notify('No package.json found', vim.log.levels.WARN)
-    return
+    root = vim.fn.getcwd()
   end
   local path = root .. '/jsconfig.json'
   if vim.uv.fs_stat(path) then
@@ -244,8 +243,7 @@ vim.api.nvim_create_user_command('JsConfig', function()
     return
   end
   local config = vim.fn.json_encode({
-    compilerOptions = { jsx = 'react-jsx', checkJs = true },
-    include = { 'src/**/*' },
+    compilerOptions = { checkJs = true, module = 'commonjs', target = 'es2020' },
   })
   vim.fn.writefile({ config }, path)
   vim.notify('Created ' .. path)
