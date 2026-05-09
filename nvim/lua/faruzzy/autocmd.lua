@@ -104,7 +104,7 @@ augroup('spell_group', {
   },
 })
 
--- Refresh mode highlights and tint on mode change
+-- Refresh mode highlights on mode change
 augroup('mode_highlights', {
   {
     'ModeChanged',
@@ -114,12 +114,6 @@ augroup('mode_highlights', {
         modes.relink_highlights()
       else
         vim.notify('mode_highlights: modes plugin not found', vim.log.levels.WARN)
-      end
-      local ok_tint, tint = pcall(require, 'tint')
-      if ok_tint then
-        tint.refresh()
-      else
-        vim.notify('mode_highlights: tint plugin not found', vim.log.levels.WARN)
       end
     end,
   },
