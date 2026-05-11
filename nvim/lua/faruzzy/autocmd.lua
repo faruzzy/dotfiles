@@ -253,7 +253,7 @@ vim.api.nvim_create_user_command('JsConfig', function()
     return
   end
   local config = vim.fn.json_encode({
-    compilerOptions = { checkJs = true, module = 'commonjs', target = 'es2020' },
+    compilerOptions = { checkJs = true, module = 'es2022', target = 'es2020' },
   })
   vim.fn.writefile({ config }, path)
   vim.notify('Created ' .. path)
