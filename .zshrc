@@ -68,7 +68,10 @@ setopt complete_in_word
 setopt always_to_end
 
 # Zsh-specific enhancements
+zmodload zsh/complist
 zstyle ':completion:*' menu select # Better completion menu
+bindkey -M menuselect '^n' menu-complete
+bindkey -M menuselect '^p' reverse-menu-complete
 zstyle ':completion:*' list-suffixes
 zstyle ':completion:*' expand prefix suffix
 zstyle ':completion:*' matcher-list 'm:{a-zA-Z}={A-Za-z}' 'r:|[._-]=* r:|=*' 'l:|=* r:|=*'
