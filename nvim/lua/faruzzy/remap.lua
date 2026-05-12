@@ -21,49 +21,42 @@ map('i', '<c-l>', '<right>')
 
 -- Smart quit: close fugitive diff view if active, otherwise save and quit
 map('n', '<Leader>x', function()
-  -- Check if we're in a fugitive diff context
-  local in_fugitive = false
-  for _, buf in ipairs(vim.api.nvim_list_bufs()) do
-    if vim.api.nvim_buf_is_loaded(buf) then
-      local name = vim.api.nvim_buf_get_name(buf)
-      local ft = vim.bo[buf].filetype
-      if name:match('^fugitive://') or ft == 'fugitive' then
-        in_fugitive = true
-        break
+  local function is_fugitive(buf)
+    local name = vim.api.nvim_buf_get_name(buf)
+    local ft = vim.bo[buf].filetype
+    return name:match('^fugitive://') or name:match('%.git//') or ft == 'fugitive'
+  end
+
+  if not is_fugitive(0) then
+    vim.cmd('x')
+    return
+  end
+
+  -- Find the most recently used real file buffer to return to
+  local target_buf
+  local latest = 0
+  for _, info in ipairs(vim.fn.getbufinfo({ buflisted = 1 })) do
+    local bt = vim.bo[info.bufnr].buftype
+    if info.loaded == 1 and bt == '' and info.name ~= '' and not is_fugitive(info.bufnr) then
+      if info.lastused > latest then
+        latest = info.lastused
+        target_buf = info.bufnr
       end
     end
   end
 
-  if in_fugitive then
-    -- Find the working file buffer to return to
-    local target_buf
-    for _, buf in ipairs(vim.api.nvim_list_bufs()) do
-      if vim.api.nvim_buf_is_loaded(buf) and vim.api.nvim_buf_is_valid(buf) then
-        local name = vim.api.nvim_buf_get_name(buf)
-        local bt = vim.bo[buf].buftype
-        if not name:match('^fugitive://') and bt == '' and name ~= '' then
-          target_buf = buf
-        end
-      end
-    end
+  vim.cmd('diffoff!')
 
-    vim.cmd('diffoff!')
-    for _, buf in ipairs(vim.api.nvim_list_bufs()) do
-      if vim.api.nvim_buf_is_valid(buf) then
-        local name = vim.api.nvim_buf_get_name(buf)
-        local ft = vim.bo[buf].filetype
-        if name:match('^fugitive://') or ft == 'fugitive' then
-          vim.api.nvim_buf_delete(buf, { force = true })
-        end
-      end
+  -- Delete all fugitive-related buffers (status, diff, and .git// index copies)
+  for _, buf in ipairs(vim.api.nvim_list_bufs()) do
+    if vim.api.nvim_buf_is_valid(buf) and is_fugitive(buf) then
+      vim.api.nvim_buf_delete(buf, { force = true })
     end
+  end
 
-    vim.cmd('only')
-    if target_buf and vim.api.nvim_buf_is_valid(target_buf) then
-      vim.api.nvim_set_current_buf(target_buf)
-    end
-  else
-    vim.cmd('x')
+  vim.cmd('only')
+  if target_buf and vim.api.nvim_buf_is_valid(target_buf) then
+    vim.api.nvim_set_current_buf(target_buf)
   end
 end, { desc = 'Smart quit (close fugitive diff or save+quit)' })
 map('n', '<Leader>X', '<cmd>wqa!<cr>', { desc = 'Save all and quit forcefully' })
