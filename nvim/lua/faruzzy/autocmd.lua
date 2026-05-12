@@ -253,11 +253,34 @@ vim.api.nvim_create_user_command('JsConfig', function()
     return
   end
   local config = vim.fn.json_encode({
-    compilerOptions = { checkJs = true, module = 'es2022', target = 'es2020' },
+    compilerOptions = {
+      checkJs = false,
+      allowJs = true,
+      noImplicitAny = false,
+      moduleResolution = 'node',
+      module = 'es2022',
+      target = 'es2020',
+    },
+    exclude = { 'node_modules' },
   })
   vim.fn.writefile({ config }, path)
   vim.notify('Created ' .. path)
 end, { desc = 'Create jsconfig.json at project root' })
+
+-- Refresh Fugitive status after auto-save has flushed to disk
+augroup('fugitive_refresh', {
+  {
+    'BufEnter',
+    pattern = 'fugitive://*',
+    callback = function()
+      vim.schedule(function()
+        if vim.bo.filetype == 'fugitive' then
+          vim.cmd.edit()
+        end
+      end)
+    end,
+  },
+})
 
 -- Handle quitting Fugitive buffers gracefully
 augroup('fugitive_quit', {
