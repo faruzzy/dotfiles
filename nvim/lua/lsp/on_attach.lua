@@ -12,9 +12,11 @@ return function(client, bufnr)
   bsk('n', '<Leader>rn', vim.lsp.buf.rename, { desc = 'LSP Rename' })
   bsk('n', '<Leader>ca', vim.lsp.buf.code_action, { desc = 'LSP Code Action' })
 
-  if client:supports_method('textDocument/inlayHint', bufnr) then
-    vim.lsp.inlay_hint.enable(true, { bufnr = bufnr })
-  end
+  -- Disabled: Neovim 0.12.x has a bug where inlay hint extmarks crash with
+  -- "Invalid 'col': out of range". Toggle manually with <Leader>ih instead.
+  -- if client:supports_method('textDocument/inlayHint', bufnr) then
+  --   vim.lsp.inlay_hint.enable(true, { bufnr = bufnr })
+  -- end
 
   if client:supports_method('textDocument/codeAction', bufnr) then
     local last_lightbulb_line = -1
