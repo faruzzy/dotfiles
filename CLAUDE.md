@@ -67,5 +67,6 @@ Uses git-delta as pager with Catppuccin theme (`catppuccin.gitconfig`). Extensiv
 - **Theme**: Catppuccin Mocha everywhere (terminal, neovim, tmux, git-delta, bat, starship)
 - **Fonts**: Nerd Fonts (FiraCode, JetBrains Mono)
 - **Commit style**: Conventional commits (`feat:`, `fix:`, `perf:`, `chore:`, `refactor:`). Never include `Co-Authored-By` trailers.
+- **Commit grouping**: Group related commits where it makes sense
 - **Branch naming**: `feature/description`, `master` is the main branch
 - **Philosophy**: Vim keybindings everywhere (shell, tmux, editor, IDE)
