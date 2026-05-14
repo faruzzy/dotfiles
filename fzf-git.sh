@@ -182,7 +182,7 @@ if [[ $__fzf_git_fzf ]]; then
 else
   # Redefine this function to change the options
   _fzf_git_fzf() {
-    local fzf_cmd=(fzf-tmux -p80%,60% --)
+    local fzf_cmd=(fzf-tmux -p90%,80% --)
     local status tty_settings
     [[ -n $FZF_GIT_INLINE_FZF ]] && fzf_cmd=(fzf)
 
