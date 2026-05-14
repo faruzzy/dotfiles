@@ -37,7 +37,8 @@ return {
         end,
         settings = {
           ['rust-analyzer'] = {
-            checkOnSave = {
+            checkOnSave = true,
+            check = {
               command = 'clippy',
               extraArgs = { '--no-deps' },
             },
