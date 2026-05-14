@@ -27,7 +27,7 @@ cursor-style-blink = true
 cursor-color = #827263
 
 # Terminal behavior
-term = screen-256color
+term = xterm-256color
 scrollback-limit = 10000
 
 # Mouse configuration
@@ -44,4 +44,4 @@ theme = catppuccin-mocha.conf
 macos-option-as-alt = left
 
 shell-integration = detect
-shell-integration-features = cursor,sudo,title
+shell-integration-features = no-cursor,sudo,title
