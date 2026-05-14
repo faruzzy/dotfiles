@@ -19,6 +19,13 @@ return {
   config = function()
     require('neo-tree').setup({
       close_if_last_window = true,
+      default_component_configs = {
+        git_status = {
+          symbols = {
+            unstaged = '✗',
+          },
+        },
+      },
       filesystem = {
         follow_current_file = { enabled = true },
         hijack_netrw_behavior = 'open_current',
