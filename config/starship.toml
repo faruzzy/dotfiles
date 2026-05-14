@@ -103,7 +103,9 @@ format = '[ $user ]($style)'
 [directory]
 style = "fg:mantle bg:peach"
 format = "[ $path ]($style)"
-truncation_length = 3
+# Keep enough parent context that deep project paths are identifiable at a glance.
+truncation_length = 5
+truncate_to_repo = false
 truncation_symbol = "…/"
 
 [directory.substitutions]
