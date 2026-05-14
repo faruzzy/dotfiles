@@ -243,6 +243,21 @@ augroup('auto_save', {
   },
 })
 
+-- Diff current buffer against the saved version on disk
+vim.api.nvim_create_user_command('DiffSaved', function()
+  local ft = vim.bo.filetype
+  local saved = vim.fn.readfile(vim.fn.expand('%'))
+  vim.cmd('diffthis')
+  vim.cmd('vnew')
+  vim.api.nvim_buf_set_lines(0, 0, -1, false, saved)
+  vim.cmd('diffthis')
+  vim.bo.buftype = 'nofile'
+  vim.bo.bufhidden = 'wipe'
+  vim.bo.swapfile = false
+  vim.bo.filetype = ft
+  vim.api.nvim_buf_set_name(0, '[Saved]')
+end, { desc = 'Diff buffer against saved version on disk' })
+
 -- Create jsconfig.json at the nearest project root
 vim.api.nvim_create_user_command('JsConfig', function()
   local root = vim.fs.root(0, { 'package.json', '.git' })

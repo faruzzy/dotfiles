@@ -24,24 +24,19 @@ return {
 
       -- Navigation
       map({ 'n', 'v' }, ']c', function()
-        if vim.wo.diff then
-          return ']c'
-        end
-        vim.schedule(function()
-          gs.next_hunk()
-        end)
+        if vim.wo.diff then return ']c' end
+        vim.schedule(function() gs.nav_hunk('next') end)
         return '<Ignore>'
       end, { expr = true, desc = 'Jump to next hunk' })
 
       map({ 'n', 'v' }, '[c', function()
-        if vim.wo.diff then
-          return '[c'
-        end
-        vim.schedule(function()
-          gs.prev_hunk()
-        end)
+        if vim.wo.diff then return '[c' end
+        vim.schedule(function() gs.nav_hunk('prev') end)
         return '<Ignore>'
       end, { expr = true, desc = 'Jump to previous hunk' })
+
+      map('n', ']C', function() gs.nav_hunk('next', { target = 'staged' }) end, { desc = 'Jump to next staged hunk' })
+      map('n', '[C', function() gs.nav_hunk('prev', { target = 'staged' }) end, { desc = 'Jump to previous staged hunk' })
 
       -- Actions
       -- visual mode

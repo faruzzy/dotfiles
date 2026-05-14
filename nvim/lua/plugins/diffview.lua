@@ -27,7 +27,7 @@ return {
       '<cmd>DiffviewFileHistory<cr>',
       desc = 'Diffview File History (all)',
     },
-    { '<leader>dc', '<cmd>DiffviewClose<cr>',   desc = 'Close Diffview' },
+    { '<leader>dc', '<cmd>DiffviewClose<cr>', desc = 'Close Diffview' },
     { '<leader>dr', '<cmd>DiffviewRefresh<cr>', desc = 'Refresh Diffview' },
   },
   opts = {

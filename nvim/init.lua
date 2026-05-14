@@ -16,28 +16,7 @@ vim.opt.rtp:prepend(lazypath)
 require('lazy').setup('plugins', {
   change_detection = { notify = false },
   checker = { enabled = true, notify = false },
-  ui = {
-    icons = vim.g.have_nerd_font and {} or {
-      cmd = '⌘',
-      config = '🛠',
-      event = '📅',
-      ft = '📂',
-      init = '⚙',
-      keys = '🗝',
-      plugin = '🔌',
-      runtime = '💻',
-      require = '🌙',
-      source = '📄',
-      task = '📌',
-      start = '🚀',
-      lazy = '💤 ',
-    },
-  },
+  ui = {},
 })
 
--- -- Remap for dealing with word wrap
--- vim.keymap.set('n', 'k', "v:count == 0 ? 'gk' : 'k'", { expr = true, silent = true })
--- vim.keymap.set('n', 'j', "v:count == 0 ? 'gj' : 'j'", { expr = true, silent = true })
 
--- The line beneath this is called `modeline`. See `:help modeline`
--- vim: ts=2 sts=2 sw=2 et
