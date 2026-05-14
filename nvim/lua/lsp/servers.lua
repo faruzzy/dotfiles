@@ -12,13 +12,12 @@ local servers = {
   html = require('lsp.servers.html'),
   pyright = {},
   tailwindcss = require('lsp.servers.tailwindcss'),
-  -- ["typescript-tools"] = require("lsp.servers.typescript-tools"),
+  vtsls = require('lsp.servers.vtsls'),
   rust_analyzer = {},
   -- jsonls is manually configured in lua/plugins/lsp.lua
   jsonls = require('lsp.servers.jsonls'),
   lua_ls = require('lsp.servers.lua_ls'),
   cssls = {},
-  -- ts_ls = {}, -- Disabled: using typescript-tools instead
   vimls = {},
   yamlls = {},
 }

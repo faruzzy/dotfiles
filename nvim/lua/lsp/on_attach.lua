@@ -17,6 +17,7 @@ return function(client, bufnr)
   -- if client:supports_method('textDocument/inlayHint', bufnr) then
   --   vim.lsp.inlay_hint.enable(true, { bufnr = bufnr })
   -- end
+  if client:supports_method('textDocument/inlayHint', bufnr) then vim.lsp.inlay_hint.enable(true, { bufnr = bufnr }) end
 
   if client:supports_method('textDocument/codeAction', bufnr) then
     local last_lightbulb_line = -1
@@ -38,9 +39,10 @@ return function(client, bufnr)
           vim.lsp.buf_request_all(bufnr, 'textDocument/codeAction', params, function(response)
             vim.api.nvim_buf_clear_namespace(bufnr, lightbulb_ns, 0, -1)
 
-            local has_code_actions = #vim.tbl_filter(function(resp)
-              return resp.result and #resp.result > 0
-            end, response) > 0
+            local has_code_actions = #vim.tbl_filter(
+              function(resp) return resp.result and #resp.result > 0 end,
+              response
+            ) > 0
 
             if has_code_actions then
               vim.api.nvim_buf_set_extmark(bufnr, lightbulb_ns, line, -1, {

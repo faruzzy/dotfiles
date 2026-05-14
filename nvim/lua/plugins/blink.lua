@@ -49,7 +49,7 @@ local function get_lsp_completion_context(completion)
   local ok, source_name = pcall(function() return vim.lsp.get_client_by_id(completion.client_id).name end)
   if not ok then return nil end
 
-  if source_name == 'ts_ls' or source_name == 'typescript-tools' then
+  if source_name == 'ts_ls' or source_name == 'typescript-tools' or source_name == 'vtsls' then
     return completion.detail
   elseif source_name == 'pyright' and completion.labelDetails ~= nil then
     return completion.labelDetails.description

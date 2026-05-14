@@ -4,7 +4,7 @@ local M = {}
 
 -- Priority list for main language servers
 M.PRIORITY_LSP_SERVERS = {
-  'typescript-tools',
+  'vtsls',
   'ts_ls',
   'lua_ls',
   'pyright',

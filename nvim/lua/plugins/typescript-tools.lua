@@ -1,50 +1,63 @@
----@type LazySpec
+-- vtsls: VS Code's TypeScript language server for Neovim
+-- Replaces typescript-tools.nvim with better VS Code feature parity
+
+local ts_filetypes = { 'typescript', 'typescriptreact', 'javascript', 'javascriptreact' }
 
 return {
-  'pmizio/typescript-tools.nvim',
-  ft = { 'typescript', 'typescriptreact', 'javascript', 'javascriptreact' },
-  dependencies = { 'nvim-lua/plenary.nvim', 'neovim/nvim-lspconfig' },
+  'yioneko/nvim-vtsls',
+  ft = ts_filetypes,
+  dependencies = { 'neovim/nvim-lspconfig' },
   config = function()
-    require('typescript-tools').setup({
-      capabilities = require('lsp.capabilities')(),
-      settings = {
-        separate_diagnostic_server = true,
-        publish_diagnostic_on = 'insert_leave',
-        complete_function_calls = false,
-        include_completions_with_insert_text = true,
-        jsx_close_tag = { enable = true },
-        expose_as_code_action = {
-          'fix_all',
-          'add_missing_imports',
-          'remove_unused',
-          'organize_imports',
-        },
-        tsserver_file_preferences = {
-          includeInlayEnumMemberValueHints = true,
-          includeInlayFunctionLikeReturnTypeHints = false,
-          includeInlayFunctionParameterTypeHints = false,
-          includeInlayParameterNameHints = 'literals',
-          includeInlayParameterNameHintsWhenArgumentMatchesName = false,
-          includeInlayPropertyDeclarationTypeHints = true,
-          includeInlayVariableTypeHints = false,
-          includeInlayVariableTypeHintsWhenTypeMatchesName = false,
-        },
-        tsserver_plugins = { 'typescript-svelte-plugin' },
-      },
-      handlers = {
-        ['textDocument/publishDiagnostics'] = require('typescript-tools.api').filter_diagnostics({
-          80001, -- File is a CommonJS module; it may be converted to an ES module.
-        }),
-      },
-      on_attach = function(client, bufnr)
-        require('lsp.on_attach')(client, bufnr)
+    require('lspconfig.configs').vtsls = require('vtsls').lspconfig
 
+    local server_config = require('lsp.servers.vtsls')
+    local config = {
+      capabilities = require('lsp.capabilities')(),
+    }
+    if server_config.config then config = server_config.config(config) end
+    require('lspconfig').vtsls.setup(config)
+
+    local commands = require('vtsls').commands
+
+    vim.api.nvim_create_autocmd('LspAttach', {
+      group = vim.api.nvim_create_augroup('vtsls_attach', { clear = true }),
+      callback = function(args)
+        local client = vim.lsp.get_client_by_id(args.data.client_id)
+        if not client or client.name ~= 'vtsls' then return end
+
+        -- Run shared on_attach (inlay hints, lightbulb, keymaps)
+        require('lsp.on_attach')(client, args.buf)
+
+        -- Disable formatting (conform.nvim handles it)
+        client.server_capabilities.documentFormattingProvider = false
+
+        local bufnr = args.buf
         local bsk = require('utils').buffer_map(bufnr)
 
-        bsk('n', '<leader>io', '<cmd>TSToolsOrganizeImports<CR>', { desc = 'Organize TypeScript imports' })
-        bsk('n', '<leader>ia', '<cmd>TSToolsAddMissingImports<CR>', { desc = 'Add missing TypeScript imports' })
-        bsk('n', '<leader>ir', '<cmd>TSToolsRemoveUnusedImports<CR>', { desc = 'Remove unused TypeScript imports' })
+        -- Same mappings as previous typescript-tools config
+        bsk(
+          'n',
+          '<leader>io',
+          function() commands.organize_imports(bufnr) end,
+          { desc = 'Organize TypeScript imports' }
+        )
+        bsk(
+          'n',
+          '<leader>ia',
+          function() commands.add_missing_imports(bufnr) end,
+          { desc = 'Add missing TypeScript imports' }
+        )
+        bsk(
+          'n',
+          '<leader>ir',
+          function() commands.remove_unused_imports(bufnr) end,
+          { desc = 'Remove unused TypeScript imports' }
+        )
+        bsk('n', '<leader>if', function() commands.fix_all(bufnr) end, { desc = 'Fix all TypeScript diagnostics' })
 
+        -- New vtsls-only features
+        bsk('n', 'gD', function() commands.goto_source_definition(bufnr) end, { desc = 'Goto Source Definition' })
+        bsk('n', 'gR', function() commands.file_references(bufnr) end, { desc = 'File References' })
       end,
     })
   end,

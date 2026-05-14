@@ -55,7 +55,7 @@ return {
         function(server_name)
           -- Only setup servers explicitly listed in lsp/servers.lua
           local server = servers[server_name]
-          if not server or server_name == 'rust_analyzer' then
+          if not server or server_name == 'rust_analyzer' or server_name == 'vtsls' then
             return
           end
 
