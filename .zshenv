@@ -75,6 +75,7 @@ path_dirs=(
     "$HOME/.local/share/bob/nvim-bin"
     "$HOME/.local/bin"
     "$HOME/bin"
+    "$HOME/github/dotfiles/bin"
     "/opt/homebrew/bin"
     "/opt/homebrew/sbin"
     "/usr/local/bin"
