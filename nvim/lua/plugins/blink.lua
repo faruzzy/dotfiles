@@ -262,7 +262,17 @@ return {
       ['<C-Space>'] = {
         function(cmp) cmp.show({ providers = { 'lsp' } }) end,
       },
-      ['<C-e>'] = { 'cancel', 'fallback' },
+      ['<C-e>'] = {
+        function(cmp)
+          if cmp.is_visible() then
+            return cmp.cancel()
+          elseif require('luasnip').session.current_nodes[vim.api.nvim_get_current_buf()] then
+            require('luasnip').unlink_current()
+            return true
+          end
+        end,
+        'fallback',
+      },
       ['<CR>'] = { 'select_and_accept', 'fallback' },
       -- Disable arrow keys to encourage better habits
       ['<Up>'] = { 'fallback' },

@@ -14,11 +14,11 @@ end
 
 return {
   'L3MON4D3/LuaSnip',
+  event = 'InsertEnter',
   keys = vim.tbl_map(key_map, {
     { '<C-y>', 'expand',         nil, 'Expand snippet',                             'i' },
     { '<C-j>', 'expand_or_jump', nil, 'Expand snippet or jump to next placeholder', { 'i', 's' } },
     { '<C-k>', 'jump',           -1,  'Jump to previous placeholder',               { 'i', 's' } },
-    { '<C-e>', 'unlink_current', nil, 'Exit snippet mode',                          { 'i', 's' } },
   }),
   config = function()
     local luasnip = require('luasnip')
