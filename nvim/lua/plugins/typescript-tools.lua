@@ -45,24 +45,6 @@ return {
         bsk('n', '<leader>ia', '<cmd>TSToolsAddMissingImports<CR>', { desc = 'Add missing TypeScript imports' })
         bsk('n', '<leader>ir', '<cmd>TSToolsRemoveUnusedImports<CR>', { desc = 'Remove unused TypeScript imports' })
 
-        local is_jsx_file =
-          vim.tbl_contains({ 'javascript', 'javascriptreact', 'typescriptreact' }, vim.bo[bufnr].filetype)
-
-        if is_jsx_file then
-          bsk('i', '>', function()
-            pcall(
-              function()
-                require('typescript-tools.api').jsx_close_tag(
-                  bufnr,
-                  vim.lsp.util.make_position_params(0, client.offset_encoding or 'utf-16'),
-                  vim.schedule,
-                  nil
-                )
-              end
-            )
-            return '>'
-          end, { expr = true, desc = 'Auto-close JSX/TSX tags' })
-        end
       end,
     })
   end,

@@ -33,7 +33,7 @@ return {
         { filter = { event = 'msg_show', kind = '', find = 'written' }, opts = { skip = true } },
         { filter = { event = 'msg_show', kind = 'search_count' }, view = 'mini' },
         { filter = { warning = true, find = 'deprecated' }, opts = { skip = true } },
-        { filter = { event = 'notify', find = 'deprecated' }, opts = { skip = true } },
+        { filter = { find = 'deprecated' }, opts = { skip = true } },
         { filter = { event = 'notify', find = 'quit with exit code' }, opts = { skip = true } },
       },
       presets = {
