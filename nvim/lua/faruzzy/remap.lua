@@ -110,6 +110,8 @@ map('n', '<Leader>tc', function()
   vim.notify('Conceal ' .. (level == 0 and 'enabled' or 'disabled'))
 end, { desc = 'Toggle Conceal' })
 
+map('n', 'gR', function() require('lsp.enclosing_references').find() end, { desc = 'Find references to enclosing function' })
+
 -- Undotree toggle
 map('n', '<leader>ut', '<cmd>UndotreeToggle<cr>', { desc = 'Toggle Undotree' })
 

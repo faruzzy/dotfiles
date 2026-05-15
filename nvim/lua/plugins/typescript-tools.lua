@@ -57,7 +57,7 @@ return {
 
         -- New vtsls-only features
         bsk('n', 'gD', function() commands.goto_source_definition(bufnr) end, { desc = 'Goto Source Definition' })
-        bsk('n', 'gR', function() commands.file_references(bufnr) end, { desc = 'File References' })
+        bsk('n', 'gR', function() require('lsp.enclosing_references').find() end, { desc = 'Find references to enclosing function' })
       end,
     })
   end,

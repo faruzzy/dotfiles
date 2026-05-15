@@ -54,6 +54,17 @@ local function buf_switch_or_edit(selected, opts)
   require('fzf-lua.actions').buf_edit(selected, opts)
 end
 
+local function is_node_modules_declaration(item)
+  local filename = item.filename or ''
+  return filename:match('/node_modules/') and filename:match('%.d%.ts$')
+end
+
+local function prefer_source_definitions(items)
+  local source_items = vim.tbl_filter(function(item) return not is_node_modules_declaration(item) end, items)
+  if #source_items > 0 then return source_items end
+  return items
+end
+
 local function smart_definitions_fzf()
   vim.lsp.buf.definition({
     on_list = function(options)
@@ -66,6 +77,7 @@ local function smart_definitions_fzf()
           table.insert(items, item)
         end
       end
+      items = prefer_source_definitions(items)
 
       if #items == 0 then
         vim.notify('No definitions found', vim.log.levels.WARN)
