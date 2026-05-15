@@ -195,6 +195,14 @@ augroup('cursorline_focus', {
   },
 })
 
+-- Equalize split sizes after the terminal or UI is resized
+augroup('equalize_splits_on_resize', {
+  {
+    'VimResized',
+    callback = function() vim.cmd('wincmd =') end,
+  },
+})
+
 -- Disable undo for temporary and commit files
 augroup('disable_undo', {
   {
@@ -288,10 +296,16 @@ augroup('fugitive_refresh', {
     'BufEnter',
     pattern = 'fugitive://*',
     callback = function()
+      -- Only refresh in normal mode to avoid wiping visual selections
+      -- and guard against re-entrant BufEnter from edit()
+      if vim.fn.mode() ~= 'n' then return end
+      if vim.b._fugitive_refreshing then return end
+      vim.b._fugitive_refreshing = true
       vim.schedule(function()
-        if vim.bo.filetype == 'fugitive' then
+        if vim.api.nvim_buf_is_valid(0) and vim.bo.filetype == 'fugitive' and vim.fn.mode() == 'n' then
           vim.cmd.edit()
         end
+        vim.b._fugitive_refreshing = false
       end)
     end,
   },
