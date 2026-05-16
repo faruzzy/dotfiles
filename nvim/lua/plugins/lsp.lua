@@ -86,6 +86,7 @@ return {
       })
       vim.lsp.config('lua_ls', {
         settings = lua_ls_config.settings,
+        on_attach = require('lsp.on_attach'),
       })
     end
 
