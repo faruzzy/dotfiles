@@ -222,6 +222,7 @@ return {
       frecency = { enabled = true },
       use_proximity = true,
       sorts = {
+        'exact',
         'score',
         'kind',
         'sort_text',
@@ -374,7 +375,7 @@ return {
         snippets = {
           name = 'Snippets',
           min_keyword_length = 2,
-          score_offset = -1,
+          score_offset = 0,
           should_show_items = function(ctx)
             -- Don't show snippets when completing object properties
             local line = vim.api.nvim_get_current_line()

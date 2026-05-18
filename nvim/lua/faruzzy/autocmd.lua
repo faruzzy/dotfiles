@@ -232,24 +232,32 @@ augroup('numbertoggle', {
   },
 })
 
--- Auto-save on focus lost or buffer leave
+-- Auto-save only when leaving Neovim, avoiding BufLeave-triggered formatter/watch churn.
+if vim.g.auto_save_on_focus_lost == nil then vim.g.auto_save_on_focus_lost = true end
 local autosave_excluded = { 'oil', 'harpoon', 'alpha', 'dashboard', 'fugitive' }
 augroup('auto_save', {
   {
-    { 'FocusLost', 'BufLeave' },
+    'FocusLost',
     callback = function(args)
-      local buf = args.buf
+      local buf = args.buf ~= 0 and args.buf or vim.api.nvim_get_current_buf()
       if
-        vim.bo[buf].modified
+        vim.g.auto_save_on_focus_lost
+        and vim.bo[buf].modified
         and vim.bo[buf].buftype == ''
         and vim.api.nvim_buf_get_name(buf) ~= ''
         and not vim.tbl_contains(autosave_excluded, vim.bo[buf].filetype)
       then
-        vim.api.nvim_buf_call(buf, function() vim.cmd('silent! write') end)
+        local ok, err = pcall(vim.api.nvim_buf_call, buf, function() vim.cmd('silent write') end)
+        if not ok then vim.notify('Auto-save failed: ' .. err, vim.log.levels.ERROR) end
       end
     end,
   },
 })
+
+vim.api.nvim_create_user_command('AutoSaveToggle', function()
+  vim.g.auto_save_on_focus_lost = not vim.g.auto_save_on_focus_lost
+  vim.notify('Auto-save ' .. (vim.g.auto_save_on_focus_lost and 'enabled' or 'disabled'))
+end, { desc = 'Toggle auto-save on focus lost' })
 
 -- Diff current buffer against the saved version on disk
 vim.api.nvim_create_user_command('DiffSaved', function()

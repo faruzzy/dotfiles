@@ -74,8 +74,8 @@ map('n', ']d', vim.diagnostic.goto_next, { desc = 'Next Diagnostic' })
 map('n', '<Leader>e', vim.diagnostic.open_float, { desc = 'Open Diagnostic Float' })
 
 -- Diff management
-map('n', '<leader>gl', '<cmd>diffget //2<cr>', { desc = 'Get left diff' })
-map('n', '<leader>gr', '<cmd>diffget //3<cr>', { desc = 'Get right diff' })
+map('n', '<leader>dL', '<cmd>diffget //2<cr>', { desc = 'Diff: get left' })
+map('n', '<leader>dR', '<cmd>diffget //3<cr>', { desc = 'Diff: get right' })
 
 -- Run last command easily (skip special buffers where CR has native meaning)
 map({ 'n', 'v' }, '<CR>', function()
@@ -109,6 +109,7 @@ map('n', '<Leader>tc', function()
   vim.opt_local.conceallevel = level == 0 and 2 or 0
   vim.notify('Conceal ' .. (level == 0 and 'enabled' or 'disabled'))
 end, { desc = 'Toggle Conceal' })
+map('n', '<Leader>ta', '<cmd>AutoSaveToggle<cr>', { desc = 'Toggle Auto-save' })
 
 map('n', 'gR', function() require('lsp.enclosing_references').find() end, { desc = 'Find references to enclosing function' })
 
@@ -249,6 +250,49 @@ end, { desc = 'Jump to floating window' })
 
 -- Compile and run
 local compile_run_buf = nil
+local compile_run_win = nil
+local function close_run_terminal()
+  if compile_run_win and vim.api.nvim_win_is_valid(compile_run_win) then
+    pcall(vim.api.nvim_win_close, compile_run_win, true)
+  end
+
+  if compile_run_buf and vim.api.nvim_buf_is_valid(compile_run_buf) then
+    pcall(vim.api.nvim_buf_delete, compile_run_buf, { force = true })
+  end
+
+  compile_run_win = nil
+  compile_run_buf = nil
+end
+
+local function open_run_terminal(argv, opts)
+  opts = opts or {}
+  close_run_terminal()
+
+  vim.cmd('botright 12split')
+  vim.cmd('enew')
+
+  compile_run_win = vim.api.nvim_get_current_win()
+  compile_run_buf = vim.api.nvim_get_current_buf()
+  vim.bo[compile_run_buf].bufhidden = 'wipe'
+  vim.bo[compile_run_buf].filetype = 'run-output'
+  vim.api.nvim_buf_set_name(compile_run_buf, '[Run] ' .. table.concat(argv, ' '))
+
+  local job = vim.fn.termopen(argv, { cwd = opts.cwd })
+  if job <= 0 then
+    vim.notify('Failed to start: ' .. table.concat(argv, ' '), vim.log.levels.ERROR)
+    close_run_terminal()
+    return
+  end
+
+  vim.cmd('startinsert')
+end
+
+local function notify_command_failure(label, result)
+  local output = vim.trim((result.stderr or '') .. '\n' .. (result.stdout or ''))
+  if output == '' then output = label .. ' failed with exit code ' .. result.code end
+  vim.notify(output, vim.log.levels.ERROR, { title = label })
+end
+
 local function compile_and_run()
   local ok, err = pcall(vim.cmd, 'w')
   if not ok then
@@ -256,32 +300,46 @@ local function compile_and_run()
     return
   end
 
-  if compile_run_buf and vim.api.nvim_buf_is_valid(compile_run_buf) then
-    vim.api.nvim_buf_delete(compile_run_buf, { force = true })
-  end
+  close_run_terminal()
 
   local ft = vim.bo.filetype
-  local file = vim.fn.shellescape(vim.fn.expand('%'))
-  local base = vim.fn.shellescape(vim.fn.expand('%:r'))
-  local cmd
+  local file = vim.fn.expand('%:p')
+  local dir = vim.fn.expand('%:p:h')
+  local base = vim.fn.expand('%:p:r')
+  local name = vim.fn.expand('%:t:r')
+
   if ft == 'c' then
-    cmd = 'gcc ' .. file .. ' -o ' .. base .. ' && ./' .. base
+    vim.system({ 'gcc', file, '-o', base }, { text = true }, function(result)
+      vim.schedule(function()
+        if result.code == 0 then
+          open_run_terminal({ base }, { cwd = dir })
+        else
+          notify_command_failure('gcc', result)
+        end
+      end)
+    end)
   elseif ft == 'java' then
-    cmd = 'javac ' .. file .. ' && java ' .. base
+    vim.system({ 'javac', file }, { text = true }, function(result)
+      vim.schedule(function()
+        if result.code == 0 then
+          open_run_terminal({ 'java', '-cp', dir, name }, { cwd = dir })
+        else
+          notify_command_failure('javac', result)
+        end
+      end)
+    end)
   elseif ft == 'javascript' then
-    cmd = 'node ' .. file
+    open_run_terminal({ 'node', file }, { cwd = dir })
   elseif ft == 'sh' then
-    cmd = 'bash ' .. file
+    open_run_terminal({ 'bash', file }, { cwd = dir })
   elseif ft == 'python' then
-    cmd = 'python ' .. file
+    open_run_terminal({ 'python3', file }, { cwd = dir })
   elseif ft == 'typescript' then
-    cmd = 'npx tsx ' .. file
+    open_run_terminal({ 'npx', 'tsx', file }, { cwd = dir })
   elseif ft == 'lua' then
-    cmd = 'lua ' .. file
-  end
-  if cmd then
-    vim.cmd('split | terminal ' .. cmd)
-    compile_run_buf = vim.api.nvim_get_current_buf()
+    open_run_terminal({ 'lua', file }, { cwd = dir })
+  else
+    vim.notify('No run command configured for ' .. ft, vim.log.levels.WARN)
   end
 end
 vim.api.nvim_create_autocmd('FileType', {
