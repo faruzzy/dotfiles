@@ -15,8 +15,8 @@ return {
           arrayIndex = 'Disable',
           enable = true,
           setType = true,    -- Show type hints
-          paramName = 'All', -- Show parameter names
-          paramType = true,  -- Show parameter types
+          paramName = 'Literal', -- Show parameter names for literal arguments only
+          paramType = false,     -- Avoid long callback parameter type hints
         },
         workspace = {
           checkThirdParty = false,
