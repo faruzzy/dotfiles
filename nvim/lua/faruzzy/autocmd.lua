@@ -86,7 +86,9 @@ augroup('YankHighlight', {
   {
     'TextYankPost',
     callback = function()
-      if vim.bo.buftype == '' then vim.hl.on_yank({ higroup = 'IncSearch', timeout = 200 }) end
+      if vim.bo.buftype == '' then
+        vim.hl.on_yank({ higroup = 'IncSearch', timeout = 200 })
+      end
     end,
     pattern = '*',
   },
@@ -126,11 +128,7 @@ augroup('document_highlight_attach', {
     callback = function(args)
       local bufnr = args.buf
       local client = vim.lsp.get_client_by_id(args.data.client_id)
-      if
-        not client
-        or not client:supports_method('textDocument/documentHighlight')
-        or vim.fn.expand('%:p'):match('^fugitive://')
-      then
+      if not client or not client:supports_method('textDocument/documentHighlight') or vim.fn.expand('%:p'):match('^fugitive://') then
         return
       end
 
@@ -140,7 +138,9 @@ augroup('document_highlight_attach', {
           callback = function()
             vim.schedule(function()
               local clients = vim.lsp.get_clients({ bufnr = bufnr, method = 'textDocument/documentHighlight' })
-              if #clients > 0 then pcall(vim.lsp.buf.document_highlight) end
+              if #clients > 0 then
+                pcall(vim.lsp.buf.document_highlight)
+              end
             end)
           end,
           buffer = bufnr,
@@ -190,7 +190,9 @@ augroup('cursorline_focus', {
   {
     'WinEnter',
     callback = function()
-      if not vim.tbl_contains({ 'alpha', 'dashboard' }, vim.bo.filetype) then vim.opt_local.cursorline = true end
+      if not vim.tbl_contains({ 'alpha', 'dashboard' }, vim.bo.filetype) then
+        vim.opt_local.cursorline = true
+      end
     end,
   },
 })
@@ -227,29 +229,46 @@ augroup('numbertoggle', {
     { 'BufLeave', 'FocusLost', 'InsertEnter', 'CmdlineEnter', 'WinLeave' },
     pattern = '*',
     callback = function()
-      if vim.o.number then vim.opt.relativenumber = false end
+      if vim.o.number then
+        vim.opt.relativenumber = false
+      end
     end,
   },
 })
 
--- Auto-save only when leaving Neovim, avoiding BufLeave-triggered formatter/watch churn.
-if vim.g.auto_save_on_focus_lost == nil then vim.g.auto_save_on_focus_lost = true end
+-- Auto-save when leaving Neovim focus, avoiding BufLeave-triggered formatter/watch churn.
+if vim.g.auto_save_on_focus_lost == nil then
+  vim.g.auto_save_on_focus_lost = true
+end
+
 local autosave_excluded = { 'oil', 'harpoon', 'alpha', 'dashboard', 'fugitive' }
+local function auto_save_buffer(buf)
+  if
+    not vim.g.auto_save_on_focus_lost
+    or not vim.api.nvim_buf_is_valid(buf)
+    or not vim.bo[buf].modified
+    or vim.bo[buf].buftype ~= ''
+    or vim.api.nvim_buf_get_name(buf) == ''
+    or vim.tbl_contains(autosave_excluded, vim.bo[buf].filetype)
+  then
+    return
+  end
+
+  local ok, err = pcall(vim.api.nvim_buf_call, buf, function() vim.api.nvim_cmd({ cmd = 'write', mods = { silent = true } }, {}) end)
+
+  if ok then
+    vim.notify('AutoSave: saved at ' .. vim.fn.strftime('%H:%M:%S'))
+  else
+    vim.notify('Auto-save failed: ' .. err, vim.log.levels.ERROR)
+  end
+end
+
 augroup('auto_save', {
   {
-    'FocusLost',
+    { 'FocusLost', 'VimLeavePre' },
     callback = function(args)
       local buf = args.buf ~= 0 and args.buf or vim.api.nvim_get_current_buf()
-      if
-        vim.g.auto_save_on_focus_lost
-        and vim.bo[buf].modified
-        and vim.bo[buf].buftype == ''
-        and vim.api.nvim_buf_get_name(buf) ~= ''
-        and not vim.tbl_contains(autosave_excluded, vim.bo[buf].filetype)
-      then
-        local ok, err = pcall(vim.api.nvim_buf_call, buf, function() vim.cmd('silent write') end)
-        if not ok then vim.notify('Auto-save failed: ' .. err, vim.log.levels.ERROR) end
-      end
+      auto_save_buffer(buf)
     end,
   },
 })
@@ -277,7 +296,9 @@ end, { desc = 'Diff buffer against saved version on disk' })
 -- Create jsconfig.json at the nearest project root
 vim.api.nvim_create_user_command('JsConfig', function()
   local root = vim.fs.root(0, { 'package.json', '.git' })
-  if not root then root = vim.fn.getcwd() end
+  if not root then
+    root = vim.fn.getcwd()
+  end
   local path = root .. '/jsconfig.json'
   if vim.uv.fs_stat(path) then
     vim.notify('jsconfig.json already exists at ' .. path, vim.log.levels.WARN)
@@ -306,8 +327,12 @@ augroup('fugitive_refresh', {
     callback = function()
       -- Only refresh in normal mode to avoid wiping visual selections
       -- and guard against re-entrant BufEnter from edit()
-      if vim.fn.mode() ~= 'n' then return end
-      if vim.b._fugitive_refreshing then return end
+      if vim.fn.mode() ~= 'n' then
+        return
+      end
+      if vim.b._fugitive_refreshing then
+        return
+      end
       vim.b._fugitive_refreshing = true
       vim.schedule(function()
         if vim.api.nvim_buf_is_valid(0) and vim.bo.filetype == 'fugitive' and vim.fn.mode() == 'n' then
