@@ -22,7 +22,6 @@ return {
     end,
   },
 
-
   {
     'wesQ3/vim-windowswap',
     keys = {

@@ -47,7 +47,9 @@ local lspkind_icons = {
 -- Enhanced LSP completion context function
 local function get_lsp_completion_context(completion)
   local ok, source_name = pcall(function() return vim.lsp.get_client_by_id(completion.client_id).name end)
-  if not ok then return nil end
+  if not ok then
+    return nil
+  end
 
   if source_name == 'ts_ls' or source_name == 'typescript-tools' or source_name == 'vtsls' then
     return completion.detail
@@ -57,17 +59,23 @@ local function get_lsp_completion_context(completion)
     return completion.detail
   elseif source_name == 'clangd' then
     local doc = completion.documentation
-    if doc == nil then return end
+    if doc == nil then
+      return
+    end
 
     local import_str = doc.value
     import_str = import_str:gsub('[\n]+', '')
 
     local str
     str = import_str:match('<(.-)>')
-    if str then return '<' .. str .. '>' end
+    if str then
+      return '<' .. str .. '>'
+    end
 
     str = import_str:match('["\'](.-)["\']')
-    if str then return '"' .. str .. '"' end
+    if str then
+      return '"' .. str .. '"'
+    end
 
     return nil
   end
@@ -142,7 +150,9 @@ return {
           if col > 0 then
             local line = vim.api.nvim_get_current_line()
             local char_before = line:sub(col, col)
-            if char_before == '(' or char_before == '{' or char_before == '>' then return false end
+            if char_before == '(' or char_before == '{' or char_before == '>' then
+              return false
+            end
           end
           return true
         end,
@@ -209,7 +219,9 @@ return {
                   snippets = 'snip',
                 }
                 local name = source_map[ctx.source_name] or ctx.source_name
-                if ctx.item.client_name then name = name .. '[' .. ctx.item.client_name .. ']' end
+                if ctx.item.client_name then
+                  name = name .. '[' .. ctx.item.client_name .. ']'
+                end
                 return name
               end,
             },
@@ -352,15 +364,21 @@ return {
                 current = current:parent()
               end
               -- If no jsx ancestor found, allow emmet for HTML files
-              if current == nil then in_markup = vim.bo.filetype == 'html' end
+              if current == nil then
+                in_markup = vim.bo.filetype == 'html'
+              end
             end
 
             local seen = {}
             return vim.tbl_filter(function(item)
               -- Drop emmet items outside JSX markup
-              if not in_markup and item.client_name == 'emmet_language_server' then return false end
+              if not in_markup and item.client_name == 'emmet_language_server' then
+                return false
+              end
               local key = item.label .. (item.kind or '')
-              if seen[key] then return false end
+              if seen[key] then
+                return false
+              end
               seen[key] = true
               return true
             end, items)
@@ -380,7 +398,9 @@ return {
             -- Don't show snippets when completing object properties
             local line = vim.api.nvim_get_current_line()
             local col = vim.api.nvim_win_get_cursor(0)[2]
-            if line:sub(col, col):match('[.:]') then return false end
+            if line:sub(col, col):match('[.:]') then
+              return false
+            end
             return ctx.trigger.initial_kind ~= 'trigger_character'
           end,
         },
