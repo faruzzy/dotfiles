@@ -1,12 +1,3 @@
---[[
-  Enhanced blink.cmp configuration for Neovim autocompletion.
-  - Replaces nvim-cmp with a faster Rust-based completion engine.
-  - Integrates with LSP, snippets, buffer, path, and lazydev sources.
-  - Provides customized keybindings and UI styling.
-  - Context-aware source selection and enhanced LSP details.
-]]
-
--- Define your LSP kind icons (extracted from your original config)
 local lspkind_icons = {
   Array = '󰅪 ',
   Boolean = '◩ ',
@@ -320,8 +311,8 @@ return {
       providers = {
         buffer = {
           name = 'Buffer',
-          max_items = 4,
-          score_offset = -2,
+          max_items = 10,
+          score_offset = 0,
           opts = {
             get_bufnrs = function()
               -- Only search visible buffers instead of all buffers
@@ -341,8 +332,12 @@ return {
         },
         lsp = {
           name = 'LSP',
+          -- Keep buffer completions active alongside LSP instead of only using
+          -- them when LSP returns no items.
+          fallbacks = {},
           score_offset = 0,
           transform_items = function(_, items)
+            local keyword_kind = vim.lsp.protocol.CompletionItemKind.Keyword
             -- Filter out emmet completions when cursor is not in a JSX/HTML markup context.
             -- Strategy: walk up the tree and find the *nearest* JSX-related ancestor.
             -- If it's jsx_expression we're in JS code — suppress emmet.
@@ -375,6 +370,9 @@ return {
               if not in_markup and item.client_name == 'emmet_language_server' then
                 return false
               end
+              if item.client_name == 'vtsls' and item.kind == keyword_kind then
+                item.score_offset = (item.score_offset or 0) + 6
+              end
               local key = item.label .. (item.kind or '')
               if seen[key] then
                 return false
@@ -386,6 +384,7 @@ return {
         },
         path = {
           name = 'Path',
+          fallbacks = {},
           opts = {
             get_cwd = function(_) return vim.fn.getcwd() end,
           },
