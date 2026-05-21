@@ -3,20 +3,44 @@
 
 ---@type table<string, table>
 local servers = {
-  clangd = {},
-  cssls = {},
+  clangd = {
+    cmd = { 'clangd' },
+    filetypes = { 'c', 'cpp', 'objc', 'objcpp', 'cuda', 'proto' },
+    root_markers = { '.clangd', '.clang-tidy', '.clang-format', 'compile_commands.json', 'compile_flags.txt' },
+  },
+  cssls = {
+    cmd = { 'vscode-css-language-server', '--stdio' },
+    filetypes = { 'css', 'scss', 'less' },
+    root_markers = { 'package.json', '.git' },
+  },
   emmet_language_server = require('lsp.servers.emmet_language_server'),
   eslint = require('lsp.servers.eslint'),
   -- graphql = require('lsp.servers.graphql'),
   html = require('lsp.servers.html'),
   jsonls = require('lsp.servers.jsonls'),
   lua_ls = require('lsp.servers.lua_ls'),
-  pyright = {},
-  rust_analyzer = {},
+  pyright = {
+    cmd = { 'pyright-langserver', '--stdio' },
+    filetypes = { 'python' },
+    root_markers = { 'pyproject.toml', 'setup.py', 'setup.cfg', 'requirements.txt', 'pyrightconfig.json' },
+  },
+  rust_analyzer = {
+    cmd = { 'rust-analyzer' },
+    filetypes = { 'rust' },
+    root_markers = { 'Cargo.toml', 'rust-project.json' },
+  },
   tailwindcss = require('lsp.servers.tailwindcss'),
-  vimls = {},
+  vimls = {
+    cmd = { 'vim-language-server', '--stdio' },
+    filetypes = { 'vim' },
+    root_markers = { '.git' },
+  },
   vtsls = require('lsp.servers.vtsls'),
-  yamlls = {},
+  yamlls = {
+    cmd = { 'yaml-language-server', '--stdio' },
+    filetypes = { 'yaml', 'yaml.docker-compose' },
+    root_markers = { '.git' },
+  },
 }
 
 local supported_servers = {}

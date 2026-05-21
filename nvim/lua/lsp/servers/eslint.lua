@@ -1,4 +1,5 @@
 return {
+  cmd = { 'vscode-eslint-language-server', '--stdio' },
   root_markers = {
     '.eslintrc',
     '.eslintrc.js',

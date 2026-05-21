@@ -132,28 +132,38 @@ augroup('document_highlight_attach', {
         return
       end
 
+      local timer = vim.uv.new_timer()
+
       augroup('document_highlight_' .. bufnr, {
         {
-          { 'CursorHold', 'CursorHoldI' },
+          { 'CursorHold', 'CursorHoldI', 'CursorMoved', 'CursorMovedI' },
           callback = function()
-            vim.schedule(function()
+            timer:stop()
+            pcall(vim.lsp.buf.clear_references)
+            timer:start(200, 0, vim.schedule_wrap(function()
+              if not vim.api.nvim_buf_is_valid(bufnr) or vim.fn.mode() ~= 'n' then return end
               local clients = vim.lsp.get_clients({ bufnr = bufnr, method = 'textDocument/documentHighlight' })
               if #clients > 0 then
                 pcall(vim.lsp.buf.document_highlight)
               end
-            end)
+            end))
           end,
           buffer = bufnr,
         },
         {
-          { 'CursorMoved', 'InsertEnter', 'BufLeave' },
-          callback = function() pcall(vim.lsp.buf.clear_references) end,
+          { 'InsertEnter', 'BufLeave' },
+          callback = function()
+            timer:stop()
+            pcall(vim.lsp.buf.clear_references)
+          end,
           buffer = bufnr,
         },
         {
           'LspDetach',
           callback = function(detach_args)
             if detach_args.buf == bufnr then
+              timer:stop()
+              if not timer:is_closing() then timer:close() end
               pcall(vim.lsp.buf.clear_references)
               pcall(vim.api.nvim_del_augroup_by_name, 'document_highlight_' .. bufnr)
             end
