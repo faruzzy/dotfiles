@@ -74,17 +74,31 @@ return {
 
     -- Enable servers (rust_analyzer managed by rustaceanvim, vtsls by nvim-vtsls)
     local skip = { 'rust_analyzer', 'vtsls' }
-    local to_enable = vim.tbl_filter(function(name)
-      return not vim.tbl_contains(skip, name)
-    end, vim.tbl_keys(servers))
+    local to_enable = vim.tbl_filter(function(name) return not vim.tbl_contains(skip, name) end, vim.tbl_keys(servers))
     vim.lsp.enable(to_enable)
+
+    local register_capability = vim.lsp.handlers['client/registerCapability']
+    vim.lsp.handlers['client/registerCapability'] = function(err, result, ctx, config)
+      local ret = register_capability(err, result, ctx, config)
+      local client = vim.lsp.get_client_by_id(ctx.client_id)
+      if client then
+        for bufnr in pairs(client.attached_buffers) do
+          if vim.api.nvim_buf_is_valid(bufnr) and client:supports_method(vim.lsp.protocol.Methods.textDocument_inlayHint, bufnr) then
+            pcall(vim.lsp.inlay_hint.enable, true, { bufnr = bufnr })
+          end
+        end
+      end
+      return ret
+    end
 
     -- Shared on_attach for all LSP servers
     vim.api.nvim_create_autocmd('LspAttach', {
       group = vim.api.nvim_create_augroup('shared_lsp_on_attach', { clear = true }),
       callback = function(args)
         local client = vim.lsp.get_client_by_id(args.data.client_id)
-        if not client then return end
+        if not client then
+          return
+        end
         require('lsp.on_attach')(client, args.buf)
       end,
     })

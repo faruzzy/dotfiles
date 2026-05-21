@@ -11,6 +11,7 @@ return {
     'eslint.config.mjs',
     'eslint.config.cjs',
     'package.json',
+    '.git',
   },
   filetypes = { 'javascript', 'javascriptreact', 'typescript', 'typescriptreact', 'vue' },
   on_attach = function(_, bufnr)
@@ -33,6 +34,10 @@ return {
       return vim.lsp.handlers['window/showMessageRequest'](_, result)
     end,
     ['textDocument/diagnostic'] = function(err, result, ctx)
+      -- Suppress "path must be string" errors from eslint failing to resolve workingDirectory
+      if err and err.message and err.message:find('The "path" argument must be of type string') then
+        return
+      end
       if result and result.items then
         for _, item in ipairs(result.items) do
           item.severity = item.severity == 1 and 1 or item.severity == 2 and 2 or 4
@@ -43,7 +48,7 @@ return {
   },
   settings = {
     format = { enable = true },
-    workingDirectories = { mode = 'auto' },
+    workingDirectories = { mode = 'location' },
     codeAction = {
       disableRuleComment = { enable = false },
       showDocumentation = { enable = true },

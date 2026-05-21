@@ -3,6 +3,22 @@
 
 local lightbulb_ns = vim.api.nvim_create_namespace('lightbulb')
 
+local function enable_inlay_hints(client, bufnr)
+  if client:supports_method(vim.lsp.protocol.Methods.textDocument_inlayHint, bufnr) then
+    pcall(vim.lsp.inlay_hint.enable, true, { bufnr = bufnr })
+
+    vim.defer_fn(function()
+      if
+        vim.api.nvim_buf_is_valid(bufnr)
+        and vim.lsp.inlay_hint.is_enabled({ bufnr = bufnr })
+        and client:supports_method(vim.lsp.protocol.Methods.textDocument_inlayHint, bufnr)
+      then
+        pcall(vim.lsp.inlay_hint.enable, true, { bufnr = bufnr })
+      end
+    end, 250)
+  end
+end
+
 ---@param client vim.lsp.Client
 ---@param bufnr number
 return function(client, bufnr)
@@ -12,9 +28,7 @@ return function(client, bufnr)
   bsk('n', '<Leader>rn', vim.lsp.buf.rename, { desc = 'LSP Rename' })
   bsk('n', '<Leader>ca', vim.lsp.buf.code_action, { desc = 'LSP Code Action' })
 
-  if client:supports_method('textDocument/inlayHint', bufnr) then
-    vim.lsp.inlay_hint.enable(true, { bufnr = bufnr })
-  end
+  enable_inlay_hints(client, bufnr)
 
   if client:supports_method('textDocument/codeAction', bufnr) then
     local last_lightbulb_line = -1
