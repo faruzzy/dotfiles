@@ -10,7 +10,7 @@ end
 ---Return lsp server display name or default server name
 ---@param server_name string
 ---@return string
-function M.get_server_display_name(server_name) return require('lsp.servers')[server_name].display or server_name end
+function M.get_server_display_name(server_name) return server_name end
 
 ---Configure auto-close tag support for HTML & Svelte servers
 ---@param client vim.lsp.Client

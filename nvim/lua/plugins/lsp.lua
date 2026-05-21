@@ -1,18 +1,13 @@
 --[[
-  LSP configuration for Neovim using nvim-lspconfig and mason.nvim.
-  - Sets up LSP servers with custom keybindings and formatting.
-  - Manages server installation via mason.nvim.
-  - Provides status updates via fidget.nvim.
-  - See lsp/servers.lua for server-specific settings.
+  LSP configuration using Neovim's native vim.lsp API (0.11+).
+  - Mason handles server installation.
+  - vim.lsp.config/enable replaces nvim-lspconfig.
+  - Shared on_attach logic via LspAttach autocmd.
 ]]
 
 return {
-  -- LSP Configuration & Plugins
-  'neovim/nvim-lspconfig',
+  'williamboman/mason.nvim',
   dependencies = {
-    -- Automatically install LSPs to stdpath for neovim
-    'williamboman/mason.nvim',
-    'williamboman/mason-lspconfig.nvim',
     'WhoIsSethDaniel/mason-tool-installer.nvim',
 
     -- JSON schemas for better completion
@@ -24,13 +19,13 @@ return {
       opts = {
         notification = {
           window = {
-            winblend = 0,     -- Opaque background
-            align = 'bottom', -- Align notifications at the bottom
+            winblend = 0,
+            align = 'bottom',
           },
         },
         progress = {
           display = {
-            render_limit = 5, -- Limit number of progress messages shown
+            render_limit = 5,
           },
         },
       },
@@ -39,67 +34,59 @@ return {
 
   config = function()
     require('mason').setup()
-    local servers = require('lsp.servers')
 
-    -- Separate formatters from LSP servers
-    local formatters = { 'stylua', 'prettierd' }
-
+    -- Mason package names for installation
     require('mason-tool-installer').setup({
-      ensure_installed = vim.list_extend(vim.tbl_keys(servers), formatters),
-      auto_update = false, -- Prevent automatic updates for reproducibility
-    })
-
-    require('mason-lspconfig').setup({
-      ensure_installed = vim.tbl_keys(servers),
-      handlers = {
-        function(server_name)
-          -- Only setup servers explicitly listed in lsp/servers.lua
-          local server = servers[server_name]
-          if not server or server_name == 'rust_analyzer' or server_name == 'vtsls' then
-            return
-          end
-
-          local capabilities = require('lsp.capabilities')()
-          local on_attach = require('lsp.on_attach')
-
-          local config = {
-            capabilities = capabilities,
-            on_attach = on_attach,
-          }
-
-          -- Call the config function if it exists
-          if server.config and type(server.config) == 'function' then
-            config = server.config(config)
-          end
-
-          require('lspconfig')[server_name].setup(config)
-        end,
+      ensure_installed = {
+        -- LSP servers
+        'clangd',
+        'css-lsp',
+        'emmet-language-server',
+        'eslint-lsp',
+        'html-lsp',
+        'json-lsp',
+        'lua-language-server',
+        'pyright',
+        'rust-analyzer',
+        'tailwindcss-language-server',
+        'vim-language-server',
+        'vtsls',
+        'yaml-language-server',
+        -- Formatters
+        'stylua',
+        'prettierd',
       },
+      auto_update = false,
     })
 
-    -- Apply lua_ls settings via vim.lsp.config so they merge with lazydev
-    local lua_ls_server = servers['lua_ls']
-    if lua_ls_server and lua_ls_server.config then
-      local lua_ls_config = lua_ls_server.config({
-        capabilities = require('lsp.capabilities')(),
-        on_attach = require('lsp.on_attach'),
-      })
-      vim.lsp.config('lua_ls', {
-        settings = lua_ls_config.settings,
-        on_attach = require('lsp.on_attach'),
-      })
+    -- Shared capabilities for all servers
+    vim.lsp.config('*', {
+      capabilities = require('lsp.capabilities')(),
+    })
+
+    -- Per-server configuration
+    local servers = require('lsp.servers')
+    for name, config in pairs(servers) do
+      if not vim.tbl_isempty(config) then
+        vim.lsp.config(name, config)
+      end
     end
 
-    -- Apply jsonls settings via vim.lsp.config so schemas are registered
-    local jsonls_server = servers['jsonls']
-    if jsonls_server and jsonls_server.config then
-      local jsonls_config = jsonls_server.config({
-        capabilities = require('lsp.capabilities')(),
-        on_attach = require('lsp.on_attach'),
-      })
-      vim.lsp.config('jsonls', {
-        settings = jsonls_config.settings,
-      })
-    end
+    -- Enable servers (rust_analyzer managed by rustaceanvim, vtsls by nvim-vtsls)
+    local skip = { 'rust_analyzer', 'vtsls' }
+    local to_enable = vim.tbl_filter(function(name)
+      return not vim.tbl_contains(skip, name)
+    end, vim.tbl_keys(servers))
+    vim.lsp.enable(to_enable)
+
+    -- Shared on_attach for all LSP servers
+    vim.api.nvim_create_autocmd('LspAttach', {
+      group = vim.api.nvim_create_augroup('shared_lsp_on_attach', { clear = true }),
+      callback = function(args)
+        local client = vim.lsp.get_client_by_id(args.data.client_id)
+        if not client then return end
+        require('lsp.on_attach')(client, args.buf)
+      end,
+    })
   end,
 }

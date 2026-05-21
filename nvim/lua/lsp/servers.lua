@@ -1,24 +1,21 @@
----@class LspServer
----@field config? fun(config: table): table
----@field display? string
----@field skip_lspconfig? boolean
+--- Server configurations for vim.lsp.config()
+--- Each entry returns a table compatible with vim.lsp.config(name, config)
 
----@type table<string, LspServer>
+---@type table<string, table>
 local servers = {
   clangd = {},
+  cssls = {},
   emmet_language_server = require('lsp.servers.emmet_language_server'),
   eslint = require('lsp.servers.eslint'),
   -- graphql = require('lsp.servers.graphql'),
   html = require('lsp.servers.html'),
-  pyright = {},
-  tailwindcss = require('lsp.servers.tailwindcss'),
-  vtsls = require('lsp.servers.vtsls'),
-  rust_analyzer = {},
-  -- jsonls is manually configured in lua/plugins/lsp.lua
   jsonls = require('lsp.servers.jsonls'),
   lua_ls = require('lsp.servers.lua_ls'),
-  cssls = {},
+  pyright = {},
+  rust_analyzer = {},
+  tailwindcss = require('lsp.servers.tailwindcss'),
   vimls = {},
+  vtsls = require('lsp.servers.vtsls'),
   yamlls = {},
 }
 
@@ -34,5 +31,3 @@ else
 end
 
 return supported_servers
-
--- vim:foldmethod=marker foldlevel=0

@@ -11,7 +11,7 @@ return {
         'lazy.nvim',
         'luvit-meta/library/uv.lua',
         'catppuccin',
-        'nvim-lspconfig',
+        'mason.nvim',
         'mini.icons',
       },
     },

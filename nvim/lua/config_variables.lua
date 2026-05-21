@@ -1,6 +1,6 @@
 ---@class (exact) AdditionalServer
----@field lspconfig lspconfig.Config
----@field server LspServer
+---@field config table
+---@field server table
 
 ---@module 'gx'
 

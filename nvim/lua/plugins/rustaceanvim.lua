@@ -18,8 +18,8 @@ return {
         },
       },
       server = {
-        on_attach = function(client, bufnr)
-          require('lsp.on_attach')(client, bufnr)
+        on_attach = function(_, bufnr)
+          -- Shared on_attach runs via global LspAttach autocmd
           local map = require('utils').buffer_map(bufnr)
           map('n', 'gK', '<cmd>RustLsp externalDocs<cr>', { desc = 'Open docs.rs' })
           map('n', 'gBa', '<cmd>RustLsp hover actions<cr>', { desc = 'Hover actions' })

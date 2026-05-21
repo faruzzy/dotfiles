@@ -1,21 +1,14 @@
 -- vtsls: VS Code's TypeScript language server for Neovim
--- Replaces typescript-tools.nvim with better VS Code feature parity
+-- Uses native vim.lsp API + nvim-vtsls for TS-specific commands
 
 local ts_filetypes = { 'typescript', 'typescriptreact', 'javascript', 'javascriptreact' }
 
 return {
   'yioneko/nvim-vtsls',
   ft = ts_filetypes,
-  dependencies = { 'neovim/nvim-lspconfig' },
   config = function()
-    require('lspconfig.configs').vtsls = require('vtsls').lspconfig
-
-    local server_config = require('lsp.servers.vtsls')
-    local config = {
-      capabilities = require('lsp.capabilities')(),
-    }
-    if server_config.config then config = server_config.config(config) end
-    require('lspconfig').vtsls.setup(config)
+    -- Enable vtsls via native API (config comes from lsp/servers/vtsls.lua)
+    vim.lsp.enable('vtsls')
 
     local commands = require('vtsls').commands
 
@@ -25,16 +18,12 @@ return {
         local client = vim.lsp.get_client_by_id(args.data.client_id)
         if not client or client.name ~= 'vtsls' then return end
 
-        -- Run shared on_attach (inlay hints, lightbulb, keymaps)
-        require('lsp.on_attach')(client, args.buf)
-
         -- Disable formatting (conform.nvim handles it)
         client.server_capabilities.documentFormattingProvider = false
 
         local bufnr = args.buf
         local bsk = require('utils').buffer_map(bufnr)
 
-        -- Same mappings as previous typescript-tools config
         bsk(
           'n',
           '<leader>io',
@@ -55,7 +44,6 @@ return {
         )
         bsk('n', '<leader>if', function() commands.fix_all(bufnr) end, { desc = 'Fix all TypeScript diagnostics' })
 
-        -- New vtsls-only features
         bsk('n', 'gD', function() commands.goto_source_definition(bufnr) end, { desc = 'Goto Source Definition' })
         bsk('n', 'gR', function() require('lsp.enclosing_references').find() end, { desc = 'Find references to enclosing function' })
       end,
