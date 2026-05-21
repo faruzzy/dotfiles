@@ -9,12 +9,20 @@ return {
   config = function()
     vim.g.rustaceanvim = {
       tools = {
+        on_initialized = function(_, client_id)
+          local client = vim.lsp.get_client_by_id(client_id)
+          if not client then
+            return
+          end
+
+          for bufnr in pairs(client.attached_buffers) do
+            if vim.api.nvim_buf_is_valid(bufnr) and client:supports_method(vim.lsp.protocol.Methods.textDocument_inlayHint, bufnr) then
+              pcall(vim.lsp.inlay_hint.enable, true, { bufnr = bufnr })
+            end
+          end
+        end,
         hover_actions = {
           auto_focus = true,
-        },
-        -- Disable rustaceanvim's inlay hints
-        inlay_hints = {
-          auto = true, -- This disables rustaceanvim's hints
         },
       },
       server = {
