@@ -27,11 +27,11 @@ return {
     require('utils').buffer_map(bufnr)('n', '<leader>ef', '<cmd>EslintFixAll<cr>', { desc = 'ESLint Fix All' })
   end,
   handlers = {
-    ['window/showMessageRequest'] = function(_, result)
+    ['window/showMessageRequest'] = function(err, result, ctx)
       if result and result.message and result.message:find('Unable to find ESLint library') then
         return vim.NIL
       end
-      return vim.lsp.handlers['window/showMessageRequest'](_, result)
+      return vim.lsp.handlers['window/showMessageRequest'](err, result, ctx)
     end,
     ['textDocument/diagnostic'] = function(err, result, ctx)
       -- Suppress "path must be string" errors from eslint failing to resolve workingDirectory
