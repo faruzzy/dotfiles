@@ -1,20 +1,6 @@
----@class (exact) AdditionalServer
----@field config table
----@field server table
-
 ---@module 'gx'
 
----@class (exact) MyConfig
----@field is_personal_machine boolean
----@field additional_servers table<string, AdditionalServer>
----@field supported_servers string[]
----@field supported_debuggers string[]
----@field supported_formatters string[]
----@field supported_linters string[]
----@field border_style string
----@field custom_gx_handlers GxHandler[]
-
----@class MyConfig
+---@type { is_personal_machine: boolean, additional_servers: table<string, { config: table, server: table }>, supported_servers: string[], supported_debuggers: string[], supported_formatters: string[], supported_linters: string[], border_style: string, custom_gx_handlers: table[] }
 local MY_CONFIG = {
   is_personal_machine = false,
   additional_servers = {},
