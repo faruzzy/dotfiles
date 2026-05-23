@@ -13,7 +13,7 @@ The guiding principle that I follow when configuring my dotfiles is that things 
 This repository contains configurations for a variety of tools, including:
 
 *   **Terminal:** Alacritty, Ghostty, tmux
-*   **Shell:** Zsh (with Oh My Zsh), Starship prompt
+*   **Shell:** Zsh, Antidote plugins, Starship prompt, Atuin history, mise runtimes
 *   **Editor:** Neovim
 *   **Git:** git, git-delta, tig
 *   **Other Tools:** fzf, bat, ripgrep, and many more.
@@ -26,9 +26,9 @@ The `install.sh` script automates the setup process. It is idempotent and Bash 3
 2.  Install Homebrew and a wide range of packages.
 3.  Install several GUI applications.
 4.  Install programming languages like Python, Node.js, and Java (with Rosetta for Apple Silicon).
-5.  Set up Zsh with Oh My Zsh and plugins.
-6.  Configure Neovim (managed via [bob](https://github.com/MordechaiHadad/bob)) with a rich set of plugins.
-7.  Configure Starship prompt.
+5.  Set up Zsh with Antidote plugins, Atuin history, fzf completion, and Starship.
+6.  Configure Neovim (managed via [bob](https://github.com/MordechaiHadad/bob)) with a Lua/lazy.nvim setup.
+7.  Install language runtimes through [mise](https://mise.jdx.dev/).
 8.  Create symbolic links for the dotfiles in this repository.
 9.  Apply macOS system preferences.
 
@@ -40,7 +40,7 @@ To start the installation, run the following command:
 
 ## Neovim Configuration
 
-My Neovim setup is tailored for a modern development workflow, with a focus on providing a rich and efficient coding experience. It is built entirely in Lua and managed by [lazy.nvim](https://github.com/folke/lazy.nvim) with ~94 plugins, all lazy-loaded for fast startup.
+My Neovim setup is tailored for a modern development workflow, with a focus on providing a rich and efficient coding experience. It is built in Lua and managed by [lazy.nvim](https://github.com/folke/lazy.nvim), with plugin specs split across focused files.
 
 ### Structure
 
@@ -50,7 +50,7 @@ nvim/
 ├── lua/
 │   ├── faruzzy/                # Core settings, keymaps, autocommands
 │   ├── lsp/                    # LSP server definitions and attach hooks
-│   ├── plugins/                # Plugin specs (~46 files)
+│   ├── plugins/                # Plugin specs
 │   ├── config/                 # Theme and statusline components
 │   └── utils.lua               # Helper functions
 ├── snippets/                   # Custom JS/TS/React/Rust snippets
@@ -63,41 +63,44 @@ nvim/
 
 ### LSP
 
-Servers are managed by [mason.nvim](https://github.com/williamboman/mason.nvim) and configured via `mason-lspconfig`. The following servers are set up out of the box:
+Servers are installed with [mason.nvim](https://github.com/williamboman/mason.nvim) and enabled through Neovim's native `vim.lsp` API. Shared attach behavior lives in `nvim/lua/lsp/on_attach.lua`, while per-server configuration lives in `nvim/lua/lsp/servers/`.
 
 | Server | Language |
 |--------|----------|
 | lua_ls | Lua |
 | pyright | Python |
-| rust_analyzer | Rust (via rustaceanvim) |
-| typescript-tools | TypeScript / JavaScript |
+| rust_analyzer | Rust (with rustaceanvim) |
+| vtsls | TypeScript / JavaScript |
 | eslint | JS/TS linting |
 | emmet_language_server | HTML/CSS abbreviations |
 | tailwindcss | Tailwind CSS |
 | html / cssls | HTML / CSS |
-| jsonls | JSON (with schemas) |
+| jsonls | JSON (with schemastore schemas) |
 | yamlls | YAML |
 | clangd | C/C++ |
 | vimls | Vim script |
 
+`vtsls` is enabled through `nvim-vtsls` for TypeScript-specific commands. `rust_analyzer` is installed by Mason but managed by `rustaceanvim`.
+
 ### Completion
 
-Powered by [blink.cmp](https://github.com/Saghen/blink.cmp), a Rust-based completion engine. Sources include LSP, snippets (LuaSnip), path, buffer, and lazydev. Completions are context-aware (e.g. buffer-only inside comments) and sorted by frecency.
+Powered by [blink.cmp](https://github.com/Saghen/blink.cmp), a Rust-based completion engine. Sources include LSP, snippets (LuaSnip), path, buffer, and lazydev. The setup includes command-line completion, documentation popups, custom kind icons, and per-language completion detail for LSP items.
 
 ### Formatting
 
 [conform.nvim](https://github.com/stevearc/conform.nvim) handles format-on-save with per-language formatters:
 
-*   **JS/TS/HTML/CSS/JSON:** prettierd
+*   **JS/TS/HTML/CSS/JSON/YAML:** prettierd/prettier
 *   **Lua:** stylua
 *   **Python:** isort + black
 *   **Go:** goimports + gofmt
-*   **Rust:** rust-analyzer (built-in)
+*   **Rust:** rust-analyzer fallback
 *   **Shell:** shfmt
+*   **Zig:** zigfmt
 
 ### Fuzzy Finding
 
-[fzf-lua](https://github.com/ibhagwan/fzf-lua) is used for all fuzzy finding:
+[fzf-lua](https://github.com/ibhagwan/fzf-lua) is used for fuzzy finding, LSP navigation, diagnostics, Git pickers, command history, keymaps, marks, registers, and TODO search:
 
 | Binding | Action |
 |---------|--------|
@@ -106,7 +109,7 @@ Powered by [blink.cmp](https://github.com/Saghen/blink.cmp), a Rust-based comple
 | `<leader><CR>` | Open buffers |
 | `<leader>/` | Buffer lines |
 | `<leader>fw` | Grep word under cursor |
-| `gd` / `gr` / `gi` | Go to definition / references / implementation |
+| `gd` / `gr` / `gi` | Smart definition / references / implementation |
 
 ### Git
 
@@ -117,9 +120,10 @@ Powered by [blink.cmp](https://github.com/Saghen/blink.cmp), a Rust-based comple
 ### Language-Specific Tooling
 
 **TypeScript / JavaScript**
-*   [typescript-tools.nvim](https://github.com/pmizio/typescript-tools.nvim) with inlay hints, auto JSX closing, and import management (`<leader>io` organize, `<leader>ia` add missing, `<leader>ir` remove unused)
+*   [nvim-vtsls](https://github.com/yioneko/nvim-vtsls) with native `vim.lsp`, inlay hints, source-definition support, and import management (`<leader>io` organize, `<leader>ia` add missing, `<leader>ir` remove unused, `<leader>if` fix all)
 *   Custom React hook snippets (`us` useState, `ue` useEffect, `ur` useRef, `um` useMemo, `uc` useCallback, and more)
 *   Programmatic React component snippet with auto prop destructuring
+*   JSDoc-friendly comment continuation and React filetype tweaks in `after/ftplugin`
 
 **Rust**
 *   [rustaceanvim](https://github.com/mrcjkb/rustaceanvim) with hover actions, runnables (`gBr`), debuggables (`gBR`), macro expansion (`gBe`), and external docs (`gK`)
@@ -142,11 +146,12 @@ Leader key is `,` (comma). A few highlights:
 | `<leader>ti` | Toggle inlay hints |
 | `<leader>tc` | Toggle conceal |
 | `<leader>ut` | Undo tree |
-| `<leader>as` | Toggle auto-save |
+| `<leader>ta` | Toggle auto-save |
 | `<leader>1`-`5` | Jump to buffer 1-5 |
 | `<A-j>` / `<A-k>` | Move line(s) up / down |
 | `<leader>c` | Compile and run (C, Java, JS, Python, sh) |
 | `<CR>` | Re-run last ex command |
+| `gR` | Find references to enclosing function |
 
 **Buffers & Windows**
 
@@ -192,7 +197,17 @@ Leader key is `,` (comma). A few highlights:
 | `<leader>tb` | Toggle inline blame |
 | `<leader>tg` | Toggle show deleted |
 | `]c` / `[c` | Next / previous hunk |
+| `]C` / `[C` | Next / previous staged hunk |
 | `<leader>pr` | Open GitHub PR for current branch |
+
+**TODOs**
+
+| Binding | Action |
+|---------|--------|
+| `]t` / `[t` | Next / previous TODO comment |
+| `<leader>td` | TODO list in Trouble |
+| `<leader>tb` | Buffer TODOs in Trouble |
+| `<leader>st` | Search TODOs with fzf-lua |
 
 **Clipboard**
 
@@ -222,17 +237,39 @@ Use [which-key.nvim](https://github.com/folke/which-key.nvim) to discover all av
 
 ### Notable Extras
 
-*   **mise auto-detection** -- reads `.nvmrc` / `.node-version` / `.java-version` to use the correct runtime versions automatically
+*   **Native `vim.lsp` configuration** -- no `nvim-lspconfig`; servers are configured with `vim.lsp.config()` / `vim.lsp.enable()`
+*   **mise runtime management** -- reads project runtime files through the shell integration and installs global Node/Java during setup
+*   **Atuin history** -- local-only shell history with fuzzy search
+*   **Antidote shell plugins** -- static Zsh plugin bundle generated from `.zsh_plugins.txt`
 *   **Code action lightbulb** -- shows a hint when code actions are available
 *   **Treesitter** -- 40+ parsers with text objects (`af`/`if` for functions, `ac`/`ic` for classes), auto-tag closing, and sticky context
 *   **vim-tmux-navigator** -- seamless `<C-h/j/k/l>` navigation between Neovim splits and tmux panes
 *   **[gx.nvim](https://github.com/chrishrb/gx.nvim)** -- smart URL opening under cursor
 *   **[in-and-out.nvim](https://github.com/ysmb-wtsg/in-and-out.nvim)** -- jump out of surrounding delimiters
 *   **[early-retirement.nvim](https://github.com/chrisgrieser/nvim-early-retirement)** -- auto-close inactive buffers
+*   **[todo-comments.nvim](https://github.com/folke/todo-comments.nvim)** -- TODO/FIXME navigation and fzf/Trouble integration
 *   **nvim-lsp-file-operations** -- LSP-aware file rename via neo-tree
-*   **auto-save** -- saves on insert leave
+*   **auto-save** -- saves on focus loss and before exit, avoiding noisy BufLeave formatting churn
 *   **persistent undo** -- undo history survives across sessions
 *   **`:JsConfig`** -- scaffolds a `jsconfig.json` at the nearest `package.json` root
+
+## Shell Workflow
+
+The shell setup is optimized for fast interactive use:
+
+*   **Antidote** loads Zsh plugins from a generated static bundle.
+*   **Starship** provides the prompt, with directory context tuned in `config/starship.toml`.
+*   **mise** manages Node, Java, and other project runtimes.
+*   **Atuin** provides local-only fuzzy shell history.
+*   **fzf** powers shell completion and custom helpers. `<Tab>` keeps normal completion, while `<C-x><C-i>` invokes fzf completion when available.
+*   `git diff` completion falls back to file completion when Git's completion has no candidate.
+
+## Helper Scripts
+
+The `bin/` directory includes fzf-based helpers:
+
+*   `claude.fzf` -- browse Claude session history, preview messages, and resume a session or jump to an existing tmux pane.
+*   `mise.fzf` -- pick a mise tool/version from local and remote versions, with a copy shortcut for coordinates.
 
 ## Other Configurations
 
@@ -241,10 +278,11 @@ This repository also includes configuration files for:
 *   **Alacritty:** A fast, cross-platform, OpenGL terminal emulator.
 *   **Ghostty:** A fast, native terminal emulator.
 *   **tmux:** A terminal multiplexer.
-*   **Zsh:** A powerful shell with Oh My Zsh for plugin and theme management.
+*   **Zsh:** A powerful shell using Antidote for plugins, Atuin for history, fzf for completion, and Starship for the prompt.
 *   **Starship:** A minimal, blazing-fast cross-shell prompt.
 *   **bat:** A cat(1) clone with syntax highlighting and Git integration.
 *   **skhd / yabai:** Hotkey daemon and tiling window manager for macOS.
+*   **mise:** Language runtime manager for global and project-local tool versions.
 *   **and more...**
 
 ## Credits
