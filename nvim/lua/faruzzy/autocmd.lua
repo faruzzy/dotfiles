@@ -31,6 +31,7 @@ augroup('jsdoc_comment_continuation', {
         local row = vim.api.nvim_win_get_cursor(0)[1]
         local col = vim.api.nvim_win_get_cursor(0)[2]
         local before_cursor = line:sub(1, col)
+        local after_cursor = line:sub(col + 1)
 
         -- Check if we just typed /**
         if before_cursor:match('^%s*/%*%*$') then
@@ -47,6 +48,29 @@ augroup('jsdoc_comment_continuation', {
             vim.api.nvim_win_set_cursor(0, { row + 1, #indent + 3 })
           end)
           return ''
+        end
+
+        if before_cursor:match('^%s*[%]%)}]') and after_cursor:match('^%s*$') then
+          local indent = before_cursor:match('^(%s*)')
+          vim.schedule(function()
+            vim.api.nvim_buf_set_lines(0, row, row, false, { indent })
+            vim.api.nvim_win_set_cursor(0, { row + 1, #indent })
+          end)
+          return ''
+        end
+
+        if before_cursor:match('^%s*$') and after_cursor:match('^%s*$') then
+          local prev_line = vim.fn.prevnonblank(row - 1)
+          local prev_text = prev_line > 0 and vim.api.nvim_buf_get_lines(0, prev_line - 1, prev_line, false)[1] or ''
+
+          if prev_text:match('^%s*[%]%)}]') then
+            local indent = prev_text:match('^(%s*)')
+            vim.schedule(function()
+              vim.api.nvim_buf_set_lines(0, row, row, false, { indent })
+              vim.api.nvim_win_set_cursor(0, { row + 1, #indent })
+            end)
+            return ''
+          end
         end
 
         -- Continue block comment with aligned " * " (bypasses smartindent
@@ -67,15 +91,43 @@ augroup('jsdoc_comment_continuation', {
       -- Same fix for 'o' in normal mode: bypass smartindent inside block comments
       bmap('n', 'o', function()
         local line = vim.api.nvim_get_current_line()
+        local row = vim.api.nvim_win_get_cursor(0)[1]
+
         if line:match('^%s*%*') then
           local prefix = line:match('^(%s*%*)')
-          local row = vim.api.nvim_win_get_cursor(0)[1]
           vim.api.nvim_buf_set_lines(0, row, row, false, { prefix .. ' ' })
           vim.api.nvim_win_set_cursor(0, { row + 1, #prefix + 1 })
           vim.cmd('startinsert!')
           return
         end
+
+        if line:match('^%s*[%]%)}]') then
+          local indent = line:match('^(%s*)')
+          vim.api.nvim_buf_set_lines(0, row, row, false, { indent })
+          vim.api.nvim_win_set_cursor(0, { row + 1, #indent })
+          vim.cmd('startinsert!')
+          return
+        end
+
         vim.api.nvim_feedkeys('o', 'n', false)
+      end)
+
+      bmap('n', 'O', function()
+        local line = vim.api.nvim_get_current_line()
+        local row = vim.api.nvim_win_get_cursor(0)[1]
+
+        if line:match('^%s*%*') then
+          local prefix = line:match('^(%s*%*)')
+          vim.api.nvim_buf_set_lines(0, row - 1, row - 1, false, { prefix .. ' ' })
+          vim.api.nvim_win_set_cursor(0, { row, #prefix + 1 })
+          vim.cmd('startinsert!')
+          return
+        end
+
+        local indent = line:match('^(%s*)')
+        vim.api.nvim_buf_set_lines(0, row - 1, row - 1, false, { indent })
+        vim.api.nvim_win_set_cursor(0, { row, #indent })
+        vim.cmd('startinsert!')
       end)
     end,
   },
