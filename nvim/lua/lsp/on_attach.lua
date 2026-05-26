@@ -2,6 +2,7 @@
 ---Sets up buffer-local keymaps and settings for LSP
 
 local lightbulb_ns = vim.api.nvim_create_namespace('lightbulb')
+local code_action_icon = vim.trim(require('config.theme').icons.code_action or '󰌵')
 
 local function enable_inlay_hints(client, bufnr)
   if client:supports_method(vim.lsp.protocol.Methods.textDocument_inlayHint, bufnr) then
@@ -33,7 +34,18 @@ return function(client, bufnr)
   if client:supports_method('textDocument/codeAction', bufnr) then
     local last_lightbulb_line = -1
     local last_lightbulb_tick = -1
+    local function clear_lightbulb()
+      vim.api.nvim_buf_clear_namespace(bufnr, lightbulb_ns, 0, -1)
+      last_lightbulb_line = -1
+      last_lightbulb_tick = -1
+    end
+
     require('utils').augroup('lightbulb_' .. bufnr, {
+      {
+        { 'CursorMoved', 'CursorMovedI', 'InsertEnter' },
+        callback = clear_lightbulb,
+        buffer = bufnr,
+      },
       {
         'CursorHold',
         callback = function()
@@ -55,9 +67,10 @@ return function(client, bufnr)
             local has_code_actions = #vim.tbl_filter(function(resp) return resp.result and #resp.result > 0 end, response) > 0
 
             if has_code_actions then
-              vim.api.nvim_buf_set_extmark(bufnr, lightbulb_ns, line, -1, {
-                virt_text = { { '💡' } },
-                hl_mode = 'combine',
+              vim.api.nvim_buf_set_extmark(bufnr, lightbulb_ns, line, 0, {
+                sign_text = code_action_icon,
+                sign_hl_group = 'DiagnosticSignHint',
+                priority = 20,
               })
             end
           end)
