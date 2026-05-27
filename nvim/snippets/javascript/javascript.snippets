@@ -99,7 +99,7 @@ snippet terr
 snippet ret
 	return ${0:result};
 snippet for "for (...) {...}"
-	for (let ${1:i} = 0, ${2:len} = ${3:Things.length}; $1 < $2; $1++) {
+	for (let ${1:i} = 0; $1 < ${2:Things.length}; $1++) {
 		${0:${VISUAL}}
 	}
 snippet forr "reversed for (...) {...}"
@@ -116,7 +116,7 @@ snippet do "do { ... } while (condition)"
 	} while (${1:/* condition */});
 # For in loop
 snippet fori
-	for (let ${1:prop} in ${2:object}) {
+	for (const ${1:prop} in ${2:object}) {
 		${0:$2[$1]}
 	}
 # Objects
@@ -127,7 +127,7 @@ snippet xf
 	},
 # hasOwnProperty
 snippet has
-	hasOwnProperty(${0})
+	Object.hasOwn(${1:object}, ${0:key})
 # singleton
 snippet sing
 	function ${1:Singleton} (${2:argument}) {
@@ -172,7 +172,7 @@ snippet props
 					// setter code
 				},
 				value        : ${4:value},
-				writeable    : ${5:boolean},
+				writable     : ${5:boolean},
 				enumerable   : ${6:boolean},
 				configurable : ${0:boolean}
 			}
@@ -191,7 +191,7 @@ snippet prop
 				// setter code
 			},
 			value        : ${3:value},
-			writeable    : ${4:boolean},
+			writable     : ${4:boolean},
 			enumerable   : ${5:boolean},
 			configurable : ${0:boolean}
 		}
@@ -309,11 +309,11 @@ snippet clac
 			${0:${VISUAL}}
 		}
 	}
-snippet foro "for (const prop of object}) { ... }"
+snippet foro "for (const prop of object) { ... }"
 	for (const ${1:prop} of ${2:object}) {
 		${0:$1}
 	}
-snippet forl "for (let prop of object}) { ... }"
+snippet forl "for (let prop of object) { ... }"
 	for (let ${1:prop} of ${2:object}) {
 		${0:$1}
 	}

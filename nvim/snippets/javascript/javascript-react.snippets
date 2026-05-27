@@ -10,8 +10,11 @@ snippet irc import React and Component
 snippet irh import React hooks
 	import { use$1 } from 'react';
 
-snippet ird import ReactDOM
-	import ReactDOM from 'react-dom';
+snippet ird import React DOM client
+	import { createRoot, hydrateRoot } from 'react-dom/client';
+
+snippet ircp import createPortal
+	import { createPortal } from 'react-dom';
 
 snippet irp import PropTypes
 	import PropTypes from 'prop-types';
@@ -153,7 +156,7 @@ snippet uses useState
 snippet usee useEffect
 	useEffect(() => {
 		${1}
-	});
+	}, [${2}]);
 
 snippet userd useReducer
 	const [${1:state}, ${2:dispatch}] = useReducer(${3:reducer});
@@ -165,15 +168,12 @@ snippet usect useContext
 	const ${1:value} = useContext(${2:MyContext});
 
 snippet usecb useCallback
-	const ${1:memoizedCallback} = useCallback(
-	() => {
-		${2}(${3})
-	},
-	[$3]
-	);
+	const ${1:memoizedCallback} = useCallback(() => {
+		${2}
+	}, [${3}]);
 
 snippet usem useMemo
-	const ${1:memoizedCallback} = useMemo(() => ${2}(${3}), [$3]);
+	const ${1:memoizedValue} = useMemo(() => ${2}, [${3}]);
 
 snippet usei useImperativeHandle
 	useImperativeHandle(${1:ref}, ${2:createHandle});
@@ -181,12 +181,12 @@ snippet usei useImperativeHandle
 snippet used useDebugValue
 	useDebugValue(${1:value});
 
-# ReactDOM methods
-snippet rdr ReactDOM.render
-	ReactDOM.render(${1}, ${2});
+# React DOM methods
+snippet rdr createRoot render
+	createRoot(${1:container}).render(${2:element});
 
-snippet rdh ReactDOM.hydrate
-	ReactDOM.hydrate(${1:element}, ${2:container}[, ${3:callback}]);
+snippet rdh hydrateRoot
+	hydrateRoot(${1:container}, ${2:element});
 
-snippet rdcp ReactDOM.createPortal
-	ReactDOM.createPortal(${1:child}, ${2:container});
+snippet rdcp createPortal
+	createPortal(${1:child}, ${2:container});
