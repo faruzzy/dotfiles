@@ -14,6 +14,9 @@ Personal dotfiles for macOS (Apple Silicon), managed via symlinks from this repo
 
 The install script symlinks individual files to `$HOME` and config directories to `~/.config/`. Existing files are backed up with timestamps before overwriting.
 
+## Workflow Requirements
+- Update CLAUDE.md before every git commit
+
 ## Validating Changes
 
 - **Zsh config**: `zsh -i -c 'exit'` (check for errors/unexpected output), or `source ~/.zshrc` in a running shell

@@ -1,3 +1,2 @@
-if vim.b.ts_highlight then
-  vim.bo.syntax = 'javascriptreact'
-end
+pcall(vim.treesitter.start)
+vim.bo.indentexpr = "v:lua.require'nvim-treesitter'.indentexpr()"

@@ -86,6 +86,10 @@ unset file
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 [ -f ~/.fzf/shell/key-bindings.zsh ] && source ~/.fzf/shell/key-bindings.zsh
 [ -f ~/.fzf/shell/completion.zsh ] && source ~/.fzf/shell/completion.zsh
+if (( $+widgets[fzf-completion] )); then
+    bindkey '^X^I' fzf-completion
+fi
+bindkey '^I' expand-or-complete
 
 # Mise (Language runtime manager)
 if command -v mise > /dev/null; then
@@ -109,6 +113,12 @@ if [[ ! -f ~/.oh-my-zsh/oh-my-zsh.sh ]]; then
     fi
     [[ -f ~/.git-completion.zsh ]] && source ~/.git-completion.zsh
 fi
+
+_git_with_file_fallback() {
+    _git "$@" && return
+    [[ ${words[1]} == git && ${words[2]} == diff ]] && _files
+}
+compdef _git_with_file_fallback git
 
 # Atuin (shell history)
 if command -v atuin > /dev/null; then

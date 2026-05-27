@@ -50,10 +50,18 @@ return {
         'smithy',
       }
 
+      local treesitter_indent_filetypes = {
+        javascriptreact = true,
+        typescriptreact = true,
+      }
+
       -- Enable treesitter highlighting for all filetypes with a parser
       vim.api.nvim_create_autocmd('FileType', {
         callback = function(args)
           pcall(vim.treesitter.start, args.buf)
+          if treesitter_indent_filetypes[vim.bo[args.buf].filetype] then
+            vim.bo[args.buf].indentexpr = "v:lua.require'nvim-treesitter'.indentexpr()"
+          end
         end,
       })
 
