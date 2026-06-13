@@ -323,15 +323,7 @@ local function compile_and_run()
       end)
     end)
   elseif ft == 'java' then
-    vim.system({ 'javac', file }, { text = true }, function(result)
-      vim.schedule(function()
-        if result.code == 0 then
-          open_run_terminal({ 'java', '-cp', dir, name }, { cwd = dir })
-        else
-          notify_command_failure('javac', result)
-        end
-      end)
-    end)
+    open_run_terminal({ 'java', file }, { cwd = dir })
   elseif ft == 'javascript' then
     open_run_terminal({ 'node', file }, { cwd = dir })
   elseif ft == 'sh' then

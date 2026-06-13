@@ -50,7 +50,6 @@ return {
         'rust-analyzer',
         'tailwindcss-language-server',
         'vim-language-server',
-        'vtsls',
         'yaml-language-server',
         -- Formatters
         'stylua',
@@ -72,13 +71,26 @@ return {
       end
     end
 
-    -- Enable servers (rust_analyzer managed by rustaceanvim, vtsls by nvim-vtsls)
-    local skip = { 'rust_analyzer', 'vtsls' }
+    -- Enable servers (rust_analyzer managed by rustaceanvim)
+    local skip = { 'rust_analyzer' }
     local to_enable = vim.tbl_filter(function(name) return not vim.tbl_contains(skip, name) end, vim.tbl_keys(servers))
     vim.lsp.enable(to_enable)
 
+    local function sanitize_watched_file_registrations(result)
+      for _, reg in ipairs(result and result.registrations or {}) do
+        if reg.method == 'workspace/didChangeWatchedFiles' and reg.registerOptions then
+          reg.registerOptions.watchers = vim.tbl_filter(function(watcher)
+            local glob_pattern = watcher.globPattern
+            return not (type(glob_pattern) == 'string' and glob_pattern:match('^bundled:///'))
+          end, reg.registerOptions.watchers or {})
+        end
+      end
+    end
+
     local register_capability = vim.lsp.handlers['client/registerCapability']
     vim.lsp.handlers['client/registerCapability'] = function(err, result, ctx, config)
+      sanitize_watched_file_registrations(result)
+
       local ret = register_capability(err, result, ctx, config)
       local client = vim.lsp.get_client_by_id(ctx.client_id)
       if client then

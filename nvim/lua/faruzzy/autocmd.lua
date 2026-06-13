@@ -67,17 +67,12 @@ augroup('jsdoc_comment_continuation', {
       -- Same fix for 'o' in normal mode: bypass smartindent inside block comments
       bmap('n', 'o', function()
         local line = vim.api.nvim_get_current_line()
-        if line:match('^%s*%*') then
-          local prefix = line:match('^(%s*%*)')
-          local row = vim.api.nvim_win_get_cursor(0)[1]
-          vim.api.nvim_buf_set_lines(0, row, row, false, { prefix .. ' ' })
-          vim.api.nvim_win_set_cursor(0, { row + 1, #prefix + 1 })
-          vim.cmd('startinsert!')
-          return ''
+        if line:match('^%s*%*') and not line:match('^%s*%*/') then
+          return 'o<C-u>* '
         end
 
         return 'o'
-      end, { expr = true })
+      end, { expr = true, replace_keycodes = true })
     end,
   },
 })

@@ -28,6 +28,9 @@ return {
           ['vim.lsp.util.stylize_markdown'] = true,
           ['cmp.entry.get_documentation'] = true,
         },
+        signature = {
+          auto_open = { enabled = false },
+        },
       },
       routes = {
         { filter = { event = 'msg_show', kind = '', find = 'written' }, opts = { skip = true } },

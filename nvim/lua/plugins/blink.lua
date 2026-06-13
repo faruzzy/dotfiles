@@ -42,7 +42,7 @@ local function get_lsp_completion_context(completion)
     return nil
   end
 
-  if source_name == 'ts_ls' or source_name == 'typescript-tools' or source_name == 'vtsls' then
+  if source_name == 'ts_ls' or source_name == 'typescript-tools' or source_name == 'tsgo' then
     return completion.detail
   elseif source_name == 'pyright' and completion.labelDetails ~= nil then
     return completion.labelDetails.description
@@ -113,8 +113,8 @@ return {
       trigger = {
         show_on_keyword = true,
         show_on_trigger_character = true,
-        show_on_accept_on_trigger_character = false,
-        show_on_insert_on_trigger_character = false,
+        show_on_accept_on_trigger_character = true,
+        show_on_insert_on_trigger_character = true,
         show_in_snippet = true,
         show_on_blocked_trigger_characters = { ' ', '\n', '\t', '{', '<' },
         show_on_x_blocked_trigger_characters = { '\'', '{' },
@@ -226,9 +226,10 @@ return {
       use_proximity = true,
       sorts = {
         'exact',
+        'sort_text',
+        'label',
         'score',
         'kind',
-        'sort_text',
       },
     },
     keymap = {
@@ -264,7 +265,7 @@ return {
       ['<C-d>'] = { 'scroll_documentation_up', 'fallback' },
       ['<C-f>'] = { 'scroll_documentation_down', 'fallback' },
       ['<C-Space>'] = {
-        function(cmp) cmp.show({ providers = { 'lsp' } }) end,
+        function(cmp) cmp.show() end,
       },
       ['<C-e>'] = {
         function(cmp)
@@ -285,11 +286,16 @@ return {
     signature = {
       enabled = true,
       trigger = {
-        enabled = false,
+        enabled = true,
+        show_on_trigger_character = true,
+        show_on_insert_on_trigger_character = true,
+        show_on_accept_on_trigger_character = true,
       },
       window = {
-        show_documentation = false,
         border = 'rounded',
+        max_width = 90,
+        max_height = 14,
+        show_documentation = true,
       },
     },
     snippets = {
@@ -298,6 +304,14 @@ return {
     sources = {
       -- Context-aware source selection
       default = function()
+        local col = vim.api.nvim_win_get_cursor(0)[2]
+        if col > 0 then
+          local line = vim.api.nvim_get_current_line()
+          if line:sub(col, col) == '.' then
+            return { 'lsp' }
+          end
+        end
+
         local success, node = pcall(vim.treesitter.get_node)
         if success and node and vim.tbl_contains({ 'comment', 'line_comment', 'block_comment' }, node:type()) then
           return { 'buffer' } -- Only buffer completions in comments
@@ -337,7 +351,6 @@ return {
           fallbacks = {},
           score_offset = 0,
           transform_items = function(_, items)
-            local keyword_kind = vim.lsp.protocol.CompletionItemKind.Keyword
             -- Filter out emmet completions when cursor is not in a JSX/HTML markup context.
             -- Strategy: walk up the tree and find the *nearest* JSX-related ancestor.
             -- If it's jsx_expression we're in JS code — suppress emmet.
@@ -370,9 +383,7 @@ return {
               if not in_markup and item.client_name == 'emmet_language_server' then
                 return false
               end
-              if item.client_name == 'vtsls' and item.kind == keyword_kind then
-                item.score_offset = (item.score_offset or 0) + 6
-              end
+
               local key = item.label .. (item.kind or '')
               if seen[key] then
                 return false
@@ -407,6 +418,14 @@ return {
     },
   },
   config = function(_, opts)
+    local ok, tsgo = pcall(require, 'tsgo')
+    if ok then
+      opts = vim.tbl_deep_extend('force', opts, tsgo.compat.blink({
+        default_sources = opts.sources.default,
+        lsp_transform_items = opts.sources.providers.lsp.transform_items,
+      }))
+    end
+
     local blink = require('blink.cmp')
     blink.setup(opts)
     blink.add_filetype_source('gitcommit', 'buffer')
