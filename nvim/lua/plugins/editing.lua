@@ -108,8 +108,14 @@ return {
   {
     'andymass/vim-matchup',
     event = 'BufReadPost',
+    init = function()
+      vim.g.matchup_delim_nomids = 1
+    end,
     config = function()
       require('match-up').setup({
+        delim = {
+          nomids = 1,
+        },
         matchparen = {
           offscreen = { method = 'popup' },
         },
