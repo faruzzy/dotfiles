@@ -16,7 +16,7 @@ This repository contains configurations for a variety of tools, including:
 *   **Shell:** Zsh, Antidote plugins, Starship prompt, Atuin history, mise runtimes
 *   **Editor:** Neovim
 *   **Git:** git, git-delta, tig
-*   **Window Management:** AeroSpace, AltTab, skhd/yabai
+*   **Window Management:** AeroSpace, AltTab
 *   **Other Tools:** fzf, bat, ripgrep, and many more.
 
 ## Installation
@@ -284,7 +284,6 @@ This repository also includes configuration files for:
 *   **Starship:** A minimal, blazing-fast cross-shell prompt.
 *   **bat:** A cat(1) clone with syntax highlighting and Git integration.
 *   **AeroSpace:** An i3-like tiling window manager with app-to-workspace rules for the three-monitor setup.
-*   **skhd / yabai:** Hotkey daemon and tiling window manager for macOS.
 *   **mise:** Language runtime manager for global and project-local tool versions.
 *   **and more...**
 

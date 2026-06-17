@@ -437,9 +437,7 @@ setup_dotfiles() {
         "alacritty"
         "bat"
         "ghostty"
-        "skhd"
         "up"
-        "yabai"
     )
 
     for config_dir in "${config_dirs[@]}"; do
