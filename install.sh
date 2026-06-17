@@ -433,6 +433,7 @@ setup_dotfiles() {
     link_dotfile "$SCRIPT_DIR/nvim" "$HOME/.config/nvim" "nvim config"
 
     local config_dirs=(
+        "aerospace"
         "alacritty"
         "bat"
         "ghostty"
@@ -448,6 +449,30 @@ setup_dotfiles() {
     link_dotfile "$SCRIPT_DIR/config/starship.toml" "$HOME/.config/starship.toml" "starship.toml"
 
     log_success "Dotfiles setup complete"
+}
+
+# Setup AeroSpace
+setup_aerospace() {
+    log_info "Setting up AeroSpace..."
+
+    if ! command_exists aerospace; then
+        log_info "AeroSpace not found. Installing with Homebrew..."
+        brew install --cask nikitabobko/tap/aerospace || {
+            log_warning "Failed to install AeroSpace. Skipping AeroSpace startup."
+            return 0
+        }
+    fi
+
+    if aerospace reload-config 2>/dev/null; then
+        log_success "AeroSpace config reloaded"
+        return 0
+    fi
+
+    if open -gja AeroSpace 2>/dev/null; then
+        log_success "AeroSpace started"
+    else
+        log_warning "Failed to start AeroSpace automatically. Open AeroSpace once from Applications."
+    fi
 }
 
 # Download git-prompt if needed
@@ -486,6 +511,7 @@ main() {
 
     # Dotfiles setup
     setup_dotfiles
+    setup_aerospace
     setup_antidote
     setup_atuin
     setup_git_prompt

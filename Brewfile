@@ -91,6 +91,8 @@ brew "mas"
 brew "yarn", args: ["ignore-dependencies"]
 
 # --- Casks: Window management and productivity ---
+tap "nikitabobko/tap"
+cask "aerospace"
 cask "rectangle"
 cask "alt-tab"
 cask "bettertouchtool"

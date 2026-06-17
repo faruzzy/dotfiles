@@ -1,0 +1,216 @@
+# AeroSpace window placement for a three-monitor setup.
+# Monitor numbers are left-to-right: 1 = left, 2 = center, 3 = right.
+
+config-version = 2
+start-at-login = true
+
+after-startup-command = ['exec-and-forget /bin/bash ~/.config/aerospace/sync-spotify-workspace.sh']
+
+enable-normalization-flatten-containers = true
+enable-normalization-opposite-orientation-for-nested-containers = true
+
+accordion-padding = 30
+default-root-container-layout = 'tiles'
+default-root-container-orientation = 'auto'
+
+on-focused-monitor-changed = ['move-mouse monitor-lazy-center']
+on-focus-changed = ['exec-and-forget /bin/bash ~/.config/aerospace/sync-spotify-workspace.sh']
+automatically-unhide-macos-hidden-apps = false
+
+persistent-workspaces = ['C', 'L', 'X', 'V', 'M', 'T', 'G', 'S', 'B', 'W', 'N', 'O']
+
+[gaps]
+inner.horizontal = 2
+inner.vertical = 2
+outer.left = 5
+outer.bottom = 2
+outer.top = 2
+outer.right = 5
+
+[workspace-to-monitor-force-assignment]
+'C' = 1 # Canary, left monitor
+'L' = 1 # Claude, left monitor
+'X' = 1 # Codex, left monitor
+'V' = 1 # VS Code, left monitor
+'T' = 2 # Ghostty / Terminal, center monitor
+'G' = 2 # Logic Pro, center monitor
+'M' = 1 # Slack / WhatsApp, left monitor
+'B' = 3 # Brave, right monitor
+'W' = 3 # Google Chrome, right monitor
+'N' = 3 # Notes / documents, right monitor
+'O' = 3 # Obsidian, right monitor
+
+[mode.main.binding]
+# Keep alt-tab free for AltTab.
+alt-slash = 'layout tiles horizontal vertical'
+alt-comma = 'layout accordion horizontal vertical'
+
+alt-h = 'focus left'
+alt-j = 'focus down'
+alt-k = 'focus up'
+alt-l = 'focus right'
+
+alt-shift-h = 'move left'
+alt-shift-j = 'move down'
+alt-shift-k = 'move up'
+alt-shift-l = 'move right'
+
+alt-1 = 'workspace C'
+alt-2 = 'workspace L'
+alt-3 = 'workspace X'
+alt-4 = 'workspace V'
+alt-5 = 'workspace M'
+alt-6 = 'workspace T'
+alt-7 = 'workspace G'
+alt-8 = 'workspace S'
+alt-9 = 'workspace B'
+alt-0 = 'workspace W'
+alt-minus = 'workspace N'
+alt-equal = 'workspace O'
+
+alt-shift-1 = ['move-node-to-workspace C', 'workspace C']
+alt-shift-2 = ['move-node-to-workspace L', 'workspace L']
+alt-shift-3 = ['move-node-to-workspace X', 'workspace X']
+alt-shift-4 = ['move-node-to-workspace V', 'workspace V']
+alt-shift-5 = ['move-node-to-workspace M', 'workspace M']
+alt-shift-6 = ['move-node-to-workspace T', 'workspace T']
+alt-shift-7 = ['move-node-to-workspace G', 'workspace G']
+alt-shift-8 = ['move-node-to-workspace S', 'workspace S']
+alt-shift-9 = ['move-node-to-workspace B', 'workspace B']
+alt-shift-0 = ['move-node-to-workspace W', 'workspace W']
+alt-shift-minus = ['move-node-to-workspace N', 'workspace N']
+alt-shift-equal = ['move-node-to-workspace O', 'workspace O']
+
+alt-s = 'focus-monitor left'
+alt-g = 'focus-monitor right'
+alt-shift-s = ['move-node-to-monitor left', 'focus-monitor left']
+alt-shift-g = ['move-node-to-monitor right', 'focus-monitor right']
+
+alt-shift-semicolon = 'mode service'
+
+[mode.service.binding]
+esc = ['reload-config', 'mode main']
+r = ['flatten-workspace-tree', 'mode main']
+f = ['layout floating tiling', 'mode main']
+backspace = ['close-all-windows-but-current', 'mode main']
+
+alt-shift-h = ['join-with left', 'mode main']
+alt-shift-j = ['join-with down', 'mode main']
+alt-shift-k = ['join-with up', 'mode main']
+alt-shift-l = ['join-with right', 'mode main']
+
+[[on-window-detected]]
+if.app-id = 'com.mitchellh.ghostty'
+run = 'move-node-to-workspace T'
+
+[[on-window-detected]]
+if.app-id = 'com.apple.Terminal'
+run = 'move-node-to-workspace T'
+
+[[on-window-detected]]
+if.app-id = 'org.alacritty'
+run = 'move-node-to-workspace T'
+
+[[on-window-detected]]
+if.app-name-regex-substring = '^Ghostty$|^Terminal$|^Alacritty$'
+run = 'move-node-to-workspace T'
+
+[[on-window-detected]]
+if.app-id = 'com.google.Chrome.canary'
+run = 'move-node-to-workspace C'
+
+[[on-window-detected]]
+if.app-name-regex-substring = 'Chrome Canary'
+run = 'move-node-to-workspace C'
+
+[[on-window-detected]]
+if.app-id = 'com.anthropic.claudefordesktop'
+run = 'move-node-to-workspace L'
+
+[[on-window-detected]]
+if.app-name-regex-substring = '^Claude$'
+run = 'move-node-to-workspace L'
+
+[[on-window-detected]]
+if.app-id = 'com.openai.codex'
+run = 'move-node-to-workspace X'
+
+[[on-window-detected]]
+if.app-name-regex-substring = '^Codex$'
+run = 'move-node-to-workspace X'
+
+[[on-window-detected]]
+if.app-id = 'com.microsoft.VSCode'
+run = 'move-node-to-workspace V'
+
+[[on-window-detected]]
+if.app-name-regex-substring = '^(Code|Visual Studio Code)$'
+run = 'move-node-to-workspace V'
+
+[[on-window-detected]]
+if.app-id = 'com.apple.logic10'
+run = ['move-node-to-workspace G', 'exec-and-forget /bin/bash ~/.config/aerospace/sync-spotify-workspace.sh']
+
+[[on-window-detected]]
+if.app-name-regex-substring = '^Logic Pro$'
+run = ['move-node-to-workspace G', 'exec-and-forget /bin/bash ~/.config/aerospace/sync-spotify-workspace.sh']
+
+[[on-window-detected]]
+if.app-id = 'com.spotify.client'
+run = ['move-node-to-workspace S', 'exec-and-forget /bin/bash ~/.config/aerospace/sync-spotify-workspace.sh']
+
+[[on-window-detected]]
+if.app-id = 'md.obsidian'
+run = 'move-node-to-workspace O'
+
+[[on-window-detected]]
+if.app-id = 'com.brave.Browser'
+run = 'move-node-to-workspace B'
+
+[[on-window-detected]]
+if.app-name-regex-substring = 'Brave'
+run = 'move-node-to-workspace B'
+
+[[on-window-detected]]
+if.app-id = 'com.google.Chrome'
+run = 'move-node-to-workspace W'
+
+[[on-window-detected]]
+if.app-name-regex-substring = '^Google Chrome$'
+run = 'move-node-to-workspace W'
+
+[[on-window-detected]]
+if.app-id = 'com.apple.Notes'
+run = ['move-node-to-workspace N', 'move right']
+
+[[on-window-detected]]
+if.app-id = 'com.adobe.Acrobat.Pro'
+run = ['move-node-to-workspace N', 'move left']
+
+[[on-window-detected]]
+if.app-id = 'com.tinyspeck.slackmacgap'
+run = 'move-node-to-workspace M'
+
+[[on-window-detected]]
+if.app-name-regex-substring = '^Slack$'
+run = 'move-node-to-workspace M'
+
+[[on-window-detected]]
+if.app-id = 'net.whatsapp.WhatsApp'
+run = 'move-node-to-workspace M'
+
+[[on-window-detected]]
+if.app-name-regex-substring = 'WhatsApp'
+run = 'move-node-to-workspace M'
+
+[[on-window-detected]]
+if.app-id = 'com.apple.systempreferences'
+run = 'layout floating'
+
+[[on-window-detected]]
+if.app-id = 'com.apple.systemsettings'
+run = 'layout floating'
+
+[[on-window-detected]]
+if.app-id = 'com.apple.finder'
+run = 'layout floating'

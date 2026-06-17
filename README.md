@@ -16,6 +16,7 @@ This repository contains configurations for a variety of tools, including:
 *   **Shell:** Zsh, Antidote plugins, Starship prompt, Atuin history, mise runtimes
 *   **Editor:** Neovim
 *   **Git:** git, git-delta, tig
+*   **Window Management:** AeroSpace, AltTab, skhd/yabai
 *   **Other Tools:** fzf, bat, ripgrep, and many more.
 
 ## Installation
@@ -30,7 +31,8 @@ The `install.sh` script automates the setup process. It is idempotent and Bash 3
 6.  Configure Neovim (managed via [bob](https://github.com/MordechaiHadad/bob)) with a Lua/lazy.nvim setup.
 7.  Install language runtimes through [mise](https://mise.jdx.dev/).
 8.  Create symbolic links for the dotfiles in this repository.
-9.  Apply macOS system preferences.
+9.  Start or reload AeroSpace after its config is linked.
+10. Apply macOS system preferences.
 
 To start the installation, run the following command:
 
@@ -281,6 +283,7 @@ This repository also includes configuration files for:
 *   **Zsh:** A powerful shell using Antidote for plugins, Atuin for history, fzf for completion, and Starship for the prompt.
 *   **Starship:** A minimal, blazing-fast cross-shell prompt.
 *   **bat:** A cat(1) clone with syntax highlighting and Git integration.
+*   **AeroSpace:** An i3-like tiling window manager with app-to-workspace rules for the three-monitor setup.
 *   **skhd / yabai:** Hotkey daemon and tiling window manager for macOS.
 *   **mise:** Language runtime manager for global and project-local tool versions.
 *   **and more...**
