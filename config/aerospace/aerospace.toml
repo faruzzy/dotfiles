@@ -4,7 +4,10 @@
 config-version = 2
 start-at-login = true
 
-after-startup-command = ['exec-and-forget /bin/bash ~/.config/aerospace/sync-spotify-workspace.sh']
+after-startup-command = [
+    'exec-and-forget /bin/bash ~/.config/aerospace/sync-spotify-workspace.sh',
+    'exec-and-forget /bin/bash ~/.config/aerospace/sync-messaging-workspace.sh',
+]
 
 enable-normalization-flatten-containers = true
 enable-normalization-opposite-orientation-for-nested-containers = true
@@ -14,10 +17,13 @@ default-root-container-layout = 'tiles'
 default-root-container-orientation = 'auto'
 
 on-focused-monitor-changed = ['move-mouse monitor-lazy-center']
-on-focus-changed = ['exec-and-forget /bin/bash ~/.config/aerospace/sync-spotify-workspace.sh']
+on-focus-changed = [
+    'exec-and-forget /bin/bash ~/.config/aerospace/sync-spotify-workspace.sh',
+    'exec-and-forget /bin/bash ~/.config/aerospace/sync-messaging-workspace.sh',
+]
 automatically-unhide-macos-hidden-apps = false
 
-persistent-workspaces = ['C', 'L', 'X', 'V', 'M', 'T', 'G', 'S', 'B', 'W', 'N', 'O']
+persistent-workspaces = ['C', 'L', 'X', 'V', 'M', 'T', 'F', 'G', 'S', 'B', 'W', 'N', 'O']
 
 [gaps]
 inner.horizontal = 2
@@ -33,8 +39,8 @@ outer.right = 5
 'X' = 1 # Codex, left monitor
 'V' = 1 # VS Code, left monitor
 'T' = 2 # Ghostty / Terminal, center monitor
+'F' = 2 # Firefox Developer Edition, center monitor
 'G' = 2 # Logic Pro, center monitor
-'M' = 1 # Slack / WhatsApp, left monitor
 'B' = 3 # Brave, right monitor
 'W' = 3 # Google Chrome, right monitor
 'N' = 3 # Notes / documents, right monitor
@@ -44,6 +50,13 @@ outer.right = 5
 # Keep alt-tab free for AltTab.
 alt-slash = 'layout tiles horizontal vertical'
 alt-comma = 'layout accordion horizontal vertical'
+
+cmd-left = ['layout floating', 'exec-and-forget /bin/bash ~/.config/aerospace/window-frame.sh left-half']
+cmd-right = ['layout floating', 'exec-and-forget /bin/bash ~/.config/aerospace/window-frame.sh right-half']
+ctrl-enter = ['layout floating', 'exec-and-forget /bin/bash ~/.config/aerospace/window-frame.sh maximize']
+cmd-enter = ['layout floating', 'exec-and-forget /bin/bash ~/.config/aerospace/window-frame.sh center']
+ctrl-cmd-right = ['move-node-to-monitor --focus-follows-window next']
+ctrl-cmd-left = ['move-node-to-monitor --focus-follows-window prev']
 
 alt-h = 'focus left'
 alt-j = 'focus down'
@@ -61,12 +74,13 @@ alt-3 = 'workspace X'
 alt-4 = 'workspace V'
 alt-5 = 'workspace M'
 alt-6 = 'workspace T'
-alt-7 = 'workspace G'
-alt-8 = 'workspace S'
-alt-9 = 'workspace B'
-alt-0 = 'workspace W'
-alt-minus = 'workspace N'
-alt-equal = 'workspace O'
+alt-7 = 'workspace F'
+alt-8 = 'workspace G'
+alt-9 = 'workspace S'
+alt-0 = 'workspace B'
+alt-minus = 'workspace W'
+alt-equal = 'workspace N'
+alt-backslash = 'workspace O'
 
 alt-shift-1 = ['move-node-to-workspace C', 'workspace C']
 alt-shift-2 = ['move-node-to-workspace L', 'workspace L']
@@ -74,12 +88,13 @@ alt-shift-3 = ['move-node-to-workspace X', 'workspace X']
 alt-shift-4 = ['move-node-to-workspace V', 'workspace V']
 alt-shift-5 = ['move-node-to-workspace M', 'workspace M']
 alt-shift-6 = ['move-node-to-workspace T', 'workspace T']
-alt-shift-7 = ['move-node-to-workspace G', 'workspace G']
-alt-shift-8 = ['move-node-to-workspace S', 'workspace S']
-alt-shift-9 = ['move-node-to-workspace B', 'workspace B']
-alt-shift-0 = ['move-node-to-workspace W', 'workspace W']
-alt-shift-minus = ['move-node-to-workspace N', 'workspace N']
-alt-shift-equal = ['move-node-to-workspace O', 'workspace O']
+alt-shift-7 = ['move-node-to-workspace F', 'workspace F']
+alt-shift-8 = ['move-node-to-workspace G', 'workspace G']
+alt-shift-9 = ['move-node-to-workspace S', 'workspace S']
+alt-shift-0 = ['move-node-to-workspace B', 'workspace B']
+alt-shift-minus = ['move-node-to-workspace W', 'workspace W']
+alt-shift-equal = ['move-node-to-workspace N', 'workspace N']
+alt-shift-backslash = ['move-node-to-workspace O', 'workspace O']
 
 alt-s = 'focus-monitor left'
 alt-g = 'focus-monitor right'
@@ -101,7 +116,7 @@ alt-shift-l = ['join-with right', 'mode main']
 
 [[on-window-detected]]
 if.app-id = 'com.mitchellh.ghostty'
-run = 'move-node-to-workspace T'
+run = ['move-node-to-workspace T', 'exec-and-forget /bin/bash ~/.config/aerospace/sync-messaging-workspace.sh']
 
 [[on-window-detected]]
 if.app-id = 'com.apple.Terminal'
@@ -146,6 +161,14 @@ run = 'move-node-to-workspace V'
 [[on-window-detected]]
 if.app-name-regex-substring = '^(Code|Visual Studio Code)$'
 run = 'move-node-to-workspace V'
+
+[[on-window-detected]]
+if.app-id = 'org.mozilla.firefoxdeveloperedition'
+run = ['move-node-to-workspace F', 'fullscreen on']
+
+[[on-window-detected]]
+if.app-name-regex-substring = '^Firefox Developer Edition$'
+run = ['move-node-to-workspace F', 'fullscreen on']
 
 [[on-window-detected]]
 if.app-id = 'com.apple.logic10'
@@ -197,11 +220,19 @@ run = 'move-node-to-workspace M'
 
 [[on-window-detected]]
 if.app-id = 'net.whatsapp.WhatsApp'
-run = 'move-node-to-workspace M'
+run = ['move-node-to-workspace M', 'exec-and-forget /bin/bash ~/.config/aerospace/sync-messaging-workspace.sh']
 
 [[on-window-detected]]
 if.app-name-regex-substring = 'WhatsApp'
-run = 'move-node-to-workspace M'
+run = ['move-node-to-workspace M', 'exec-and-forget /bin/bash ~/.config/aerospace/sync-messaging-workspace.sh']
+
+[[on-window-detected]]
+if.app-id = 'com.apple.MobileSMS'
+run = ['move-node-to-workspace M', 'exec-and-forget /bin/bash ~/.config/aerospace/sync-messaging-workspace.sh']
+
+[[on-window-detected]]
+if.app-name-regex-substring = '^Messages$'
+run = ['move-node-to-workspace M', 'exec-and-forget /bin/bash ~/.config/aerospace/sync-messaging-workspace.sh']
 
 [[on-window-detected]]
 if.app-id = 'com.apple.systempreferences'
