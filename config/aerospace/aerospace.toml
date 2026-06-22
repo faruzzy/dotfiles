@@ -7,6 +7,7 @@ start-at-login = true
 after-startup-command = [
     'exec-and-forget /bin/bash ~/.config/aerospace/sync-spotify-workspace.sh',
     'exec-and-forget /bin/bash ~/.config/aerospace/sync-messaging-workspace.sh',
+    'exec-and-forget /bin/bash ~/.config/aerospace/sync-safari-workspace.sh',
 ]
 
 enable-normalization-flatten-containers = true
@@ -20,10 +21,11 @@ on-focused-monitor-changed = ['move-mouse monitor-lazy-center']
 on-focus-changed = [
     'exec-and-forget /bin/bash ~/.config/aerospace/sync-spotify-workspace.sh',
     'exec-and-forget /bin/bash ~/.config/aerospace/sync-messaging-workspace.sh',
+    'exec-and-forget /bin/bash ~/.config/aerospace/sync-safari-workspace.sh',
 ]
 automatically-unhide-macos-hidden-apps = false
 
-persistent-workspaces = ['C', 'L', 'X', 'V', 'M', 'T', 'F', 'G', 'S', 'B', 'W', 'N', 'O']
+persistent-workspaces = ['C', 'L', 'X', 'V', 'M', 'A', 'D', 'T', 'F', 'G', 'S', 'B', 'W', 'N', 'O']
 
 [gaps]
 inner.horizontal = 2
@@ -38,6 +40,8 @@ outer.right = 5
 'L' = 1 # Claude, left monitor
 'X' = 1 # Codex, left monitor
 'V' = 1 # VS Code, left monitor
+'A' = 1 # Safari, left monitor
+'D' = 1 # Things, left monitor
 'T' = 2 # Ghostty / Terminal, center monitor
 'F' = 2 # Firefox Developer Edition, center monitor
 'G' = 2 # Logic Pro, center monitor
@@ -73,28 +77,32 @@ alt-2 = 'workspace L'
 alt-3 = 'workspace X'
 alt-4 = 'workspace V'
 alt-5 = 'workspace M'
-alt-6 = 'workspace T'
-alt-7 = 'workspace F'
-alt-8 = 'workspace G'
-alt-9 = 'workspace S'
-alt-0 = 'workspace B'
-alt-minus = 'workspace W'
-alt-equal = 'workspace N'
-alt-backslash = 'workspace O'
+alt-6 = 'workspace A'
+alt-7 = 'workspace D'
+alt-8 = 'workspace T'
+alt-9 = 'workspace F'
+alt-0 = 'workspace G'
+alt-minus = 'workspace S'
+alt-equal = 'workspace B'
+alt-backslash = 'workspace W'
+alt-quote = 'workspace N'
+alt-period = 'workspace O'
 
 alt-shift-1 = ['move-node-to-workspace C', 'workspace C']
 alt-shift-2 = ['move-node-to-workspace L', 'workspace L']
 alt-shift-3 = ['move-node-to-workspace X', 'workspace X']
 alt-shift-4 = ['move-node-to-workspace V', 'workspace V']
 alt-shift-5 = ['move-node-to-workspace M', 'workspace M']
-alt-shift-6 = ['move-node-to-workspace T', 'workspace T']
-alt-shift-7 = ['move-node-to-workspace F', 'workspace F']
-alt-shift-8 = ['move-node-to-workspace G', 'workspace G']
-alt-shift-9 = ['move-node-to-workspace S', 'workspace S']
-alt-shift-0 = ['move-node-to-workspace B', 'workspace B']
-alt-shift-minus = ['move-node-to-workspace W', 'workspace W']
-alt-shift-equal = ['move-node-to-workspace N', 'workspace N']
-alt-shift-backslash = ['move-node-to-workspace O', 'workspace O']
+alt-shift-6 = ['move-node-to-workspace A', 'workspace A']
+alt-shift-7 = ['move-node-to-workspace D', 'workspace D']
+alt-shift-8 = ['move-node-to-workspace T', 'workspace T']
+alt-shift-9 = ['move-node-to-workspace F', 'workspace F']
+alt-shift-0 = ['move-node-to-workspace G', 'workspace G']
+alt-shift-minus = ['move-node-to-workspace S', 'workspace S']
+alt-shift-equal = ['move-node-to-workspace B', 'workspace B']
+alt-shift-backslash = ['move-node-to-workspace W', 'workspace W']
+alt-shift-quote = ['move-node-to-workspace N', 'workspace N']
+alt-shift-period = ['move-node-to-workspace O', 'workspace O']
 
 alt-s = 'focus-monitor left'
 alt-g = 'focus-monitor right'
@@ -172,15 +180,35 @@ run = ['move-node-to-workspace F', 'fullscreen on']
 
 [[on-window-detected]]
 if.app-id = 'com.apple.logic10'
-run = ['move-node-to-workspace G', 'exec-and-forget /bin/bash ~/.config/aerospace/sync-spotify-workspace.sh']
+run = [
+    'move-node-to-workspace G',
+    'exec-and-forget /bin/bash ~/.config/aerospace/sync-spotify-workspace.sh',
+    'exec-and-forget /bin/bash ~/.config/aerospace/sync-safari-workspace.sh',
+]
 
 [[on-window-detected]]
 if.app-name-regex-substring = '^Logic Pro$'
-run = ['move-node-to-workspace G', 'exec-and-forget /bin/bash ~/.config/aerospace/sync-spotify-workspace.sh']
+run = [
+    'move-node-to-workspace G',
+    'exec-and-forget /bin/bash ~/.config/aerospace/sync-spotify-workspace.sh',
+    'exec-and-forget /bin/bash ~/.config/aerospace/sync-safari-workspace.sh',
+]
 
 [[on-window-detected]]
 if.app-id = 'com.spotify.client'
 run = ['move-node-to-workspace S', 'exec-and-forget /bin/bash ~/.config/aerospace/sync-spotify-workspace.sh']
+
+[[on-window-detected]]
+if.app-id = 'com.apple.Safari'
+run = [
+    'move-node-to-workspace A',
+    'fullscreen on',
+    'exec-and-forget /bin/bash ~/.config/aerospace/sync-safari-workspace.sh',
+]
+
+[[on-window-detected]]
+if.app-id = 'com.culturedcode.ThingsMac'
+run = 'move-node-to-workspace D'
 
 [[on-window-detected]]
 if.app-id = 'md.obsidian'
