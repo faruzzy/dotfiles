@@ -759,6 +759,48 @@ tmux_fzf_files() {
   tmux send-keys -t "$pane_id" "$result"
 }
 
+# Merge PDF files via qpdf.
+# Usage: mergepdf input1.pdf input2.pdf [input3.pdf ...]
+#        mergepdf -o output.pdf input1.pdf input2.pdf [...]
+# Without -o, the output name is derived from input basenames (joined with +)
+# and saved next to the first input. Never overwrites existing files.
+function mergepdf() {
+  local out=""
+  if [[ "$1" == "-o" ]]; then
+    out="$2"; shift 2
+  fi
+  if (( $# < 2 )); then
+    print -u2 "usage: mergepdf [-o output.pdf] input1.pdf input2.pdf [input3.pdf ...]"
+    print -u2 "  Inputs are appended in order. Without -o, the output name is derived"
+    print -u2 "  from the input basenames and saved next to the first input."
+    print -u2 "  Never overwrites an existing file (auto-suffixes _1, _2, ...)."
+    return 1
+  fi
+  local f
+  for f in "$@"; do
+    [[ -f "$f" ]] || { print -u2 "mergepdf: not a file: $f"; return 1; }
+  done
+  if [[ -z "$out" ]]; then
+    local -a parts
+    local base
+    for f in "$@"; do
+      base="${f:t:r}"
+      parts+=("${base// /_}")
+    done
+    local joined="${(j:+:)parts}"
+    (( ${#joined} > 80 )) && joined="merged_$(date +%Y%m%d_%H%M%S)"
+    local dir="${1:h}"
+    [[ "$dir" == "$1" ]] && dir="."
+    out="${dir}/${joined}.pdf"
+  fi
+  if [[ -e "$out" ]]; then
+    local base="${out:r}" ext="${out:e}" n=1
+    while [[ -e "${base}_${n}.${ext}" ]]; do (( n++ )); done
+    out="${base}_${n}.${ext}"
+  fi
+  qpdf --empty --pages "$@" -- "$out" && print "wrote $out"
+}
+
 # ZSH: Create zle widgets and bind keys
 zle -N _gp_widget
 zle -N _gg_widget

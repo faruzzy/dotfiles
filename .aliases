@@ -110,10 +110,6 @@ alias chmod='chmod -v'
 # Recursively delete `.DS_Store` files
 alias cleanup="find . -name '*.DS_Store' -type f -ls -delete"
 
-# Merge PDF files (macOS specific)
-# Usage: `mergepdf -o output.pdf input{1,2,3}.pdf`
-alias mergepdf='/System/Library/Automator/Combine\ PDF\ Pages.action/Contents/Resources/join.py'
-
 if [[ "$OSTYPE" =~ ^darwin ]]; then
   # Hide/Show desktop icons
   alias hide-desktop-icons='defaults write com.apple.finder CreateDesktop -bool false && killall Finder'

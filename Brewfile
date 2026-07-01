@@ -65,6 +65,7 @@ brew "yt-dlp"
 brew "gallery-dl"
 brew "cmus"
 brew "imagemagick"
+brew "qpdf"
 
 # --- Networking and security ---
 brew "mkcert"
