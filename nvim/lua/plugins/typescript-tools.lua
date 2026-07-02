@@ -30,6 +30,12 @@ return {
         -- Disable formatting (conform.nvim handles it)
         client.server_capabilities.documentFormattingProvider = false
 
+        -- tsgo advertises willRenameFiles, but currently returns an empty response
+        -- often enough to trigger nvim-lsp-file-operations timeout warnings.
+        if client.server_capabilities.workspace and client.server_capabilities.workspace.fileOperations then
+          client.server_capabilities.workspace.fileOperations.willRename = nil
+        end
+
         local bufnr = args.buf
         local bsk = require('utils').buffer_map(bufnr)
 
