@@ -27,12 +27,13 @@ The `install.sh` script automates the setup process. It is idempotent and Bash 3
 2.  Install Homebrew and a wide range of packages.
 3.  Install several GUI applications.
 4.  Install programming languages like Python, Node.js, and Java (with Rosetta for Apple Silicon).
-5.  Set up Zsh with Antidote plugins, Atuin history, fzf completion, and Starship.
-6.  Configure Neovim (managed via [bob](https://github.com/MordechaiHadad/bob)) with a Lua/lazy.nvim setup.
-7.  Install language runtimes through [mise](https://mise.jdx.dev/).
-8.  Create symbolic links for the dotfiles in this repository.
-9.  Start or reload AeroSpace after its config is linked.
-10. Apply macOS system preferences.
+5.  Install Codex CLI.
+6.  Set up Zsh with Antidote plugins, Atuin history, fzf completion, and Starship.
+7.  Configure Neovim (managed via [bob](https://github.com/MordechaiHadad/bob)) with a Lua/lazy.nvim setup.
+8.  Install language runtimes through [mise](https://mise.jdx.dev/).
+9.  Create symbolic links for the dotfiles in this repository.
+10. Start or reload AeroSpace after its config is linked.
+11. Apply macOS system preferences.
 
 To start the installation, run the following command:
 

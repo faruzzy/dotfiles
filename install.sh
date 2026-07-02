@@ -217,6 +217,25 @@ install_npm_packages() {
     log_success "Global npm packages installed"
 }
 
+# Install Codex CLI
+install_codex() {
+    log_info "Checking Codex CLI installation..."
+
+    if command_exists codex; then
+        log_success "Codex CLI already installed"
+        return 0
+    fi
+
+    log_info "Installing Codex CLI..."
+    curl -fsSL https://chatgpt.com/codex/install.sh | sh || log_warning "Failed to install Codex CLI"
+
+    if command_exists codex; then
+        log_success "Codex CLI installed"
+    else
+        log_warning "Codex CLI installer completed, but 'codex' is not available on PATH yet."
+    fi
+}
+
 # Setup Atuin (shell history)
 setup_atuin() {
     log_info "Setting up Atuin shell history..."
@@ -499,6 +518,7 @@ main() {
     # Language runtimes and global packages
     install_mise_runtimes
     install_npm_packages
+    install_codex
 
     # Shell and terminal setup
     install_tmux_plugins
