@@ -1,7 +1,9 @@
 # Ghostty configuration file
 # Converted from Alacritty configuration
 
-background-opacity = 1
+background-opacity = 0.9
+background-opacity-cells = true
+background-blur = 50
 
 # Font configuration
 font-family = "ComicShannsMono Nerd Font"
