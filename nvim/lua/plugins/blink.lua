@@ -72,6 +72,112 @@ local function get_lsp_completion_context(completion)
   end
 end
 
+local lsp_completion_labels_by_context = {}
+local lsp_completion_context_id = nil
+
+local function normalize_completion_label(label)
+  label = tostring(label or '')
+  return label:gsub('^#', ''):lower()
+end
+
+local function current_private_member_prefix()
+  local col = vim.api.nvim_win_get_cursor(0)[2]
+  local before_cursor = vim.api.nvim_get_current_line():sub(1, col)
+  local prefix = before_cursor:match('#([%w_$]*)$')
+  return prefix and prefix:lower() or nil
+end
+
+local function current_member_prefix()
+  local col = vim.api.nvim_win_get_cursor(0)[2]
+  local before_cursor = vim.api.nvim_get_current_line():sub(1, col)
+  local prefix = before_cursor:match('[%.:]([%w_$]*)$') or before_cursor:match('%?%.([%w_$]*)$')
+
+  if prefix then
+    return prefix:lower()
+  end
+
+  return current_private_member_prefix()
+end
+
+local function remember_lsp_completion_labels(ctx, items)
+  if lsp_completion_context_id ~= ctx.id then
+    lsp_completion_labels_by_context = {}
+    lsp_completion_context_id = ctx.id
+  end
+
+  local labels = {}
+  for _, item in ipairs(items) do
+    labels[normalize_completion_label(item.label)] = true
+    labels[normalize_completion_label(item.filterText)] = true
+    labels[normalize_completion_label(item.insertText)] = true
+
+    if item.textEdit and item.textEdit.newText then
+      labels[normalize_completion_label(item.textEdit.newText)] = true
+    end
+  end
+
+  lsp_completion_labels_by_context[ctx.id] = labels
+end
+
+local function filter_buffer_duplicates(ctx, items)
+  local lsp_labels = lsp_completion_labels_by_context[ctx.id]
+  local private_prefix = current_private_member_prefix()
+  if not lsp_labels and not private_prefix then
+    return items
+  end
+
+  return vim.tbl_filter(function(item)
+    local label = normalize_completion_label(item.label)
+    if lsp_labels and lsp_labels[label] then
+      return false
+    end
+
+    if private_prefix and private_prefix ~= '' and label:sub(1, #private_prefix) == private_prefix then
+      return false
+    end
+
+    return true
+  end, items)
+end
+
+local function prefer_lsp_member_match(a, b)
+  if a.source_id == b.source_id then
+    return nil
+  end
+
+  local lsp_item = a.source_id == 'lsp' and a or b.source_id == 'lsp' and b or nil
+  local buffer_item = a.source_id == 'buffer' and a or b.source_id == 'buffer' and b or nil
+  if not lsp_item or not buffer_item then
+    return nil
+  end
+
+  local prefix = current_member_prefix()
+  if not prefix or prefix == '' then
+    return nil
+  end
+
+  local lsp_label = normalize_completion_label(lsp_item.label)
+  if lsp_label:sub(1, #prefix) ~= prefix then
+    return nil
+  end
+
+  return a.source_id == 'lsp'
+end
+
+local function prioritize_score_for_words(sorts)
+  if current_member_prefix() ~= nil then
+    return sorts
+  end
+
+  local reordered = { 'exact', 'score' }
+  for _, sort in ipairs(sorts or {}) do
+    if sort ~= 'exact' and sort ~= 'score' then
+      table.insert(reordered, sort)
+    end
+  end
+  return reordered
+end
+
 return {
   'saghen/blink.cmp',
   version = '1.*',
@@ -327,6 +433,7 @@ return {
           name = 'Buffer',
           max_items = 10,
           score_offset = 0,
+          transform_items = filter_buffer_duplicates,
           opts = {
             get_bufnrs = function()
               -- Only search visible buffers instead of all buffers
@@ -350,7 +457,7 @@ return {
           -- them when LSP returns no items.
           fallbacks = {},
           score_offset = 0,
-          transform_items = function(_, items)
+          transform_items = function(ctx, items)
             -- Filter out emmet completions when cursor is not in a JSX/HTML markup context.
             -- Strategy: walk up the tree and find the *nearest* JSX-related ancestor.
             -- If it's jsx_expression we're in JS code — suppress emmet.
@@ -378,7 +485,7 @@ return {
             end
 
             local seen = {}
-            return vim.tbl_filter(function(item)
+            local filtered = vim.tbl_filter(function(item)
               -- Drop emmet items outside JSX markup
               if not in_markup and item.client_name == 'emmet_language_server' then
                 return false
@@ -388,9 +495,17 @@ return {
               if seen[key] then
                 return false
               end
+
+              if current_member_prefix() == nil and tostring(item.label or ''):sub(1, 1) == '#' then
+                item.score_offset = (item.score_offset or 0) - 8
+              end
+
               seen[key] = true
               return true
             end, items)
+
+            remember_lsp_completion_labels(ctx, filtered)
+            return filtered
           end,
         },
         path = {
@@ -424,6 +539,14 @@ return {
         default_sources = opts.sources.default,
         lsp_transform_items = opts.sources.providers.lsp.transform_items,
       }))
+    end
+
+    local tsgo_sorts = opts.fuzzy.sorts
+    opts.fuzzy.sorts = function()
+      local sorts = type(tsgo_sorts) == 'function' and tsgo_sorts() or tsgo_sorts
+      local combined = { prefer_lsp_member_match }
+      vim.list_extend(combined, prioritize_score_for_words(sorts))
+      return combined
     end
 
     local blink = require('blink.cmp')
