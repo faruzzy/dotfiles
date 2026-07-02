@@ -32,7 +32,7 @@ while IFS= read -r window_id; do
 done <<< "$spotify_windows"
 
 if "$AEROSPACE_BIN" list-apps 2>/dev/null | grep -q 'com.apple.logic10'; then
-    "$AEROSPACE_BIN" move-workspace-to-monitor --workspace S 3 >/dev/null 2>&1 || true
+    "$AEROSPACE_BIN" move-workspace-to-monitor --workspace S '^DELL U2715H \(2\)$' >/dev/null 2>&1 || true
 else
-    "$AEROSPACE_BIN" move-workspace-to-monitor --workspace S 2 >/dev/null 2>&1 || true
+    "$AEROSPACE_BIN" move-workspace-to-monitor --workspace S '^DELL U2715H \(3\)$' >/dev/null 2>&1 || true
 fi

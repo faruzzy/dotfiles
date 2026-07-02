@@ -1,5 +1,9 @@
 # AeroSpace window placement for a three-monitor setup.
-# Monitor numbers are left-to-right: 1 = left, 2 = center, 3 = right.
+# External monitor names:
+# - DELL U2715H (1) = left
+# - DELL U2715H (3) = center
+# - DELL U2715H (2) = right
+# The built-in laptop display is intentionally unused for forced workspace placement.
 
 config-version = 2
 start-at-login = true
@@ -36,19 +40,19 @@ outer.top = 2
 outer.right = 5
 
 [workspace-to-monitor-force-assignment]
-'C' = 1 # Canary, left monitor
-'L' = 1 # Claude, left monitor
-'X' = 1 # Codex, left monitor
-'V' = 1 # VS Code, left monitor
-'A' = 1 # Safari, left monitor
-'D' = 1 # Things, left monitor
-'T' = 2 # Ghostty / Terminal, center monitor
-'F' = 2 # Firefox Developer Edition, center monitor
-'G' = 2 # Logic Pro, center monitor
-'B' = 3 # Brave, right monitor
-'W' = 3 # Google Chrome, right monitor
-'N' = 3 # Notes / documents, right monitor
-'O' = 3 # Obsidian, right monitor
+'C' = '^DELL U2715H \(1\)$' # Canary, left monitor
+'L' = '^DELL U2715H \(1\)$' # Claude, left monitor
+'X' = '^DELL U2715H \(1\)$' # Codex, left monitor
+'V' = '^DELL U2715H \(1\)$' # VS Code, left monitor
+'A' = '^DELL U2715H \(1\)$' # Safari, left monitor
+'D' = '^DELL U2715H \(1\)$' # Things, left monitor
+'T' = '^DELL U2715H \(3\)$' # Ghostty / Terminal, center monitor
+'F' = '^DELL U2715H \(3\)$' # Firefox Developer Edition, center monitor
+'G' = '^DELL U2715H \(3\)$' # Logic Pro, center monitor
+'B' = '^DELL U2715H \(2\)$' # Brave, right monitor
+'W' = '^DELL U2715H \(2\)$' # Google Chrome, right monitor
+'N' = '^DELL U2715H \(2\)$' # Notes / documents, right monitor
+'O' = '^DELL U2715H \(2\)$' # Obsidian, right monitor
 
 [mode.main.binding]
 # Keep alt-tab free for AltTab.

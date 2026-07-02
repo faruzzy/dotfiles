@@ -32,4 +32,4 @@ while IFS= read -r window_id; do
     "$AEROSPACE_BIN" fullscreen on --window-id "$window_id" >/dev/null 2>&1 || true
 done <<< "$safari_windows"
 
-"$AEROSPACE_BIN" move-workspace-to-monitor --workspace A 1 >/dev/null 2>&1 || true
+"$AEROSPACE_BIN" move-workspace-to-monitor --workspace A '^DELL U2715H \(1\)$' >/dev/null 2>&1 || true
