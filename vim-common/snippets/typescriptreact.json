@@ -37,6 +37,20 @@
       "const ${1:name} = (${2}) => ${3};"
     ]
   },
+  "Export Arrow Function": {
+    "prefix": "eaf",
+    "body": [
+      "export const ${1:name} = (${2}) => {",
+      "\t${3}",
+      "};"
+    ]
+  },
+  "Export Arrow Function One-liner": {
+    "prefix": "eafl",
+    "body": [
+      "export const ${1:name} = (${2}) => ${3};"
+    ]
+  },
   "React Function Component": {
     "prefix": "rfc",
     "body": [
