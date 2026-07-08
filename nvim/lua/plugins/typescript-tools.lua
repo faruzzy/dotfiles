@@ -4,6 +4,7 @@ local ts_filetypes = { 'typescript', 'typescriptreact', 'javascript', 'javascrip
 
 return {
   'faruzzy/tsgo.nvim',
+  dir = '~/github/tsgo.nvim',
   ft = ts_filetypes,
   opts = {
     setup_lsp = false,
