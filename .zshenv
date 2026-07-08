@@ -26,6 +26,9 @@ export NODE_REPL_HISTORY=~/.node_history
 export NODE_REPL_HISTORY_SIZE='32768'
 export NODE_REPL_MODE='sloppy'
 
+# AWS CDK
+export CDK_DISABLE_CLI_TELEMETRY=true
+
 # FZF Configuration (resolve dotfiles dir from this symlinked file)
 DOTFILES_DIR="$(dirname "$(readlink -f "${(%):-%x}")" 2>/dev/null)"
 export FZF_DEFAULT_OPTS_FILE="${DOTFILES_DIR:-$HOME/github/dotfiles}/fzfrc"
