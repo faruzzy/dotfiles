@@ -29,7 +29,7 @@ on-focus-changed = [
 ]
 automatically-unhide-macos-hidden-apps = false
 
-persistent-workspaces = ['C', 'L', 'X', 'V', 'M', 'A', 'D', 'T', 'F', 'G', 'S', 'B', 'W', 'N', 'O']
+persistent-workspaces = ['C', 'L', 'X', 'V', 'M', 'A', 'D', 'H', 'T', 'F', 'G', 'S', 'B', 'W', 'N', 'O']
 
 [gaps]
 inner.horizontal = 2
@@ -46,6 +46,7 @@ outer.right = 5
 'V' = '^DELL U2715H \(1\)$' # VS Code, left monitor
 'A' = '^DELL U2715H \(1\)$' # Safari, left monitor
 'D' = '^DELL U2715H \(1\)$' # Things, left monitor
+'H' = '^DELL U2715H \(1\)$' # Dash, left monitor
 'T' = '^DELL U2715H \(3\)$' # Ghostty / Terminal, center monitor
 'F' = '^DELL U2715H \(3\)$' # Firefox Developer Edition, center monitor
 'G' = '^DELL U2715H \(3\)$' # Logic Pro, center monitor
@@ -67,9 +68,9 @@ ctrl-cmd-right = ['move-node-to-monitor --focus-follows-window next']
 ctrl-cmd-left = ['move-node-to-monitor --focus-follows-window prev']
 
 alt-h = 'focus left'
-alt-j = 'focus down'
-alt-k = 'focus up'
 alt-l = 'focus right'
+ctrl-alt-j = 'focus down'
+ctrl-alt-k = 'focus up'
 
 alt-shift-h = 'move left'
 alt-shift-j = 'move down'
@@ -213,6 +214,10 @@ run = [
 [[on-window-detected]]
 if.app-id = 'com.culturedcode.ThingsMac'
 run = 'move-node-to-workspace D'
+
+[[on-window-detected]]
+if.app-id = 'com.kapeli.dashdoc'
+run = 'move-node-to-workspace H'
 
 [[on-window-detected]]
 if.app-id = 'md.obsidian'
