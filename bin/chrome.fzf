@@ -1,0 +1,191 @@
+#!/opt/homebrew/opt/ruby/bin/ruby
+# frozen_string_literal: true
+
+# MIT License
+#
+# Copyright (c) 2026 Junegunn Choi
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in all
+# copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+# SOFTWARE.
+
+require 'rbconfig'
+require 'tempfile'
+require 'json'
+require 'shellwords'
+
+ENV['BUNDLE_USER_HOME'] ||= File.expand_path('~/.bundle')
+ENV['BUNDLE_PATH'] ||= File.expand_path('~/.bundle')
+
+gems = %w[sqlite3 ansi256]
+begin
+  gems.each { |gem_name| require gem_name }
+rescue LoadError
+  require 'bundler/inline'
+  gemfile(true) do
+    source 'https://rubygems.org'
+    gems.each { |gem_name| gem gem_name }
+  end
+end
+
+# Chrome fzf integration
+module ChromeFzf
+  extend self
+
+  # Platform-specific constants.
+  # FIXME: Commands for Linux and Windows are not tested.
+  BASE_PATH, OPEN_COMMAND, CLIP_COMMAND, FOCUS_COMMAND =
+    case RbConfig::CONFIG['host_os']
+    when /darwin/
+      ['Library/Application Support/Google/Chrome', 'open {+2}', 'echo -n {+2} | pbcopy', DATA.read]
+    when /linux/
+      ['.config/google-chrome', 'xdg-open {+2}', 'echo -n {+2} | xsel --clipboard --input', '']
+    else
+      ['AppData\Local\Google\Chrome\User Data', 'start {+2}', 'echo {+2} | clip', '']
+    end
+
+  DELIMITER = "\a"
+  RS = "\x0"
+
+  def run(type)
+    IO.popen(fzf(type), 'r+') do |io|
+      list(type, io)
+    end
+  rescue Errno::EPIPE
+    # Ignore broken pipe error
+  end
+
+  def list(type, io = $stdout)
+    method(type).call.each do |args|
+      format(io, *args)
+    end
+  end
+
+  private
+
+  def paths(name)
+    Dir[File.join(Dir.home, BASE_PATH, '**', name)]
+  end
+
+  # Build fzf command
+  def fzf(name)
+    <<~CMD
+      fzf --ansi --read0 #{'--multi' unless name == :tabs} --info inline-right --reverse --scheme history \\
+          --header-border --gap \\
+          --highlight-line --height 100% --wrap word --wrap-sign ' ↳ ' \\
+          --border --border-label " Chrome::#{name.capitalize} " --delimiter "#{DELIMITER}" \\
+          --header '╱ CTRL-T: Tabs ╱ CTRL-H: History ╱ CTRL-B: Bookmarks ╱ CTRL-Y: Copy to clipboard ╱' \\
+          --with-shell 'bash -c' \\
+          --with-nth "{1}\n · {2}" \\
+          --bind 'enter:execute-silent(
+                    if [[ {3} ]]; then
+                      chrome-cli activate -t {3}
+                      #{FOCUS_COMMAND}
+                    else
+                      #{OPEN_COMMAND}
+                    fi)+deselect-all' \\
+          --bind 'ctrl-y:execute-silent(#{CLIP_COMMAND})+bell+deselect-all' \\
+          --bind 'ctrl-b:reload(ruby #{__FILE__.shellescape} --list b)+change-multi+change-border-label( Chrome::Bookmarks )+top' \\
+          --bind 'ctrl-t:reload(ruby #{__FILE__.shellescape} --list t)+change-multi(0)+change-border-label( Chrome::Tabs )+top' \\
+          --bind 'ctrl-h:reload(ruby #{__FILE__.shellescape} --list h)+change-multi+change-border-label( Chrome::History )+top' \\
+          --bind 'ctrl-w:transform:
+                  [[ $FZF_BORDER_LABEL =~ Tabs ]] || exit
+                  chrome-cli close -t {3} > /dev/null
+                  echo "reload:ruby #{__FILE__.shellescape} --list t"
+          '
+    CMD
+  end
+
+  def format(io, title, url, time, id = nil)
+    time = Time.at(time).strftime('%F %T') if time.is_a?(Integer)
+    io.print "#{title} (#{time.yellow})".strip
+    io.print DELIMITER
+    io.print url.blue.dim
+    if id
+      io.print DELIMITER
+      io.print id
+    end
+    io.print RS
+  end
+
+  def history
+    Tempfile.create('chrome') do |temp|
+      temp.close
+      paths('History').flat_map do |history_path|
+        FileUtils.cp(history_path, temp.path)
+        SQLite3::Database.open(temp.path) do |db|
+          rows = db.execute('select title, url, last_visit_time from urls order by last_visit_time desc')
+          rows.map do |title, url, time|
+            [title, url, to_unix(time)]
+          end
+        end
+      end
+    end
+  end
+
+  def bookmarks
+    build = lambda do |parent, json|
+      name = [parent, json[:name]].compact.join('/')
+      if json[:type] == 'folder'
+        json[:children].flat_map { |child| build[name, child] }
+      else
+        [[name, json[:url], to_unix(json.values_at(:date_last_used, :date_added).max)]]
+      end
+    end
+
+    paths('Bookmarks').flat_map do |bookmark_path|
+      JSON.load_file(bookmark_path, symbolize_names: true)
+        .fetch(:roots, {})
+        .values
+        .flat_map { |e| build[nil, e] }
+        .sort_by(&:last)
+        .reverse
+    end
+  end
+
+  def tabs
+    `chrome-cli list tablinks`.each_line.each_with_index.each_with_object([]) do |(line, idx), links|
+      # [726631302:726631487] title: GitHub, url: https://github.com/
+      /^\[(?:[0-9]+:)?([0-9]+)\] title: (.+?), url: (.+?)$/.match(line) do |m|
+        links << [m[2], m[3], idx.succ.to_s, m[1]]
+      end
+    end
+  end
+
+  def to_unix(time)
+    time.to_i / 1_000_000 - 11_644_473_600
+  end
+end
+
+method = ARGV.delete('--list') ? :list : :run
+type = case ARGV[0]&.downcase
+       when 'h' then :history
+       when 'b' then :bookmarks
+       when 't', nil then :tabs
+       else abort "Usage: #{__FILE__} [t|h|b]"
+       end
+
+ChromeFzf.send(method, type)
+
+__END__
+osascript << EOF
+tell application "System Events"
+  tell process "Chrome"
+    set frontmost to true
+  end tell
+end tell
+EOF

@@ -28,6 +28,7 @@ brew "wget"
 brew "jq"
 brew "htop"
 brew "ngrep"
+brew "chrome-cli"
 brew "z"
 
 # --- Programming languages and runtimes ---
