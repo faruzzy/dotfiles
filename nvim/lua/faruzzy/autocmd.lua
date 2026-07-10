@@ -242,49 +242,6 @@ augroup('numbertoggle', {
   },
 })
 
--- Auto-save when leaving Neovim focus, avoiding BufLeave-triggered formatter/watch churn.
-if vim.g.auto_save_on_focus_lost == nil then
-  vim.g.auto_save_on_focus_lost = true
-end
-
-local autosave_excluded = { 'oil', 'harpoon', 'alpha', 'dashboard', 'fugitive' }
-local function auto_save_buffer(buf)
-  if
-    not vim.g.auto_save_on_focus_lost
-    or not vim.api.nvim_buf_is_valid(buf)
-    or not vim.bo[buf].modified
-    or vim.bo[buf].buftype ~= ''
-    or vim.api.nvim_buf_get_name(buf) == ''
-    or vim.tbl_contains(autosave_excluded, vim.bo[buf].filetype)
-  then
-    return
-  end
-
-  local ok, err = pcall(vim.api.nvim_buf_call, buf, function() vim.api.nvim_cmd({ cmd = 'write', mods = { silent = true } }, {}) end)
-
-  if ok then
-    vim.notify('AutoSave: saved at ' .. vim.fn.strftime('%H:%M:%S'))
-  else
-    vim.notify('Auto-save failed: ' .. err, vim.log.levels.ERROR)
-  end
-end
-
-augroup('auto_save', {
-  {
-    { 'FocusLost', 'VimLeavePre' },
-    callback = function(args)
-      local buf = args.buf ~= 0 and args.buf or vim.api.nvim_get_current_buf()
-      auto_save_buffer(buf)
-    end,
-  },
-})
-
-vim.api.nvim_create_user_command('AutoSaveToggle', function()
-  vim.g.auto_save_on_focus_lost = not vim.g.auto_save_on_focus_lost
-  vim.notify('Auto-save ' .. (vim.g.auto_save_on_focus_lost and 'enabled' or 'disabled'))
-end, { desc = 'Toggle auto-save on focus lost' })
-
--- Diff current buffer against the saved version on disk
 -- Create jsconfig.json at the nearest project root
 vim.api.nvim_create_user_command('JsConfig', function()
   local root = vim.fs.root(0, { 'package.json', '.git' })

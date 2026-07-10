@@ -8,6 +8,43 @@ return {
   { 'lewis6991/spaceless.nvim', event = 'BufReadPost' },
 
   {
+    'okuuva/auto-save.nvim',
+    version = '*',
+    event = { 'InsertEnter', 'BufReadPost', 'BufNewFile' },
+    cmd = 'ASToggle',
+    init = function()
+      vim.api.nvim_create_autocmd('User', {
+        pattern = 'AutoSaveWritePost',
+        callback = function(args)
+          if args.data and args.data.saved_buffer then
+            vim.notify('AutoSave: saved at ' .. vim.fn.strftime('%H:%M:%S'))
+          end
+        end,
+      })
+    end,
+    opts = {
+      trigger_events = {
+        immediate_save = { 'FocusLost', 'BufLeave' },
+        defer_save = { 'InsertLeave', 'TextChanged' },
+        cancel_deferred_save = { 'InsertEnter' },
+      },
+      condition = function(buf)
+        if not vim.api.nvim_buf_is_valid(buf) then return false end
+        if vim.bo[buf].buftype ~= '' then return false end
+        if vim.api.nvim_buf_get_name(buf) == '' then return false end
+        local excluded = {
+          'oil', 'harpoon', 'alpha', 'dashboard', 'fugitive',
+          'typescriptreact', 'javascriptreact',
+        }
+        return not vim.tbl_contains(excluded, vim.bo[buf].filetype)
+      end,
+      write_all_buffers = false,
+      debounce_delay = 500,
+    },
+    desc = 'Auto-save on focus loss (disabled for tsx/jsx)',
+  },
+
+  {
     'andythigpen/nvim-coverage',
     version = '*',
     config = function()

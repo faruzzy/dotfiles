@@ -52,7 +52,7 @@ Lua-based config using **lazy.nvim** for plugin management. Entry point: `nvim/i
 - `lua/config/theme.lua` — Catppuccin Mocha theme with custom highlights
 - `lua/lsp/` — per-language LSP server configurations
 
-Key subsystems: mason.nvim (LSP installer), blink.cmp (completion), conform.nvim (formatting), fzf-lua (fuzzy finding), treesitter (syntax).
+Key subsystems: mason.nvim (LSP installer), blink.cmp (completion), conform.nvim (formatting), fzf-lua (fuzzy finding), treesitter (syntax), auto-save.nvim (auto-save, disabled for tsx/jsx to avoid conform format churn).
 
 ### Tmux (`.tmux.conf`)
 
