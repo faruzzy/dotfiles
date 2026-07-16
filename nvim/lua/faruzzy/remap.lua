@@ -61,7 +61,7 @@ end, { desc = 'Smart quit (close fugitive diff or save+quit)' })
 map('n', '<Leader>X', '<cmd>wqa!<cr>', { desc = 'Save all and quit forcefully' })
 
 -- Clear highlighting
-map('n', '<Leader>n', '<cmd>noh<cr>', { desc = 'Turn off search highlighting' })
+map('n', '<Esc>', '<cmd>noh<cr>', { desc = 'Turn off search highlighting' })
 
 -- Window management
 map('n', '<Leader>o', '<cmd>only<cr>', { desc = 'Show only current buffer' })
