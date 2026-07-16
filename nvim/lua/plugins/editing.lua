@@ -12,16 +12,6 @@ return {
     version = '*',
     event = { 'InsertEnter', 'BufReadPost', 'BufNewFile' },
     cmd = 'ASToggle',
-    init = function()
-      vim.api.nvim_create_autocmd('User', {
-        pattern = 'AutoSaveWritePost',
-        callback = function(args)
-          if args.data and args.data.saved_buffer then
-            vim.notify('AutoSave: saved at ' .. vim.fn.strftime('%H:%M:%S'))
-          end
-        end,
-      })
-    end,
     opts = {
       trigger_events = {
         immediate_save = { 'FocusLost', 'BufLeave' },
@@ -29,12 +19,23 @@ return {
         cancel_deferred_save = { 'InsertEnter' },
       },
       condition = function(buf)
-        if not vim.api.nvim_buf_is_valid(buf) then return false end
-        if vim.bo[buf].buftype ~= '' then return false end
-        if vim.api.nvim_buf_get_name(buf) == '' then return false end
+        if not vim.api.nvim_buf_is_valid(buf) then
+          return false
+        end
+        if vim.bo[buf].buftype ~= '' then
+          return false
+        end
+        if vim.api.nvim_buf_get_name(buf) == '' then
+          return false
+        end
         local excluded = {
-          'oil', 'harpoon', 'alpha', 'dashboard', 'fugitive',
-          'typescriptreact', 'javascriptreact',
+          'oil',
+          'harpoon',
+          'alpha',
+          'dashboard',
+          'fugitive',
+          'typescriptreact',
+          'javascriptreact',
         }
         return not vim.tbl_contains(excluded, vim.bo[buf].filetype)
       end,
@@ -145,9 +146,7 @@ return {
   {
     'andymass/vim-matchup',
     event = 'BufReadPost',
-    init = function()
-      vim.g.matchup_delim_nomids = 1
-    end,
+    init = function() vim.g.matchup_delim_nomids = 1 end,
     config = function()
       require('match-up').setup({
         delim = {

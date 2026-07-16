@@ -12,8 +12,8 @@ return {
       hint = {
         arrayIndex = 'Disable',
         enable = true,
-        setType = true,
-        paramName = 'Literal',
+        setType = false,
+        paramName = 'All',
         paramType = false,
       },
       workspace = {

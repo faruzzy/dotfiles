@@ -24,19 +24,22 @@ local function tsgo_cmd()
 end
 
 local function tsgo_settings()
-  local ok, config = pcall(require, 'tsgo.config')
-  if ok then
-    return config.defaults.settings
-  end
-
   local inlay_hints = {
-    parameterNames = { enabled = 'literals' },
+    parameterNames = { enabled = 'all' },
     parameterTypes = { enabled = false },
     variableTypes = { enabled = false },
     propertyDeclarationTypes = { enabled = false },
     functionLikeReturnTypes = { enabled = false },
     enumMemberValues = { enabled = true },
   }
+
+  local ok, config = pcall(require, 'tsgo.config')
+  if ok then
+    return vim.tbl_deep_extend('force', config.defaults.settings, {
+      typescript = { inlayHints = inlay_hints },
+      javascript = { inlayHints = inlay_hints },
+    })
+  end
 
   return {
     typescript = { inlayHints = inlay_hints },
