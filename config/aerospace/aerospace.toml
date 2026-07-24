@@ -29,7 +29,7 @@ on-focus-changed = [
 ]
 automatically-unhide-macos-hidden-apps = false
 
-persistent-workspaces = ['C', 'L', 'X', 'V', 'M', 'A', 'D', 'H', 'T', 'F', 'G', 'S', 'B', 'W', 'N', 'O']
+persistent-workspaces = ['C', 'L', 'X', 'V', 'K', 'P', 'R', 'M', 'A', 'D', 'H', 'T', 'F', 'G', 'S', 'B', 'W', 'N', 'O']
 
 [gaps]
 inner.horizontal = 2
@@ -44,6 +44,9 @@ outer.right = 5
 'L' = '^DELL U2715H \(1\)$' # Claude, left monitor
 'X' = '^DELL U2715H \(1\)$' # Codex, left monitor
 'V' = '^DELL U2715H \(1\)$' # VS Code, left monitor
+'K' = '^DELL U2715H \(1\)$' # Anki, left monitor
+'P' = '^DELL U2715H \(1\)$' # Nord Sound Manager, left monitor
+'R' = '^DELL U2715H \(1\)$' # Audio MIDI Setup / Steinberg Download Assistant, left monitor
 'A' = '^DELL U2715H \(1\)$' # Safari, left monitor
 'D' = '^DELL U2715H \(1\)$' # Things, left monitor
 'H' = '^DELL U2715H \(1\)$' # Dash, left monitor
@@ -198,6 +201,54 @@ run = [
     'exec-and-forget /bin/bash ~/.config/aerospace/sync-spotify-workspace.sh',
     'exec-and-forget /bin/bash ~/.config/aerospace/sync-safari-workspace.sh',
 ]
+
+[[on-window-detected]]
+if.app-id = 'cc.ffitch.shottr'
+run = ['layout floating', 'move-node-to-monitor ^DELL U2715H \(3\)$']
+
+[[on-window-detected]]
+if.app-name-regex-substring = '^Shottr$'
+run = ['layout floating', 'move-node-to-monitor ^DELL U2715H \(3\)$']
+
+[[on-window-detected]]
+if.app-id = 'net.steinberg.elicenser.SteinbergDownloadAssistant'
+run = ['move-node-to-workspace R', 'layout floating']
+
+[[on-window-detected]]
+if.app-id = 'net.steinberg.eLicenser.installer.SteinbergDownloadAssistant'
+run = ['move-node-to-workspace R', 'layout floating']
+
+[[on-window-detected]]
+if.app-name-regex-substring = '^Steinberg Download Assistant'
+run = ['move-node-to-workspace R', 'layout floating']
+
+[[on-window-detected]]
+if.app-id = 'com.steinberg.SteinbergActivationManager'
+run = ['move-node-to-workspace R', 'layout floating tiling']
+
+[[on-window-detected]]
+if.app-id = 'com.apple.audio.AudioMIDISetup'
+run = 'move-node-to-workspace R'
+
+[[on-window-detected]]
+if.app-name-regex-substring = '^Audio MIDI Setup$'
+run = 'move-node-to-workspace R'
+
+[[on-window-detected]]
+if.app-id = 'com.clavia.NordSoundManager'
+run = ['move-node-to-workspace P', 'fullscreen on']
+
+[[on-window-detected]]
+if.app-name-regex-substring = '^Nord Sound Manager$'
+run = ['move-node-to-workspace P', 'fullscreen on']
+
+[[on-window-detected]]
+if.app-id = 'net.ankiweb.anki'
+run = 'move-node-to-workspace K'
+
+[[on-window-detected]]
+if.app-name-regex-substring = '^Anki$'
+run = 'move-node-to-workspace K'
 
 [[on-window-detected]]
 if.app-id = 'com.spotify.client'
