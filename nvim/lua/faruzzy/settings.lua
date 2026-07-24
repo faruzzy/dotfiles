@@ -5,7 +5,6 @@ g.mapleader = ','
 g.maplocalleader = ','
 g.have_nerd_font = true -- Enable Nerd Font icons for UI
 
-
 opt.clipboard = 'unnamedplus' -- Sync clipboard with system
 opt.number = true -- Show line numbers
 opt.relativenumber = true -- Show relative line numbers
@@ -50,3 +49,31 @@ opt.autoindent = true -- Auto-indent new lines
 opt.guicursor = 'n-v-c:block,i-ci-ve:ver25,r-cr:hor20,o:hor50' -- Custom cursor shapes
 opt.conceallevel = 2 -- Hide concealable text (e.g. class attributes)
 opt.fillchars = { eob = ' ', vert = '▏' } -- Clean fill characters
+
+vim.diagnostic.config({
+  severity_sort = true,
+  float = { border = 'rounded', source = 'if_many' },
+  underline = { severity = { min = vim.diagnostic.severity.WARN } },
+
+  virtual_text = false,
+  virtual_lines = false,
+
+  jump = {
+    on_jump = function(_, bufnr)
+      vim.diagnostic.open_float({
+        bufnr = bufnr,
+        scope = 'cursor',
+        focus = false,
+      })
+    end,
+  },
+
+  signs = {
+    text = {
+      [vim.diagnostic.severity.ERROR] = ' ',
+      [vim.diagnostic.severity.WARN] = ' ',
+      [vim.diagnostic.severity.INFO] = ' ',
+      [vim.diagnostic.severity.HINT] = ' ',
+    },
+  },
+})
