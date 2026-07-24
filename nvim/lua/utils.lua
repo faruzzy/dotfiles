@@ -52,9 +52,12 @@ function M.get_snippet_engine() return 'luasnip' end
 ---@param highlight_map vim.api.keyset.highlight
 function M.highlight(name, highlight_map) vim.api.nvim_set_hl(0, name, highlight_map) end
 
+---@class AutoCmd: vim.api.keyset.create_autocmd
+---@field [1] vim.api.keyset.events | vim.api.keyset.events[]
+
 ---Create augroup
 ---@param group_name string
----@param autocmds { [1]: string | string[], pattern?: string | string[], buffer?: number, desc?: string, callback?: fun(args: vim.api.keyset.create_autocmd.callback_args) | string, command?: string, once?: boolean, nested?: boolean }[]
+---@param autocmds AutoCmd[]
 function M.augroup(group_name, autocmds)
   local group = vim.api.nvim_create_augroup('my_' .. group_name, {})
 
