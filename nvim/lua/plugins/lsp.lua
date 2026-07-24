@@ -43,6 +43,7 @@ return {
         'css-lsp',
         'emmet-language-server',
         'eslint-lsp',
+        'gopls',
         'html-lsp',
         'json-lsp',
         'lua-language-server',
@@ -54,6 +55,7 @@ return {
         -- Formatters
         'stylua',
         'prettierd',
+        'goimports',
       },
       auto_update = false,
     })

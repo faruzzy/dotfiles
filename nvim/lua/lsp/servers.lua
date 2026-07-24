@@ -15,6 +15,11 @@ local servers = {
   },
   emmet_language_server = require('lsp.servers.emmet_language_server'),
   eslint = require('lsp.servers.eslint'),
+  gopls = {
+    cmd = { 'gopls' },
+    filetypes = { 'go', 'gomod', 'gowork', 'gotmpl' },
+    root_markers = { 'go.work', 'go.mod', '.git' },
+  },
   -- graphql = require('lsp.servers.graphql'),
   html = require('lsp.servers.html'),
   jsonls = require('lsp.servers.jsonls'),
