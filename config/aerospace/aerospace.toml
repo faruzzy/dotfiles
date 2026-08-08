@@ -203,6 +203,22 @@ run = [
 ]
 
 [[on-window-detected]]
+if.app-id = 'com.apple.iCal'
+run = 'layout floating'
+
+[[on-window-detected]]
+if.app-name-regex-substring = '^Calendar$'
+run = 'layout floating'
+
+[[on-window-detected]]
+if.app-id = 'com.apple.Dictionary'
+run = 'layout floating'
+
+[[on-window-detected]]
+if.app-name-regex-substring = '^Dictionary$'
+run = 'layout floating'
+
+[[on-window-detected]]
 if.app-id = 'cc.ffitch.shottr'
 run = ['layout floating', 'move-node-to-monitor ^DELL U2715H \(3\)$']
 
