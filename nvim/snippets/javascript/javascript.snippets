@@ -343,6 +343,22 @@ snippet sym
 	const ${1} = Symbol('${0}');
 snippet ed
 	export default ${0}
+snippet fn "function declaration"
+	function ${1:name}(${2}) {
+		${0:${VISUAL}}
+	}
+snippet efn "export function declaration"
+	export function ${1:name}(${2}) {
+		${0:${VISUAL}}
+	}
+snippet fe "function expression"
+	const ${1:name} = (${2}) => {
+		${0:${VISUAL}}
+	}
+snippet efe "export function expression"
+	export const ${1:name} = (${2}) => {
+		${0:${VISUAL}}
+	}
 snippet ${
 	\${${1}}${0}
 snippet as "async"

@@ -33,6 +33,22 @@ snippet tfun "ts function"
 	function ${1}(${2}): ${3:any} {
 		${0}
 	}
+snippet tfn "ts function declaration"
+	function ${1:name}(${2}): ${3:any} {
+		${0}
+	}
+snippet tefn "ts export function declaration"
+	export function ${1:name}(${2}): ${3:any} {
+		${0}
+	}
+snippet tfe "ts function expression"
+	const ${1:name} = (${2}): ${3:any} => {
+		${0}
+	}
+snippet tefe "ts export function expression"
+	export const ${1:name} = (${2}): ${3:any} => {
+		${0}
+	}
 snippet tpmet "ts public method"
 	public ${1}(${2}): ${3:any} {
 		${0}
