@@ -9,7 +9,6 @@ augroup('no_auto_comment', {
   },
 })
 
--- Re-enable comment continuation for JavaScript/TypeScript to support JSDoc
 augroup('jsdoc_comment_continuation', {
   {
     'FileType',
@@ -28,39 +27,39 @@ augroup('jsdoc_comment_continuation', {
         end
 
         local line = vim.api.nvim_get_current_line()
-        local row = vim.api.nvim_win_get_cursor(0)[1]
-        local col = vim.api.nvim_win_get_cursor(0)[2]
-        local before_cursor = line:sub(1, col)
+        local row, col = unpack(vim.api.nvim_win_get_cursor(0))
+        local before = line:sub(1, col)
+        local after = line:sub(col + 1)
 
-        -- Check if we just typed /**
-        if before_cursor:match('^%s*/%*%*$') then
-          local indent = before_cursor:match('^(%s*)')
-
-          -- Schedule the buffer modification
+        -- /**| + Enter → expand block. `after` may be '' or '*/' (autopairs).
+        if before:match('^%s*/%*%*$') and (after == '' or after:match('^%s*%*/%s*$')) then
+          local indent = before:match('^(%s*)')
           vim.schedule(function()
-            -- Insert the JSDoc structure
-            vim.api.nvim_buf_set_lines(0, row, row, false, {
+            vim.api.nvim_buf_set_lines(0, row - 1, row, false, {
+              before,
               indent .. ' * ',
               indent .. ' */',
             })
-            -- Position cursor at the end of the first inserted line
             vim.api.nvim_win_set_cursor(0, { row + 1, #indent + 3 })
           end)
           return ''
         end
 
-        -- Continue block comment with aligned " * " (bypasses smartindent
-        -- which mis-indents after lines containing { like @param {type})
-        if before_cursor:match('^%s*%*') then
-          local prefix = line:match('^(%s*%*)')
+        -- Inside block, continue with aligned " * ". Skip the closing " */"
+        -- line so Enter there falls through to a plain newline.
+        if before:match('^%s*%*') and not before:match('^%s*%*/') then
+          local indent = before:match('^(%s*)')
+          local prefix = indent .. '* '
           vim.schedule(function()
-            vim.api.nvim_buf_set_lines(0, row, row, false, { prefix .. ' ' })
-            vim.api.nvim_win_set_cursor(0, { row + 1, #prefix + 1 })
+            vim.api.nvim_buf_set_lines(0, row - 1, row, false, {
+              before,
+              prefix .. after,
+            })
+            vim.api.nvim_win_set_cursor(0, { row + 1, #prefix })
           end)
           return ''
         end
 
-        -- Otherwise use autopairs CR
         return require('nvim-autopairs').autopairs_cr()
       end, { expr = true, replace_keycodes = false })
 
@@ -68,7 +67,8 @@ augroup('jsdoc_comment_continuation', {
       bmap('n', 'o', function()
         local line = vim.api.nvim_get_current_line()
         if line:match('^%s*%*') and not line:match('^%s*%*/') then
-          return 'o<C-u>* '
+          local indent = line:match('^(%s*)')
+          return 'o<C-u>' .. indent .. '* '
         end
 
         return 'o'
