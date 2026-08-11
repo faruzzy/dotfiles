@@ -167,8 +167,22 @@ return {
     'hrsh7th/nvim-pasta',
     event = { 'BufReadPost', 'BufNewFile' },
     config = function()
-      vim.keymap.set({ 'n', 'x' }, 'p', require('pasta.mapping').p, { desc = 'Paste with context' })
-      vim.keymap.set({ 'n', 'x' }, 'P', require('pasta.mapping').P, { desc = 'Paste before with context' })
+      -- Filetypes where pasta's context-aware reindent mis-guesses; fall back to default p/P
+      local disabled = { lua = true }
+
+      local function paste(key)
+        return function()
+          if disabled[vim.bo.filetype] then
+            local count = vim.v.count > 0 and vim.v.count or ''
+            vim.cmd('normal! "' .. vim.v.register .. count .. key)
+          else
+            require('pasta.mapping')[key]()
+          end
+        end
+      end
+
+      vim.keymap.set({ 'n', 'x' }, 'p', paste('p'), { desc = 'Paste with context' })
+      vim.keymap.set({ 'n', 'x' }, 'P', paste('P'), { desc = 'Paste before with context' })
     end,
     desc = 'Context-aware pasting with indentation',
   },
