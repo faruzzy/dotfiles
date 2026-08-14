@@ -53,7 +53,41 @@ map('n', '<Leader>x', function()
     end
   end
 
-  vim.cmd('only')
+  -- Deleting fugitive buffers may have shifted focus to a sidebar (neo-tree).
+  -- Pick a non-sidebar window to land the target file in.
+  local sidebar_fts = { ['neo-tree'] = true }
+  local function win_ft(win) return vim.bo[vim.api.nvim_win_get_buf(win)].filetype end
+
+  local focus_win
+  if target_buf then
+    for _, win in ipairs(vim.api.nvim_list_wins()) do
+      if vim.api.nvim_win_get_buf(win) == target_buf then
+        focus_win = win
+        break
+      end
+    end
+  end
+  if not focus_win then
+    for _, win in ipairs(vim.api.nvim_list_wins()) do
+      if not sidebar_fts[win_ft(win)] then
+        focus_win = win
+        break
+      end
+    end
+  end
+  if not focus_win then
+    vim.cmd('vsplit')
+    focus_win = vim.api.nvim_get_current_win()
+  end
+  vim.api.nvim_set_current_win(focus_win)
+
+  -- Close any remaining non-sidebar windows so we end on a single file view
+  for _, win in ipairs(vim.api.nvim_list_wins()) do
+    if win ~= focus_win and not sidebar_fts[win_ft(win)] then
+      pcall(vim.api.nvim_win_close, win, true)
+    end
+  end
+
   if target_buf and vim.api.nvim_buf_is_valid(target_buf) then
     vim.api.nvim_set_current_buf(target_buf)
   end

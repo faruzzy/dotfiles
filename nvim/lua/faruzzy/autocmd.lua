@@ -301,17 +301,16 @@ augroup('fugitive_refresh', {
   },
 })
 
--- Handle quitting Fugitive buffers gracefully
+-- Wipe hidden Fugitive buffers so they don't accumulate in the buffer list
 augroup('fugitive_quit', {
   {
     'BufHidden',
     pattern = 'fugitive://*',
-    callback = function()
+    callback = function(args)
       vim.schedule(function()
-        vim.cmd('silent! bdelete!')
-        local bufnr = vim.api.nvim_get_current_buf()
-        pcall(vim.lsp.buf.clear_references)
-        pcall(vim.api.nvim_del_augroup_by_name, 'document_highlight_' .. bufnr)
+        if vim.api.nvim_buf_is_valid(args.buf) then
+          pcall(vim.api.nvim_buf_delete, args.buf, { force = true })
+        end
       end)
     end,
   },
