@@ -3,6 +3,9 @@ return {
   'lewis6991/gitsigns.nvim',
   opts = {
     -- See `:help gitsigns.txt`
+    sign_priority = 100, -- above diagnostic signs (~10) so hunks stay visible
+    word_diff = true,
+    attach_to_untracked = true,
     signs = {
       add = { text = '+' },
       change = { text = '~' },
@@ -22,30 +25,32 @@ return {
         vim.keymap.set(mode, l, r, opts)
       end
 
-      -- Navigation
+      -- Navigation is here
       map({ 'n', 'v' }, ']c', function()
-        if vim.wo.diff then return ']c' end
+        if vim.wo.diff then
+          return ']c'
+        end
         vim.schedule(function() gs.nav_hunk('next') end)
         return '<Ignore>'
       end, { expr = true, desc = 'Jump to next hunk' })
 
       map({ 'n', 'v' }, '[c', function()
-        if vim.wo.diff then return '[c' end
+        if vim.wo.diff then
+          return '[c'
+        end
         vim.schedule(function() gs.nav_hunk('prev') end)
         return '<Ignore>'
       end, { expr = true, desc = 'Jump to previous hunk' })
 
       map('n', ']C', function() gs.nav_hunk('next', { target = 'staged' }) end, { desc = 'Jump to next staged hunk' })
       map('n', '[C', function() gs.nav_hunk('prev', { target = 'staged' }) end, { desc = 'Jump to previous staged hunk' })
+      map('n', '<leader>hQ', function() gs.setqflist('all') end)
+      map('n', '<leader>hq', gs.setqflist)
 
       -- Actions
       -- visual mode
-      map('v', '<leader>hs', function()
-        gs.stage_hunk({ vim.fn.line('.'), vim.fn.line('v') })
-      end, { desc = 'stage git hunk' })
-      map('v', '<leader>hr', function()
-        gs.reset_hunk({ vim.fn.line('.'), vim.fn.line('v') })
-      end, { desc = 'reset git hunk' })
+      map('v', '<leader>hs', function() gs.stage_hunk({ vim.fn.line('.'), vim.fn.line('v') }) end, { desc = 'stage git hunk' })
+      map('v', '<leader>hr', function() gs.reset_hunk({ vim.fn.line('.'), vim.fn.line('v') }) end, { desc = 'reset git hunk' })
       -- normal mode
       map('n', '<leader>hs', gs.stage_hunk, { desc = 'git stage hunk' })
       map('n', '<leader>hS', gs.stage_buffer, { desc = 'git Stage buffer' })
@@ -53,13 +58,11 @@ return {
       map('n', '<leader>hR', gs.reset_buffer, { desc = 'git Reset buffer' })
       map('n', '<leader>hu', gs.undo_stage_hunk, { desc = 'undo stage hunk' })
       map('n', '<leader>hp', gs.preview_hunk, { desc = 'preview git hunk' })
-      map('n', '<leader>hb', function()
-        gs.blame_line({ full = true })
-      end, { desc = 'git blame line' })
+      map('n', '<leader>hb', function() gs.blame_line({ full = true }) end, { desc = 'git blame line' })
 
       -- Toggles
-      map('n', '<leader>tb', gs.toggle_current_line_blame, { desc = 'toggle git blame line' })
       map('n', '<leader>tg', gs.toggle_deleted, { desc = 'toggle git show deleted' })
+      map('n', '<leader>tw', gs.toggle_word_diff)
 
       -- Text object
       map({ 'o', 'x' }, 'ih', ':<C-U>Gitsigns select_hunk<CR>', { desc = 'select git hunk' })
