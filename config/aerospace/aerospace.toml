@@ -29,7 +29,7 @@ on-focus-changed = [
 ]
 automatically-unhide-macos-hidden-apps = false
 
-persistent-workspaces = ['C', 'L', 'X', 'V', 'K', 'P', 'R', 'M', 'A', 'D', 'H', 'T', 'F', 'G', 'S', 'B', 'W', 'N', 'O']
+persistent-workspaces = ['C', 'L', 'X', 'V', 'K', 'P', 'R', 'M', 'A', 'D', 'H', 'T', 'F', 'G', 'Y', 'S', 'B', 'W', 'N', 'O']
 
 [gaps]
 inner.horizontal = 2
@@ -53,6 +53,7 @@ outer.right = 5
 'T' = '^DELL U2715H \(3\)$' # Ghostty / Terminal, center monitor
 'F' = '^DELL U2715H \(3\)$' # Firefox Developer Edition, center monitor
 'G' = '^DELL U2715H \(3\)$' # Logic Pro, center monitor
+'Y' = '^DELL U2715H \(3\)$' # Obsidian temporary center workspace
 'B' = '^DELL U2715H \(2\)$' # Brave, right monitor
 'W' = '^DELL U2715H \(2\)$' # Google Chrome, right monitor
 'N' = '^DELL U2715H \(2\)$' # Notes / documents, right monitor
@@ -67,8 +68,8 @@ cmd-left = ['layout floating', 'exec-and-forget /bin/bash ~/.config/aerospace/wi
 cmd-right = ['layout floating', 'exec-and-forget /bin/bash ~/.config/aerospace/window-frame.sh right-half']
 ctrl-enter = ['layout floating', 'exec-and-forget /bin/bash ~/.config/aerospace/window-frame.sh maximize']
 cmd-enter = ['layout floating', 'exec-and-forget /bin/bash ~/.config/aerospace/window-frame.sh center']
-ctrl-cmd-right = ['move-node-to-monitor --focus-follows-window next']
-ctrl-cmd-left = ['move-node-to-monitor --focus-follows-window prev']
+ctrl-cmd-right = 'exec-and-forget /bin/bash ~/.config/aerospace/move-focused-window.sh next'
+ctrl-cmd-left = 'exec-and-forget /bin/bash ~/.config/aerospace/move-focused-window.sh prev'
 
 alt-h = 'focus left'
 alt-l = 'focus right'
