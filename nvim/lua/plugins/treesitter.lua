@@ -39,7 +39,6 @@ return {
         'json',
         'toml',
         'latex',
-        'tmux',
         'readline',
         'markdown',
         'markdown_inline',
