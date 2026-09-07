@@ -47,6 +47,36 @@ local function tsgo_settings()
   }
 end
 
+local function tsgo_root_dir(bufnr, on_dir)
+  local name = vim.api.nvim_buf_get_name(bufnr)
+  local startpath = name ~= '' and name or vim.fn.getcwd()
+  local startdir = vim.fs.dirname(startpath)
+
+  local marker = vim.fs.find({ 'tsconfig.json', 'jsconfig.json' }, {
+    upward = true,
+    path = startdir,
+  })[1]
+
+  if not marker then
+    return
+  end
+
+  local root = vim.fs.dirname(marker)
+  local boundary_marker = vim.fs.find({ 'package.json', '.git' }, {
+    upward = true,
+    path = startdir,
+  })[1]
+
+  if boundary_marker then
+    local boundary = vim.fs.dirname(boundary_marker)
+    if root ~= boundary and root:sub(1, #boundary + 1) ~= boundary .. '/' then
+      return
+    end
+  end
+
+  on_dir(root)
+end
+
 return {
   cmd = tsgo_cmd(),
   filetypes = {
@@ -57,6 +87,6 @@ return {
     'typescriptreact',
     'typescript.tsx',
   },
-  root_markers = { 'tsconfig.json', 'jsconfig.json', 'package.json', '.git' },
+  root_dir = tsgo_root_dir,
   settings = tsgo_settings(),
 }
