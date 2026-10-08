@@ -276,6 +276,28 @@ vim.api.nvim_create_user_command('JsConfig', function()
   vim.notify('Created ' .. path)
 end, { desc = 'Create jsconfig.json at project root' })
 
+-- Reload buffers when the underlying file is changed externally (e.g. by
+-- Claude Code edits). Without this, LSP diagnostics stay pinned to the old
+-- buffer content and auto-save can clobber external edits.
+vim.opt.autoread = true
+augroup('external_file_reload', {
+  {
+    { 'FocusGained', 'BufEnter', 'CursorHold', 'CursorHoldI' },
+    pattern = '*',
+    callback = function()
+      if vim.fn.mode() == 'n' and vim.bo.buftype == '' then
+        pcall(vim.cmd.checktime)
+      end
+    end,
+  },
+  {
+    'FileChangedShellPost',
+    callback = function()
+      vim.notify('File reloaded from disk', vim.log.levels.INFO)
+    end,
+  },
+})
+
 -- Refresh Fugitive status after auto-save has flushed to disk
 augroup('fugitive_refresh', {
   {
