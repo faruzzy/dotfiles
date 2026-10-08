@@ -135,6 +135,7 @@ cask "macfuse"
 cask "nightfall"
 
 # --- Casks: Fonts ---
+cask "font-comic-shanns-mono-nerd-font"
 cask "font-fira-code"
 cask "font-jetbrains-mono"
 cask "font-source-code-pro"
