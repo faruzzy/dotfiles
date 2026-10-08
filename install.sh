@@ -201,6 +201,7 @@ install_npm_packages() {
 
     local npm_packages=(
         typescript ts-node
+        @typescript/native-preview
         aws-cdk
         tldr
         git-open
