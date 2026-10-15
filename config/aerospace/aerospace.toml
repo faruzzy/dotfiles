@@ -131,6 +131,15 @@ alt-shift-j = ['join-with down', 'mode main']
 alt-shift-k = ['join-with up', 'mode main']
 alt-shift-l = ['join-with right', 'mode main']
 
+# Catch-all: float typical dialog / popup / secondary windows across all apps.
+# AeroSpace runs ONLY the first matching on-window-detected rule, so this must
+# stay above app-specific rules below. The anchor at title start avoids false
+# positives from document / note titles that merely contain these words.
+# Expand this list when a new popup pattern slips through.
+[[on-window-detected]]
+if.window-title-regex-substring = '(?i)^(Settings|Preferences|About|Properties|Options|Export|Import|Save As|Print|Find|Replace|Get Info|Welcome|Community plugins)'
+run = 'layout floating'
+
 [[on-window-detected]]
 if.app-id = 'com.mitchellh.ghostty'
 run = ['move-node-to-workspace T', 'exec-and-forget /bin/bash ~/.config/aerospace/sync-messaging-workspace.sh']
