@@ -342,7 +342,7 @@ run = 'move-node-to-workspace W'
 
 [[on-window-detected]]
 if.app-id = 'com.apple.Notes'
-run = ['move-node-to-workspace N', 'move right']
+run = ['move-node-to-workspace O', 'move right']
 
 [[on-window-detected]]
 if.app-id = 'com.adobe.Acrobat.Pro'
