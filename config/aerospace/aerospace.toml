@@ -297,6 +297,14 @@ if.app-id = 'com.spotify.client'
 run = ['move-node-to-workspace S', 'exec-and-forget /bin/bash ~/.config/aerospace/sync-spotify-workspace.sh']
 
 [[on-window-detected]]
+if.app-id = 'com.readdle.smartemail-Mac'
+run = 'move-node-to-workspace N'
+
+[[on-window-detected]]
+if.app-name-regex-substring = '^Spark$'
+run = 'move-node-to-workspace N'
+
+[[on-window-detected]]
 if.app-id = 'com.apple.Safari'
 run = [
     'move-node-to-workspace A',
