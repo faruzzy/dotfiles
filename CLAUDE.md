@@ -39,6 +39,8 @@ The install script symlinks individual files to `$HOME` and config directories t
 7. **Mise** (replaces nvm/jEnv — universal runtime manager)
 8. **Atuin** (replaces built-in history search, Ctrl-R and up-arrow)
 
+Git completion uses zsh's built-in `_git` (wrapped by `_git_with_file_fallback` in `.zshrc`). Do not source upstream `git-completion.zsh` directly — it is a completion function that needs `git-completion.bash` alongside it.
+
 `.zsh_plugins.zsh` is a generated file — edit `.zsh_plugins.txt` instead, then restart the shell to regenerate.
 
 ### Neovim (`nvim/`)

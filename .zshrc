@@ -105,15 +105,6 @@ fi
 # Homebrew
 eval "$(/opt/homebrew/bin/brew shellenv)"
 
-# Git completion and prompt (if not using oh-my-zsh)
-if [[ ! -f ~/.oh-my-zsh/oh-my-zsh.sh ]]; then
-    # Download git completion for zsh if not exists
-    if [[ ! -f ~/.git-completion.zsh ]]; then
-        curl -o ~/.git-completion.zsh https://raw.githubusercontent.com/git/git/master/contrib/completion/git-completion.zsh
-    fi
-    [[ -f ~/.git-completion.zsh ]] && source ~/.git-completion.zsh
-fi
-
 _git_with_file_fallback() {
     _git "$@" && return
     [[ ${words[1]} == git && ${words[2]} == diff ]] && _files
