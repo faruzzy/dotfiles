@@ -229,6 +229,22 @@ if.app-name-regex-substring = '^Dictionary$'
 run = 'layout floating'
 
 [[on-window-detected]]
+if.app-id = 'com.electron.dockerdesktop'
+run = 'layout floating'
+
+[[on-window-detected]]
+if.app-id = 'com.docker.docker'
+run = 'layout floating'
+
+[[on-window-detected]]
+if.app-id = 'com.hp.SmartMac'
+run = 'layout floating'
+
+[[on-window-detected]]
+if.app-name-regex-substring = '^HP$'
+run = 'layout floating'
+
+[[on-window-detected]]
 if.app-id = 'cc.ffitch.shottr'
 run = ['layout floating', 'move-node-to-monitor ^DELL U2715H \(3\)$']
 
