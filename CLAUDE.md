@@ -67,6 +67,14 @@ Prefix is `C-x` (not default `C-b`). Vi-mode copy with pbcopy integration. Plugi
 
 Uses git-delta as pager with Catppuccin theme (`catppuccin.gitconfig`). Extensive aliases defined in `.gitconfig`.
 
+### AeroSpace (`config/aerospace/aerospace.toml`)
+
+Tiling window manager with one workspace per app (`alt-<key>` to switch, `alt-shift-<key>` to move a window). The config is shared by two setups:
+- **Home**: three `DELL U2715H` monitors (1 = left, 3 = center, 2 = right); built-in display unused.
+- **Work**: built-in display + one Philips wide monitor (`PHL 346B1C`).
+
+Workspaces that should land somewhere sensible in both places use a pattern list in `[workspace-to-monitor-force-assignment]`, e.g. `['^DELL U2715H \(1\)$', 'built-in']` (first connected match wins). Validate with `aerospace reload-config`. Inside `run` command strings, avoid backslashes and quote monitor names containing spaces (e.g. `"move-node-to-monitor 'DELL U2715H [(]3[)]'"`) or the whole config fails to load.
+
 ## Key Conventions
 
 - **Theme**: Catppuccin Mocha everywhere (terminal, neovim, tmux, git-delta, bat, starship)
