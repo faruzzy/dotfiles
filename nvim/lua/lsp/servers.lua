@@ -40,7 +40,6 @@ local servers = {
     filetypes = { 'vim' },
     root_markers = { '.git' },
   },
-  tsgo = require('lsp.servers.tsgo'),
   yamlls = {
     cmd = { 'yaml-language-server', '--stdio' },
     filetypes = { 'yaml', 'yaml.docker-compose' },
