@@ -110,35 +110,7 @@ local function current_object_property_position()
   end
 
   local ok, tsgo_util = pcall(require, 'tsgo.util')
-  if ok and tsgo_util.is_object_property_completion() then
-    return true
-  end
-
-  local col = vim.api.nvim_win_get_cursor(0)[2]
-  local before_cursor = vim.api.nvim_get_current_line():sub(1, col)
-  if before_cursor:match('[:%.]%s*[%w_$]*$') then
-    return false
-  end
-
-  if not before_cursor:match('^%s*[%w_$]*$') and not before_cursor:match('[{,]%s*[%w_$]*$') then
-    return false
-  end
-
-  local success, node = pcall(vim.treesitter.get_node)
-  if not success or not node then
-    return false
-  end
-
-  local current = node
-  while current do
-    local ntype = current:type()
-    if ntype == 'object' or ntype == 'object_pattern' then
-      return true
-    end
-    current = current:parent()
-  end
-
-  return false
+  return ok and tsgo_util.is_object_property_completion()
 end
 
 local function remember_lsp_completion_labels(ctx, items)
