@@ -1,9 +1,10 @@
 # Ghostty configuration file
 # Converted from Alacritty configuration
 
-background-opacity = 0.9
-background-opacity-cells = true
-background-blur = 50
+background-opacity = 1
+# background-opacity = 0.9
+# background-opacity-cells = true
+# background-blur = 50
 
 # Font configuration
 font-family = "ComicShannsMono Nerd Font"
@@ -37,9 +38,6 @@ mouse-hide-while-typing = true
 
 # Selection configuration
 copy-on-select = true
-
-# Live reload equivalent
-# config-file-watch = true
 
 theme = catppuccin-mocha.conf
 
