@@ -1,16 +1,15 @@
-# AeroSpace window placement. This config is shared by two setups:
+# AeroSpace window placement. This config is shared by two machines and setups.
 #
-# Home (three external monitors):
-# - DELL U2715H (1) = left
-# - DELL U2715H (3) = center
-# - DELL U2715H (2) = right
-# The built-in laptop display is intentionally unused for forced workspace placement.
+# Home (three DELL U2715H monitors, laptop lid closed):
+# Monitors are referenced by position (1 = left, 2 = center, 3 = right), not by
+# name, because macOS numbers the identical Dells differently on each Mac
+# (center is "DELL U2715H (3)" on the personal Mac but "(2)" on the work Mac).
 #
 # Work (built-in display + one wide monitor):
 # - Built-in Retina Display
 # - PHL 346B1C (Philips wide monitor)
-# The DELL assignments don't match here, so those workspaces go to whichever
-# monitor they're on. Add a fallback pattern (e.g. 'built-in') to pin one.
+# Position 1/2 assignments apply here as well (3 doesn't exist, so those
+# workspaces stay wherever they are). Put 'built-in' first to pin one to the laptop.
 
 config-version = 2
 start-at-login = true
@@ -36,7 +35,7 @@ on-focus-changed = [
 ]
 automatically-unhide-macos-hidden-apps = false
 
-persistent-workspaces = ['C', 'L', 'X', 'V', 'K', 'P', 'R', 'M', 'A', 'D', 'H', 'T', 'F', 'G', 'Y', 'S', 'B', 'W', 'N', 'O', 'E', 'Q']
+persistent-workspaces = ['C', 'L', 'X', 'V', 'K', 'P', 'R', 'M', 'A', 'D', 'H', 'T', 'F', 'G', 'Y', 'S', 'B', 'W', 'N', 'O', 'E']
 
 [gaps]
 inner.horizontal = 2
@@ -47,26 +46,25 @@ outer.top = 2
 outer.right = 5
 
 [workspace-to-monitor-force-assignment]
-'C' = ['^DELL U2715H \(1\)$', 'built-in'] # Canary, left monitor; falls back to the built-in display at work
-'L' = '^DELL U2715H \(1\)$' # Claude, left monitor
-'X' = '^DELL U2715H \(1\)$' # Codex, left monitor
-'V' = '^DELL U2715H \(1\)$' # VS Code, left monitor
-'K' = '^DELL U2715H \(1\)$' # Anki, left monitor
-'P' = '^DELL U2715H \(1\)$' # Nord Sound Manager, left monitor
-'R' = '^DELL U2715H \(1\)$' # Audio MIDI Setup / Steinberg Download Assistant, left monitor
-'A' = '^DELL U2715H \(1\)$' # Safari, left monitor
-'D' = ['^DELL U2715H \(1\)$', 'built-in'] # Things, left monitor; falls back to the built-in display on machines without the Dells
-'H' = '^DELL U2715H \(1\)$' # Dash, left monitor
-'E' = 'built-in' # Outlook, always on the built-in display
-'Q' = '^PHL 346B1C$' # Microsoft Teams, Philips wide monitor at work
-'T' = '^DELL U2715H \(3\)$' # Ghostty / Terminal, center monitor
-'F' = '^DELL U2715H \(3\)$' # Firefox Developer Edition, center monitor
-'G' = '^DELL U2715H \(3\)$' # Logic Pro, center monitor
-'Y' = '^DELL U2715H \(3\)$' # Obsidian temporary center workspace
-'B' = '^DELL U2715H \(2\)$' # Brave, right monitor
-'W' = '^DELL U2715H \(2\)$' # Google Chrome, right monitor
-'N' = '^DELL U2715H \(2\)$' # Notes / documents, right monitor
-'O' = '^DELL U2715H \(2\)$' # Obsidian, right monitor
+'C' = ['built-in', 1] # Canary, built-in display at work; left monitor at home (lid closed)
+'L' = 1 # Claude, left monitor
+'X' = 1 # Codex, left monitor
+'V' = 1 # VS Code, left monitor
+'K' = 1 # Anki, left monitor
+'P' = 1 # Nord Sound Manager, left monitor
+'R' = 1 # Audio MIDI Setup / Steinberg Download Assistant, left monitor
+'A' = 1 # Safari, left monitor
+'D' = ['built-in', 1] # Things, built-in display at work; left monitor at home (lid closed)
+'H' = 1 # Dash, left monitor
+'E' = [3, 2] # Outlook + floating Microsoft Teams, rightmost monitor (3 of 3 at home, 2 of 2 at work)
+'T' = 2 # Ghostty / Terminal, center monitor
+'F' = 2 # Firefox Developer Edition, center monitor
+'G' = 2 # Logic Pro, center monitor
+'Y' = 2 # Obsidian temporary center workspace
+'B' = 3 # Brave, right monitor
+'W' = 3 # Google Chrome, right monitor
+'N' = 3 # Notes / documents, right monitor
+'O' = 3 # Obsidian, right monitor
 
 [mode.main.binding]
 # Keep alt-tab free for AltTab.
@@ -105,8 +103,7 @@ alt-equal = 'workspace B'
 alt-backslash = 'workspace W'
 alt-quote = 'workspace N'
 alt-period = 'workspace O'
-alt-e = 'workspace E' # Outlook
-alt-q = 'workspace Q' # Microsoft Teams
+alt-e = 'workspace E' # Outlook / Microsoft Teams
 
 alt-shift-1 = ['move-node-to-workspace C', 'workspace C']
 alt-shift-2 = ['move-node-to-workspace L', 'workspace L']
@@ -124,7 +121,6 @@ alt-shift-backslash = ['move-node-to-workspace W', 'workspace W']
 alt-shift-quote = ['move-node-to-workspace N', 'workspace N']
 alt-shift-period = ['move-node-to-workspace O', 'workspace O']
 alt-shift-e = ['move-node-to-workspace E', 'workspace E']
-alt-shift-q = ['move-node-to-workspace Q', 'workspace Q']
 
 alt-s = 'focus-monitor left'
 alt-g = 'focus-monitor right'
@@ -259,11 +255,11 @@ run = 'layout floating'
 
 [[on-window-detected]]
 if.app-id = 'cc.ffitch.shottr'
-run = ['layout floating', "move-node-to-monitor 'DELL U2715H [(]3[)]'"]
+run = ['layout floating', "move-node-to-monitor 2"]
 
 [[on-window-detected]]
 if.app-name-regex-substring = '^Shottr$'
-run = ['layout floating', "move-node-to-monitor 'DELL U2715H [(]3[)]'"]
+run = ['layout floating', "move-node-to-monitor 2"]
 
 [[on-window-detected]]
 if.app-id = 'net.steinberg.elicenser.SteinbergDownloadAssistant'
@@ -335,7 +331,7 @@ run = 'move-node-to-workspace E'
 
 [[on-window-detected]]
 if.app-id = 'com.microsoft.teams2'
-run = 'move-node-to-workspace Q'
+run = ['layout floating', 'move-node-to-workspace E']
 
 [[on-window-detected]]
 if.app-id = 'com.kapeli.dashdoc'
