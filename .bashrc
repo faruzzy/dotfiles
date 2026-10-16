@@ -12,3 +12,4 @@ fi
 
 . "$HOME/.cargo/env"
 eval "$(starship init bash)"
+. "$HOME/.deno/env"
