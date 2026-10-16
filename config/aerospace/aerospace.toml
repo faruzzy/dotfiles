@@ -35,7 +35,7 @@ on-focus-changed = [
 ]
 automatically-unhide-macos-hidden-apps = false
 
-persistent-workspaces = ['C', 'L', 'X', 'V', 'K', 'P', 'R', 'M', 'A', 'D', 'H', 'T', 'F', 'G', 'Y', 'S', 'B', 'W', 'N', 'O', 'E']
+persistent-workspaces = ['C', 'L', 'X', 'V', 'K', 'P', 'R', 'M', 'A', 'D', 'H', 'T', 'F', 'G', 'Y', 'S', 'B', 'W', 'N', 'O', 'E', 'Q']
 
 [gaps]
 inner.horizontal = 2
@@ -56,7 +56,8 @@ outer.right = 5
 'A' = 1 # Safari, left monitor
 'D' = ['built-in', 1] # Things, built-in display at work; left monitor at home (lid closed)
 'H' = 1 # Dash, left monitor
-'E' = [3, 2] # Outlook + floating Microsoft Teams, rightmost monitor (3 of 3 at home, 2 of 2 at work)
+'E' = [3, 2] # Outlook, rightmost monitor (3 of 3 at home, 2 of 2 at work)
+'Q' = [3, 2] # Microsoft Teams, rightmost monitor (3 of 3 at home, 2 of 2 at work)
 'T' = 2 # Ghostty / Terminal, center monitor
 'F' = 2 # Firefox Developer Edition, center monitor
 'G' = 2 # Logic Pro, center monitor
@@ -103,7 +104,8 @@ alt-equal = 'workspace B'
 alt-backslash = 'workspace W'
 alt-quote = 'workspace N'
 alt-period = 'workspace O'
-alt-e = 'workspace E' # Outlook / Microsoft Teams
+alt-e = 'workspace E' # Outlook
+alt-q = 'workspace Q' # Microsoft Teams
 
 alt-shift-1 = ['move-node-to-workspace C', 'workspace C']
 alt-shift-2 = ['move-node-to-workspace L', 'workspace L']
@@ -121,6 +123,7 @@ alt-shift-backslash = ['move-node-to-workspace W', 'workspace W']
 alt-shift-quote = ['move-node-to-workspace N', 'workspace N']
 alt-shift-period = ['move-node-to-workspace O', 'workspace O']
 alt-shift-e = ['move-node-to-workspace E', 'workspace E']
+alt-shift-q = ['move-node-to-workspace Q', 'workspace Q']
 
 alt-s = 'focus-monitor left'
 alt-g = 'focus-monitor right'
@@ -331,7 +334,7 @@ run = 'move-node-to-workspace E'
 
 [[on-window-detected]]
 if.app-id = 'com.microsoft.teams2'
-run = ['layout floating', 'move-node-to-workspace E']
+run = ['layout tiling', 'move-node-to-workspace Q']
 
 [[on-window-detected]]
 if.app-id = 'com.kapeli.dashdoc'
