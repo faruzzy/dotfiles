@@ -18,6 +18,7 @@ after-startup-command = [
     'exec-and-forget /bin/bash ~/.config/aerospace/sync-spotify-workspace.sh',
     'exec-and-forget /bin/bash ~/.config/aerospace/sync-messaging-workspace.sh',
     'exec-and-forget /bin/bash ~/.config/aerospace/sync-safari-workspace.sh',
+    'exec-and-forget /bin/bash ~/.config/aerospace/sync-teams-call-window.sh',
 ]
 
 enable-normalization-flatten-containers = true
@@ -32,6 +33,7 @@ on-focus-changed = [
     'exec-and-forget /bin/bash ~/.config/aerospace/sync-spotify-workspace.sh',
     'exec-and-forget /bin/bash ~/.config/aerospace/sync-messaging-workspace.sh',
     'exec-and-forget /bin/bash ~/.config/aerospace/sync-safari-workspace.sh',
+    'exec-and-forget /bin/bash ~/.config/aerospace/sync-teams-call-window.sh',
 ]
 automatically-unhide-macos-hidden-apps = false
 
@@ -332,9 +334,17 @@ run = 'move-node-to-workspace D'
 if.app-id = 'com.microsoft.Outlook'
 run = 'move-node-to-workspace E'
 
+# Teams call/meeting windows are titled after the meeting or person, while the
+# main window is "<Section> | <name>". Float calls over Ghostty in T.
+# sync-teams-call-window.sh catches call windows whose title is set after creation.
 [[on-window-detected]]
 if.app-id = 'com.microsoft.teams2'
-run = ['layout tiling', 'move-node-to-workspace Q']
+if.window-title-regex-substring = '^(?!Microsoft Teams$)[^|]+$'
+run = ['layout floating', 'move-node-to-workspace T']
+
+[[on-window-detected]]
+if.app-id = 'com.microsoft.teams2'
+run = ['layout tiling', 'move-node-to-workspace Q', 'exec-and-forget /bin/bash ~/.config/aerospace/sync-teams-call-window.sh']
 
 [[on-window-detected]]
 if.app-id = 'com.kapeli.dashdoc'
