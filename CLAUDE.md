@@ -63,6 +63,8 @@ Prefix is `C-x` (not default `C-b`). Vi-mode copy with pbcopy integration. Plugi
 - tmux-resurrect + tmux-continuum (session persistence)
 - vim-tmux-navigator (seamless vim/tmux pane navigation)
 
+The fzf popup bindings (`M-t` words, ``M-` `` files, `prefix 0` panes) run `zsh -c "source ~/.functions.zsh; <fn>"`. Don't use `zsh -ci`: background jobs started by `.zshrc` (e.g. Atuin's search indexer) make fzf inside `$(...)` fail with `input/output error`.
+
 ### Git (`.gitconfig`)
 
 Uses git-delta as pager with Catppuccin theme (`catppuccin.gitconfig`). Extensive aliases defined in `.gitconfig`.
