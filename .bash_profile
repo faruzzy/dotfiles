@@ -48,4 +48,4 @@ export MANPATH="/opt/local/share/man:$MANPATH"
 
 eval "$(/opt/homebrew/bin/brew shellenv)"
 . "$HOME/.cargo/env"
-. "$HOME/.deno/env"
+[ -s "$HOME/.deno/env" ] && . "$HOME/.deno/env"
