@@ -469,6 +469,41 @@ setup_dotfiles() {
     log_success "Dotfiles setup complete"
 }
 
+# Configure the work git identity used for repos under ~/github/work (see includeIf in .gitconfig)
+setup_git_work_identity() {
+    local work_gitconfig="$HOME/.gitconfig-work"
+    local current_email=""
+
+    if ! ask_yes_no "Is this a work computer?" "n"; then
+        log_info "Skipping work git identity setup"
+        return 0
+    fi
+
+    if [[ -f "$work_gitconfig" ]]; then
+        current_email="$(git config --file "$work_gitconfig" user.email 2>/dev/null || true)"
+    fi
+
+    local work_email=""
+    while [[ -z "$work_email" ]]; do
+        if [[ -n "$current_email" ]]; then
+            read -rp "Work email [$current_email]: " work_email
+            work_email=${work_email:-$current_email}
+        else
+            read -rp "Work email: " work_email
+        fi
+
+        if [[ "$work_email" != *@*.* ]]; then
+            echo "Please enter a valid email address."
+            work_email=""
+        fi
+    done
+
+    git config --file "$work_gitconfig" user.email "$work_email"
+    mkdir -p "$HOME/github/work"
+
+    log_success "Work git identity set to $work_email for repos under ~/github/work"
+}
+
 # Setup AeroSpace
 setup_aerospace() {
     log_info "Setting up AeroSpace..."
@@ -530,6 +565,7 @@ main() {
 
     # Dotfiles setup
     setup_dotfiles
+    setup_git_work_identity
     setup_aerospace
     setup_antidote
     setup_atuin

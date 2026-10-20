@@ -73,6 +73,8 @@ The fzf popup bindings (`M-t` words, ``M-` `` files, `prefix 0` panes) run `zsh 
 
 Uses git-delta as pager with Catppuccin theme (`catppuccin.gitconfig`). Extensive aliases defined in `.gitconfig`.
 
+The default identity is the personal email. Repos under `~/github/work/` pick up the work email through `includeIf "gitdir:~/github/work/"` → `~/.gitconfig-work`. That file is machine-local (not in this repo) and is written by `setup_git_work_identity` in `install.sh` when you answer "yes" to "Is this a work computer?". If the file is missing, git silently ignores the include.
+
 ### AeroSpace (`config/aerospace/aerospace.toml`)
 
 Tiling window manager with one workspace per app (`alt-<key>` to switch, `alt-shift-<key>` to move a window). The config is shared by two setups:

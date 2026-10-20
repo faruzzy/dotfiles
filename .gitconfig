@@ -17,6 +17,10 @@
 [include]
   path = ~/github/dotfiles/catppuccin.gitconfig
 
+# Work repos use the work identity; ~/.gitconfig-work is machine-local (written by install.sh)
+[includeIf "gitdir:~/github/work/"]
+  path = ~/.gitconfig-work
+
 [delta]
   side-by-side = true
   navigate = true
