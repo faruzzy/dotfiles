@@ -19,6 +19,7 @@ after-startup-command = [
     'exec-and-forget /bin/bash ~/.config/aerospace/sync-messaging-workspace.sh',
     'exec-and-forget /bin/bash ~/.config/aerospace/sync-safari-workspace.sh',
     'exec-and-forget /bin/bash ~/.config/aerospace/sync-teams-call-window.sh',
+    'exec-and-forget /bin/bash ~/.config/aerospace/sync-notes-workspace.sh',
 ]
 
 enable-normalization-flatten-containers = true
@@ -34,6 +35,7 @@ on-focus-changed = [
     'exec-and-forget /bin/bash ~/.config/aerospace/sync-messaging-workspace.sh',
     'exec-and-forget /bin/bash ~/.config/aerospace/sync-safari-workspace.sh',
     'exec-and-forget /bin/bash ~/.config/aerospace/sync-teams-call-window.sh',
+    'exec-and-forget /bin/bash ~/.config/aerospace/sync-notes-workspace.sh',
 ]
 automatically-unhide-macos-hidden-apps = false
 
@@ -106,6 +108,7 @@ alt-equal = 'workspace B'
 alt-backslash = 'workspace W'
 alt-quote = 'workspace N'
 alt-period = 'workspace O'
+alt-o = 'workspace O' # Obsidian (same as alt-period)
 alt-e = 'workspace E' # Outlook
 alt-q = 'workspace Q' # Microsoft Teams
 
@@ -124,6 +127,7 @@ alt-shift-equal = ['move-node-to-workspace B', 'workspace B']
 alt-shift-backslash = ['move-node-to-workspace W', 'workspace W']
 alt-shift-quote = ['move-node-to-workspace N', 'workspace N']
 alt-shift-period = ['move-node-to-workspace O', 'workspace O']
+alt-shift-o = ['move-node-to-workspace O', 'workspace O']
 alt-shift-e = ['move-node-to-workspace E', 'workspace E']
 alt-shift-q = ['move-node-to-workspace Q', 'workspace Q']
 
@@ -352,7 +356,7 @@ run = 'move-node-to-workspace H'
 
 [[on-window-detected]]
 if.app-id = 'md.obsidian'
-run = 'move-node-to-workspace O'
+run = ['move-node-to-workspace O', 'exec-and-forget /bin/bash ~/.config/aerospace/sync-notes-workspace.sh']
 
 [[on-window-detected]]
 if.app-id = 'com.brave.Browser'
@@ -372,7 +376,7 @@ run = 'move-node-to-workspace W'
 
 [[on-window-detected]]
 if.app-id = 'com.apple.Notes'
-run = ['move-node-to-workspace O', 'move right']
+run = ['move-node-to-workspace O', 'move right', 'exec-and-forget /bin/bash ~/.config/aerospace/sync-notes-workspace.sh']
 
 [[on-window-detected]]
 if.app-id = 'com.adobe.Acrobat.Pro'

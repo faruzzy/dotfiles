@@ -83,6 +83,8 @@ Tiling window manager with one workspace per app (`alt-<key>` to switch, `alt-sh
 
 Outlook (`E`) and Microsoft Teams (`Q`) sit on the built-in display at work and the right monitor at home (`['built-in', 3]`). Teams' main window (titled `<Section> | <name>`) goes to `Q`; call/meeting windows (titles without `|`) float over Ghostty in `T`, via an `on-window-detected` rule plus `sync-teams-call-window.sh` (run on focus change) for windows whose title is set after creation.
 
+Workspace `O` (`alt-o` / `alt-period`) holds Obsidian and Apple Notes. At work only, `sync-notes-workspace.sh` (run on startup, focus change and window detection) tiles them half and half when both are open, or floats a lone one on the left half. It re-applies only when that open/closed state changes, so manual moves stick.
+
 Workspaces that should land somewhere sensible in both places use a list in `[workspace-to-monitor-force-assignment]`, e.g. `['built-in', 1]` or `[3, 2]` (first connected match wins). Validate with `aerospace reload-config`. Inside `run` command strings, avoid backslashes and quote monitor names containing spaces (e.g. `"move-node-to-monitor 'DELL U2715H [(]3[)]'"`) or the whole config fails to load.
 
 ## Key Conventions
