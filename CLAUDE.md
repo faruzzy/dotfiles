@@ -58,6 +58,8 @@ Lua-based config using **lazy.nvim** for plugin management. Entry point: `nvim/i
 
 Key subsystems: mason.nvim (LSP installer), blink.cmp (completion), copilot.vim (AI inline suggestions, lazy-loaded on InsertEnter / `:Copilot`), conform.nvim (formatting), tsgo.nvim (owns the tsgo TypeScript LSP setup — binary resolution incl. mise, root detection (bounded only by `.git`, so sub-packages with their own `package.json` still use a parent tsconfig), settings, import actions, object-property completion detection used by blink; uses `~/github/tsgo.nvim` if checked out, else GitHub), fzf-lua (fuzzy finding), treesitter (syntax), auto-save.nvim (auto-save, disabled for tsx/jsx to avoid conform format churn).
 
+LSP servers are configured with native `vim.lsp.config` (no nvim-lspconfig), so anything lspconfig would normally inject must be provided in `lua/lsp/servers/*.lua`. For example, `eslint.lua` sets `settings.workspaceFolder` in `before_init` (without it every diagnostic request fails) and defines `:EslintFixAll` itself. `root_markers` lists are priority-ordered, not nearest-wins: use nested groups, and keep project-level markers ahead of the global `~/.eslintrc` fallback.
+
 ### Tmux (`.tmux.conf`)
 
 Prefix is `C-x` (not default `C-b`). Vi-mode copy with pbcopy integration. Plugins via tpm:
