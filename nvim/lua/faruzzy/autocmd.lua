@@ -195,11 +195,15 @@ augroup('lsp_hover_border', {
   },
 })
 
--- Cursorline only in focused window
+-- Cursorline only in focused window (neo-tree keeps it, so the followed file stays highlighted)
 augroup('cursorline_focus', {
   {
     'WinLeave',
-    callback = function() vim.opt_local.cursorline = false end,
+    callback = function()
+      if vim.bo.filetype ~= 'neo-tree' then
+        vim.opt_local.cursorline = false
+      end
+    end,
   },
   {
     'WinEnter',
