@@ -10,6 +10,9 @@ return {
   ft = ts_filetypes,
   -- LSP setup, cmd resolution, root detection and inlay hint settings come from the plugin defaults
   opts = {
+    -- Only a repo root bounds the tsconfig search. The default also stops at package.json,
+    -- which drops tsgo for sub-packages that rely on a parent tsconfig
+    fallback_root_markers = { '.git' },
     keymaps = {
       enable = true,
       organize_imports = '<leader>io',
