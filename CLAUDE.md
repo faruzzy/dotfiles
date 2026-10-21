@@ -71,7 +71,9 @@ The fzf popup bindings (`M-t` words, ``M-` `` files, `prefix 0` panes) run `zsh 
 
 ### Git (`.gitconfig`)
 
-Uses git-delta as pager with Catppuccin theme (`catppuccin.gitconfig`). Extensive aliases defined in `.gitconfig`.
+Uses git-delta as pager with Catppuccin theme (`catppuccin.gitconfig`). Extensive aliases defined in `.gitconfig`. `git fzf` is a thin alias that sources `.functions.zsh` and runs `gfzf`; edit the commit browser there, not in `.gitconfig`.
+
+fzf-git (`fzf-git.sh`, `Ctrl-G` + key pickers like `^G^B` branches, `^G^H` hashes) is sourced from the repo path by `.functions.zsh`; it is not symlinked into `$HOME`.
 
 The default identity is the personal email. Repos under `~/github/work/` pick up the work email through `includeIf "gitdir:~/github/work/"` → `~/.gitconfig-work`. That file is machine-local (not in this repo) and is written by `setup_git_work_identity` in `install.sh` when you answer "yes" to "Is this a work computer?". If the file is missing, git silently ignores the include.
 
@@ -91,7 +93,7 @@ Workspaces that should land somewhere sensible in both places use a list in `[wo
 
 - **Theme**: Catppuccin Mocha everywhere (terminal, neovim, tmux, git-delta, bat, starship)
 - **Fonts**: Nerd Fonts (FiraCode, JetBrains Mono)
-- **Commit style**: Conventional commits (`feat:`, `fix:`, `perf:`, `chore:`, `refactor:`). Never include `Co-Authored-By` trailers.
+- **Commit style**: Conventional commits (`feat:`, `fix:`, `perf:`, `chore:`, `refactor:`). Never include `Co-Authored-By` trailers. With succinct details
 - **Commit grouping**: Group related commits where it makes sense
 - **Branch naming**: `feature/description`, `master` is the main branch
 - **Philosophy**: Vim keybindings everywhere (shell, tmux, editor, IDE)
