@@ -585,8 +585,8 @@ RG() {
 
 # ZSH: Key bindings (converted from bash bind commands)
 # Note: Make sure you have fzf-git.sh sourced for these to work
-if [[ -f ~/fzf-git.sh ]]; then
-  source ~/fzf-git.sh
+if [[ -f ~/github/dotfiles/fzf-git.sh ]]; then
+  source ~/github/dotfiles/fzf-git.sh
 fi
 
 # ZSH: Widget functions for key bindings
