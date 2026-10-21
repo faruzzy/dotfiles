@@ -1,65 +1,5 @@
 #!/usr/bin/env zsh
 
-# Github pull request
-function ghpr() {
-  local sed_cmd=$( [ "$(uname)" = Darwin ] && echo 'sed -E' || echo 'sed -r' )
-  local PR=${1}
-  local REPO_SLUG="$(git config --get remote.upstream.url \
-        | sed 's/^.*github.com[\/:]\(.*\)\.git/\1/')"
-  local req_url="https://api.github.com/repos/${REPO_SLUG}/pulls/${PR}"
-  local PR_TITLE="$(curl -Ss "$req_url" \
-        | grep '"title"' \
-        | $sed_cmd 's/.*(\[(RFC|RDY)\]) *(.*)../\3/')"
-
-  [ -z "$PR_TITLE" ] && { printf "error. request: $req_url\n       response: $(curl -Ss $req_url)\n"; return 1; }
-
-  git fetch --all --prune \
-    && git checkout master \
-    && git stash save autosave-$(date +%Y%m%d_%H%M%S) \
-    && git reset --hard upstream/master \
-    && git merge --no-commit --no-ff -m "Merge #${PR} '${PR_TITLE}'" refs/pull/upstream/${PR}
-}
-
-function ghrebase1() {
-  local PR=${1}
-  local sed_cmd=$( [ "$(uname)" = Darwin ] && echo 'sed -E' || echo 'sed -r' )
-
-  #FOO=bar nvim -c 'au VimEnter * Gcommit --amend' -s <(echo 'Afoo')
-  git fetch --all --prune \
-    && git checkout --quiet refs/pull/upstream/${PR} \
-    && git rebase upstream/master \
-    && git checkout master \
-    && git stash save autosave-$(date +%Y%m%d_%H%M%S) \
-    && git reset --hard upstream/master \
-    && git merge --ff-only - \
-    && git commit --amend -m "$(git log -1 --pretty=format:"%B" \
-              | $sed_cmd "1 s/^(.*)\$/\\1 #${PR}/g")" \
-    && git log --oneline --graph --decorate -n 5
-}
-
-# fshow - git commit browser
-# Thanks to https://gist.github.com/akatrevorjay/9fc061e8371529c4007689a696d33c62
-fshow() {
-	local g=(
-		git log
-		--graph
-		--format='%C(auto)%h%d %s %C(white)%C(bold)%cr'
-		--color=always
-		"$@"
-	)
-
-	local fzf=(
-		fzf
-		--ansi
-		--reverse
-		--tiebreak=index
-		--no-sort
-		--bind=ctrl-s:toggle-sort
-		--preview 'f() { set -- $(echo -- "$@" | grep -o "[a-f0-9]\{7\}"); [ $# -eq 0 ] || git show --color=always $1; }; f {}'
-	)
-	$g | $fzf
-}
-
 ## git-fzf - Fancy git-browser
 # Thanks to https://git.tsundere.moe/Frederick888/frederick-settings/blob/master/.gitconfig
 # git_fzf - Interactive git log browser with fzf
@@ -313,14 +253,6 @@ function fstash() {
   done
 }
 
-# fcs - get git commit sha
-# example usage: git rebase -i `fcs`
-function fcs() {
-  local commits commit
-  commits=$(git log --color=always --pretty=oneline --abbrev-commit --reverse) &&
-  commit=$(echo "$commits" | fzf --tac +s +m -e --ansi --reverse) &&
-  echo -n $(echo "$commit" | sed "s/ .*//")
-}
 
 # fco - checkout git branch/tag
 function fco() {
@@ -334,25 +266,6 @@ function fco() {
     (echo "$tags"; echo "$branches") |
     fzf-tmux -l40 -- --no-hscroll --ansi +m -d "\t" -n 2 -1 -q "$*") || return
   git checkout $(echo "$target" | awk '{print $2}')
-}
-
-# fbr - checkout git branch
-function fbr() {
-  local branches branch
-  branches=$(git branch) &&
-  branch=$(echo "$branches" | fzf-tmux -d 15 +m) &&
-  git checkout $(echo "$branch" | sed "s/.* //")
-}
-
-# ftags - search ctags
-function ftags() {
-  local line
-  [ -e tags ] &&
-  line=$(
-    awk 'BEGIN { FS="\t" } !/^!/ {print toupper($4)"\t"$1"\t"$2"\t"$3}' tags |
-    cut -c1-$COLUMNS | fzf --nth=2 --tiebreak=begin
-  ) && $EDITOR $(cut -f3 <<< "$line") -c "set nocst" \
-    -c "silent tag $(cut -f2 <<< "$line")"
 }
 
 git-fixup() {
