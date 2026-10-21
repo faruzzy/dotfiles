@@ -268,42 +268,37 @@ function fco() {
   git checkout $(echo "$target" | awk '{print $2}')
 }
 
+# git-fixup - pick a commit on this branch, commit staged changes as its fixup and autosquash
+# Extra args go to `git commit` (e.g. `git-fixup -a`)
 git-fixup() {
-  # Helper: Browse commits with fzf
-  local git-commit-browser() {
-    git log --graph --color=always --format="%C(auto)%h%d %s %C(black)%C(bold)%cr" |
+  git rev-parse --git-dir >/dev/null 2>&1 || { echo "Not in a git repository."; return 1; }
+
+  # Limit the picker to commits on this branch; fall back to full history on the default branch
+  local base range=()
+  base=$(git merge-base HEAD origin/HEAD 2>/dev/null)
+  [[ -n "$base" && "$base" != "$(git rev-parse HEAD)" ]] && range=("$base..HEAD")
+
+  local commit
+  commit=$(
+    git log --graph --color=always --format="%C(auto)%h%d %s %C(black)%C(bold)%cr" "${range[@]}" |
       fzf --ansi --no-sort --reverse --tiebreak=index \
         --preview-window=right:60% \
-        --preview \
-        'f() { \
-            set -- $(echo -- "$@" | grep -o "[a-f0-9]\{7\}"); \
-            [ $# -eq 0 ] || git show --color=always --stat --patch $1 ; \
-          }; \
-          f {}' \
-        --bind "j:down,k:up,alt-j:preview-down,alt-k:preview-up,ctrl-f:preview-page-down,ctrl-b:preview-page-up,pgdn:preview-page-down,pgup:preview-page-up,q:abort"
-  }
+        --preview 'git show --color=always --stat --patch $(grep -oE "[a-f0-9]{7,}" <<< {} | head -1)' \
+        --bind "j:down,k:up,alt-j:preview-down,alt-k:preview-up,ctrl-f:preview-page-down,ctrl-b:preview-page-up,pgdn:preview-page-down,pgup:preview-page-up,q:abort" |
+      grep -oE '[a-f0-9]{7,}' | head -1
+  )
 
-  # Helper: Find branch ancestor
-  local git-branch-ancestor() {
-    branch_origin=$(git symbolic-ref refs/remotes/origin/HEAD | cut -d'/' -f3)
-    main_branch=$(git symbolic-ref refs/remotes/origin/HEAD | cut -d'/' -f4-)
-    diff -u1 --color=never \
-      <(git rev-list --first-parent "${1:-$branch_origin/$main_branch}") \
-      <(git rev-list --first-parent "${2:-HEAD}") | sed -ne 's/^ //p'
-  }
-
-  # Main logic
-  FIXUP_COMMIT=$(git-commit-browser $(git-branch-ancestor)..HEAD | cut -d' ' -f2)
-
-  if [ -n "$FIXUP_COMMIT" ]; then
-    git commit --fixup "$FIXUP_COMMIT" "$@"
-    git stash
-    git rebase --autosquash "${FIXUP_COMMIT}~1"
-    git stash pop
-  else
-    echo "No fixup commit provided."
+  if [[ -z "$commit" ]]; then
+    echo "No fixup commit selected."
     return 1
   fi
+
+  local onto="${commit}~1"
+  git rev-parse --verify --quiet "$onto" >/dev/null || onto="--root"
+
+  # --autostash only stashes when there are changes, and leaves them stashed if the rebase stops on a conflict
+  git commit --fixup "$commit" "$@" &&
+    GIT_SEQUENCE_EDITOR=: git rebase -i --autosquash --autostash "$onto"
 }
 
 # dd - cd to selected directory
