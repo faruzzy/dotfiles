@@ -95,6 +95,9 @@ local function get_custom_highlights(colors)
     DiagnosticVirtualTextWarn = { fg = colors.yellow, bg = utils.darken(colors.yellow, 0.1, colors.base) },
     DiagnosticVirtualTextInfo = { fg = colors.sky, bg = utils.darken(colors.sky, 0.1, colors.base) },
     DiagnosticVirtualTextHint = { fg = colors.teal, bg = utils.darken(colors.teal, 0.1, colors.base) },
+    -- Hints are underlined only to dim unused code (see underline in settings.lua)
+    DiagnosticUnderlineHint = { style = {} },
+    DiagnosticUnnecessary = { fg = colors.overlay1 },
 
     LspInlayHint = { fg = colors.overlay0, style = { 'italic' } },
 

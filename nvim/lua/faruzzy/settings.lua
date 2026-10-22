@@ -53,9 +53,26 @@ opt.fillchars = { eob = ' ', vert = '▏' } -- Clean fill characters
 vim.diagnostic.config({
   severity_sort = true,
   float = { border = 'rounded', source = 'if_many' },
-  underline = { severity = { min = vim.diagnostic.severity.WARN } },
+  -- HINT is included so unused/deprecated code (tagged hints) gets dimmed via
+  -- DiagnosticUnnecessary; plain hints have no underline style in catppuccin.lua.
+  underline = {
+    severity = {
+      vim.diagnostic.severity.ERROR,
+      vim.diagnostic.severity.WARN,
+      vim.diagnostic.severity.HINT,
+    },
+  },
 
-  virtual_text = { prefix = '●', source = 'if_many' },
+  virtual_text = {
+    prefix = '●',
+    source = 'if_many',
+    -- Unused code is dimmed instead; skip the "declared but never used" text
+    format = function(diagnostic)
+      local tags = diagnostic._tags
+      if tags and (tags.unnecessary or tags.deprecated) then return nil end
+      return diagnostic.message
+    end,
+  },
   virtual_lines = false,
 
   jump = {
