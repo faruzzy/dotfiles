@@ -45,6 +45,10 @@ Git completion uses zsh's built-in `_git` (wrapped by `_git_with_file_fallback` 
 
 `.zsh_plugins.zsh` is a generated file — edit `.zsh_plugins.txt` instead, then restart the shell to regenerate.
 
+### Scripts (`bin/`)
+
+On `PATH` via `.zshenv`. `bin/claude.fzf` is a relative symlink to `../../everything.fzf/claude.fzf`, so it needs `github.com/faruzzy/everything.fzf` cloned next to this repo (`~/github/everything.fzf`). Keep such links relative: the username differs between the personal and work Macs.
+
 ### Neovim (`nvim/`)
 
 Lua-based config using **lazy.nvim** for plugin management. Entry point: `nvim/init.lua`.
