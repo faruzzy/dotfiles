@@ -39,7 +39,7 @@ return {
         end,
         offsets = {
           {
-            filetype = 'NvimTree',
+            filetype = 'neo-tree',
             text = 'File Explorer',
             highlight = 'Directory',
             separator = true,

@@ -7,7 +7,7 @@ local ft_extension = {
   sections = { lualine_a = { components.ft_upper } },
   filetypes = {
     'DiffviewFiles',
-    'NvimTree',
+    'neo-tree',
     'Outline',
     'Trouble',
     'aerial',

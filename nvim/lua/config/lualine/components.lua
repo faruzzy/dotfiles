@@ -167,7 +167,7 @@ end
 M.filetype_names = {
   DiffviewFiles = 'Diff View',
   NeogitStatus = 'Neogit',
-  NvimTree = 'Nvim Tree',
+  ['neo-tree'] = 'Neo-tree',
   Outline = 'Symbols Outline',
   aerial = 'Aerial',
   gitcommit = 'Git Commit',
