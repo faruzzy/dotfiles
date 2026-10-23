@@ -41,11 +41,6 @@ return {
         if client.server_capabilities.workspace and client.server_capabilities.workspace.fileOperations then
           client.server_capabilities.workspace.fileOperations.willRename = nil
         end
-
-        local bufnr = args.buf
-        local bsk = require('utils').buffer_map(bufnr)
-
-        bsk('n', 'gR', function() require('lsp.enclosing_references').find() end, { desc = 'Find references to enclosing function' })
       end,
     })
   end,
