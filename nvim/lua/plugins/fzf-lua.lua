@@ -204,7 +204,7 @@ return {
     opts = {
       winopts = {
         backdrop = 100,
-        border = vim.g.border_style,
+        border = MY_CONFIG.border_style,
         preview = { border = 'border-double', wrap = 'wrap', flip_columns = 160 },
       },
       fzf_opts = {
