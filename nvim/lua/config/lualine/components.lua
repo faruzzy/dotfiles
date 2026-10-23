@@ -106,16 +106,32 @@ M.spell_indicator = {
   color = { fg = '#7aa2f7' },
 }
 
--- Tmux zoom indicator
+-- Tmux zoom indicator. The flag is cached and re-read asynchronously when the
+-- pane is resized (zoom/unzoom resizes it) or regains focus, not on every redraw.
+local tmux_zoomed = false
+if vim.env.TMUX then
+  -- Target this Neovim's pane, not whichever pane the client is focused on
+  local cmd = vim.env.TMUX_PANE and { 'tmux', 'display-message', '-p', '-t', vim.env.TMUX_PANE, '#{window_zoomed_flag}' }
+    or { 'tmux', 'display-message', '-p', '#{window_zoomed_flag}' }
+  local function update_tmux_zoomed()
+    vim.system(cmd, { text = true }, function(out)
+      local zoomed = vim.trim(out.stdout or '') == '1'
+      if zoomed ~= tmux_zoomed then
+        tmux_zoomed = zoomed
+        vim.schedule(function() require('lualine').refresh() end)
+      end
+    end)
+  end
+  vim.api.nvim_create_autocmd({ 'VimResized', 'FocusGained' }, {
+    group = vim.api.nvim_create_augroup('lualine_tmux_zoomed', { clear = true }),
+    callback = update_tmux_zoomed,
+  })
+  update_tmux_zoomed()
+end
+
 M.tmux_zoomed = {
   function()
-    if vim.env.TMUX then
-      local zoomed = vim.fn.system("tmux display-message -p '#{window_zoomed_flag}'")
-      if vim.trim(zoomed) == '1' then
-        return 'ZOOMED'
-      end
-    end
-    return ''
+    return tmux_zoomed and 'ZOOMED' or ''
   end,
   cond = function()
     return vim.env.TMUX ~= nil
