@@ -60,7 +60,7 @@ Key subsystems: mason.nvim (LSP installer), blink.cmp (completion), copilot.vim 
 
 LSP servers are configured with native `vim.lsp.config` (no nvim-lspconfig), so anything lspconfig would normally inject must be provided in `lua/lsp/servers/*.lua`. For example, `eslint.lua` sets `settings.workspaceFolder` in `before_init` (without it every diagnostic request fails) and defines `:EslintFixAll` itself. `root_markers` lists are priority-ordered, not nearest-wins: use nested groups, and keep project-level markers ahead of the global `~/.eslintrc` fallback.
 
-Diagnostics (`settings.lua`): unused/deprecated code (LSP hints tagged `unnecessary`/`deprecated`) is dimmed via `DiagnosticUnnecessary` instead of shown as virtual text; underlines include HINT for that reason, and `DiagnosticUnderlineHint` has no underline style (`catppuccin_highlights.lua`).
+Diagnostics (`settings.lua`): unused/deprecated code (LSP hints tagged `unnecessary`/`deprecated`) is dimmed via `DiagnosticUnnecessary` instead of shown as virtual text (higher severities, e.g. `noUnusedLocals` errors, keep their message); underlines include HINT for that reason, and `DiagnosticUnderlineHint` has no underline style (`catppuccin_highlights.lua`).
 
 ### Tmux (`.tmux.conf`)
 

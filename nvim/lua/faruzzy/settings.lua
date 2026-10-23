@@ -66,10 +66,13 @@ vim.diagnostic.config({
   virtual_text = {
     prefix = '●',
     source = 'if_many',
-    -- Unused code is dimmed instead; skip the "declared but never used" text
+    -- Unused code is dimmed instead; skip the "declared but never used" text.
+    -- Only for hints: with e.g. noUnusedLocals it is an error and must stay visible.
     format = function(diagnostic)
       local tags = diagnostic._tags
-      if tags and (tags.unnecessary or tags.deprecated) then return nil end
+      if diagnostic.severity == vim.diagnostic.severity.HINT and tags and (tags.unnecessary or tags.deprecated) then
+        return nil
+      end
       return diagnostic.message
     end,
   },
