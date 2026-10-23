@@ -59,7 +59,7 @@ return function(client, bufnr)
 
           local params = vim.lsp.util.make_range_params(0, client.offset_encoding)
           ---@diagnostic disable-next-line: inject-field
-          params.context = { diagnostics = vim.diagnostic.get(bufnr, { lnum = line }) }
+          params.context = { diagnostics = vim.lsp.diagnostic.from(vim.diagnostic.get(bufnr, { lnum = line })) }
 
           vim.lsp.buf_request_all(bufnr, 'textDocument/codeAction', params, function(response)
             vim.api.nvim_buf_clear_namespace(bufnr, lightbulb_ns, 0, -1)
