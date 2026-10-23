@@ -20,7 +20,6 @@ local servers = {
     filetypes = { 'go', 'gomod', 'gowork', 'gotmpl' },
     root_markers = { 'go.work', 'go.mod', '.git' },
   },
-  -- graphql = require('lsp.servers.graphql'),
   html = require('lsp.servers.html'),
   jsonls = require('lsp.servers.jsonls'),
   lua_ls = require('lsp.servers.lua_ls'),
