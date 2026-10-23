@@ -3,6 +3,8 @@
 
 return {
   'nvim-pack/nvim-spectre',
+  cmd = 'Spectre',
+  keys = { '<leader>S', { '<leader>srw', mode = { 'n', 'v' } }, '<leader>sf' },
   dependencies = {
     'nvim-lua/plenary.nvim',
   },

@@ -52,7 +52,7 @@ Lua-based config using **lazy.nvim** for plugin management. Entry point: `nvim/i
 - `lua/faruzzy/settings.lua` — vim options
 - `lua/faruzzy/remap.lua` — keybindings (leader = comma)
 - `lua/faruzzy/autocmd.lua` — autocommands (cursorline only in the focused window, except neo-tree, so the followed file stays highlighted)
-- `lua/plugins/` — ~45 lazy-loaded plugin specs
+- `lua/plugins/` — ~45 lazy-loaded plugin specs. Every spec should have a `keys`/`cmd`/`event`/`ft` trigger; plugins that set up `FileType` autocmds (nvim-ts-autotag, endwise) load on `BufReadPre`/`BufNewFile` so they catch the first buffer
 - `lua/config/theme.lua` — Catppuccin Mocha theme with custom highlights
 - `lua/lsp/` — per-language LSP server configurations
 

@@ -1,5 +1,6 @@
 return {
   'brenoprata10/nvim-highlight-colors',
+  event = { 'BufReadPost', 'BufNewFile' },
   opts = function()
     return {
       custom_colors = require('utils').map_table_to_list(function(color, name)

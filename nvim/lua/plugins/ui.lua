@@ -1,7 +1,6 @@
 return {
   {
     'psliwka/vim-smoothie',
-    lazy = false,
     keys = { '<C-d>', '<C-u>', '<C-f>', '<C-b>' },
     desc = 'Smooth scrolling',
   },

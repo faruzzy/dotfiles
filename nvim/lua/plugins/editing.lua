@@ -54,6 +54,7 @@ return {
 
   {
     'andythigpen/nvim-coverage',
+    cmd = { 'Coverage', 'CoverageLoad', 'CoverageLoadLcov', 'CoverageShow', 'CoverageHide', 'CoverageToggle', 'CoverageClear', 'CoverageSummary' },
     version = '*',
     config = function()
       require('coverage').setup({
@@ -133,7 +134,7 @@ return {
 
   {
     'moll/vim-bbye',
-    lazy = false,
+    cmd = { 'Bdelete', 'Bwipeout' },
     keys = {
       { '<Leader>bd', '<cmd>Bdelete<cr>', desc = 'Delete buffer (preserve layout)' },
       { '<Leader>bD', '<cmd>Bdelete!<cr>', desc = 'Delete buffer (force)' },

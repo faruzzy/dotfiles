@@ -77,6 +77,7 @@ return {
     -- Textobjects: select, move, swap
     'nvim-treesitter/nvim-treesitter-textobjects',
     branch = 'main',
+    event = { 'BufReadPost', 'BufNewFile' },
     config = function()
       require('nvim-treesitter-textobjects').setup {
         select = {
@@ -117,6 +118,7 @@ return {
   -- Context (shows function/class context at top of buffer)
   {
     'nvim-treesitter/nvim-treesitter-context',
+    event = { 'BufReadPost', 'BufNewFile' },
     config = function()
       require('treesitter-context').setup({ enable = true })
     end,
@@ -125,6 +127,8 @@ return {
   -- Autoclose and autorename HTML tags
   {
     'windwp/nvim-ts-autotag',
+    -- Before FileType, so the tsx > override below applies to the first buffer
+    event = { 'BufReadPre', 'BufNewFile' },
     config = function()
       require('nvim-ts-autotag').setup({})
 
@@ -160,5 +164,6 @@ return {
   },
 
   -- Auto-end structures (do/end, if/end, etc.)
-  { 'RRethy/nvim-treesitter-endwise' },
+  -- Before FileType, which is when endwise attaches to a buffer
+  { 'RRethy/nvim-treesitter-endwise', event = { 'BufReadPre', 'BufNewFile' } },
 }

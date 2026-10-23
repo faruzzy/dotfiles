@@ -2,6 +2,7 @@
 ---@type table
 return {
   'chrisgrieser/nvim-early-retirement',
+  event = 'VeryLazy',
   config = function()
     ---@diagnostic disable-next-line: missing-fields
     require('early-retirement').setup({})

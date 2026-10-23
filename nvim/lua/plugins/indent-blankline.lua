@@ -1,6 +1,7 @@
 -- adds indentation guides to Neovim
 return {
   'lukas-reineke/indent-blankline.nvim',
+  event = { 'BufReadPost', 'BufNewFile' },
   config = function()
     -- local hooks = require('ibl.hooks')
     -- local hi = Config.common.hl.hi

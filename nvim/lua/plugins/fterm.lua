@@ -1,5 +1,6 @@
 return {
   'numToStr/FTerm.nvim',
+  keys = { { '<A-i>', mode = { 'n', 't' } } },
   -- name = 'Fterm',
   config = function ()
     require'FTerm'.setup({

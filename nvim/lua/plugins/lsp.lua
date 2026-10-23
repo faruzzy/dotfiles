@@ -7,6 +7,8 @@
 
 return {
   'williamboman/mason.nvim',
+  event = { 'BufReadPre', 'BufNewFile' },
+  cmd = 'Mason',
   dependencies = {
     'WhoIsSethDaniel/mason-tool-installer.nvim',
 

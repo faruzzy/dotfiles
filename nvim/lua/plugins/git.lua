@@ -51,7 +51,7 @@ return {
 
   {
     'wintermute-cell/gitignore.nvim',
-    dependencies = { 'nvim-telescope/telescope.nvim' },
+    dependencies = { { 'nvim-telescope/telescope.nvim', lazy = true } },
     cmd = 'Gitignore',
     keys = {
       { '<Leader>gi', '<cmd>Gitignore<cr>', desc = 'Generate .gitignore' },

@@ -1,6 +1,8 @@
 -- Distraction-free writing for Neovim
 local M = {
   'Pocco81/true-zen.nvim',
+  cmd = { 'TZAtaraxis', 'TZFocus', 'TZMinimalist', 'TZNarrow' },
+  keys = { '<leader>za', '<leader>zf', { '<leader>zn', mode = { 'n', 'v' } } },
 }
 
 function M.config()
