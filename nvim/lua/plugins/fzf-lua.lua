@@ -56,7 +56,8 @@ end
 
 local function single_file_in_cwd()
   local commands = {
-    { 'fd', '--color=never', '--type', 'f', '--type', 'l', '--hidden', '--exclude', '.git', '--exclude', '.jj' },
+    -- Two results are enough to know there isn't exactly one; stop there in big repos
+    { 'fd', '--color=never', '--type', 'f', '--type', 'l', '--hidden', '--exclude', '.git', '--exclude', '.jj', '--max-results', '2' },
     { 'rg', '--color=never', '--files', '--hidden', '-g', '!.git', '-g', '!.jj' },
   }
 
