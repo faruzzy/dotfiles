@@ -75,7 +75,6 @@ export JAVA_HOME=$(/usr/libexec/java_home -v 21 2>/dev/null || /usr/libexec/java
 # PATH Configuration
 # Clean and organize PATH - remove duplicates and ensure proper ordering
 path_dirs=(
-    "$HOME/.local/share/bob/nvim-bin"
     "$HOME/.local/bin"
     "$HOME/bin"
     "$HOME/github/dotfiles/bin"

@@ -56,7 +56,7 @@ brew "atuin"
 
 # --- Editors and Neovim tooling ---
 brew "vim"
-brew "bob"
+brew "neovim"
 brew "tree-sitter"
 brew "tree-sitter-cli"
 
