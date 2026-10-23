@@ -1,8 +1,8 @@
 -- Soothing pastel theme for (Neo)vim
 return {
   'catppuccin/nvim',
-  lazy = true,
-  event = { 'VimEnter', 'ColorschemePre' }, -- Load on startup or colorscheme change
+  -- Load before other plugins: lualine's 'auto' theme reads the highlights when it is set up
+  lazy = false,
   name = 'catppuccin',
   priority = 1000,
   config = function()
