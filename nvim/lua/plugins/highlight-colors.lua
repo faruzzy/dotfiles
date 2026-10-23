@@ -7,7 +7,7 @@ return {
         return { label = 'colors.' .. name, color = color }
       end, require('colors').get_colors()),
       enable_named_colors = false,
-      excluded_filetypes = { 'lazy' },
+      exclude_filetypes = { 'lazy' },
     }
   end,
 }

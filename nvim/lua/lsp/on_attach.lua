@@ -31,6 +31,10 @@ return function(client, bufnr)
 
   enable_inlay_hints(client, bufnr)
 
+  -- nvim-highlight-colors already requests LSP document colors (and also covers
+  -- hex/rgb without a server), so the built-in 0.12 default would just duplicate it
+  vim.lsp.document_color.enable(false, { bufnr = bufnr })
+
   if client:supports_method('textDocument/codeAction', bufnr) then
     local last_lightbulb_line = -1
     local last_lightbulb_tick = -1
