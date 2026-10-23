@@ -94,10 +94,19 @@ return {
       sanitize_watched_file_registrations(result)
 
       local ret = register_capability(err, result, ctx, config)
-      local client = vim.lsp.get_client_by_id(ctx.client_id)
+      -- Enable hints for servers that register inlayHint dynamically after attach,
+      -- but leave buffers where they were turned off with <Leader>ti
+      local registers_inlay_hint = vim.iter(result and result.registrations or {}):any(function(reg)
+        return reg.method == vim.lsp.protocol.Methods.textDocument_inlayHint
+      end)
+      local client = registers_inlay_hint and vim.lsp.get_client_by_id(ctx.client_id)
       if client then
         for bufnr in pairs(client.attached_buffers) do
-          if vim.api.nvim_buf_is_valid(bufnr) and client:supports_method(vim.lsp.protocol.Methods.textDocument_inlayHint, bufnr) then
+          if
+            vim.api.nvim_buf_is_valid(bufnr)
+            and not vim.b[bufnr].inlay_hints_off
+            and client:supports_method(vim.lsp.protocol.Methods.textDocument_inlayHint, bufnr)
+          then
             pcall(vim.lsp.inlay_hint.enable, true, { bufnr = bufnr })
           end
         end

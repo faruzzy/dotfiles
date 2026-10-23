@@ -132,6 +132,8 @@ map('n', '<Leader>ti', function()
   if not ok then
     vim.notify('Failed to toggle inlay hints: ' .. err, vim.log.levels.ERROR)
   else
+    -- Remembered so LSP re-registrations don't turn them back on (lua/plugins/lsp.lua)
+    vim.b.inlay_hints_off = inlay_state
     vim.notify('Inlay hints ' .. (not inlay_state and 'enabled' or 'disabled'))
   end
 end, { desc = 'Toggle Inlay Hints' })
