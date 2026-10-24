@@ -1,6 +1,7 @@
+-- Neovim/plugin types for lua_ls. Adds $VIMRUNTIME and any required plugin to the
+-- workspace library on demand, so lua_ls.lua doesn't list libraries itself.
 ---@type LazySpec
 return {
-  { 'Bilal2453/luvit-meta', lazy = true },
   ---@module 'lazydev'
   ---@type lazydev.Config
   {
@@ -9,7 +10,7 @@ return {
     opts = {
       library = {
         'lazy.nvim',
-        'luvit-meta/library/uv.lua',
+        { path = '${3rd}/luv/library', words = { 'vim%.uv' } },
         'catppuccin',
         'mason.nvim',
         'mini.icons',

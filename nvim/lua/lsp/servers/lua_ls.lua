@@ -16,12 +16,9 @@ return {
         paramName = 'All',
         paramType = false,
       },
+      -- Libraries come from lazydev (lua/plugins/lazydev.lua)
       workspace = {
         checkThirdParty = false,
-        library = {
-          vim.fn.expand('$VIMRUNTIME/lua'),
-          vim.fn.stdpath('config') .. '/lua',
-        },
         maxPreload = 1000,
       },
       runtime = {
