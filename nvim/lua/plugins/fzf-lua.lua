@@ -156,17 +156,9 @@ local function smart_references_fzf()
           and math.abs((item.col or 1) - current_col - 1) <= 1
         )
 
-        if not is_current_position then
-          -- Skip import lines
-          local line = item.text or ''
-          if
-            not line:match('^%s*import%s')
-            and not line:match('^%s*export%s')
-            and not line:match('^%s*from%s')
-            and not line:match('^%s*type%s.*=')
-          then
-            table.insert(filtered_items, item)
-          end
+        -- Skip imports/re-exports, but keep usages like `export const x = useThing()`
+        if not is_current_position and not require('lsp.enclosing_references').is_import_reference(item) then
+          table.insert(filtered_items, item)
         end
       end
 

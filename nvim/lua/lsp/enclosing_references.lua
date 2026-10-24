@@ -42,9 +42,16 @@ local function item_lines(item, start_lnum, end_lnum)
   return {}
 end
 
-local function is_import_reference(item)
+-- One name in a multi-line import list: `foo,`, `foo as bar,`, `type Foo,`.
+-- (Lua patterns can't make a group optional, hence the separate matches.)
+local function is_import_specifier(line)
+  line = line:gsub('^%s*type%s+', '')
+  return line:match('^%s*[%w_$]+%s*,?%s*$') or line:match('^%s*[%w_$]+%s+as%s+[%w_$]+%s*,?%s*$')
+end
+
+---Whether a reference is only an import/re-export of the symbol, not a usage
+function M.is_import_reference(item)
   local line = item_line(item)
-  local import_specifier_pattern = '^%s*[%w_$]+%s*(as%s+[%w_$]+)?%s*,?%s*$'
 
   if
     line:match('^%s*import%s')
@@ -55,7 +62,7 @@ local function is_import_reference(item)
     return true
   end
 
-  if not line:match(import_specifier_pattern) then return false end
+  if not is_import_specifier(line) then return false end
 
   local start_lnum = math.max(1, item.lnum - 20)
   local end_lnum = item.lnum + 20
@@ -71,8 +78,7 @@ local function is_import_reference(item)
       break
     end
 
-    local is_import_specifier = candidate:match(import_specifier_pattern)
-    if candidate:match(';') or (candidate:match('^%s*%S') and not is_import_specifier) then break end
+    if candidate:match(';') or (candidate:match('^%s*%S') and not is_import_specifier(candidate)) then break end
   end
 
   for i = relative_lnum, #lines do
@@ -146,7 +152,7 @@ function M.find()
             local filtered = {}
             for _, item in ipairs(options.items) do
               local is_definition = item_path(item) == current_file and item.lnum == row + 1
-              if not is_definition and not is_import_reference(item) then table.insert(filtered, item) end
+              if not is_definition and not M.is_import_reference(item) then table.insert(filtered, item) end
             end
 
             if #filtered == 0 then
