@@ -42,7 +42,6 @@ return {
         range_args = false,
       },
     },
-    log_level = vim.log.levels.TRACE,
     format_on_save = function(bufnr)
       if vim.b[bufnr].disable_autoformat then return end
       if vim.fs.basename(vim.api.nvim_buf_get_name(bufnr)) == 'lazy-lock.json' then return end
