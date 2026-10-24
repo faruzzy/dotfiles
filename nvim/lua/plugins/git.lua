@@ -2,7 +2,14 @@ return {
   {
     'tpope/vim-fugitive',
     dependencies = { 'tpope/vim-rhubarb' },
-    cmd = { 'Git', 'Gvdiffsplit', 'Gread', 'Gwrite', 'GBrowse' },
+    cmd = {
+      'G', 'Git', 'GBrowse', 'Gclog', 'Gllog', 'Gcd', 'Glcd',
+      'Gedit', 'Gsplit', 'Gvsplit', 'Gtabedit', 'Gpedit', 'Gdrop',
+      'Gdiffsplit', 'Gvdiffsplit', 'Ghdiffsplit',
+      'Gread', 'Gwrite', 'Gwq', 'GMove', 'GRename', 'GDelete', 'GRemove', 'GUnlink',
+    },
+    -- Also load when a fugitive:// buffer is opened directly (e.g. restored session)
+    event = 'BufReadCmd fugitive://*',
     keys = {
       {
         '<Leader>ga',

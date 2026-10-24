@@ -25,7 +25,12 @@ return {
         if vim.bo[buf].buftype ~= '' then
           return false
         end
-        if vim.api.nvim_buf_get_name(buf) == '' then
+        local name = vim.api.nvim_buf_get_name(buf)
+        if name == '' then
+          return false
+        end
+        -- Writing a Fugitive index/blob buffer stages it; leave that to an explicit :w
+        if name:match('^fugitive://') then
           return false
         end
         local excluded = {
