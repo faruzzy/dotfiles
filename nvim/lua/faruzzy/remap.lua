@@ -18,7 +18,8 @@ map({ 'n', 'v' }, '<Space>', '<Nop>')
 map('i', '<c-h>', '<left>')
 map('i', '<c-l>', '<right>')
 
--- Smart quit: close fugitive diff view if active, otherwise save and quit
+-- Smart quit: close fugitive diff view if active, otherwise save and quit.
+-- Only touches the current tab, and never discards unwritten edits.
 map('n', '<Leader>x', function()
   local function is_fugitive(buf)
     local name = vim.api.nvim_buf_get_name(buf)
@@ -31,45 +32,78 @@ map('n', '<Leader>x', function()
     return
   end
 
-  -- Find the most recently used real file buffer to return to
-  local target_buf
-  local latest = 0
-  for _, info in ipairs(vim.fn.getbufinfo({ buflisted = 1 })) do
-    local bt = vim.bo[info.bufnr].buftype
-    if info.loaded == 1 and bt == '' and info.name ~= '' and not is_fugitive(info.bufnr) then
-      if info.lastused > latest then
-        latest = info.lastused
-        target_buf = info.bufnr
-      end
-    end
-  end
-
-  vim.cmd('diffoff!')
-
-  -- Delete all fugitive-related buffers (status, diff, and .git// index copies)
-  for _, buf in ipairs(vim.api.nvim_list_bufs()) do
-    if vim.api.nvim_buf_is_valid(buf) and is_fugitive(buf) then
-      vim.api.nvim_buf_delete(buf, { force = true })
-    end
-  end
-
-  -- Deleting fugitive buffers may have shifted focus to a sidebar (neo-tree).
-  -- Pick a non-sidebar window to land the target file in.
+  local api = vim.api
   local sidebar_fts = { ['neo-tree'] = true }
-  local function win_ft(win) return vim.bo[vim.api.nvim_win_get_buf(win)].filetype end
+  local function win_ft(win) return vim.bo[api.nvim_win_get_buf(win)].filetype end
 
-  local focus_win
-  if target_buf then
-    for _, win in ipairs(vim.api.nvim_list_wins()) do
-      if vim.api.nvim_win_get_buf(win) == target_buf then
-        focus_win = win
-        break
+  -- Windows in this tab that belong to the fugitive view (status, diff panes)
+  local view_wins = {}
+  for _, win in ipairs(api.nvim_tabpage_list_wins(0)) do
+    local buf = api.nvim_win_get_buf(win)
+    if vim.wo[win].diff or is_fugitive(buf) then
+      if is_fugitive(buf) and vim.bo[buf].modified then
+        vim.notify(
+          'Unwritten changes in ' .. vim.fn.bufname(buf) .. ' (:w to stage, :e! to discard)',
+          vim.log.levels.WARN
+        )
+        return
       end
+      table.insert(view_wins, win)
+    end
+  end
+
+  -- Return to the real file in the diff, else the most recently used one
+  local target_buf
+  for _, win in ipairs(view_wins) do
+    local buf = api.nvim_win_get_buf(win)
+    if not is_fugitive(buf) and vim.bo[buf].buftype == '' then
+      target_buf = buf
+      break
+    end
+  end
+  if not target_buf then
+    local latest = 0
+    for _, info in ipairs(vim.fn.getbufinfo({ buflisted = 1 })) do
+      if info.loaded == 1 and vim.bo[info.bufnr].buftype == '' and info.name ~= '' and not is_fugitive(info.bufnr) then
+        if info.lastused > latest then
+          latest = info.lastused
+          target_buf = info.bufnr
+        end
+      end
+    end
+  end
+
+  vim.cmd('diffoff!') -- current tab only
+
+  -- Buffers shown in other tabs are left alone
+  local in_other_tabs = {}
+  for _, tab in ipairs(api.nvim_list_tabpages()) do
+    if tab ~= api.nvim_get_current_tabpage() then
+      for _, win in ipairs(api.nvim_tabpage_list_wins(tab)) do
+        in_other_tabs[api.nvim_win_get_buf(win)] = true
+      end
+    end
+  end
+
+  -- Delete fugitive buffers (status, diff, and .git// index copies), unforced
+  for _, buf in ipairs(api.nvim_list_bufs()) do
+    if api.nvim_buf_is_valid(buf) and is_fugitive(buf) and not in_other_tabs[buf] and not vim.bo[buf].modified then
+      pcall(api.nvim_buf_delete, buf, {})
+    end
+  end
+
+  -- Deleting buffers closes their windows and may move focus to a sidebar (neo-tree).
+  -- Land in this tab's window showing the target file, else any non-sidebar one.
+  local focus_win
+  for _, win in ipairs(api.nvim_tabpage_list_wins(0)) do
+    if api.nvim_win_get_buf(win) == target_buf then
+      focus_win = win
+      break
     end
   end
   if not focus_win then
-    for _, win in ipairs(vim.api.nvim_list_wins()) do
-      if not sidebar_fts[win_ft(win)] then
+    for _, win in ipairs(api.nvim_tabpage_list_wins(0)) do
+      if not sidebar_fts[win_ft(win)] and api.nvim_win_get_config(win).relative == '' then
         focus_win = win
         break
       end
@@ -77,19 +111,19 @@ map('n', '<Leader>x', function()
   end
   if not focus_win then
     vim.cmd('vsplit')
-    focus_win = vim.api.nvim_get_current_win()
+    focus_win = api.nvim_get_current_win()
   end
-  vim.api.nvim_set_current_win(focus_win)
+  api.nvim_set_current_win(focus_win)
 
-  -- Close any remaining non-sidebar windows so we end on a single file view
-  for _, win in ipairs(vim.api.nvim_list_wins()) do
-    if win ~= focus_win and not sidebar_fts[win_ft(win)] then
-      pcall(vim.api.nvim_win_close, win, true)
+  -- Close what's left of the fugitive view; unrelated splits stay
+  for _, win in ipairs(view_wins) do
+    if win ~= focus_win and api.nvim_win_is_valid(win) then
+      pcall(api.nvim_win_close, win, false)
     end
   end
 
-  if target_buf and vim.api.nvim_buf_is_valid(target_buf) then
-    vim.api.nvim_set_current_buf(target_buf)
+  if target_buf and api.nvim_buf_is_valid(target_buf) then
+    api.nvim_set_current_buf(target_buf)
   end
 end, { desc = 'Smart quit (close fugitive diff or save+quit)' })
 map('n', '<Leader>X', '<cmd>wqa!<cr>', { desc = 'Save all and quit forcefully' })

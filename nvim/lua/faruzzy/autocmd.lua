@@ -265,18 +265,3 @@ augroup('fugitive_refresh', {
     end,
   },
 })
-
--- Wipe hidden Fugitive buffers so they don't accumulate in the buffer list
-augroup('fugitive_quit', {
-  {
-    'BufHidden',
-    pattern = 'fugitive://*',
-    callback = function(args)
-      vim.schedule(function()
-        if vim.api.nvim_buf_is_valid(args.buf) then
-          pcall(vim.api.nvim_buf_delete, args.buf, { force = true })
-        end
-      end)
-    end,
-  },
-})
