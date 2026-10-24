@@ -22,7 +22,7 @@ return {
       markdown = { 'injected' },
       norg = { 'injected' },
       lua = { 'stylua' },
-      go = { 'goimports', 'gofmt' },
+      go = { 'goimports', 'gofmt', stop_after_first = true },
       query = { 'format-queries' },
       sh = { 'shfmt' },
       python = { 'isort', 'black' },

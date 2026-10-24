@@ -3,7 +3,6 @@ local ok, schemastore = pcall(require, 'schemastore')
 return {
   cmd = { 'vscode-json-language-server', '--stdio' },
   filetypes = { 'json', 'jsonc' },
-  single_file_support = true,
   settings = {
     json = {
       schemas = ok and schemastore.json.schemas() or {
