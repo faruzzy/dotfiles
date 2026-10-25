@@ -13,6 +13,9 @@ return {
     -- Only a repo root bounds the tsconfig search. The default also stops at package.json,
     -- which drops tsgo for sub-packages that rely on a parent tsconfig
     fallback_root_markers = { '.git' },
+    -- Like VS Code, start tsgo without a tsconfig/jsconfig (inferred project), rooted at
+    -- the repo, or at the file's directory for loose scratch files
+    allow_inferred_project = true,
     keymaps = {
       enable = true,
       organize_imports = '<leader>io',
