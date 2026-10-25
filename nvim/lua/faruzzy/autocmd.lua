@@ -101,6 +101,34 @@ augroup('spell_group', {
   },
 })
 
+-- A shell whose mise PATH predates a tool install (e.g. a pinned Go) starts nvim without `go`,
+-- so gopls answers "no views" and conform's gofmt fails. Pull in mise's bin paths for the
+-- file's directory before those start; runs before vim.lsp.enable's FileType autocmd
+augroup('mise_go_path', {
+  {
+    'FileType',
+    pattern = { 'go', 'gomod', 'gowork', 'gotmpl' },
+    callback = function(args)
+      if vim.fn.executable('go') == 1 or vim.fn.executable('mise') == 0 then
+        return
+      end
+
+      local dir = vim.fs.dirname(vim.api.nvim_buf_get_name(args.buf))
+      local result = vim.system({ 'mise', 'bin-paths' }, { cwd = dir ~= '' and dir or nil, text = true }):wait()
+      local missing = vim.tbl_filter(function(bin)
+        return not vim.tbl_contains(vim.split(vim.env.PATH, ':'), bin)
+      end, vim.split(vim.trim(result.stdout or ''), '\n', { trimempty = true }))
+      if #missing > 0 then
+        vim.env.PATH = table.concat(missing, ':') .. ':' .. vim.env.PATH
+      end
+
+      if vim.fn.executable('go') == 0 then
+        vim.notify('`go` not found on PATH; run `mise install` in this project', vim.log.levels.WARN)
+      end
+    end,
+  },
+})
+
 -- Refresh mode highlights on mode change
 augroup('mode_highlights', {
   {
