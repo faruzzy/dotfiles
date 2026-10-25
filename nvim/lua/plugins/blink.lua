@@ -244,7 +244,6 @@ return {
         auto_show_delay_ms = 200,
         treesitter_highlighting = true,
         window = {
-          border = 'rounded',
           min_width = 40,
           max_width = 70,
           max_height = 20,
@@ -267,7 +266,6 @@ return {
           end
           return true
         end,
-        border = 'rounded',
         min_width = 34,
         max_height = 10,
         draw = {
@@ -412,7 +410,6 @@ return {
         show_on_accept_on_trigger_character = true,
       },
       window = {
-        border = 'rounded',
         max_width = 90,
         max_height = 14,
         show_documentation = true,
@@ -549,10 +546,14 @@ return {
   config = function(_, opts)
     local ok, tsgo = pcall(require, 'tsgo')
     if ok then
-      opts = vim.tbl_deep_extend('force', opts, tsgo.compat.blink({
-        default_sources = opts.sources.default,
-        lsp_transform_items = opts.sources.providers.lsp.transform_items,
-      }))
+      opts = vim.tbl_deep_extend(
+        'force',
+        opts,
+        tsgo.compat.blink({
+          default_sources = opts.sources.default,
+          lsp_transform_items = opts.sources.providers.lsp.transform_items,
+        })
+      )
     end
 
     local tsgo_sorts = opts.fuzzy.sorts

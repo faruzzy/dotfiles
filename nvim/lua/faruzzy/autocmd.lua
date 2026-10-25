@@ -127,9 +127,9 @@ augroup('lsp_hover_border', {
       -- Skip for filetypes where better-type-hover handles K
       local ft = vim.bo[args.buf].filetype
       if client and not vim.tbl_contains({ 'typescript', 'typescriptreact' }, ft) then
-        bmap('n', 'K', function() vim.lsp.buf.hover({ border = 'rounded' }) end, { desc = 'LSP Hover Documentation' })
+        bmap('n', 'K', function() vim.lsp.buf.hover() end, { desc = 'LSP Hover Documentation' })
       end
-      bmap('i', '<C-s>', function() vim.lsp.buf.signature_help({ border = 'rounded' }) end, { desc = 'Signature Help' })
+      bmap('i', '<C-s>', function() vim.lsp.buf.signature_help() end, { desc = 'Signature Help' })
     end,
   },
 })

@@ -49,10 +49,11 @@ opt.autoindent = true -- Auto-indent new lines
 opt.guicursor = 'n-v-c:block,i-ci-ve:ver25,r-cr:hor20,o:hor50' -- Custom cursor shapes
 opt.conceallevel = 2 -- Hide concealable text (e.g. class attributes)
 opt.fillchars = { eob = ' ', vert = '▏' } -- Clean fill characters
+opt.winborder = MY_CONFIG.border_style -- Default border for every float (0.11+); no per-call border needed
 
 vim.diagnostic.config({
   severity_sort = true,
-  float = { border = 'rounded', source = 'if_many' },
+  float = { source = 'if_many' },
   -- HINT is included so unused/deprecated code (tagged hints) gets dimmed via
   -- DiagnosticUnnecessary; plain hints have no underline style in catppuccin.lua.
   underline = {

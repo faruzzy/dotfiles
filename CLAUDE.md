@@ -67,6 +67,8 @@ LSP servers are configured with native `vim.lsp.config` (no nvim-lspconfig), so 
 
 Diagnostics (`settings.lua`): unused/deprecated code (LSP hints tagged `unnecessary`/`deprecated`) is dimmed via `DiagnosticUnnecessary` instead of shown as virtual text (higher severities, e.g. `noUnusedLocals` errors, keep their message); underlines include HINT for that reason, and `DiagnosticUnderlineHint` has no underline style (`catppuccin_highlights.lua`).
 
+Float borders come from `opt.winborder` (`MY_CONFIG.border_style`, `settings.lua`); hover, signature help, diagnostic floats and blink.cmp windows inherit it, so don't pass `border =` per call.
+
 ### Tmux (`.tmux.conf`)
 
 Prefix is `C-x` (not default `C-b`). Vi-mode copy with pbcopy integration. Plugins via tpm:
