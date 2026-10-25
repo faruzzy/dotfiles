@@ -97,7 +97,6 @@ augroup('spell_group', {
     pattern = { 'gitcommit', 'markdown', 'text', 'tex', 'rst' },
     callback = function()
       vim.opt_local.spell = true
-      vim.opt_local.spelllang = 'en_us'
     end,
   },
 })

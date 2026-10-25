@@ -98,7 +98,7 @@ M.search_result = {
 -- Spell check indicator
 M.spell_indicator = {
   function()
-    return vim.wo.spell and '暈' or ''
+    return vim.wo.spell and '󰓆' or ''
   end,
   cond = function()
     return vim.wo.spell
