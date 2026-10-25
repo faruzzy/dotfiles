@@ -176,8 +176,8 @@ augroup('numbertoggle', {
     { 'BufEnter', 'FocusGained', 'InsertLeave', 'CmdlineLeave', 'WinEnter' },
     pattern = '*',
     callback = function()
-      if vim.o.number and not vim.tbl_contains({ 'help', 'terminal', 'nofile' }, vim.bo.buftype) then
-        vim.opt.relativenumber = true
+      if vim.wo.number and not vim.tbl_contains({ 'help', 'terminal', 'nofile' }, vim.bo.buftype) then
+        vim.opt_local.relativenumber = true
       end
     end,
   },
@@ -185,8 +185,8 @@ augroup('numbertoggle', {
     { 'BufLeave', 'FocusLost', 'InsertEnter', 'CmdlineEnter', 'WinLeave' },
     pattern = '*',
     callback = function()
-      if vim.o.number then
-        vim.opt.relativenumber = false
+      if vim.wo.number then
+        vim.opt_local.relativenumber = false
       end
     end,
   },
