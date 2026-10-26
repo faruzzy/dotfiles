@@ -172,8 +172,12 @@ map('n', '<Leader>ti', function()
   end
 end, { desc = 'Toggle Inlay Hints' })
 
--- Toggle conceal (hide/show class attribute values)
+-- Toggle conceal (hide/show class attribute values; shown by default in html/jsx/tsx)
 map('n', '<Leader>tc', function()
+  if require('utils').toggle_class_conceal(0) then
+    vim.notify(vim.b.hide_classes and 'Classes hidden' or 'Classes shown')
+    return
+  end
   local level = vim.wo.conceallevel
   vim.wo.conceallevel = level == 0 and 2 or 0
   vim.notify('Conceal ' .. (level == 0 and 'enabled' or 'disabled'))

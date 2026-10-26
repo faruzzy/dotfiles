@@ -9,6 +9,14 @@ augroup('no_auto_comment', {
   },
 })
 
+-- Show class attribute values by default (after/queries conceal them); <Leader>tc hides them per buffer
+augroup('class_conceal', {
+  {
+    { 'FileType', 'BufWinEnter' },
+    callback = function(args) utils.apply_class_conceal(args.buf) end,
+  },
+})
+
 augroup('jsdoc_comment_continuation', {
   {
     'FileType',

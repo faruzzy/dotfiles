@@ -70,6 +70,29 @@ function M.augroup(group_name, autocmds)
   end
 end
 
+-- Filetypes whose class attribute values after/queries conceal
+local class_conceal_filetypes = { html = true, javascript = true, javascriptreact = true, typescriptreact = true }
+
+---Show class values unless the buffer opted to hide them (<Leader>tc); conceallevel is per window,
+---so restore the global value when the window moves on to another filetype
+function M.apply_class_conceal(buf)
+  if class_conceal_filetypes[vim.bo[buf].filetype] then
+    vim.opt_local.conceallevel = vim.b[buf].hide_classes and 2 or 0
+    vim.w.class_conceal_set = true
+  elseif vim.w.class_conceal_set then
+    vim.opt_local.conceallevel = vim.go.conceallevel
+    vim.w.class_conceal_set = nil
+  end
+end
+
+---@return boolean handled false when the buffer isn't a class-concealing filetype
+function M.toggle_class_conceal(buf)
+  if not class_conceal_filetypes[vim.bo[buf].filetype] then return false end
+  vim.b[buf].hide_classes = not vim.b[buf].hide_classes
+  M.apply_class_conceal(buf)
+  return true
+end
+
 function M.find_git_root()
   -- Use the current buffer's path as the starting point for the git search
   local current_file = vim.api.nvim_buf_get_name(0)

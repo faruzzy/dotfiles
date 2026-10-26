@@ -55,7 +55,7 @@ Lua-based config using **lazy.nvim** for plugin management. Entry point: `nvim/i
 
 - `lua/faruzzy/settings.lua` — vim options
 - `lua/faruzzy/remap.lua` — keybindings (leader = comma)
-- `lua/faruzzy/autocmd.lua` — autocommands (cursorline only in the focused window, except neo-tree, so the followed file stays highlighted; Go buffers pull in `mise bin-paths` when `go` is missing from a stale shell PATH, before gopls/conform start)
+- `lua/faruzzy/autocmd.lua` — autocommands (cursorline only in the focused window, except neo-tree, so the followed file stays highlighted; Go buffers pull in `mise bin-paths` when `go` is missing from a stale shell PATH, before gopls/conform start; class attribute values are shown by default in html/js/jsx/tsx and `<Leader>tc` hides them per buffer via `utils.apply_class_conceal`)
 - `lua/plugins/` — ~45 lazy-loaded plugin specs. Every spec should have a `keys`/`cmd`/`event`/`ft` trigger; plugins that set up `FileType` autocmds (nvim-ts-autotag, endwise) load on `BufReadPre`/`BufNewFile` so they catch the first buffer. Only top-level files are imported (`setup('plugins')`); a subfolder needs an `init.lua` or its specs are silently ignored
 - `lua/config/theme.lua` — Catppuccin Mocha theme with custom highlights
 - `lua/plugins/catppuccin.lua` — colorscheme spec; loads eagerly (`lazy = false`) so lualine's `auto` theme sees Catppuccin's highlights instead of racing it at VimEnter
