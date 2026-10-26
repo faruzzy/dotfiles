@@ -10,11 +10,11 @@ return {
         zindex = 49,
         width = 'fit',
         padding = { left = 2, right = 1 },
-        placement = { vertical = 'top', horizontal = 'right' },
+        placement = { vertical = 'bottom', horizontal = 'right' },
         margin = { horizontal = 0 },
       },
       hide = {
-        cursorline = false,
+        cursorline = true, -- hide while the cursor is on the line it covers
         focused_win = false,
         only_win = true,
       },
