@@ -192,6 +192,14 @@ return {
     'ibhagwan/fzf-lua',
     dependencies = { 'echasnovski/mini.icons' },
     event = 'VeryLazy',
+    init = function()
+      -- Use fzf for vim.ui.select (code actions, etc.) instead of the numbered inputlist prompt
+      ---@diagnostic disable-next-line: duplicate-set-field
+      vim.ui.select = function(...)
+        require('fzf-lua').register_ui_select()
+        return vim.ui.select(...)
+      end
+    end,
     opts = {
       winopts = {
         backdrop = 100,
