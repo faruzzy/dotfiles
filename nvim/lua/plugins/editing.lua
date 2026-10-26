@@ -7,55 +7,96 @@ return {
 
   { 'lewis6991/spaceless.nvim', event = 'BufReadPost' },
 
-  {
-    'okuuva/auto-save.nvim',
-    version = '*',
-    event = { 'InsertEnter', 'BufReadPost', 'BufNewFile' },
-    cmd = 'ASToggle',
-    opts = {
-      trigger_events = {
-        immediate_save = { 'FocusLost', 'BufLeave' },
-        defer_save = { 'InsertLeave', 'TextChanged' },
-        cancel_deferred_save = { 'InsertEnter' },
+  (function()
+    local excluded = { 'oil', 'harpoon', 'alpha', 'dashboard', 'fugitive' }
+    -- tsx/jsx get their own slower idle save (below) so format-on-save doesn't churn mid-edit
+    local jsx_filetypes = { typescriptreact = true, javascriptreact = true }
+    local jsx_idle_ms = 2000
+
+    local function can_save(buf)
+      if not vim.api.nvim_buf_is_valid(buf) or vim.bo[buf].buftype ~= '' then
+        return false
+      end
+      local name = vim.api.nvim_buf_get_name(buf)
+      -- Writing a Fugitive index/blob buffer stages it; leave that to an explicit :w
+      if name == '' or name:match('^fugitive://') then
+        return false
+      end
+      -- Sync with disk before saving so an external edit (e.g. Claude Code)
+      -- isn't overwritten by a stale buffer. If the file changed on disk,
+      -- Neovim will prompt and skip the write.
+      pcall(vim.cmd, 'checktime ' .. buf)
+      return vim.api.nvim_buf_is_valid(buf) and vim.bo[buf].modified
+    end
+
+    local function setup_jsx_idle_save()
+      local timers = {}
+      local function cancel(buf)
+        local timer = timers[buf]
+        if timer then
+          timer:stop()
+          timer:close()
+          timers[buf] = nil
+        end
+      end
+
+      local group = vim.api.nvim_create_augroup('jsx_idle_save', { clear = true })
+      vim.api.nvim_create_autocmd({ 'InsertLeave', 'TextChanged' }, {
+        group = group,
+        callback = function(args)
+          local buf = args.buf
+          if not jsx_filetypes[vim.bo[buf].filetype] then
+            return
+          end
+          cancel(buf)
+          local timer = assert(vim.uv.new_timer())
+          timers[buf] = timer
+          timer:start(jsx_idle_ms, 0, vim.schedule_wrap(function()
+            cancel(buf)
+            if can_save(buf) then
+              vim.api.nvim_buf_call(buf, function() vim.cmd('silent! lockmarks write') end)
+            end
+          end))
+        end,
+        desc = 'Save tsx/jsx after 2s idle in normal mode',
+      })
+      vim.api.nvim_create_autocmd({ 'InsertEnter', 'BufDelete' }, {
+        group = group,
+        callback = function(args) cancel(args.buf) end,
+      })
+    end
+
+    return {
+      'okuuva/auto-save.nvim',
+      version = '*',
+      event = { 'InsertEnter', 'BufReadPost', 'BufNewFile' },
+      cmd = 'ASToggle',
+      opts = {
+        trigger_events = {
+          immediate_save = { 'FocusLost', 'BufLeave' },
+          defer_save = { 'InsertLeave', 'TextChanged' },
+          cancel_deferred_save = { 'InsertEnter' },
+        },
+        condition = function(buf)
+          if not vim.api.nvim_buf_is_valid(buf) then
+            return false
+          end
+          local filetype = vim.bo[buf].filetype
+          if vim.tbl_contains(excluded, filetype) or jsx_filetypes[filetype] then
+            return false
+          end
+          return can_save(buf)
+        end,
+        write_all_buffers = false,
+        debounce_delay = 500,
       },
-      condition = function(buf)
-        if not vim.api.nvim_buf_is_valid(buf) then
-          return false
-        end
-        if vim.bo[buf].buftype ~= '' then
-          return false
-        end
-        local name = vim.api.nvim_buf_get_name(buf)
-        if name == '' then
-          return false
-        end
-        -- Writing a Fugitive index/blob buffer stages it; leave that to an explicit :w
-        if name:match('^fugitive://') then
-          return false
-        end
-        local excluded = {
-          'oil',
-          'harpoon',
-          'alpha',
-          'dashboard',
-          'fugitive',
-          'typescriptreact',
-          'javascriptreact',
-        }
-        if vim.tbl_contains(excluded, vim.bo[buf].filetype) then
-          return false
-        end
-        -- Sync with disk before saving so an external edit (e.g. Claude Code)
-        -- isn't overwritten by a stale buffer. If the file changed on disk,
-        -- Neovim will prompt and skip the write.
-        pcall(vim.cmd, 'checktime ' .. buf)
-        return vim.api.nvim_buf_is_valid(buf) and vim.bo[buf].modified
+      config = function(_, opts)
+        require('auto-save').setup(opts)
+        setup_jsx_idle_save()
       end,
-      write_all_buffers = false,
-      debounce_delay = 500,
-    },
-    desc = 'Auto-save on focus loss (disabled for tsx/jsx)',
-  },
+      desc = 'Auto-save (tsx/jsx: after 2s idle in normal mode)',
+    }
+  end)(),
 
   {
     'andythigpen/nvim-coverage',
