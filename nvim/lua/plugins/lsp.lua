@@ -124,6 +124,18 @@ return {
         if not client then
           return
         end
+        -- Git revision buffers (fugitive://, diffview://, gitsigns://) have no real path, so
+        -- servers can't resolve relative imports and flood the diff with "Cannot find module"
+        if vim.api.nvim_buf_get_name(args.buf):match('^%a[%w+.-]*://') then
+          -- Also hides diagnostics published before the detach lands
+          vim.diagnostic.enable(false, { bufnr = args.buf })
+          vim.schedule(function()
+            if vim.api.nvim_buf_is_valid(args.buf) and vim.lsp.buf_is_attached(args.buf, client.id) then
+              vim.lsp.buf_detach_client(args.buf, client.id)
+            end
+          end)
+          return
+        end
         require('lsp.on_attach')(client, args.buf)
       end,
     })
