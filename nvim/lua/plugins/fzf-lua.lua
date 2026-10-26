@@ -128,16 +128,7 @@ local function smart_definitions_fzf()
       if #items == 0 then
         vim.notify('No definitions found', vim.log.levels.WARN)
       elseif #items == 1 then
-        local item = items[1]
-        local bufnr = item.bufnr or vim.fn.bufadd(item.filename)
-        vim.fn.bufload(bufnr)
-        vim.bo[bufnr].buflisted = true
-        vim.cmd("normal! m'")
-        vim.api.nvim_win_set_buf(0, bufnr)
-        -- The server's line can be past the end when the buffer differs from what it indexed
-        local lnum = math.min(item.lnum, vim.api.nvim_buf_line_count(bufnr))
-        pcall(vim.api.nvim_win_set_cursor, 0, { lnum, math.max((item.col or 1) - 1, 0) })
-        vim.cmd('normal! zv')
+        require('lsp.utils').jump_to_item(items[1])
       else
         vim.fn.setqflist({}, 'r', { title = options.title, items = items })
         require('fzf-lua').quickfix({ prompt = 'Definitions> ' })

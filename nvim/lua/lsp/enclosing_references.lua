@@ -93,14 +93,6 @@ function M.is_import_reference(item)
   return saw_import_start and saw_import_end
 end
 
-local function jump_to_item(item)
-  local path = item_path(item)
-  if not path then return end
-
-  vim.cmd('edit ' .. vim.fn.fnameescape(path))
-  vim.api.nvim_win_set_cursor(0, { item.lnum, (item.col or 1) - 1 })
-end
-
 local function name_from_declarator(node)
   for child in node:iter_children() do
     if child:type() == 'identifier' then return child end
@@ -126,57 +118,98 @@ local function name_from_node(node)
   end
 end
 
-function M.find()
+-- Arrow functions are named by their enclosing declaration; their own identifier children are parameters
+local declaration_types = {
+  function_declaration = true,
+  lexical_declaration = true,
+  export_statement = true,
+  variable_declaration = true,
+  method_definition = true,
+}
+
+---Named declarations around the cursor, nearest first
+---@return { name: string, row: integer, col: integer }[]
+local function enclosing_declarations()
+  local found, seen = {}, {}
   local node = vim.treesitter.get_node()
   while node do
-    local node_type = node:type()
-    if
-      node_type == 'function_declaration'
-      or node_type == 'lexical_declaration'
-      or node_type == 'export_statement'
-      or node_type == 'variable_declaration'
-      or node_type == 'method_definition'
-      or node_type == 'arrow_function'
-    then
+    if declaration_types[node:type()] then
       local name_node = name_from_node(node)
       if name_node then
         local row, col = name_node:range()
-        local save_pos = vim.api.nvim_win_get_cursor(0)
-
-        vim.api.nvim_win_set_cursor(0, { row + 1, col })
-        vim.lsp.buf.references(nil, {
-          on_list = function(options)
-            pcall(vim.api.nvim_win_set_cursor, 0, save_pos)
-
-            local current_file = vim.fn.expand('%:p')
-            local filtered = {}
-            for _, item in ipairs(options.items) do
-              local is_definition = item_path(item) == current_file and item.lnum == row + 1
-              if not is_definition and not M.is_import_reference(item) then table.insert(filtered, item) end
-            end
-
-            if #filtered == 0 then
-              vim.notify('No usages found', vim.log.levels.WARN)
-              return
-            end
-
-            if #filtered == 1 then
-              jump_to_item(filtered[1])
-              return
-            end
-
-            vim.fn.setqflist({}, 'r', { title = 'Usages', items = filtered })
-            require('fzf-lua').quickfix({ prompt = 'Usages> ' })
-          end,
-        })
-        return
+        local key = row .. ':' .. col
+        if not seen[key] then
+          seen[key] = true
+          table.insert(found, { name = vim.treesitter.get_node_text(name_node, 0), row = row, col = col })
+        end
       end
     end
-
     node = node:parent()
   end
+  return found
+end
 
-  vim.notify('No enclosing function found', vim.log.levels.WARN)
+---@param decl { name: string, row: integer, col: integer }
+local function find_usages(decl)
+  local save_pos = vim.api.nvim_win_get_cursor(0)
+
+  vim.api.nvim_win_set_cursor(0, { decl.row + 1, decl.col })
+  vim.lsp.buf.references(nil, {
+    on_list = function(options)
+      pcall(vim.api.nvim_win_set_cursor, 0, save_pos)
+
+      local current_file = vim.fn.expand('%:p')
+      local filtered = {}
+      for _, item in ipairs(options.items) do
+        local is_definition = item_path(item) == current_file and item.lnum == decl.row + 1
+        if not is_definition and not M.is_import_reference(item) then table.insert(filtered, item) end
+      end
+
+      if #filtered == 0 then
+        vim.notify('No usages of ' .. decl.name .. ' found', vim.log.levels.WARN)
+        return
+      end
+
+      if #filtered == 1 then
+        require('lsp.utils').jump_to_item(filtered[1])
+        return
+      end
+
+      vim.fn.setqflist({}, 'r', { title = 'Usages of ' .. decl.name, items = filtered })
+      require('fzf-lua').quickfix({ prompt = decl.name .. ' usages> ' })
+    end,
+  })
+end
+
+---Find usages of the enclosing declaration; when nested, pick one (nearest first)
+function M.find()
+  local decls = enclosing_declarations()
+
+  if #decls == 0 then
+    vim.notify('No enclosing function found', vim.log.levels.WARN)
+    return
+  end
+
+  if #decls == 1 then
+    find_usages(decls[1])
+    return
+  end
+
+  local entries = {}
+  for i, decl in ipairs(decls) do
+    entries[i] = ('%d\t%s\t:%d'):format(i, decl.name, decl.row + 1)
+  end
+
+  require('fzf-lua').fzf_exec(entries, {
+    prompt = 'Usages of> ',
+    fzf_opts = { ['--delimiter'] = '\t', ['--with-nth'] = '2..', ['--no-sort'] = true },
+    actions = {
+      ['default'] = function(selected)
+        local index = selected[1] and tonumber(selected[1]:match('^(%d+)'))
+        if index then find_usages(decls[index]) end
+      end,
+    },
+  })
 end
 
 return M
