@@ -5,7 +5,8 @@
 local servers = {
   clangd = {
     cmd = { 'clangd' },
-    filetypes = { 'c', 'cpp', 'objc', 'objcpp', 'cuda', 'proto' },
+    -- No 'proto': clangd can't parse .proto files ("invalid AST", "expected exactly one compiler job")
+    filetypes = { 'c', 'cpp', 'objc', 'objcpp', 'cuda' },
     root_markers = { '.clangd', '.clang-tidy', '.clang-format', 'compile_commands.json', 'compile_flags.txt' },
   },
   cssls = {

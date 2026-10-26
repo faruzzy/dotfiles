@@ -59,7 +59,7 @@ Lua-based config using **lazy.nvim** for plugin management. Entry point: `nvim/i
 - `lua/plugins/` — ~45 lazy-loaded plugin specs. Every spec should have a `keys`/`cmd`/`event`/`ft` trigger; plugins that set up `FileType` autocmds (nvim-ts-autotag, endwise) load on `BufReadPre`/`BufNewFile` so they catch the first buffer. Only top-level files are imported (`setup('plugins')`); a subfolder needs an `init.lua` or its specs are silently ignored
 - `lua/config/theme.lua` — Catppuccin Mocha theme with custom highlights
 - `lua/plugins/catppuccin.lua` — colorscheme spec; loads eagerly (`lazy = false`) so lualine's `auto` theme sees Catppuccin's highlights instead of racing it at VimEnter
-- `lua/lsp/` — per-language LSP server configurations
+- `lua/lsp/` — per-language LSP server configurations (`servers.lua` keeps `proto` out of clangd's filetypes; clangd can't parse protobuf)
 
 Key subsystems: mason.nvim (LSP installer), blink.cmp (completion), copilot.vim (AI inline suggestions, lazy-loaded on InsertEnter / `:Copilot`), conform.nvim (formatting), tsgo.nvim (owns the tsgo TypeScript LSP setup — binary resolution incl. mise, root detection (bounded only by `.git`, so sub-packages with their own `package.json` still use a parent tsconfig; `allow_inferred_project` starts tsgo without any tsconfig/jsconfig, like VS Code, rooted at the repo or the file's directory), settings, import actions, object-property completion detection used by blink; uses `~/github/tsgo.nvim` if checked out, else GitHub), fzf-lua (fuzzy finding), treesitter (syntax), auto-save.nvim (auto-save, disabled for tsx/jsx to avoid conform format churn).
 
