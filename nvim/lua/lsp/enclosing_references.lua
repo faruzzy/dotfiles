@@ -127,13 +127,50 @@ local declaration_types = {
   method_definition = true,
 }
 
----Named declarations around the cursor, nearest first
+local function_value_types = {
+  arrow_function = true,
+  function_expression = true,
+  ['function'] = true,
+  generator_function = true,
+}
+
+---A function, or a call wrapping one: useCallback(() => …), memo(…), forwardRef(…)
+local function is_function_value(node)
+  if not node then return false end
+  if function_value_types[node:type()] then return true end
+  if node:type() == 'call_expression' then
+    local args = node:field('arguments')[1]
+    if args then
+      for arg in args:iter_children() do
+        if is_function_value(arg) then return true end
+      end
+    end
+  end
+  return false
+end
+
+---Skip plain variables (`const ref = useRef()`): only functions and components count
+local function declares_function(node)
+  local node_type = node:type()
+  if node_type == 'function_declaration' or node_type == 'method_definition' then return true end
+  for child in node:iter_children() do
+    local child_type = child:type()
+    if child_type == 'variable_declarator' then return is_function_value(child:field('value')[1]) end
+    if child_type == 'function_declaration' then return true end
+    if child_type == 'lexical_declaration' or child_type == 'variable_declaration' then
+      return declares_function(child)
+    end
+  end
+  return false
+end
+
+---Named function/component declarations around the cursor, nearest first
 ---@return { name: string, row: integer, col: integer }[]
 local function enclosing_declarations()
   local found, seen = {}, {}
   local node = vim.treesitter.get_node()
   while node do
-    if declaration_types[node:type()] then
+    if declaration_types[node:type()] and declares_function(node) then
       local name_node = name_from_node(node)
       if name_node then
         local row, col = name_node:range()
