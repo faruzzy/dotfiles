@@ -1,56 +1,50 @@
 -- Track which window each buffer was last displayed in
 local buf_last_win = {}
+local tracker = vim.api.nvim_create_augroup('BufWinTracker', { clear = true })
 vim.api.nvim_create_autocmd('BufWinLeave', {
-  group = vim.api.nvim_create_augroup('BufWinTracker', { clear = true }),
+  group = tracker,
   callback = function(args) buf_last_win[args.buf] = vim.api.nvim_get_current_win() end,
 })
+vim.api.nvim_create_autocmd({ 'BufDelete', 'BufWipeout' }, {
+  group = tracker,
+  callback = function(args) buf_last_win[args.buf] = nil end,
+})
+
+---Focus an open buffer: its visible window, else the window it was last shown in.
+---Deleted (unlisted) buffers don't count, so they reopen in the current window like a new file.
+---@return boolean handled
+local function switch_to_open_buffer(bufnr)
+  if not bufnr or bufnr == -1 or not vim.api.nvim_buf_is_valid(bufnr) or not vim.bo[bufnr].buflisted then
+    return false
+  end
+  local winid = vim.fn.bufwinid(bufnr)
+  if winid ~= -1 then
+    vim.api.nvim_set_current_win(winid)
+    return true
+  end
+  local last_win = buf_last_win[bufnr]
+  if last_win and vim.api.nvim_win_is_valid(last_win) then
+    vim.api.nvim_set_current_win(last_win)
+    vim.api.nvim_win_set_buf(last_win, bufnr)
+    return true
+  end
+  return false
+end
 
 local function file_switch_or_edit(selected, opts)
   if not selected or not selected[1] then return end
 
   local stripped = require('fzf-lua.utils').strip_ansi_coloring(selected[1])
   local fullpath = vim.fn.fnamemodify(stripped:match('^%s*(.-)%s*$'), ':p')
-  local bufnr = vim.fn.bufnr(fullpath)
+  if switch_to_open_buffer(vim.fn.bufnr(fullpath)) then return end
 
-  if bufnr ~= -1 then
-    local winid = vim.fn.bufwinid(bufnr)
-    if winid ~= -1 then
-      vim.api.nvim_set_current_win(winid)
-      return
-    end
-    -- Buffer exists but hidden, restore it in its last known window
-    local last_win = buf_last_win[bufnr]
-    if last_win and vim.api.nvim_win_is_valid(last_win) then
-      vim.api.nvim_set_current_win(last_win)
-      vim.api.nvim_win_set_buf(last_win, bufnr)
-      return
-    end
-  end
-
-  -- No existing buffer or no tracked window, open in current window
   require('fzf-lua.actions').file_edit(selected, opts)
 end
 
 local function switch_or_edit_path(path)
   local fullpath = vim.fn.fnamemodify(path, ':p')
-  local bufnr = vim.fn.bufnr(fullpath)
+  if switch_to_open_buffer(vim.fn.bufnr(fullpath)) then return end
 
-  if bufnr ~= -1 then
-    local winid = vim.fn.bufwinid(bufnr)
-    if winid ~= -1 then
-      vim.api.nvim_set_current_win(winid)
-      return
-    end
-    -- Buffer exists but hidden, restore it in its last known window
-    local last_win = buf_last_win[bufnr]
-    if last_win and vim.api.nvim_win_is_valid(last_win) then
-      vim.api.nvim_set_current_win(last_win)
-      vim.api.nvim_win_set_buf(last_win, bufnr)
-      return
-    end
-  end
-
-  -- No existing buffer or no tracked window, open in current window
   vim.cmd.edit(vim.fn.fnameescape(fullpath))
 end
 
@@ -81,21 +75,7 @@ local function buf_switch_or_edit(selected, opts)
   if not selected or not selected[1] then return end
 
   local stripped = require('fzf-lua.utils').strip_ansi_coloring(selected[1])
-  local bufnr = tonumber(stripped:match('%[(%d+)%]'))
-
-  if bufnr and vim.api.nvim_buf_is_valid(bufnr) then
-    local winid = vim.fn.bufwinid(bufnr)
-    if winid ~= -1 then
-      vim.api.nvim_set_current_win(winid)
-      return
-    end
-    local last_win = buf_last_win[bufnr]
-    if last_win and vim.api.nvim_win_is_valid(last_win) then
-      vim.api.nvim_set_current_win(last_win)
-      vim.api.nvim_win_set_buf(last_win, bufnr)
-      return
-    end
-  end
+  if switch_to_open_buffer(tonumber(stripped:match('%[(%d+)%]'))) then return end
 
   require('fzf-lua.actions').buf_edit(selected, opts)
 end
