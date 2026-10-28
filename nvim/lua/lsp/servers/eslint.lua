@@ -36,10 +36,15 @@ return {
   end,
   on_attach = function(client, bufnr)
     vim.api.nvim_buf_create_user_command(bufnr, 'EslintFixAll', function()
-      client:request_sync('workspace/executeCommand', {
+      -- The first fix in a fresh buffer loads ESLint, its plugins and the TS parser, which can
+      -- outlast request_sync's 1s default and silently do nothing
+      local response, err = client:request_sync('workspace/executeCommand', {
         command = 'eslint.applyAllFixes',
         arguments = { { uri = vim.uri_from_bufnr(bufnr), version = vim.lsp.util.buf_versions[bufnr] } },
-      }, nil, bufnr)
+      }, 10000, bufnr)
+      if not response then
+        vim.notify('ESLint fix all: ' .. (err or 'no response'), vim.log.levels.WARN)
+      end
     end, { desc = 'ESLint: fix all auto-fixable problems' })
 
     vim.api.nvim_create_autocmd('BufWritePre', {
