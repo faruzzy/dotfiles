@@ -69,11 +69,7 @@
   df = diff --color --abbrev
   dfc = diff --cached
   lb = !git reflog show --pretty=format:'%gs ~ %gd' --date=relative | grep 'checkout:' | grep -oE '[^ ]+ ~ .*' | awk -F~ '!seen[$1]++' | head -n 10 | awk -F' ~ HEAD@{' '{printf(\"  \\033[33m%s: \\033[37m %s\\033[0m\\n\", substr($2, 1, length($2)-1), $1)}'
-  logr3 = log --stat -M -3
-  logit = log --stat -M
   l = log --stat -C
-  lgl = log --color --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit --all
-  lola = log --graph --decorate --pretty=oneline --abbrev-commit --all
   ls = ls-files
   ign = ls-files -o -i --exclude-standard          # Show files ignored by git
   p = push
