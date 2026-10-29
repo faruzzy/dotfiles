@@ -35,7 +35,7 @@ The install script symlinks individual files to `$HOME` and config directories t
 3. OMZ lib (subset) + git plugin, zsh-autosuggestions, zsh-syntax-highlighting
 4. **Starship** prompt (`config/starship.toml`, Catppuccin Mocha palette)
 5. Sourced files: `.aliases`, `.functions.zsh`, `.extra` (gitignored, for secrets/local overrides)
-6. **FZF** key bindings and completion
+6. **FZF** key bindings and completion (`Alt-C` cd widget uses `fd`, so no separate fzf cd functions are kept)
 7. **Mise** (replaces nvm/jEnv — universal runtime manager)
 8. **Atuin** (replaces built-in history search, Ctrl-R and up-arrow)
 

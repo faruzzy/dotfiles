@@ -315,17 +315,6 @@ git-fixup() {
     GIT_SEQUENCE_EDITOR=: git rebase -i --autosquash --autostash "$onto"
 }
 
-# dd - cd to selected directory
-function fdd() {
-  DIR=`find ${1:-*} -path '*/\.*' -prune -o -type d -print 2> /dev/null | fzf-tmux` \
-    && cd "$DIR"
-}
-
-# dda - including hidden directories
-function dda() {
-  DIR=`find ${1:-.} -type d 2> /dev/null | fzf-tmux` && cd "$DIR"
-}
-
 # Function to list directories, can take an argument for depth or path
 function lsd() { find "${1:-.}" -maxdepth "${2:-1}" -type d -not -name '.*'; }
 
