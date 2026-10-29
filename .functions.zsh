@@ -239,8 +239,10 @@ function fstash() {
     k=$(head -2 <<< "$out" | tail -1)
     sha=$(tail -1 <<< "$out" | cut -d' ' -f1)
     [ -z "$sha" ] && continue
+      # delta's default paging=auto prints short diffs straight to the terminal, where
+      # the next fzf loop immediately covers them; always page so they stay until q
       if [ "$k" = 'ctrl-d' ]; then
-        git diff $sha
+        git -c core.pager='delta --paging=always' diff $sha
       elif [ "$k" = 'ctrl-b' ]; then
         git stash branch "stash-$sha" $sha
         break;
@@ -248,7 +250,7 @@ function fstash() {
         git stash drop $sha
         break;
       else
-        git stash show -p $sha
+        git -c core.pager='delta --paging=always' stash show -p $sha
       fi
   done
 }
