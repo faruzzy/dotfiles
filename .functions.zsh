@@ -640,20 +640,6 @@ _rg_widget() {
   zle reset-prompt
 }
 
-# ftpane - switch tmux pane interactively with fzf
-ftpane() {
-  local panes current_pane target target_window target_pane
-  panes=$(tmux list-panes -s -F '#I:#P - #{pane_current_path} #{pane_current_command}')
-  current_pane=$(tmux display-message -p '#I:#P')
-
-  target=$(echo "$panes" | grep -v "$current_pane" | fzf +m --reverse) || return
-
-  target=${target%%\ *}
-  target_window=${target%%:*}
-  target_pane=${target##*:}
-  tmux select-window -t "$target_window" && tmux select-pane -t "$target_pane"
-}
-
 # tmux_words - pick words from tmux panes via fzf and send to target pane
 tmux_words() {
   local pane_id="$1"
