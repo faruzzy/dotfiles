@@ -295,6 +295,18 @@ git-fixup() {
     return 1
   fi
 
+  # Rewriting a pushed commit means force-pushing afterwards; confirm before touching anything
+  local remotes
+  remotes=$(git branch -r --contains "$commit" 2>/dev/null | grep -v ' -> ' | sed 's/^ *//' | head -3 | tr '\n' ' ')
+  if [[ -n "$remotes" ]]; then
+    echo "$commit is already pushed (on: ${remotes% }). Rewriting it means pushing with --force-with-lease."
+    if ! read -q "?Continue? [y/N] "; then
+      echo; echo "Aborted."
+      return 1
+    fi
+    echo
+  fi
+
   local onto="${commit}~1"
   git rev-parse --verify --quiet "$onto" >/dev/null || onto="--root"
 
