@@ -94,12 +94,19 @@ gfzf() {
 	local old_ripgrep_config="$RIPGREP_CONFIG_PATH"
 	unset RIPGREP_CONFIG_PATH
 
-	git log \
-		--color=always --abbrev=7 \
-		--format=format:"%C(bold blue)%h%C(reset) %C(dim white)%an%C(reset)%C(bold yellow)%d%C(reset) %C(white)%s%C(reset) %C(bold green)(%ar)%C(reset)" \
-		"${args[@]}" |
-	fzf \
+	# Merge commits are hidden by default; alt-m reloads the list with them toggled.
+	# The two commands are passed to fzf as env vars so reload can eval them.
+	local format="%C(bold blue)%h%C(reset) %C(dim white)%an%C(reset)%C(bold yellow)%d%C(reset) %C(white)%s%C(reset) %C(bold green)(%ar)%C(reset)"
+	local log_all="git log --color=always --abbrev=7 --format=format:${(q)format} ${(j: :)${(q)args[@]}}"
+	local log_no_merges="git log --no-merges ${log_all#git log }"
+
+	eval "$log_no_merges" |
+	GFZF_LOG_ALL="$log_all" GFZF_LOG_NO_MERGES="$log_no_merges" fzf \
 		--ansi --no-sort --layout=reverse --tiebreak=index \
+		--prompt='Commits (no merges)> ' \
+		--header='alt-m: toggle merges ╱ alt-r: toggle sort (history ↔ best match)' \
+		--bind='alt-r:toggle-sort' \
+		--bind='alt-m:transform:[[ $FZF_PROMPT == *"no merges"* ]] && echo "change-prompt[Commits> ]+reload[eval \"\$GFZF_LOG_ALL\"]" || echo "change-prompt[Commits (no merges)> ]+reload[eval \"\$GFZF_LOG_NO_MERGES\"]"' \
 		--preview="
 			f() {
 				set -- \$(echo -- \"\$@\" | rg -o '\b[a-f0-9]{7,}\b' 2>/dev/null)
