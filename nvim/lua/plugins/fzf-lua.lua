@@ -1,212 +1,13 @@
--- Track which window each buffer was last displayed in
-local buf_last_win = {}
-local tracker = vim.api.nvim_create_augroup('BufWinTracker', { clear = true })
-vim.api.nvim_create_autocmd('BufWinLeave', {
-  group = tracker,
-  callback = function(args) buf_last_win[args.buf] = vim.api.nvim_get_current_win() end,
-})
-vim.api.nvim_create_autocmd({ 'BufDelete', 'BufWipeout' }, {
-  group = tracker,
-  callback = function(args) buf_last_win[args.buf] = nil end,
-})
-
----Focus an open buffer: its visible window, else the window it was last shown in.
----Deleted (unlisted) buffers don't count, so they reopen in the current window like a new file.
----@return boolean handled
-local function switch_to_open_buffer(bufnr)
-  if not bufnr or bufnr == -1 or not vim.api.nvim_buf_is_valid(bufnr) or not vim.bo[bufnr].buflisted then
-    return false
-  end
-  local winid = vim.fn.bufwinid(bufnr)
-  if winid ~= -1 then
-    vim.api.nvim_set_current_win(winid)
-    return true
-  end
-  local last_win = buf_last_win[bufnr]
-  if last_win and vim.api.nvim_win_is_valid(last_win) then
-    vim.api.nvim_set_current_win(last_win)
-    vim.api.nvim_win_set_buf(last_win, bufnr)
-    return true
-  end
-  return false
-end
-
-local function file_switch_or_edit(selected, opts)
-  if not selected or not selected[1] then
-    return
-  end
-
-  local stripped = require('fzf-lua.utils').strip_ansi_coloring(selected[1])
-  local fullpath = vim.fn.fnamemodify(stripped:match('^%s*(.-)%s*$'), ':p')
-  if switch_to_open_buffer(vim.fn.bufnr(fullpath)) then
-    return
-  end
-
-  require('fzf-lua.actions').file_edit(selected, opts)
-end
-
-local function switch_or_edit_path(path)
-  local fullpath = vim.fn.fnamemodify(path, ':p')
-  if switch_to_open_buffer(vim.fn.bufnr(fullpath)) then
-    return
-  end
-
-  vim.cmd.edit(vim.fn.fnameescape(fullpath))
-end
-
-local function single_file_in_cwd()
-  local commands = {
-    -- Two results are enough to know there isn't exactly one; stop there in big repos
-    { 'fd', '--color=never', '--type', 'f', '--type', 'l', '--hidden', '--exclude', '.git', '--exclude', '.jj', '--max-results', '2' },
-    { 'rg', '--color=never', '--files', '--hidden', '-g', '!.git', '-g', '!.jj' },
-  }
-
-  for _, cmd in ipairs(commands) do
-    if vim.fn.executable(cmd[1]) == 1 then
-      local files = vim.fn.systemlist(cmd)
-      if vim.v.shell_error == 0 and #files == 1 then
-        return files[1]
-      end
-      return nil
-    end
-  end
-
-  local files = vim.fn.systemlist({ 'find', '.', '-type', 'f', '!', '-path', '*/.git/*', '!', '-path', '*/.jj/*' })
-  if vim.v.shell_error == 0 and #files == 1 then
-    return files[1]:gsub('^%./', '')
-  end
-end
-
-local function buf_switch_or_edit(selected, opts)
-  if not selected or not selected[1] then
-    return
-  end
-
-  local stripped = require('fzf-lua.utils').strip_ansi_coloring(selected[1])
-  if switch_to_open_buffer(tonumber(stripped:match('%[(%d+)%]'))) then
-    return
-  end
-
-  require('fzf-lua.actions').buf_edit(selected, opts)
-end
-
-local function is_node_modules_declaration(item)
-  local filename = item.filename or ''
-  return filename:match('/node_modules/') and filename:match('%.d%.ts$')
-end
-
-local function prefer_source_definitions(items)
-  local source_items = vim.tbl_filter(function(item) return not is_node_modules_declaration(item) end, items)
-  if #source_items > 0 then
-    return source_items
-  end
-  return items
-end
-
-local function smart_definitions_fzf()
-  vim.lsp.buf.definition({
-    on_list = function(options)
-      local seen = {}
-      local items = {}
-      for _, item in ipairs(options.items) do
-        local key = item.filename .. ':' .. item.lnum
-        if not seen[key] then
-          seen[key] = true
-          table.insert(items, item)
-        end
-      end
-      items = prefer_source_definitions(items)
-
-      if #items == 0 then
-        vim.notify('No definitions found', vim.log.levels.WARN)
-      elseif #items == 1 then
-        require('lsp.utils').jump_to_item(items[1])
-      else
-        vim.fn.setqflist({}, 'r', { title = options.title, items = items })
-        require('fzf-lua').quickfix({ prompt = 'Definitions> ' })
-      end
-    end,
-  })
-end
-
-local function smart_references_fzf()
-  local current_file = vim.fn.expand('%:p')
-  local current_pos = vim.api.nvim_win_get_cursor(0)
-  local current_line = current_pos[1]
-  local current_col = current_pos[2]
-
-  vim.lsp.buf.references(nil, {
-    on_list = function(options)
-      -- Filter the items
-      local filtered_items = {}
-      for _, item in ipairs(options.items) do
-        -- Skip current cursor position
-        local is_current_position = (
-          item.filename == current_file
-          and item.lnum == current_line
-          and math.abs((item.col or 1) - current_col - 1) <= 1
-        )
-
-        -- Skip imports/re-exports, but keep usages like `export const x = useThing()`
-        if not is_current_position and not require('lsp.enclosing_references').is_import_reference(item) then
-          table.insert(filtered_items, item)
-        end
-      end
-
-      if #filtered_items == 0 then
-        vim.notify('No other references found', vim.log.levels.WARN)
-        return
-      end
-
-      -- Jump directly if only one result
-      if #filtered_items == 1 then
-        local item = filtered_items[1]
-        vim.cmd('edit ' .. vim.fn.fnameescape(item.filename))
-        vim.api.nvim_win_set_cursor(0, { item.lnum, (item.col or 1) - 1 })
-        return
-      end
-
-      -- Set quickfix list and use fzf-lua
-      vim.fn.setqflist({}, 'r', {
-        title = 'References (filtered)',
-        items = filtered_items,
-      })
-
-      require('fzf-lua').quickfix({
-        prompt = 'References (filtered)> ',
-      })
-    end,
-  })
-end
-
----git_commits / git_bcommits without merge commits by default; alt-m reopens with them toggled
----@param picker 'commits'|'bcommits'
----@param show_merges? boolean
-local function git_log_picker(picker, show_merges)
-  local cmd = require('fzf-lua.defaults').defaults.git[picker].cmd
-  if not show_merges then cmd = cmd:gsub('^git log ', 'git log --no-merges ') end
-  require('fzf-lua')['git_' .. picker]({
-    cmd = cmd,
-    prompt = (picker == 'commits' and 'Commits' or 'Buffer commits') .. (show_merges and '> ' or ' (no merges)> '),
-    -- A custom header replaces fzf-lua's action hints, so list the keys here
-    header = (show_merges and 'alt-m: hide merges' or 'alt-m: show merges')
-      .. ' ╱ alt-r: toggle sort (best match ↔ history) ╱ ctrl-d: diff ╱ ctrl-y: copy hash',
-    keymap = { fzf = { ['alt-r'] = 'toggle-sort' } },
-    actions = {
-      ['alt-m'] = {
-        fn = function() git_log_picker(picker, not show_merges) end,
-        header = show_merges and 'hide merges' or 'show merges',
-      },
-    },
-  })
-end
-
+-- Fuzzy finder; picker logic lives in config/fzf-lua/ (open, git) and lsp/navigation.lua
 return {
   {
     'ibhagwan/fzf-lua',
     dependencies = { 'echasnovski/mini.icons' },
     event = 'VeryLazy',
     init = function()
+      -- At startup, not on first picker use, so buffers visited before then are tracked too
+      require('config.fzf-lua.open').setup()
+
       -- Use fzf for vim.ui.select (code actions, etc.) instead of the numbered inputlist prompt
       ---@diagnostic disable-next-line: duplicate-set-field
       vim.ui.select = function(...)
@@ -269,38 +70,14 @@ return {
       oldfiles = { cwd_only = true },
     },
     keys = {
-      {
-        '<C-p>',
-        function()
-          local single_file = single_file_in_cwd()
-          if single_file then
-            switch_or_edit_path(single_file)
-            return
-          end
-
-          require('fzf-lua').files({
-            file_icons = false,
-            git_icons = false,
-            actions = { ['default'] = file_switch_or_edit },
-          })
-        end,
-        desc = 'files / git files',
-      },
+      { '<C-p>', function() require('config.fzf-lua.open').files() end, desc = 'files / git files' },
       {
         '<M-f>',
         [[<cmd>lua require('fzf-lua').grep_project({ file_icons=false, git_icons=false })<CR>]],
         desc = 'file lines',
       },
       --- Buffer
-      {
-        '<Leader><CR>',
-        function()
-          require('fzf-lua').buffers({
-            actions = { ['default'] = buf_switch_or_edit },
-          })
-        end,
-        desc = 'buffers',
-      },
+      { '<Leader><CR>', function() require('config.fzf-lua.open').buffers() end, desc = 'buffers' },
       { '<C-g>', [[<cmd>lua require('fzf-lua').resume()<CR>]], desc = 'resume' },
       { '<leader>of', [[<cmd>lua require('fzf-lua').oldfiles()<CR>]], desc = '[O]ld [F]iles' },
 
@@ -321,16 +98,8 @@ return {
       { '<Leader>dw', [[<cmd>lua require('fzf-lua').diagnostics_workspace()<CR>]], desc = 'Workspace diagnostics' },
       { '<Leader>ws', [[<cmd>lua require('fzf-lua').lsp_workspace_symbols()<CR>]], desc = 'Workspace Symbols' },
       { '<Leader>ds', [[<cmd>lua require('fzf-lua').lsp_document_symbols()<CR>]], desc = 'Document Symbols' },
-      {
-        'gr',
-        smart_references_fzf,
-        desc = '[G]o to [R]eferences',
-      },
-      {
-        'gd',
-        smart_definitions_fzf,
-        desc = '[G]o to [D]efinition',
-      },
+      { 'gr', function() require('lsp.navigation').references() end, desc = '[G]o to [R]eferences' },
+      { 'gd', function() require('lsp.navigation').definitions() end, desc = '[G]o to [D]efinition' },
       {
         'gi',
         [[<cmd>lua require('fzf-lua').lsp_implementations({ jump1 = true })<CR>]],
@@ -343,8 +112,8 @@ return {
       },
 
       --- Git
-      { '<Leader>gX', function() git_log_picker('commits') end, desc = 'git commits (alt-m: toggle merges)' },
-      { '<Leader>gx', function() git_log_picker('bcommits') end, desc = 'git buffer commits (alt-m: toggle merges)' },
+      { '<Leader>gX', function() require('config.fzf-lua.git').log_picker('commits') end, desc = 'git commits (alt-m: toggle merges)' },
+      { '<Leader>gx', function() require('config.fzf-lua.git').log_picker('bcommits') end, desc = 'git buffer commits (alt-m: toggle merges)' },
       { '<Leader>gS', [[<cmd>lua require('fzf-lua').git_status()<CR>]], desc = 'git status' },
       { '<Leader>gB', [[<cmd>lua require('fzf-lua').git_branches()<CR>]], desc = 'git branches' },
 
