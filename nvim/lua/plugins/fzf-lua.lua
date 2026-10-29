@@ -32,18 +32,24 @@ local function switch_to_open_buffer(bufnr)
 end
 
 local function file_switch_or_edit(selected, opts)
-  if not selected or not selected[1] then return end
+  if not selected or not selected[1] then
+    return
+  end
 
   local stripped = require('fzf-lua.utils').strip_ansi_coloring(selected[1])
   local fullpath = vim.fn.fnamemodify(stripped:match('^%s*(.-)%s*$'), ':p')
-  if switch_to_open_buffer(vim.fn.bufnr(fullpath)) then return end
+  if switch_to_open_buffer(vim.fn.bufnr(fullpath)) then
+    return
+  end
 
   require('fzf-lua.actions').file_edit(selected, opts)
 end
 
 local function switch_or_edit_path(path)
   local fullpath = vim.fn.fnamemodify(path, ':p')
-  if switch_to_open_buffer(vim.fn.bufnr(fullpath)) then return end
+  if switch_to_open_buffer(vim.fn.bufnr(fullpath)) then
+    return
+  end
 
   vim.cmd.edit(vim.fn.fnameescape(fullpath))
 end
@@ -72,10 +78,14 @@ local function single_file_in_cwd()
 end
 
 local function buf_switch_or_edit(selected, opts)
-  if not selected or not selected[1] then return end
+  if not selected or not selected[1] then
+    return
+  end
 
   local stripped = require('fzf-lua.utils').strip_ansi_coloring(selected[1])
-  if switch_to_open_buffer(tonumber(stripped:match('%[(%d+)%]'))) then return end
+  if switch_to_open_buffer(tonumber(stripped:match('%[(%d+)%]'))) then
+    return
+  end
 
   require('fzf-lua.actions').buf_edit(selected, opts)
 end
@@ -87,7 +97,9 @@ end
 
 local function prefer_source_definitions(items)
   local source_items = vim.tbl_filter(function(item) return not is_node_modules_declaration(item) end, items)
-  if #source_items > 0 then return source_items end
+  if #source_items > 0 then
+    return source_items
+  end
   return items
 end
 
@@ -309,8 +321,8 @@ return {
       },
 
       --- Git
-      { '<Leader>gx', [[<cmd>lua require('fzf-lua').git_commits()<CR>]], desc = 'git commits' },
-      { '<Leader>gX', [[<cmd>lua require('fzf-lua').git_bcommits()<CR>]], desc = 'git buffer commits' },
+      { '<Leader>gX', [[<cmd>lua require('fzf-lua').git_commits()<CR>]], desc = 'git commits' },
+      { '<Leader>gx', [[<cmd>lua require('fzf-lua').git_bcommits()<CR>]], desc = 'git buffer commits' },
       { '<Leader>gS', [[<cmd>lua require('fzf-lua').git_status()<CR>]], desc = 'git status' },
       { '<Leader>gB', [[<cmd>lua require('fzf-lua').git_branches()<CR>]], desc = 'git branches' },
 
