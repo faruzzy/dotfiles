@@ -34,24 +34,30 @@
 
 [alias]
   # thanks to http://stackoverflow.com/questions/11269256/how-to-name-and-retrieve-a-stash-by-name-in-git
-  sshow = "!f() { git stash show stash^{/$*} -p; }; f"
-  sapply = "!f() { git stash apply stash^{/$*}; }; f"
+  # Newest stash whose message contains the text (stash^{/text} only searches the top stash)
+  sfind = "!f() { git stash list --format='%gd %s' | grep -F -m1 -- \"$*\" | cut -d' ' -f1; }; f"
+  sshow = "!f() { ref=$(git sfind \"$*\"); [ -n \"$ref\" ] || { echo \"No stash matching: $*\"; return 1; }; git stash show -p \"$ref\"; }; f"
+  sapply = "!f() { ref=$(git sfind \"$*\"); [ -n \"$ref\" ] || { echo \"No stash matching: $*\"; return 1; }; echo \"Applying $ref\"; git stash apply \"$ref\"; }; f"
 
+  # Save uncommitted work (untracked files included) as a stash named "checkpoint: <msg>",
+  # without touching the working tree, the index or other stashes. Restore: git sapply <msg>
   checkpoint = "!f() { \
       if [ -z \"$1\" ]; then \
-          echo \"Error: Please provide a checkpoint message\"; \
+          echo \"usage: git checkpoint <message>\"; \
           return 1; \
       fi; \
-      if git stash list | head -n 1 | grep -q \"$1\"; then \
-          echo \"Updating existing checkpoint: $1\"; \
-          git stash drop stash@{0} && \
-          git stash push -m \"$1\" && \
-          git stash apply stash@{0}; \
-      else \
-          echo \"Creating new checkpoint: $1\"; \
-          git stash push -m \"$1\" && \
-          git stash apply stash@{0}; \
+      msg=\"checkpoint: $*\"; \
+      tmp=$(mktemp); \
+      index=$(git rev-parse --git-path index); \
+      [ -f \"$index\" ] && cp \"$index\" \"$tmp\"; \
+      GIT_INDEX_FILE=\"$tmp\" git add -A && \
+      hash=$(GIT_INDEX_FILE=\"$tmp\" git stash create \"$msg\"); \
+      rm -f \"$tmp\"; \
+      if [ -z \"$hash\" ]; then \
+          echo \"Nothing to checkpoint\"; \
+          return 1; \
       fi; \
+      git stash store -m \"$msg\" \"$hash\" && echo \"Saved $msg\"; \
   }; f"
 
   st = status -sb

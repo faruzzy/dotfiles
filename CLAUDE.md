@@ -80,7 +80,7 @@ The fzf popup bindings (`M-t` words, ``M-` `` files, `prefix 0` panes) run `zsh 
 
 ### Git (`.gitconfig`)
 
-Uses git-delta as pager with Catppuccin theme (`catppuccin.gitconfig`). Extensive aliases defined in `.gitconfig`. `git fzf` is a thin alias that sources `.functions.zsh` and runs `gfzf`; edit the commit browser there, not in `.gitconfig`.
+Uses git-delta as pager with Catppuccin theme (`catppuccin.gitconfig`). Extensive aliases defined in `.gitconfig`. `git checkpoint <msg>` stores uncommitted work (untracked included) as stash "checkpoint: <msg>" via a temporary index, leaving the tree, index and other stashes alone; `git stash create` has no `--include-untracked`. `sapply`/`sshow` resolve names through `sfind` (`git stash list` substring match), because `stash^{/text}` only searches the newest stash. `git fzf` is a thin alias that sources `.functions.zsh` and runs `gfzf`; edit the commit browser there, not in `.gitconfig`.
 
 fzf-git (`fzf-git.sh`, `Ctrl-G` + key pickers like `^G^B` branches, `^G^H` hashes) is sourced from the repo path by `.functions.zsh`; it is not symlinked into `$HOME`.
 
