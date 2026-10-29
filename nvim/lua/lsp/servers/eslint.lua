@@ -51,7 +51,12 @@ return {
       buffer = bufnr,
       group = vim.api.nvim_create_augroup('eslint_fix_' .. bufnr, { clear = true }),
       callback = function()
-        if vim.fn.exists(':EslintFixAll') == 2 then
+        -- Skip the blocking fix request when ESLint reports nothing. Match on source: its pull
+        -- diagnostics don't land in vim.lsp.diagnostic.get_namespace(client.id, true)
+        local has_problems = vim.iter(vim.diagnostic.get(bufnr)):any(function(d)
+          return (d.source or ''):lower() == 'eslint'
+        end)
+        if has_problems and vim.fn.exists(':EslintFixAll') == 2 then
           vim.cmd.EslintFixAll()
         end
       end,
