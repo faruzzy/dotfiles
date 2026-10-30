@@ -408,12 +408,14 @@ local function compile_and_run()
     open_run_terminal({ 'npx', 'tsx', file }, { cwd = dir })
   elseif ft == 'lua' then
     open_run_terminal({ 'lua', file }, { cwd = dir })
+  elseif ft == 'go' then
+    open_run_terminal({ 'go', 'run', file }, { cwd = dir })
   else
     vim.notify('No run command configured for ' .. ft, vim.log.levels.WARN)
   end
 end
 vim.api.nvim_create_autocmd('FileType', {
-  pattern = { 'c', 'java', 'javascript', 'typescript', 'sh', 'python', 'lua' },
+  pattern = { 'c', 'go', 'java', 'javascript', 'typescript', 'sh', 'python', 'lua' },
   callback = function() map('n', '<leader>.', compile_and_run, { buffer = true, desc = 'Compile and Run' }) end,
 })
 
