@@ -414,7 +414,7 @@ local function compile_and_run()
 end
 vim.api.nvim_create_autocmd('FileType', {
   pattern = { 'c', 'java', 'javascript', 'typescript', 'sh', 'python', 'lua' },
-  callback = function() map('n', '<leader>c', compile_and_run, { buffer = true, desc = 'Compile and Run' }) end,
+  callback = function() map('n', '<leader>.', compile_and_run, { buffer = true, desc = 'Compile and Run' }) end,
 })
 
 -- Copy commands
