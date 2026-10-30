@@ -7,8 +7,10 @@ background-opacity = 1
 # background-blur = 50
 
 # Font configuration
-font-family = "ComicShannsMono Nerd Font"
-font-size = 16
+# font-family = "ComicShannsMono Nerd Font"
+# font-family = "Monaco for Powerline"
+font-family = "Monaco Nerd Font Mono"
+font-size = 15.5
 font-style = regular
 font-style-bold = bold
 font-style-italic = italic

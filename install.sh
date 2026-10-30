@@ -165,6 +165,42 @@ install_brew_packages() {
     log_success "Homebrew packages installed"
 }
 
+# Install Monaco Nerd Font Mono (thep0y build, with real bold/italic). Monaco is Apple's font,
+# so there is no Homebrew cask; download a pinned release and verify its checksum
+install_monaco_nerd_font() {
+    local version="v1.1.0"
+    local sha256="d71fd284122f2626efb5367fb147c2c512bd97f01389aeb358a3bd097515d8de"
+    local url="https://github.com/thep0y/monaco-nerd-font/releases/download/$version/MonacoNerdFontMono.zip"
+    local fonts_dir="$HOME/Library/Fonts"
+    local style
+
+    log_info "Checking Monaco Nerd Font Mono..."
+
+    local missing=false
+    for style in Regular Bold Italic BoldItalic; do
+        [[ -f "$fonts_dir/MonacoNerdFontMono-$style.ttf" ]] || missing=true
+    done
+    if [[ "$missing" == false ]]; then
+        log_success "Monaco Nerd Font Mono already installed"
+        return 0
+    fi
+
+    local tmp_dir
+    tmp_dir="$(mktemp -d)"
+
+    if curl -fsSL "$url" -o "$tmp_dir/monaco.zip" &&
+        echo "$sha256  $tmp_dir/monaco.zip" | shasum -a 256 -c --status &&
+        unzip -q -o "$tmp_dir/monaco.zip" 'MonacoNerdFontMono-*.ttf' -d "$tmp_dir/fonts"; then
+        mkdir -p "$fonts_dir"
+        cp "$tmp_dir"/fonts/MonacoNerdFontMono-*.ttf "$fonts_dir/"
+        log_success "Monaco Nerd Font Mono $version installed"
+    else
+        log_warning "Failed to install Monaco Nerd Font Mono (download or checksum mismatch)"
+    fi
+
+    rm -rf "$tmp_dir"
+}
+
 # Install language runtimes via mise
 install_mise_runtimes() {
     log_info "Installing language runtimes via mise..."
@@ -550,6 +586,7 @@ main() {
 
     # Development environment (formulas, casks, fonts, Java)
     install_brew_packages
+    install_monaco_nerd_font
 
     # Language runtimes and global packages
     install_mise_runtimes
