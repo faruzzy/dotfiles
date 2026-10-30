@@ -139,5 +139,26 @@ return {
         require('lsp.on_attach')(client, args.buf)
       end,
     })
+
+    -- A stopped client's diagnostics are only cleared on buffers it was attached to. Servers also
+    -- publish for files they aren't attached to (tsgo reports tsconfig.json errors), and those
+    -- outlived :lsp restart until Neovim quit. Clear every namespace of a client once it's gone.
+    vim.api.nvim_create_autocmd('LspDetach', {
+      group = vim.api.nvim_create_augroup('clear_stopped_client_diagnostics', { clear = true }),
+      callback = function(args)
+        local client_id = args.data.client_id
+        vim.schedule(function()
+          local client = vim.lsp.get_client_by_id(client_id)
+          if client and not client:is_stopped() then
+            return
+          end
+          for ns, info in pairs(vim.diagnostic.get_namespaces()) do
+            if info.name:match('^nvim%.lsp%.[^.]+%.' .. client_id .. '$') or info.name:match('^nvim%.lsp%.[^.]+%.' .. client_id .. '%.') then
+              vim.diagnostic.reset(ns)
+            end
+          end
+        end)
+      end,
+    })
   end,
 }

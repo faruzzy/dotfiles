@@ -72,6 +72,7 @@ Gotchas:
 - **ESLint:** its pull diagnostics aren't in `vim.lsp.diagnostic.get_namespace(client.id, true)`; match on diagnostic `source` instead. Its first request in a fresh buffer can exceed `request_sync`'s 1s default, so pass a longer timeout.
 - **tsgo** is set up by tsgo.nvim (uses `~/github/tsgo.nvim` if checked out, else GitHub), not here.
 - **Git revision buffers** (`fugitive://`, `diffview://`): the shared `LspAttach` in `plugins/lsp.lua` detaches servers there, since they can't resolve relative imports.
+- **Stale diagnostics after a restart:** Neovim only clears a stopped client's diagnostics on buffers it was attached to, but servers also publish for others (tsgo reports `tsconfig.json` errors). `plugins/lsp.lua` resets every namespace of a client once it stops.
 - **Sessions** (persistence.nvim) are per directory and git branch. Auto-restore loads only that exact branch's session (`load()` falls back to main's) and runs via `vim.schedule` after VimEnter; sourced inside VimEnter, the first restored buffer never gets its FileType.
 - **Auto-save:** tsx/jsx are excluded from auto-save.nvim and saved by a separate 2s idle timer outside insert mode, so format-on-save never runs mid-edit.
 - **Keymaps:** don't map a key that is also the prefix of other mappings (e.g. `<Leader>c` vs `<Leader>ca`); Neovim waits `timeoutlen` before firing it.
