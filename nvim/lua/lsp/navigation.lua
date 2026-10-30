@@ -73,9 +73,7 @@ function M.references()
 
       -- Jump directly if only one result
       if #filtered_items == 1 then
-        local item = filtered_items[1]
-        vim.cmd('edit ' .. vim.fn.fnameescape(item.filename))
-        vim.api.nvim_win_set_cursor(0, { item.lnum, (item.col or 1) - 1 })
+        require('lsp.utils').jump_to_item(filtered_items[1])
         return
       end
 
