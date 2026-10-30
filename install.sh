@@ -273,6 +273,42 @@ install_codex() {
     fi
 }
 
+# Clone everything.fzf next to this repo and link every script into ~/.local/bin (on PATH via .zshenv)
+setup_everything_fzf() {
+    local repo_dir bin_dir script link
+    repo_dir="$(dirname "$SCRIPT_DIR")/everything.fzf"
+    bin_dir="$HOME/.local/bin"
+
+    log_info "Setting up everything.fzf..."
+
+    if [[ -d "$repo_dir/.git" ]]; then
+        git -C "$repo_dir" pull --ff-only --quiet || log_warning "Could not update $repo_dir (local changes?)"
+    elif ! git clone --quiet https://github.com/junegunn/everything.fzf "$repo_dir"; then
+        log_warning "Failed to clone everything.fzf"
+        return 0
+    fi
+
+    mkdir -p "$bin_dir"
+    for script in "$repo_dir"/*.fzf; do
+        [[ -f "$script" && -x "$script" ]] || continue
+        link="$bin_dir/$(basename "$script")"
+        if [[ -e "$link" && ! -L "$link" ]]; then
+            log_warning "Skipping $link: a regular file already exists"
+            continue
+        fi
+        ln -sfn "$script" "$link"
+    done
+
+    # Drop links to scripts that were removed upstream
+    for link in "$bin_dir"/*.fzf; do
+        if [[ -L "$link" && ! -e "$link" && "$(readlink "$link")" == "$repo_dir"/* ]]; then
+            rm "$link"
+        fi
+    done
+
+    log_success "everything.fzf scripts linked into $bin_dir"
+}
+
 # Setup Atuin (shell history)
 setup_atuin() {
     log_info "Setting up Atuin shell history..."
@@ -595,6 +631,7 @@ main() {
 
     # Shell and terminal setup
     install_tmux_plugins
+    setup_everything_fzf
 
     # Application configuration
     configure_vscode
