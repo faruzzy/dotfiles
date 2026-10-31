@@ -25,7 +25,9 @@ readonly NC='\033[0m' # No Color
 # Logging functions
 log_info() { printf '%b\n' "${BLUE}[INFO]${NC} $1" | tee -a "$LOG_FILE"; }
 log_success() { printf '%b\n' "${GREEN}[SUCCESS]${NC} $1" | tee -a "$LOG_FILE"; }
-log_warning() { printf '%b\n' "${YELLOW}[WARNING]${NC} $1" | tee -a "$LOG_FILE"; }
+# Warnings are collected so main can list them instead of reporting success
+WARNINGS=()
+log_warning() { printf '%b\n' "${YELLOW}[WARNING]${NC} $1" | tee -a "$LOG_FILE"; WARNINGS+=("$1"); }
 log_error() { printf '%b\n' "${RED}[ERROR]${NC} $1" | tee -a "$LOG_FILE"; }
 
 # Utility functions
@@ -94,7 +96,7 @@ install_xcode_tools() {
     # Wait for installation to complete
     # NOTE: The automated 'Agree' click from the original script is often unreliable/not recommended.
     # We will wait for the tool to be available, or the user to manually agree/install.
-    log_warning "Please follow the on-screen prompts to install Command Line Tools."
+    log_info "Please follow the on-screen prompts to install Command Line Tools."
     until xcode-select -p &>/dev/null; do
         sleep 5
     done
@@ -410,7 +412,7 @@ configure_vscode() {
     fi
 
     if ! command_exists code; then
-        log_warning "VS Code 'code' command not found. Attempting to install Visual Studio Code..."
+        log_info "VS Code 'code' command not found. Attempting to install Visual Studio Code..."
         brew install --cask visual-studio-code || log_warning "Failed to install Visual Studio Code"
 
         if [[ -d "/Applications/Visual Studio Code.app/Contents/Resources/app/bin" ]]; then
@@ -638,13 +640,20 @@ main() {
         log_success "macOS system preferences applied"
     fi
 
-    log_success "Installation complete! 🎉"
+    if (( ${#WARNINGS[@]} )); then
+        log_error "Installation finished with ${#WARNINGS[@]} warning(s); re-run after fixing:"
+        printf '  - %s\n' "${WARNINGS[@]}" | tee -a "$LOG_FILE"
+    else
+        log_success "Installation complete! 🎉"
+    fi
     log_info "Please restart your terminal or run 'source ~/.zshrc' to apply changes"
     log_info "Installation log saved to: $LOG_FILE"
 
     if ask_yes_no "Would you like to restart your shell now?" "n"; then
         exec "$SHELL"
     fi
+
+    (( ${#WARNINGS[@]} == 0 ))
 }
 
 # Run main function
