@@ -225,13 +225,17 @@ install_mise_runtimes() {
 install_npm_packages() {
     log_info "Installing global npm packages..."
 
-    if ! command_exists npm; then
-        log_warning "npm not found. Attempting to install language runtimes before retrying..."
-        install_mise_runtimes
+    if ! command_exists mise; then
+        log_warning "mise not found. Skipping global npm package installation."
+        return 0
     fi
 
-    if ! command_exists npm; then
-        log_warning "npm still not available after retry. Skipping global npm package installation."
+    # mise isn't activated in this script, so run npm from the Node that
+    # install_mise_runtimes selected rather than whatever npm is on PATH
+    local npm=(mise exec node@lts -- npm)
+
+    if ! "${npm[@]}" --version &>/dev/null; then
+        log_warning "npm not available through mise. Skipping global npm package installation."
         return 0
     fi
 
@@ -246,8 +250,8 @@ install_npm_packages() {
     )
 
     for package in "${npm_packages[@]}"; do
-        if ! npm list -g "$package" &>/dev/null; then
-            npm install -g "$package" || log_warning "Failed to install $package"
+        if ! "${npm[@]}" list -g "$package" &>/dev/null; then
+            "${npm[@]}" install -g "$package" || log_warning "Failed to install $package"
         fi
     done
 
