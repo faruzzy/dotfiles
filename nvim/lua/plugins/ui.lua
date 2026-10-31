@@ -63,11 +63,6 @@ return {
     keys = {
       { '<Leader>tt', '<cmd>Trouble diagnostics toggle<cr>', desc = 'Trouble: Toggle' },
       {
-        '<Leader>tw',
-        '<cmd>Trouble diagnostics toggle<cr>',
-        desc = 'Trouble: Workspace diagnostics',
-      },
-      {
         '<Leader>tD',
         '<cmd>Trouble diagnostics toggle filter.buf=0<cr>',
         desc = 'Trouble: Document diagnostics',
