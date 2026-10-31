@@ -452,23 +452,6 @@ configure_vscode() {
     log_success "VS Code configured"
 }
 
-# Install Python packages
-install_python_packages() {
-    log_info "Installing Python packages..."
-
-    # Use a dedicated venv for Neovim's Python dependencies
-    local nvim_venv="$HOME/.config/nvim/venv"
-    if [[ ! -d "$nvim_venv" ]]; then
-        python3 -m venv "$nvim_venv" || log_warning "Failed to create Neovim Python venv"
-    fi
-
-    if [[ -d "$nvim_venv" ]]; then
-        "$nvim_venv/bin/pip" install --upgrade pynvim Pygments || log_warning "Failed to install Python packages"
-    fi
-
-    log_success "Python packages installed"
-}
-
 # Setup dotfiles
 setup_dotfiles() {
     log_info "Setting up dotfiles symbolic links..."
@@ -639,7 +622,6 @@ main() {
 
     # Application configuration
     configure_vscode
-    install_python_packages
 
     # Dotfiles setup
     setup_dotfiles
