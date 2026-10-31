@@ -60,7 +60,7 @@ return {
       map('n', '<leader>hp', gs.preview_hunk, { desc = 'preview git hunk' })
       map('n', '<leader>hb', function() gs.blame_line({ full = true }) end, { desc = 'git blame line' })
 
-      map('n', '<leader>tg', gs.preview_hunk_inline, { desc = 'toggle git show deleted' })
+      map('n', '<leader>tg', gs.preview_hunk_inline, { desc = 'preview git hunk inline' })
       map('n', '<leader>tw', gs.toggle_word_diff, { desc = 'toggle git word diff' })
 
       -- Text object
