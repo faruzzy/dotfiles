@@ -24,16 +24,19 @@ This repository contains configurations for a variety of tools, including:
 The `install.sh` script automates the setup process. It is idempotent and Bash 3.2 compatible (works on a fresh macOS). It will:
 
 1.  Install Xcode Command Line Tools.
-2.  Install Homebrew and a wide range of packages.
-3.  Install several GUI applications.
-4.  Install programming languages like Python, Node.js, and Java (with Rosetta for Apple Silicon).
+2.  Install Homebrew, then everything in the `Brewfile` (CLI tools, Neovim, GUI apps, fonts, and Temurin JDKs, with Rosetta for the x86-only ones).
+3.  Install Monaco Nerd Font Mono, which has no Homebrew cask.
+4.  Install global Node (LTS) and Java through [mise](https://mise.jdx.dev/), plus global npm packages.
 5.  Install Codex CLI.
-6.  Set up Zsh with Antidote plugins, Atuin history, fzf completion, and Starship.
-7.  Configure Neovim (managed via [bob](https://github.com/MordechaiHadad/bob)) with a Lua/lazy.nvim setup.
-8.  Install language runtimes through [mise](https://mise.jdx.dev/).
-9.  Create symbolic links for the dotfiles in this repository.
+6.  Install tmux plugins and set up [everything.fzf](https://github.com/junegunn/everything.fzf).
+7.  Install VS Code extensions.
+8.  Create symbolic links for the dotfiles in this repository.
+9.  Optionally set up a work Git identity for repos under `~/github/work`.
 10. Start or reload AeroSpace after its config is linked.
-11. Apply macOS system preferences.
+11. Set up Antidote and Atuin.
+12. Apply macOS system preferences.
+
+When it finishes, it lists any warnings and exits nonzero if there were some.
 
 To start the installation, run the following command:
 
@@ -54,9 +57,10 @@ nvim/
 │   ├── faruzzy/                # Core settings, keymaps, autocommands
 │   ├── lsp/                    # LSP server definitions and attach hooks
 │   ├── plugins/                # Plugin specs
-│   ├── config/                 # Theme and statusline components
+│   ├── config/                 # Theme, statusline and fzf-lua helpers
 │   └── utils.lua               # Helper functions
 ├── snippets/                   # Custom JS/TS/React/Rust snippets
+├── after/ftplugin/             # React filetype tweaks
 └── after/queries/              # Treesitter query overrides
 ```
 
@@ -73,17 +77,18 @@ Servers are installed with [mason.nvim](https://github.com/williamboman/mason.nv
 | lua_ls | Lua |
 | pyright | Python |
 | rust_analyzer | Rust (with rustaceanvim) |
-| vtsls | TypeScript / JavaScript |
+| tsgo | TypeScript / JavaScript (with tsgo.nvim) |
 | eslint | JS/TS linting |
 | emmet_language_server | HTML/CSS abbreviations |
 | tailwindcss | Tailwind CSS |
 | html / cssls | HTML / CSS |
 | jsonls | JSON (with schemastore schemas) |
 | yamlls | YAML |
+| gopls | Go |
 | clangd | C/C++ |
 | vimls | Vim script |
 
-`vtsls` is enabled through `nvim-vtsls` for TypeScript-specific commands. `rust_analyzer` is installed by Mason but managed by `rustaceanvim`.
+`tsgo` (the native TypeScript Go port) is set up by [tsgo.nvim](https://github.com/faruzzy/tsgo.nvim) rather than Mason or `nvim/lua/lsp/servers/`; a local checkout at `~/github/tsgo.nvim` takes precedence over GitHub. `rust_analyzer` is installed by Mason but managed by `rustaceanvim`.
 
 ### Completion
 
@@ -108,7 +113,7 @@ Powered by [blink.cmp](https://github.com/Saghen/blink.cmp), a Rust-based comple
 | Binding | Action |
 |---------|--------|
 | `<C-p>` | Find files |
-| `<M-f>` | Live grep |
+| `<M-f>` | Grep project |
 | `<leader><CR>` | Open buffers |
 | `<leader>/` | Buffer lines |
 | `<leader>fw` | Grep word under cursor |
@@ -123,7 +128,7 @@ Powered by [blink.cmp](https://github.com/Saghen/blink.cmp), a Rust-based comple
 ### Language-Specific Tooling
 
 **TypeScript / JavaScript**
-*   [nvim-vtsls](https://github.com/yioneko/nvim-vtsls) with native `vim.lsp`, inlay hints, source-definition support, and import management (`<leader>io` organize, `<leader>ia` add missing, `<leader>ir` remove unused, `<leader>if` fix all)
+*   [tsgo.nvim](https://github.com/faruzzy/tsgo.nvim) with native `vim.lsp`, inlay hints, source definition (`gD`), and import management (`<leader>io` organize, `<leader>ia` add missing, `<leader>ir` remove unused, `<leader>if` fix all, `<leader>ii` all three at once)
 *   Custom React hook snippets (`us` useState, `ue` useEffect, `ur` useRef, `um` useMemo, `uc` useCallback, and more)
 *   Programmatic React component snippet with auto prop destructuring
 *   JSDoc-friendly comment continuation and React filetype tweaks in `after/ftplugin`
@@ -152,7 +157,7 @@ Leader key is `,` (comma). A few highlights:
 | `<leader>ta` | Toggle auto-save |
 | `<leader>1`-`5` | Jump to buffer 1-5 |
 | `<A-j>` / `<A-k>` | Move line(s) up / down |
-| `<leader>c` | Compile and run (C, Java, JS, Python, sh) |
+| `<leader>.` | Compile and run (C, Go, Java, JS, TS, Lua, Python, sh) |
 | `<CR>` | Re-run last ex command |
 | `gR` | Find references to enclosing function |
 
@@ -171,7 +176,7 @@ Leader key is `,` (comma). A few highlights:
 | Binding | Action |
 |---------|--------|
 | `<C-p>` | Find files |
-| `<M-f>` | Live grep project |
+| `<M-f>` | Grep project |
 | `<leader><CR>` | Open buffers |
 | `<leader>/` | Search current buffer lines |
 | `<leader>fw` / `<leader>fW` | Grep word under cursor (project / buffer) |
@@ -190,15 +195,15 @@ Leader key is `,` (comma). A few highlights:
 
 | Binding | Action |
 |---------|--------|
-| `<leader>gx` / `<leader>gX` | Git commits / buffer commits |
+| `<leader>gx` / `<leader>gX` | Buffer commits / Git commits |
 | `<leader>gS` | Git status |
 | `<leader>gB` | Git branches |
 | `<leader>hs` / `<leader>hr` | Stage / reset hunk |
 | `<leader>hS` / `<leader>hR` | Stage / reset entire buffer |
 | `<leader>hp` | Preview hunk |
 | `<leader>hb` | Blame line |
-| `<leader>tb` | Toggle inline blame |
-| `<leader>tg` | Toggle show deleted |
+| `<leader>tg` | Preview hunk inline |
+| `<leader>tw` | Toggle word diff |
 | `]c` / `[c` | Next / previous hunk |
 | `]C` / `[C` | Next / previous staged hunk |
 | `<leader>pr` | Open GitHub PR for current branch |
@@ -235,7 +240,6 @@ Use [which-key.nvim](https://github.com/folke/which-key.nvim) to discover all av
 *   [lualine.nvim](https://github.com/nvim-lualine/lualine.nvim) -- statusline showing mode, git branch, diagnostics, LSP status, and tmux zoom indicator
 *   [incline.nvim](https://github.com/b0o/incline.nvim) -- floating filename labels on splits
 *   [indent-blankline.nvim](https://github.com/lukas-reineke/indent-blankline.nvim) -- indent guides
-*   [alpha.nvim](https://github.com/goolord/alpha-nvim) -- startup dashboard
 *   [trouble.nvim](https://github.com/folke/trouble.nvim) -- diagnostics panel (`<leader>tt`)
 
 ### Notable Extras
@@ -245,14 +249,15 @@ Use [which-key.nvim](https://github.com/folke/which-key.nvim) to discover all av
 *   **Atuin history** -- local-only shell history with fuzzy search
 *   **Antidote shell plugins** -- static Zsh plugin bundle generated from `.zsh_plugins.txt`
 *   **Code action lightbulb** -- shows a hint when code actions are available
-*   **Treesitter** -- 40+ parsers with text objects (`af`/`if` for functions, `ac`/`ic` for classes), auto-tag closing, and sticky context
+*   **Treesitter** -- 35+ parsers with text objects (`af`/`if` for functions, `ac`/`ic` for classes), auto-tag closing, and sticky context
 *   **vim-tmux-navigator** -- seamless `<C-h/j/k/l>` navigation between Neovim splits and tmux panes
 *   **[gx.nvim](https://github.com/chrishrb/gx.nvim)** -- smart URL opening under cursor
 *   **[in-and-out.nvim](https://github.com/ysmb-wtsg/in-and-out.nvim)** -- jump out of surrounding delimiters
 *   **[early-retirement.nvim](https://github.com/chrisgrieser/nvim-early-retirement)** -- auto-close inactive buffers
 *   **[todo-comments.nvim](https://github.com/folke/todo-comments.nvim)** -- TODO/FIXME navigation and fzf/Trouble integration
 *   **nvim-lsp-file-operations** -- LSP-aware file rename via neo-tree
-*   **auto-save** -- saves on focus loss and before exit, avoiding noisy BufLeave formatting churn
+*   **auto-save** -- saves on focus loss and buffer switch, and shortly after leaving insert mode or changing text; tsx/jsx are saved only after 2s idle in normal mode, so format-on-save never runs mid-edit
+*   **Sessions** ([persistence.nvim](https://github.com/folke/persistence.nvim)) -- per directory and Git branch, restored automatically
 *   **persistent undo** -- undo history survives across sessions
 *   **`:JsConfig`** -- scaffolds a `jsconfig.json` at the nearest `package.json` root
 
@@ -269,10 +274,9 @@ The shell setup is optimized for fast interactive use:
 
 ## Helper Scripts
 
-The `bin/` directory includes fzf-based helpers:
+`bin/` is on `PATH` (via `.zshenv`) for personal scripts.
 
-*   `claude.fzf` -- browse Claude session history, preview messages, and resume a session or jump to an existing tmux pane.
-*   `mise.fzf` -- pick a mise tool/version from local and remote versions, with a copy shortcut for coordinates.
+fzf-based helpers (`claude.fzf`, `codex.fzf`, `pr.fzf`, `mise.fzf`, `chrome.fzf`, and more) come from [everything.fzf](https://github.com/junegunn/everything.fzf): `install.sh` clones it to `~/github/everything.fzf` and links every `*.fzf` script into `~/.local/bin`. Re-run `install.sh` to pick up new scripts.
 
 ## Other Configurations
 
@@ -284,7 +288,7 @@ This repository also includes configuration files for:
 *   **Zsh:** A powerful shell using Antidote for plugins, Atuin for history, fzf for completion, and Starship for the prompt.
 *   **Starship:** A minimal, blazing-fast cross-shell prompt.
 *   **bat:** A cat(1) clone with syntax highlighting and Git integration.
-*   **AeroSpace:** An i3-like tiling window manager with app-to-workspace rules for the three-monitor setup.
+*   **AeroSpace:** An i3-like tiling window manager with one workspace per app, shared by a three-monitor home setup and a laptop + wide-monitor work setup.
 *   **mise:** Language runtime manager for global and project-local tool versions.
 *   **and more...**
 
