@@ -25,7 +25,7 @@ return {
       -- Sync with disk before saving so an external edit (e.g. Claude Code)
       -- isn't overwritten by a stale buffer. If the file changed on disk,
       -- Neovim will prompt and skip the write.
-      pcall(vim.cmd, 'checktime ' .. buf)
+      pcall(vim.api.nvim_command, 'checktime ' .. buf)
       return vim.api.nvim_buf_is_valid(buf) and vim.bo[buf].modified
     end
 

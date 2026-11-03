@@ -29,7 +29,7 @@ return {
       group = vim.api.nvim_create_augroup('persistence_neotree', { clear = true }),
       pattern = 'PersistenceSavePre',
       callback = function()
-        if package.loaded['neo-tree'] then pcall(vim.cmd, 'Neotree close') end
+        if package.loaded['neo-tree'] then pcall(vim.api.nvim_command, 'Neotree close') end
       end,
     })
   end,
