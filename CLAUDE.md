@@ -8,6 +8,8 @@ Personal dotfiles for macOS (Apple Silicon), managed via symlinks from this repo
 
 The same repo runs on two Macs, a personal one and a work one, with different usernames and monitor setups (see AeroSpace). Don't assume anything that only holds on one of them.
 
+Since the dotfiles in `$HOME` are symlinks into this repo, any installer that edits them is editing the repo (Docker Desktop appends to `.zprofile` and `.bash_profile`). Check those diffs before committing and replace hardcoded `/Users/<name>` paths with `$HOME`.
+
 ## Setup & Installation
 
 ```bash

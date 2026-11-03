@@ -1,5 +1,5 @@
 # --- Core Shell Settings & Refresh ---
-alias s='tmux source-file ~/.tmux.conf 2>/dev/null; exec zsh'
+alias s='tmux source-file ~/.tmux.conf 2>/dev/null; exec zsh -l'  # login shell, so .zprofile is re-read too
 alias python='python3'
 alias c='clear'
 
