@@ -67,6 +67,7 @@ Lua config using **lazy.nvim**. Entry point: `nvim/init.lua`; leader is comma.
 
 Gotchas:
 - **Lazy loading:** every spec needs a `keys`/`cmd`/`event`/`ft` trigger. Plugins that set up `FileType` autocmds (nvim-ts-autotag, endwise) must load on `BufReadPre`/`BufNewFile` or they miss the first buffer.
+- **Closing fzf-lua pickers programmatically:** send fzf an Esc (`nvim_chan_send` to its terminal) rather than closing its window; closing kills fzf before fzf-lua saves the query, so `<C-g>` resumes empty.
 - **Startup-time side effects:** lazy evaluates every spec file at startup, but a module only runs when required. Anything that must run at startup goes in a spec's `init` (e.g. fzf-lua's buffer→window tracker).
 - **Colorscheme:** Catppuccin loads eagerly (`lazy = false`). Lazy-loading it races lualine's `auto` theme at VimEnter and leaves the statusline grey.
 - **No nvim-lspconfig:** servers use native `vim.lsp.config`, so whatever lspconfig would inject must live in `lua/lsp/servers/*.lua`. Example: `eslint.lua` sets `settings.workspaceFolder` in `before_init`, or every diagnostic request fails.

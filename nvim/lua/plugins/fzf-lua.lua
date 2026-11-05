@@ -7,6 +7,7 @@ return {
     init = function()
       -- At startup, not on first picker use, so buffers visited before then are tracked too
       require('config.fzf-lua.open').setup()
+      require('config.fzf-lua.close_on_leave').setup()
 
       -- Use fzf for vim.ui.select (code actions, etc.) instead of the numbered inputlist prompt
       ---@diagnostic disable-next-line: duplicate-set-field
