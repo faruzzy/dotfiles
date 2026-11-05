@@ -110,6 +110,11 @@ function M.files()
   end
 
   require('fzf-lua').files({
+    -- fd skips git-ignored files; add back ignored .env files. `--directory` keeps git from
+    -- descending into ignored folders like node_modules, so this stays fast
+    cmd = 'fd --color=never --type f --type l --hidden --exclude .git;'
+      .. ' git ls-files --others --ignored --exclude-standard --directory --no-empty-directory 2>/dev/null'
+      .. " | grep -E '(^|/)\\.env[^/]*$'",
     file_icons = false,
     git_icons = false,
     actions = { ['default'] = M.file_switch_or_edit },
