@@ -87,6 +87,7 @@ path_dirs=(
     "/bin"
     "/sbin"
     "/usr/local/opt/libpq/bin"
+    "$HOME/.docker/bin"
 )
 
 # Build PATH from array, checking that directories exist and avoiding duplicates
