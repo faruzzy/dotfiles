@@ -33,7 +33,6 @@ on-focused-monitor-changed = ['move-mouse monitor-lazy-center']
 on-focus-changed = [
     'exec-and-forget /bin/bash ~/.config/aerospace/sync-spotify-workspace.sh',
     'exec-and-forget /bin/bash ~/.config/aerospace/sync-messaging-workspace.sh',
-    'exec-and-forget /bin/bash ~/.config/aerospace/sync-safari-workspace.sh',
     'exec-and-forget /bin/bash ~/.config/aerospace/sync-teams-call-window.sh',
     'exec-and-forget /bin/bash ~/.config/aerospace/sync-notes-workspace.sh',
 ]
