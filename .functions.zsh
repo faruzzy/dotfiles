@@ -336,37 +336,6 @@ function lsd() { find "${1:-.}" -maxdepth "${2:-1}" -type d -not -name '.*'; }
 # List only hidden files (using find)
 function lsh() { find "${1:-.}" -maxdepth "${2:-1}" -type f -name '.*'; }
 
-# ZSH: Custom fuzzy completion for "docker" command (converted from bash completion)
-# Added: zsh-style completion function
-function _fzf_complete_docker() {
-  local context state line
-  ARGS="$@"
-  if [[ $ARGS = 'docker ** docker' ]]; then
-    _values 'docker commands' \
-        'images[list images]' \
-        'inspect[inspect container/image]' \
-        'ps -a[list all containers]' \
-        'rmi -f[force remove images]' \
-        'rm[remove containers]' \
-        'stop[stop containers]' \
-        'start[start containers]'
-  elif [[ $ARGS = 'docker ** rmi' || $ARGS = 'docker ** -f' ]]; then
-    local images
-    images=(${(f)"$(docker images --format '{{.Repository}}:{{.Tag}}')"})
-    _values 'docker images' $images
-  elif [[ $ARGS = 'docker ** start' || $ARGS = 'docker ** stop' || $ARGS = 'docker ** rm' ]]; then
-    local containers
-    containers=(${(f)"$(docker ps -a --format '{{.Names}}')"})
-    _values 'docker containers' $containers
-  fi
-}
-
-# ZSH: Register the completion function
-# Added: Check if compdef exists before using it
-if [[ -n "$ZSH_VERSION" ]] && (( $+functions[compdef] )); then
-  compdef _fzf_complete_docker docker
-fi
-
 # https://gist.github.com/premek/6e70446cfc913d3c929d7cdbfe896fef
 # Usage: mv oldfilename
 # If you call mv without the second parameter it will prompt you to edit the filename on command line.
