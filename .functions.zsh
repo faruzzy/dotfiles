@@ -565,8 +565,11 @@ RG() {
   )
 
   if [ -n "$selected" ]; then
-    local file_location=$(echo "$selected" | cut -d: -f1-3)
-    $EDITOR "$file_location"
+    # nvim doesn't understand file:line:col, so split it and place the cursor
+    local file=${selected%%:*} rest=${selected#*:}
+    local line=${rest%%:*}
+    rest=${rest#*:}
+    $EDITOR "+call cursor($line, ${rest%%:*})" "$file"
   fi
 }
 
@@ -620,7 +623,9 @@ _fe_widget() {
 }
 
 _rg_widget() {
-  RG ""
+  # Hand nvim the terminal, as _fe_widget does
+  zle -I
+  RG "" </dev/tty >/dev/tty 2>&1
   zle reset-prompt
 }
 
