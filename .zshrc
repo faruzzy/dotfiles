@@ -33,6 +33,7 @@ if (( $+commands[docker] )); then
     _lazy_docker_completion() {
         unfunction _lazy_docker_completion
         source <(docker completion zsh)
+        _docker "$@"  # complete this Tab too, not just the next one
     }
     compdef _lazy_docker_completion docker
 fi
@@ -42,6 +43,7 @@ if (( $+commands[kubectl] )); then
     _lazy_kubectl_completion() {
         unfunction _lazy_kubectl_completion
         source <(kubectl completion zsh)
+        _kubectl "$@"  # complete this Tab too, not just the next one
     }
     compdef _lazy_kubectl_completion kubectl
 fi
