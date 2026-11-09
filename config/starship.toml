@@ -188,7 +188,8 @@ detect_files = [
     "setup.cfg",
     "poetry.lock"
 ]
-detect_folders = ["venv", ".venv", "env", ".env"]
+# Not "env"/".env": common names for config folders in non-Python repos
+detect_folders = ["venv", ".venv"]
 
 [docker_context]
 symbol = ""
