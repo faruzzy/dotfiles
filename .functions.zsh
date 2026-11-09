@@ -233,32 +233,40 @@ gfzf() {
 # type fstash to get a list of your stashes
 # enter shows you the contents of the stash
 # ctrl-d shows a diff of the stash against your current HEAD
+# ctrl-r drops the marked stashes (tab marks, ctrl-a marks all; not ctrl-x: that is the tmux prefix)
 # ctrl-b checks the stash out as a branch, for easier merging
 function fstash() {
-  local out q k sha
+  local out q k sha ref refs
   while out=$(
     git stash list --color=always --format="%C(yellow)%h %C(green)%>(14)%cr %C(blue)%gs" |
-    fzf --ansi --no-sort --query="$q" --print-query \
-        --header=$'ENTER (show) ╱ CTRL-D (diff) ╱ CTRL-B (branch) ╱ CTRL-X (drop)\n' \
-        --expect=ctrl-d,ctrl-b,ctrl-x);
+    fzf --ansi --no-sort --multi --query="$q" --print-query --bind=ctrl-a:toggle-all \
+        --header=$'ENTER (show) ╱ CTRL-D (diff) ╱ CTRL-B (branch) ╱ CTRL-R (drop marked) ╱ TAB (mark) ╱ CTRL-A (mark all)\n' \
+        --expect=ctrl-d,ctrl-b,ctrl-r);
   do
     q=$(head -1 <<< "$out")
     k=$(head -2 <<< "$out" | tail -1)
-    sha=$(tail -1 <<< "$out" | cut -d' ' -f1)
-    [ -z "$sha" ] && continue
-      # delta's default paging=auto prints short diffs straight to the terminal, where
-      # the next fzf loop immediately covers them; always page so they stay until q
-      if [ "$k" = 'ctrl-d' ]; then
-        git -c core.pager='delta --paging=always' diff $sha
-      elif [ "$k" = 'ctrl-b' ]; then
-        git stash branch "stash-$sha" $sha
-        break;
-      elif [ "$k" = 'ctrl-x' ]; then
-        git stash drop $sha
-        break;
-      else
-        git -c core.pager='delta --paging=always' stash show -p $sha
-      fi
+    # git stash commands take stash@{n}, and read an all-digit hash like 2026168 as an index
+    refs=$(tail -n +3 <<< "$out" | cut -d' ' -f1 | awk '
+      NR == FNR { ref[$1] = $2; next }
+      $1 in ref { print ref[$1] }' <(git stash list --format='%h %gd') -)
+    [ -z "$refs" ] && continue
+    # show/diff/branch act on the first selection only
+    ref=$(head -1 <<< "$refs")
+    sha=$(git rev-parse --short "$ref")
+    # delta's default paging=auto prints short diffs straight to the terminal, where
+    # the next fzf loop immediately covers them; always page so they stay until q
+    if [ "$k" = 'ctrl-d' ]; then
+      git -c core.pager='delta --paging=always' diff "$ref"
+    elif [ "$k" = 'ctrl-b' ]; then
+      git stash branch "stash-$sha" "$ref"
+      break
+    elif [ "$k" = 'ctrl-r' ]; then
+      # drop highest index first, since dropping renumbers every stash after it
+      sort -t '{' -k2 -rn <<< "$refs" | while read -r ref; do git stash drop "$ref"; done
+      break
+    else
+      git -c core.pager='delta --paging=always' stash show -p "$ref"
+    fi
   done
 }
 
