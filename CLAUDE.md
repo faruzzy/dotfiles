@@ -110,7 +110,7 @@ One workspace per app (`alt-<key>` to switch, `alt-shift-<key>` to move a window
 ## Key Conventions
 
 - **Theme**: Catppuccin Mocha everywhere (terminal, neovim, tmux, git-delta, bat, starship)
-- **Fonts**: Nerd Fonts (FiraCode, JetBrains Mono). Ghostty uses Monaco Nerd Font Mono, which has no Homebrew cask (Monaco is Apple's font); `install_monaco_nerd_font` in `install.sh` downloads it into `~/Library/Fonts`
+- **Fonts**: Nerd Fonts (FiraCode, JetBrains Mono). Ghostty uses Monaco Nerd Font Mono, which has no Homebrew cask (Monaco is Apple's font); `install_monaco_nerd_font` in `install.sh` downloads it into `~/Library/Fonts`. It lacks the Unicode spaces (U+2000-U+200A), so Ghostty's `font-codepoint-map` takes them from Apple's Monaco; without it, fzf-lua's U+2002 icon separators render as placeholder glyphs
 - **Commit style**: Conventional commits (`feat:`, `fix:`, `perf:`, `chore:`, `refactor:`). Never include `Co-Authored-By` trailers. Aim for concise: the subject alone when the change speaks for itself, a body when the why isn't obvious from the diff, and only as much detail as that context needs. Write it the way a person would explain the change, not as a generated summary.
 - **Commit grouping**: Group related commits where it makes sense
 - **Branch naming**: `feature/description`, `master` is the main branch

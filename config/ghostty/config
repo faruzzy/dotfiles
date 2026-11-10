@@ -10,6 +10,9 @@ background-opacity = 1
 # font-family = "ComicShannsMono Nerd Font"
 # font-size = 15.5
 font-family = "Monaco Nerd Font Mono"
+# The patched font lacks the Unicode spaces (U+2000-U+200A). fzf-lua separates icons with U+2002,
+# which otherwise falls back to placeholder glyphs. Take them from Apple's own Monaco.
+font-codepoint-map = U+2000-U+200A=Monaco
 font-size = 14.5
 font-style = regular
 font-style-bold = bold
