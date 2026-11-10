@@ -46,18 +46,22 @@ function M.references()
   local current_file = vim.fn.expand('%:p')
   local current_pos = vim.api.nvim_win_get_cursor(0)
   local current_line = current_pos[1]
-  local current_col = current_pos[2]
+  local cursor_col = current_pos[2] + 1 -- 1-based, like item.col
+  local word_len = #vim.fn.expand('<cword>')
 
-  vim.lsp.buf.references(nil, {
+  -- The declaration isn't a usage (the server includes it by default)
+  vim.lsp.buf.references({ includeDeclaration = false }, {
     on_list = function(options)
       -- Filter the items
       local filtered_items = {}
       for _, item in ipairs(options.items) do
-        -- Skip current cursor position
+        -- Skip the reference under the cursor, wherever the cursor sits within the word
+        local col = item.col or 1
         local is_current_position = (
           item.filename == current_file
           and item.lnum == current_line
-          and math.abs((item.col or 1) - current_col - 1) <= 1
+          and cursor_col >= col
+          and cursor_col < col + math.max(word_len, 1)
         )
 
         -- Skip imports/re-exports, but keep usages like `export const x = useThing()`
