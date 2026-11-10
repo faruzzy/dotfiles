@@ -23,6 +23,11 @@ return {
         if bufname == '' then
           return '[No name]'
         end
+        -- Git revision buffers (fugitive://, diffview://) have URL names, not useful paths;
+        -- an empty result hides the label
+        if bufname:match('^%a[%w+.-]*://') then
+          return ''
+        end
 
         local icon, color = devicons.get_icon_color(bufname, nil, { default = true })
         local parts = vim.split(vim.fn.fnamemodify(bufname, ':.'), '/')
