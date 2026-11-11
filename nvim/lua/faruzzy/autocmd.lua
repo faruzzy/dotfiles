@@ -206,6 +206,21 @@ augroup('disable_undo', {
   },
 })
 
+-- :e new/dir/file then :w creates the missing folders instead of failing with E212
+augroup('create_parent_dirs', {
+  {
+    'BufWritePre',
+    callback = function(args)
+      -- Only real files: fugitive://, diffview:// and other URL buffers write elsewhere
+      if vim.bo[args.buf].buftype ~= '' or args.match:match('^%a[%w+.-]*://') then return end
+      local dir = vim.fs.dirname(vim.fn.fnamemodify(args.match, ':p'))
+      if vim.uv.fs_stat(dir) then return end
+      vim.fn.mkdir(dir, 'p')
+      vim.notify('Created ' .. vim.fn.fnamemodify(dir, ':~:.'))
+    end,
+  },
+})
+
 -- Toggle relative/absolute line numbers based on focus and mode
 augroup('numbertoggle', {
   {
