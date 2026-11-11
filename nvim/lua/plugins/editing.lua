@@ -51,12 +51,16 @@ return {
           cancel(buf)
           local timer = assert(vim.uv.new_timer())
           timers[buf] = timer
-          timer:start(jsx_idle_ms, 0, vim.schedule_wrap(function()
-            cancel(buf)
-            if can_save(buf) then
-              vim.api.nvim_buf_call(buf, function() vim.cmd('silent! lockmarks write') end)
-            end
-          end))
+          timer:start(
+            jsx_idle_ms,
+            0,
+            vim.schedule_wrap(function()
+              cancel(buf)
+              if can_save(buf) then
+                vim.api.nvim_buf_call(buf, function() vim.cmd('silent! lockmarks write') end)
+              end
+            end)
+          )
         end,
         desc = 'Save tsx/jsx after 2s idle in normal mode',
       })
@@ -100,7 +104,16 @@ return {
 
   {
     'andythigpen/nvim-coverage',
-    cmd = { 'Coverage', 'CoverageLoad', 'CoverageLoadLcov', 'CoverageShow', 'CoverageHide', 'CoverageToggle', 'CoverageClear', 'CoverageSummary' },
+    cmd = {
+      'Coverage',
+      'CoverageLoad',
+      'CoverageLoadLcov',
+      'CoverageShow',
+      'CoverageHide',
+      'CoverageToggle',
+      'CoverageClear',
+      'CoverageSummary',
+    },
     version = '*',
     config = function()
       require('coverage').setup({
