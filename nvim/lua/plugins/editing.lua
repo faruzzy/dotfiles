@@ -177,12 +177,81 @@ return {
   },
 
   {
-    'AndrewRadev/splitjoin.vim',
+    'Wansmer/treesj',
     keys = {
-      { 'gS', desc = 'Split: Single to multi-line' },
-      { 'gJ', desc = 'Join: Multi to single-line' },
+      {
+        'gS',
+        function() require('treesj').split() end,
+        desc = 'Split: Single to multi-line',
+      },
+      {
+        'gJ',
+        function() require('treesj').join() end,
+        desc = 'Join: Multi to single-line',
+      },
     },
-    desc = 'Toggle between single/multi-line statements',
+    dependencies = { 'AndrewRadev/splitjoin.vim' },
+    opts = function()
+      -- treesj joins lists as [ 1, 2 ]; match Prettier's [1, 2]. Fresh tables per node: setup
+      -- rewrites each override in place
+      local function tight(nodes)
+        local t = {}
+        for _, node in ipairs(nodes) do
+          t[node] = { join = { space_in_brackets = false } }
+        end
+        return t
+      end
+      return {
+        use_default_keymaps = false,
+        notify = false,
+        langs = {
+          javascript = tight({ 'array', 'array_pattern' }),
+          typescript = tight({ 'array', 'array_pattern', 'tuple_type' }),
+          tsx = tight({ 'array', 'array_pattern', 'tuple_type' }),
+          json = tight({ 'array' }),
+          jsonc = tight({ 'array' }),
+        },
+        -- Hand what treesj can't handle (no parser or preset for the node, e.g. Vim script) to
+        -- splitjoin.vim, and report the rest
+        on_error = function(err, level, ...)
+          -- Required here, not when building opts: treesj.notify keeps the settings table that
+          -- exists when it's first loaded, and setup() replaces it
+          local msg = require('treesj.notify').msg
+          -- treesj found the node but declined to change it
+          local declined = { msg.node_is_already_joined, msg.node_is_already_splitted, msg.extra_longer, msg.contains_error }
+          if vim.tbl_contains(declined, err) then
+            vim.notify(err:format(...), level, { title = 'treesj' })
+          else
+            vim.cmd(require('treesj')._mode_to_use == 'join' and 'SplitjoinJoin' or 'SplitjoinSplit')
+          end
+        end,
+      }
+    end,
+    desc = 'Split/join code blocks with treesitter',
+  },
+
+  {
+    'AndrewRadev/splitjoin.vim',
+    cmd = { 'SplitjoinSplit', 'SplitjoinJoin' },
+    init = function()
+      -- gS/gJ belong to treesj, which falls back to these commands
+      vim.g.splitjoin_split_mapping = ''
+      vim.g.splitjoin_join_mapping = ''
+    end,
+    config = function()
+      -- Its ftplugins set each buffer's split/join handlers on FileType, which already ran for
+      -- buffers opened before it loaded; without them it silently does nothing there
+      for _, buf in ipairs(vim.api.nvim_list_bufs()) do
+        if vim.api.nvim_buf_is_loaded(buf) and vim.bo[buf].filetype ~= '' then
+          vim.api.nvim_buf_call(buf, function()
+            for _, ft in ipairs(vim.split(vim.bo.filetype, '.', { plain = true })) do
+              vim.cmd.runtime({ 'ftplugin/' .. ft .. '/splitjoin.vim', bang = true })
+            end
+          end)
+        end
+      end
+    end,
+    desc = 'Fallback for treesj',
   },
 
   {
