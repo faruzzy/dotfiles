@@ -28,7 +28,7 @@ Pulling doesn't apply what `install.sh` installs (Homebrew packages, fonts, clon
 
 - **Zsh config**: `zsh -i -c 'exit'` (check for errors/unexpected output), or `source ~/.zshrc` in a running shell
 - **Tmux config**: `tmux source-file ~/.tmux.conf` or `prefix + r` (bound to reload)
-- **Neovim**: `:checkhealth` after changes, or `nvim --headless "+q"` for startup errors
+- **Neovim**: `:checkhealth` after changes, or `nvim --headless "+q"` for startup errors. Without file arguments nvim restores and re-saves the current directory's session, so run session/layout tests from a scratch directory with `XDG_STATE_HOME` pointed at a temp dir
 - **Shell startup time**: `ZSH_PROFILE=1 zsh -i -c 'zsh-profile'` (built-in profiling support)
 
 ## Architecture
@@ -76,7 +76,7 @@ Gotchas:
 - **tsgo** is set up by tsgo.nvim (uses `~/github/tsgo.nvim` if checked out, else GitHub), not here.
 - **Git revision buffers** (`fugitive://`, `diffview://`): the shared `LspAttach` in `plugins/lsp.lua` detaches servers there, since they can't resolve relative imports.
 - **Stale diagnostics after a restart:** Neovim only clears a stopped client's diagnostics on buffers it was attached to, but servers also publish for others (tsgo reports `tsconfig.json` errors). `plugins/lsp.lua` resets every namespace of a client once it stops.
-- **Sessions** (persistence.nvim) are per directory and git branch. Auto-restore loads only that exact branch's session (`load()` falls back to main's) and runs via `vim.schedule` after VimEnter; sourced inside VimEnter, the first restored buffer never gets its FileType.
+- **Sessions** (persistence.nvim) are per directory and git branch. Auto-restore loads only that exact branch's session (`load()` falls back to main's) and runs via `vim.schedule` after VimEnter; sourced inside VimEnter, the first restored buffer never gets its FileType. Neo-tree windows are closed before saving and reopened after loading, tracked in the `NeoTreeSession` global (`sessionoptions` has `globals`); reopen with `Neotree focus`, since `Neotree show` jumps back to the previous window, which after a tab switch is in another tab.
 - **Auto-save:** tsx/jsx are excluded from auto-save.nvim and saved by a separate 2s idle timer outside insert mode, so format-on-save never runs mid-edit.
 - **Keymaps:** don't map a key that is also the prefix of other mappings (e.g. `<Leader>c` vs `<Leader>ca`); Neovim waits `timeoutlen` before firing it.
 - **Floats** inherit borders from `opt.winborder`; don't pass `border =` per call.
