@@ -12,7 +12,17 @@ local config = function()
 end
 
 return {
-  'mbbill/undotree',
-  cmd = 'UndotreeToggle',
-  config = config,
+  {
+    'mbbill/undotree',
+    cmd = 'UndotreeToggle',
+    config = config,
+  },
+  {
+    -- Keeps the undo history of a file changed outside Neovim (git switch, a formatter, Claude);
+    -- otherwise the undofile no longer matches and Neovim drops it
+    'kevinhwang91/nvim-fundo',
+    event = 'BufReadPre',
+    dependencies = { 'kevinhwang91/promise-async' },
+    opts = {},
+  },
 }
