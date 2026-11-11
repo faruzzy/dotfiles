@@ -26,7 +26,11 @@ return function(client, bufnr)
   local bsk = require('utils').buffer_map(bufnr)
 
   -- LSP actions (gd is handled by fzf-lua with jump-on-single-result)
-  bsk('n', '<Leader>rn', vim.lsp.buf.rename, { desc = 'LSP Rename' })
+  bsk('n', '<Leader>rn', function()
+    -- Load it first: lazy's stub :IncRename has no preview, so the first rename wouldn't either
+    require('inc_rename')
+    return ':IncRename ' .. vim.fn.expand('<cword>')
+  end, { expr = true, desc = 'LSP Rename' })
   bsk('n', '<Leader>ca', vim.lsp.buf.code_action, { desc = 'LSP Code Action' })
 
   enable_inlay_hints(client, bufnr)
