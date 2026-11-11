@@ -1,72 +1,77 @@
--- Custom lualine components
+-- Custom lualine components. Required from the lualine spec's opts function, so Catppuccin
+-- is already set up and its palette can be read here.
+
+local p = require('catppuccin.palettes').get_palette()
 
 local M = {}
 
--- Priority list for main language servers
-M.PRIORITY_LSP_SERVERS = {
-  'tsgo',
-  'ts_ls',
-  'lua_ls',
-  'pyright',
-  'rust_analyzer',
-  'gopls',
-  'clangd',
-  'svelte',
-  'cssls',
-  'html',
-  'graphql',
-  'jsonls',
-  'yamlls',
-  'vimls',
+M.palette = p
+
+-- The bar itself is the editor background; only the pills carry colour, so they float
+local bar = { a = { fg = p.overlay1, bg = p.base }, b = { fg = p.overlay1, bg = p.base }, c = { fg = p.overlay1, bg = p.base } }
+M.theme = { normal = bar, insert = bar, visual = bar, replace = bar, command = bar, terminal = bar, inactive = bar }
+
+local mode_colors = {
+  n = p.lavender,
+  i = p.green,
+  v = p.mauve,
+  V = p.mauve,
+  ['\22'] = p.mauve,
+  s = p.teal,
+  S = p.teal,
+  ['\19'] = p.teal,
+  c = p.peach,
+  R = p.red,
+  r = p.red,
+  ['!'] = p.lavender,
+  t = p.sapphire,
 }
 
--- LSP server name with count
-M.active_lsp = {
+-- Two-tone pill on the left: mode, then the filetype. The mode's rounded end bleeds into the
+-- filetype half; lualine colours a table separator from the neighbouring components
+M.mode = {
+  'mode',
+  icon = '\u{e62b}',
+  color = function() return { fg = p.base, bg = mode_colors[vim.fn.mode():sub(1, 1)] or p.lavender, gui = 'bold' } end,
+  separator = { left = '\u{e0b6}', right = '\u{e0b4}' },
+}
+
+M.filetype = {
+  'filetype',
+  colored = false,
+  color = { fg = p.base, bg = p.pink },
+  separator = { right = '\u{e0b4}' },
+}
+
+M.branch = { 'b:gitsigns_head', icon = '\u{e725}' }
+
+-- Two-tone pill on the right: working directory, then the host (tells the two Macs apart)
+M.cwd = {
+  function() return vim.fn.fnamemodify(vim.fn.getcwd(), ':t') end,
+  icon = '\u{f07b}',
+  color = { fg = p.base, bg = p.pink, gui = 'bold' },
+  separator = { left = '\u{e0b6}' },
+}
+
+local host = vim.fn.hostname():gsub('%.local$', '')
+M.host = {
+  function() return host end,
+  icon = '󰒋',
+  color = { fg = p.base, bg = p.peach, gui = 'bold' },
+  separator = { left = '\u{e0b6}', right = '\u{e0b4}' },
+}
+
+-- Attached language servers by name (state dots are in the incline label)
+local lsp_hidden = { copilot = true }
+M.lsp = {
   function()
-    local clients = vim.lsp.get_clients({ bufnr = 0 })
-    if next(clients) == nil then
-      return ''
+    local names = {}
+    for _, client in ipairs(vim.lsp.get_clients({ bufnr = 0 })) do
+      if not lsp_hidden[client.name] then names[#names + 1] = client.name end
     end
-
-    -- Find priority server
-    local main_server = nil
-    for _, priority in ipairs(M.PRIORITY_LSP_SERVERS) do
-      for _, client in ipairs(clients) do
-        if client.name == priority then
-          main_server = client.name
-          break
-        end
-      end
-      if main_server then
-        break
-      end
-    end
-
-    -- Count total non-null-ls clients
-    local count = 0
-    for _, client in ipairs(clients) do
-      if client.name ~= 'null-ls' then
-        count = count + 1
-      end
-    end
-
-    if main_server then
-      if count > 1 then
-        return string.format('%s +%d', main_server, count - 1)
-      end
-      return main_server
-    end
-
-    -- Fallback to first non-null-ls client
-    for _, client in ipairs(clients) do
-      if client.name ~= 'null-ls' then
-        return client.name
-      end
-    end
-
-    return clients[1] and clients[1].name or ''
+    return table.concat(names, ' ')
   end,
-  icon = ' LSP:',
+  icon = '\u{f013}',
 }
 
 -- Macro recording indicator
@@ -78,7 +83,7 @@ M.macro_recording = {
     end
     return 'recording @' .. reg
   end,
-  color = { fg = '#ff9e64', gui = 'bold' },
+  color = { fg = p.red, gui = 'bold' },
 }
 
 -- Search count
@@ -93,6 +98,8 @@ M.search_result = {
     end
     return string.format('%d/%d', res.current, res.total)
   end,
+  icon = '\u{f002}',
+  color = { fg = p.mauve },
 }
 
 -- Spell check indicator
@@ -103,7 +110,7 @@ M.spell_indicator = {
   cond = function()
     return vim.wo.spell
   end,
-  color = { fg = '#7aa2f7' },
+  color = { fg = p.blue },
 }
 
 -- Tmux zoom indicator. The flag is cached and re-read asynchronously when the
@@ -136,19 +143,8 @@ M.tmux_zoomed = {
   cond = function()
     return vim.env.TMUX ~= nil
   end,
-  color = { fg = '#1a1b26', bg = '#f7768e', gui = 'bold' },
-}
-
--- Smart filename with path shortening
-M.filename = {
-  'filename',
-  path = 1, -- Relative path
-  shorting_target = 40,
-  symbols = {
-    modified = ' ●',
-    readonly = ' ',
-    unnamed = '[No Name]',
-  },
+  color = { fg = p.base, bg = p.red, gui = 'bold' },
+  separator = { left = '\u{e0b6}', right = '\u{e0b4}' },
 }
 
 -- Diff source from gitsigns
@@ -176,11 +172,15 @@ M.filetype_names = {
   undotree = 'Undo Tree',
 }
 
+-- Lead pill for extensions (neo-tree, help, ...)
 M.ft_upper = {
   'filetype',
   fmt = function(name)
     return M.filetype_names[name] or name
   end,
+  colored = false,
+  color = { fg = p.base, bg = p.lavender, gui = 'bold' },
+  separator = { left = '\u{e0b6}', right = '\u{e0b4}' },
 }
 
 return M
