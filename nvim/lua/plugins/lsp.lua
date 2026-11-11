@@ -65,7 +65,10 @@ return {
     -- Shared capabilities for all servers
     vim.lsp.config('*', {
       capabilities = require('lsp.capabilities')(),
+      -- Records crashes for the incline label; a server config with its own on_exit replaces this
+      on_exit = function(...) require('lsp.status').on_exit(...) end,
     })
+    require('lsp.status').setup()
 
     -- Per-server configuration
     local servers = require('lsp.servers')

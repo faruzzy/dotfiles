@@ -33,12 +33,35 @@ return {
         local parts = vim.split(vim.fn.fnamemodify(bufname, ':.'), '/')
         local result = { { icon .. ' ', guifg = color } }
 
+        -- Keep the file and its directory whole; shorten the directories above them to their
+        -- first letter (.config -> .c), dimmed, and drop all but the nearest 3
+        local head = #parts - 2
+        if head > 3 then table.insert(result, { '… > ', group = 'Comment' }) end
         for idx, part in ipairs(parts) do
-          if next(parts, idx) then
+          if idx <= head then
+            if idx > head - 3 then
+              table.insert(result, { part:match('^%.?[^.]') or part, group = 'Comment' })
+              table.insert(result, { ' > ', group = 'Comment' })
+            end
+          elseif next(parts, idx) then
             table.insert(result, { part })
             table.insert(result, { ' > ', guifg = 'Directory' })
           else
             table.insert(result, { part, gui = 'bold' })
+          end
+        end
+
+        -- One dot per server state, with a count when several share it
+        local counts = require('lsp.status').counts(props.buf)
+        for _, s in ipairs({
+          { 'starting', 'DiagnosticWarn' },
+          { 'busy', 'DiagnosticWarn' },
+          { 'running', 'DiagnosticOk' },
+          { 'crashed', 'DiagnosticError' },
+        }) do
+          local n = counts[s[1]]
+          if n > 0 then
+            table.insert(result, { (n > 1 and ' ' .. n or ' ') .. (s[1] == 'busy' and '◐' or '●'), group = s[2] })
           end
         end
 
