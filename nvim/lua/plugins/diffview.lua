@@ -3,7 +3,15 @@ return {
   'sindrets/diffview.nvim',
   cmd = { 'DiffviewOpen', 'DiffviewFileHistory' },
   dependencies = { 'nvim-lua/plenary.nvim' },
+  init = function()
+    -- :PRReview 123 opens that PR; without a number, pick from open PRs
+    vim.api.nvim_create_user_command('PRReview', function(opts)
+      local pr = require('config.pr_review')
+      if opts.args == '' then pr.pick() else pr.open(opts.args) end
+    end, { nargs = '?', desc = 'Review a GitHub PR in diffview' })
+  end,
   keys = {
+    { '<leader>dp', function() require('config.pr_review').pick() end, desc = 'Review a GitHub PR in diffview' },
     {
       '<leader>dv',
       function()
