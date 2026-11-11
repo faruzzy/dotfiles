@@ -440,6 +440,10 @@ return {
         lua = { inherit_defaults = true, 'lazydev' },
       },
       providers = {
+        cmdline = {
+          -- The cmdline source has no docs; show the :help entry for the selected item
+          override = { resolve = function(...) return require('config.cmdline_help').resolve(...) end },
+        },
         buffer = {
           name = 'Buffer',
           max_items = 10,
