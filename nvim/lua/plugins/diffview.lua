@@ -26,6 +26,32 @@ return {
       desc = 'Toggle Diffview',
     },
     {
+      '<leader>dV',
+      function()
+        if require('diffview.lib').get_current_view() then
+          return vim.cmd.DiffviewClose()
+        end
+        -- Default branch from origin/HEAD (main or master), falling back to whichever exists
+        local base = vim.trim(vim.fn.system({ 'git', 'rev-parse', '--abbrev-ref', 'origin/HEAD' }))
+        if vim.v.shell_error ~= 0 then
+          base = nil
+          for _, candidate in ipairs({ 'origin/main', 'origin/master' }) do
+            vim.fn.system({ 'git', 'rev-parse', '--verify', '--quiet', candidate })
+            if vim.v.shell_error == 0 then
+              base = candidate
+              break
+            end
+          end
+        end
+        if not base then
+          return vim.notify('No origin/HEAD, origin/main or origin/master to compare against', vim.log.levels.WARN)
+        end
+        -- Branch point to the files on disk: committed and uncommitted work, without main's newer changes
+        vim.cmd(('DiffviewOpen %s...HEAD --imply-local'):format(base))
+      end,
+      desc = 'Toggle Diffview of the whole branch (incl. uncommitted)',
+    },
+    {
       '<leader>dh',
       '<cmd>DiffviewFileHistory %<cr>',
       desc = 'Diffview File History (current file)',
