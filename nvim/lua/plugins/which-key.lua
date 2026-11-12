@@ -1,22 +1,40 @@
--- Useful plugin to show you pending keybinds.
+-- Shows pending keybinds. Groups mirror the <Leader> prefixes used across the config; the
+-- desc-only entries label mappings that are defined elsewhere without one.
 return {
   'folke/which-key.nvim',
   event = 'VeryLazy',
-  opts = {},
-  config = function()
-    local which_key = require('which-key')
-    which_key.setup()
+  opts = {
+    spec = {
+      { '<Leader>a', group = '[A]erial / misc' },
+      { '<Leader>b', group = '[B]uffer' },
+      { '<Leader>c', group = '[C]ode' },
+      { '<Leader>d', group = '[D]iff / diagnostics' },
+      { '<Leader>D', group = '[D]ebug', mode = { 'n', 'x' } },
+      { '<Leader>f', group = '[F]ind word' },
+      { '<Leader>g', group = '[G]it' },
+      { '<Leader>h', group = 'Git [H]unk' },
+      { '<Leader>i', group = '[I]mports' },
+      { '<Leader>n', group = '[N]eogen annotations' },
+      { '<Leader>P', group = '[P]eek' },
+      { '<Leader>q', group = 'Session' },
+      { '<Leader>r', group = '[R]ename' },
+      { '<Leader>s', group = '[S]earch' },
+      { '<Leader>sr', group = '[S]earch & [R]eplace' },
+      { '<Leader>t', group = '[T]oggle / Trouble' },
+      { '<Leader>T', group = '[T]ests' },
+      { '<Leader>v', group = '[V]imux' },
+      { '<Leader>w', group = '[W]indow / workspace' },
+      { '<Leader>y', group = '[Y]ank path', mode = { 'n', 'x' } },
+      { '<Leader>ya', group = 'Absolute', mode = { 'n', 'x' } },
+      { '<Leader>yf', group = 'File', mode = { 'n', 'x' } },
+      { '<Leader>z', group = '[Z]en', mode = { 'n', 'x' } },
 
-    which_key.add({
-      { '<leader>c', group = '[C]ode' },
-      -- { '<leader>d', group = '[D]ocument' },
-      { '<leader>g', group = '[G]it' },
-      { '<leader>h', group = 'Git [H]unk' },
-      { '<leader>r', group = '[R]ename' },
-      { '<leader>s', group = '[S]earch' },
-      { '<leader>t', group = '[T]oggle' },
-      -- { '<leader>w', group = '[W]orkspace' },
-      { '<leader>', name = 'VISUAL <leader>', mode = { 'v' } },
-    })
-  end,
+      { '<Leader>gh', desc = 'Open GitHub repo' },
+      { '<Leader>hq', desc = 'Hunks to quickfix (buffer)' },
+      { '<Leader>hQ', desc = 'Hunks to quickfix (all)' },
+      { '<Leader>za', desc = 'Zen: Ataraxis' },
+      { '<Leader>zf', desc = 'Zen: Focus' },
+      { '<Leader>zn', desc = 'Zen: Narrow', mode = { 'n', 'x' } },
+    },
+  },
 }
