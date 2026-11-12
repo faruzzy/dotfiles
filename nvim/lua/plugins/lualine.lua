@@ -61,7 +61,7 @@ local function opts()
         { 'diff', source = components.diff_source },
         { 'diagnostics', symbols = { error = '\u{f057} ', warn = '\u{f071} ', hint = '\u{f0eb} ', info = '\u{f05a} ' } },
       },
-      lualine_c = { 'aerial' },
+      lualine_c = {},
       lualine_x = {
         components.tmux_zoomed,
         components.macro_recording,
