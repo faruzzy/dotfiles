@@ -1,0 +1,37 @@
+#!/usr/bin/env bash
+# git here: graph of every branch, cropped to the lines around HEAD, to see where the current
+# branch sits relative to the others (`git lg` shows only the current branch).
+#
+#   git here          20 lines
+#   git here -40      40 lines
+#   git here -- path  any other arguments go to git log
+
+set -euo pipefail
+
+height=20
+if [[ ${1:-} =~ ^-[0-9]+$ ]]; then
+  height=${1#-}
+  shift
+fi
+
+# Only history newer than HEAD~height can land near HEAD; skip the rest so big repos stay fast
+after=()
+if since=$(git log -1 --format=%aI "HEAD~$height" 2>/dev/null); then
+  after=(--after="$since")
+fi
+
+graph=$(git log ${after[@]+"${after[@]}"} --all --graph --color=always \
+  --format='%C(bold blue)%h%C(reset) %C(bold green)%ar%C(reset) %C(dim white)%an%C(reset)%C(auto)%d%C(reset) %s' "$@")
+
+# HEAD's line, found by its hash (the decoration could be anywhere in a subject)
+head_hash=$(git rev-parse --short HEAD)
+head_line=$(grep -nF -m1 -- "$head_hash" <<<"$graph" | cut -d: -f1 || true)
+start=$(( ${head_line:-1} - height / 2 ))
+(( start < 1 )) && start=1
+
+output=$(tail -n "+$start" <<<"$graph" | head -n "$height")
+if [ -t 1 ]; then
+  less -FRSX <<<"$output"
+else
+  echo "$output"
+fi

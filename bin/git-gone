@@ -1,0 +1,43 @@
+#!/usr/bin/env bash
+# git gone: delete local branches whose upstream no longer exists (merged PRs whose GitHub branch
+# was deleted). Catches squash merges, which `git branch --merged` misses.
+#
+# TAB marks, CTRL-A marks all, ENTER deletes the marked branches (or the one under the cursor),
+# CTRL-D shows the branch's full diff against main.
+
+set -euo pipefail
+
+git rev-parse --git-dir >/dev/null
+
+git fetch --prune --quiet || echo 'git gone: fetch failed; using the last known remote state' >&2
+
+current=$(git branch --show-current)
+gone=$(git for-each-ref --format='%(refname:short) %(upstream:track)' refs/heads |
+  awk '$2 == "[gone]" { print $1 }' | grep -vxF -- "$current" || true)
+
+if [ -n "$current" ] && [ "$(git for-each-ref --format='%(upstream:track)' "refs/heads/$current")" = '[gone]' ]; then
+  echo "The current branch ($current) is gone too; switch away to delete it."
+fi
+
+if [ -z "$gone" ]; then
+  echo 'No branches with a deleted upstream.'
+  exit 0
+fi
+
+# The branch's own commits and changes, measured from where it left the default branch
+main=$(git rev-parse --abbrev-ref origin/HEAD 2>/dev/null || echo HEAD)
+preview="git log --color=always --format='%C(yellow)%h %C(green)%>(12)%cr %C(reset)%s' $main..{1} | head -20
+echo
+git diff --stat --color=always \$(git merge-base $main {1}) {1}"
+
+# fzf's execute runs delta with fzf's stdout, so page explicitly (see .functions.zsh fstash)
+diff_cmd="git -c core.pager='delta --paging=always' diff \$(git merge-base $main {1}) {1}"
+
+selected=$(fzf --multi --reverse --no-sort --bind=ctrl-a:toggle-all \
+  --header=$'ENTER (delete marked) ╱ TAB (mark) ╱ CTRL-A (mark all) ╱ CTRL-D (diff)\n' \
+  --preview="$preview" --preview-window=right,60% \
+  --bind="ctrl-d:execute($diff_cmd)" <<<"$gone") || exit 0
+
+while read -r branch; do
+  git branch -D -- "$branch"
+done <<<"$selected"

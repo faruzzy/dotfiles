@@ -82,6 +82,9 @@
   rlc = !git reset --hard HEAD~1                  # Remove last commit
   ulc = reset --soft HEAD~1                       # Undo last commit
   update = "!f() { git fetch origin && git rebase origin/${1:-$(git rev-parse --abbrev-ref HEAD)}; }; f"
+  # New branch from origin's default branch (fresher than a stale local master), without tracking
+  # it, so `git pull`/`git push` on the new branch never target master
+  nb = "!f() { [ -n \"$1\" ] || { echo 'usage: git nb <branch>'; return 1; }; git fetch -q origin && git switch --no-track -c \"$1\" \"$(git rev-parse --abbrev-ref origin/HEAD)\"; }; f"
   commend = commit --amend --no-edit
   amend = !git add -u && git commit --amend --no-edit
   amendall = !git add . && git commit --amend --no-edit

@@ -92,6 +92,7 @@ Popup bindings that run shell functions use `zsh -c "source ~/.functions.zsh; <f
 
 - Pager is git-delta (Catppuccin theme in `catppuccin.gitconfig`). Its default auto paging prints short output straight to the terminal; fzf loops that show diffs (e.g. `fstash`) must force `--paging=always` or the next fzf frame covers it.
 - `git fzf` is a thin alias for `gfzf` in `.functions.zsh`; edit the browser there.
+- Git subcommands longer than a one-liner go in `bin/git-<name>` (git runs it as `git <name>`), not as escaped shell inside a `.gitconfig` alias.
 - Stash helpers: `stash^{/text}` only searches the newest stash, so name lookups go through `git stash list` (`sfind`). `git stash create` has no `--include-untracked`; `checkpoint` stages into a temporary index instead.
 - fzf-git (`fzf-git.sh`) is sourced from the repo path by `.functions.zsh`, not symlinked into `$HOME`.
 - Work identity: repos under `~/github/work/` include `~/.gitconfig-work` via `includeIf`. That file is machine-local, written by `install.sh` on the work Mac; if it's missing, git silently ignores the include.
