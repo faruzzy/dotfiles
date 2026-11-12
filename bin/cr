@@ -1,4 +1,4 @@
-#!/usr/bin/env ruby
+#!/opt/homebrew/opt/ruby/bin/ruby
 # frozen_string_literal: true
 
 # cr: pick a Claude Code session with fzf and get back to it.
