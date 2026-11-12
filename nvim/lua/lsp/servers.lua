@@ -29,6 +29,18 @@ local servers = {
     filetypes = { 'python' },
     root_markers = { 'pyproject.toml', 'setup.py', 'setup.cfg', 'requirements.txt', 'pyrightconfig.json' },
   },
+  -- Also attaches to extensionless scripts (bin/cr, the *.fzf scripts) through their ruby shebang
+  ruby_lsp = {
+    cmd = { 'ruby-lsp' },
+    filetypes = { 'ruby', 'eruby' },
+    root_markers = { 'Gemfile', '.git' },
+    init_options = {
+      -- RuboCop when the project bundles it, otherwise no formatter
+      formatter = 'auto',
+      -- The index covers *.rb only; without this, go-to-definition can't see executables
+      indexing = { includedPatterns = { '{bin,exe}/*' } },
+    },
+  },
   rust_analyzer = {
     cmd = { 'rust-analyzer' },
     filetypes = { 'rust' },

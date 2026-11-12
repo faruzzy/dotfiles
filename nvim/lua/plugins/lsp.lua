@@ -50,6 +50,7 @@ return {
         'json-lsp',
         'lua-language-server',
         'pyright',
+        'ruby-lsp',
         'rust-analyzer',
         'tailwindcss-language-server',
         'vim-language-server',

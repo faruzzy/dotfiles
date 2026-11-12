@@ -73,6 +73,7 @@ Gotchas:
 - **No nvim-lspconfig:** servers use native `vim.lsp.config`, so whatever lspconfig would inject must live in `lua/lsp/servers/*.lua`. Example: `eslint.lua` sets `settings.workspaceFolder` in `before_init`, or every diagnostic request fails.
 - **`root_markers` are priority-ordered, not nearest-wins:** use nested groups and keep project markers ahead of the global `~/.eslintrc` fallback.
 - **ESLint:** its pull diagnostics aren't in `vim.lsp.diagnostic.get_namespace(client.id, true)`; match on diagnostic `source` instead. Its first request in a fresh buffer can exceed `request_sync`'s 1s default, so pass a longer timeout.
+- **ruby-lsp** is a gem, so Mason installs it with whatever `ruby` is on PATH, and the gem pins that Ruby in its shebang. Mise provides Ruby 4 only under `~/github` (`~/github/mise.toml`); elsewhere it's macOS's 2.6, which ruby-lsp doesn't support. Install it from nvim started inside `~/github`, and after a Ruby upgrade run `:MasonInstall --force ruby-lsp`.
 - **tsgo** is set up by tsgo.nvim (uses `~/github/tsgo.nvim` if checked out, else GitHub), not here.
 - **Git revision buffers** (`fugitive://`, `diffview://`): the shared `LspAttach` in `plugins/lsp.lua` detaches servers there, since they can't resolve relative imports.
 - **Stale diagnostics after a restart:** Neovim only clears a stopped client's diagnostics on buffers it was attached to, but servers also publish for others (tsgo reports `tsconfig.json` errors). `plugins/lsp.lua` resets every namespace of a client once it stops.
