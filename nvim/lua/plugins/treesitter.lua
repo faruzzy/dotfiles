@@ -97,6 +97,11 @@ return {
       vim.keymap.set({ 'x', 'o' }, 'if', function() select.select_textobject('@function.inner', 'textobjects') end)
       vim.keymap.set({ 'x', 'o' }, 'ac', function() select.select_textobject('@class.outer', 'textobjects') end)
       vim.keymap.set({ 'x', 'o' }, 'ic', function() select.select_textobject('@class.inner', 'textobjects') end)
+      -- JSX/HTML attribute (className="..."), and a Markdown fenced code block
+      vim.keymap.set({ 'x', 'o' }, 'ax', function() select.select_textobject('@attribute.outer', 'textobjects') end)
+      vim.keymap.set({ 'x', 'o' }, 'ix', function() select.select_textobject('@attribute.inner', 'textobjects') end)
+      vim.keymap.set({ 'x', 'o' }, 'aC', function() select.select_textobject('@block.outer', 'textobjects') end)
+      vim.keymap.set({ 'x', 'o' }, 'iC', function() select.select_textobject('@block.inner', 'textobjects') end)
 
       -- Move keymaps
       local move = require('nvim-treesitter-textobjects.move')
