@@ -41,9 +41,14 @@ return {
   opts = {
     enhanced_diff_hl = true, -- Use better diff highlighting
     view = {
+      -- Revision and path at the top of each side (incline hides its label on diffview:// buffers)
+      default = { winbar_info = true },
       merge_tool = {
         layout = 'diff3_mixed', -- Better 3-way merge view
       },
+    },
+    file_panel = {
+      win_config = { width = 50 }, -- the default 35 cuts off nested e2e/src paths
     },
     hooks = {
       diff_buf_read = function()
