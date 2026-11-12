@@ -80,6 +80,7 @@ Gotchas:
 - **Sessions** (persistence.nvim) are per directory and git branch. Auto-restore loads only that exact branch's session (`load()` falls back to main's) and runs via `vim.schedule` after VimEnter; sourced inside VimEnter, the first restored buffer never gets its FileType. Neo-tree windows are closed before saving and reopened after loading, tracked in the `NeoTreeSession` global (`sessionoptions` has `globals`); reopen with `Neotree focus`, since `Neotree show` jumps back to the previous window, which after a tab switch is in another tab.
 - **Auto-save:** tsx/jsx are excluded from auto-save.nvim and saved by a separate 2s idle timer outside insert mode, so format-on-save never runs mid-edit.
 - **Keymaps:** don't map a key that is also the prefix of other mappings (e.g. `<Leader>c` vs `<Leader>ca`); Neovim waits `timeoutlen` before firing it.
+- **Treesitter query predicates:** `#match?` patterns are very magic (`\v`), so groups are `(a|b)` and word end is `>`; `\(a\|b\)` silently never matches. Language injections live in `nvim/after/queries/<lang>/injections.scm` with `;; extends`.
 - **Floats** inherit borders from `opt.winborder`; don't pass `border =` per call.
 - **Diagnostics:** unused/deprecated hints are dimmed via `DiagnosticUnnecessary` instead of virtual text, so `DiagnosticUnderlineHint` has no underline style.
 
