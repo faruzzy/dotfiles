@@ -58,6 +58,8 @@ return {
         'stylua',
         'prettierd',
         'goimports',
+        -- Debug adapters
+        'js-debug-adapter',
       },
       auto_update = false,
     })

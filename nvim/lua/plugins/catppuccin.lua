@@ -15,6 +15,8 @@ return {
         cmp = true,
         treesitter = true,
         colorful_winsep = { enabled = true, color = 'blue' },
+        dap = true,
+        dap_ui = true,
         diffview = true,
         fidget = true,
         fzf = true,
