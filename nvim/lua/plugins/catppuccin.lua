@@ -41,6 +41,7 @@ return {
             information = { 'undercurl' },
           },
         },
+        neotest = true,
         notify = true,
         symbols_outline = true,
         treesitter_context = true,
