@@ -47,6 +47,7 @@ return {
         'vue',
         'yaml',
         'smithy',
+        'sql',
       }
 
       local treesitter_indent_filetypes = {
