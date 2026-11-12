@@ -1,0 +1,467 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+
+# cr: pick a Claude Code session with fzf and get back to it.
+#
+# One row per session. The query searches the whole conversation (your prompts, Claude's
+# replies, the commands it ran, the files it touched), not only the title. A session that is
+# still running in a tmux pane shows that pane, and enter switches to it; any other session is
+# resumed in its folder.
+#
+#   cr [query...]   open the picker with a query
+#   cr .            only sessions of the current folder
+#   cr --reindex    rebuild the search index
+#
+# Query: every word must match (smart case), "a phrase" matches as is, -word excludes,
+# @project keeps one project. Sessions whose title or project matches come before those that
+# only match in the conversation.
+#
+# Builds on everything.fzf's claude.fzf (tmux panes, session colors) and ideas from
+# smjonas/dotfiles' cr (a full-text index of the transcripts, query syntax, session stats).
+
+require 'date'
+require 'fileutils'
+require 'json'
+require 'open3'
+require 'rbconfig'
+require 'shellwords'
+require 'time'
+
+begin
+  require 'ansi256'
+rescue LoadError
+  require 'bundler/inline'
+  gemfile(true) do
+    source 'https://rubygems.org'
+    gem 'ansi256'
+  end
+end
+
+HOME = Dir.home
+PROJECTS = File.join(HOME, '.claude/projects')
+# Project names are shown relative to this folder (~/github/dotfiles -> dotfiles)
+ROOT = File.expand_path(ENV.fetch('CR_ROOT', '~/github'))
+CACHE = File.join(ENV.fetch('XDG_CACHE_HOME', File.join(HOME, '.cache')), 'cr')
+INDEX = File.join(CACHE, 'index.json')
+TEXT = File.join(CACHE, 'text') # one plain-text transcript per session, searched with rg
+LIVE = File.join(CACHE, 'live.json') # session id -> tmux pane, written when the picker opens
+INDEX_VERSION = 1
+CLAUDE = ENV.fetch('CLAUDE_COMMAND', 'claude')
+# Subcommands run under the same Ruby: fzf's shell may find an older one first on PATH
+SELF = "#{RbConfig.ruby.shellescape} #{File.realpath(__FILE__).shellescape}"
+
+# Colors set by /color, mapped as Claude Code maps them to the terminal (from claude.fzf)
+NAMED_COLORS = {
+  'red' => 1, 'green' => 2, 'yellow' => 3, 'blue' => 4,
+  'purple' => 5, 'cyan' => 6, 'pink' => 205, 'orange' => 208
+}.freeze
+
+# Warm 256-color palette for sessions without one, minus the named colors (from claude.fzf)
+COLORS = ((17..230).select do |c|
+  r, g, b = [(c - 16) / 36, ((c - 16) / 6) % 6, (c - 16) % 6]
+  r + g + b >= 7 && r > g && g > b
+end - NAMED_COLORS.values).freeze
+
+# ---------------------------------------------------------------------------------- index
+
+def text_path(id) = File.join(TEXT, "#{id}.txt")
+
+def project_dir(cwd) = File.join(PROJECTS, cwd.gsub(/[^a-zA-Z0-9]/, '-'))
+
+# A typed prompt, or nil for tool results, reminders and other injected messages
+def prompt_text(content)
+  if content.is_a?(Array)
+    content = content.filter_map do |block|
+      case block['type']
+      when 'text' then block['text'] unless block['text'].to_s.lstrip.start_with?('<')
+      when 'image' then '[Image]'
+      end
+    end.join(' ')
+  end
+  return unless content.is_a?(String)
+
+  text = content.strip
+  if text.start_with?('<command-name>')
+    name = text[%r{<command-name>(.*?)</command-name>}m, 1]
+    args = text[%r{<command-args>(.*?)</command-args>}m, 1]&.strip
+    return [name, args].compact.reject(&:empty?).join(' ')
+  end
+  text unless text.empty? || text.start_with?('<', '[Request interrupted')
+end
+
+def tool_line(block)
+  input = block['input'] || {}
+  if block['name'] == 'Bash' && input['command'] then "$ #{input['command']}"
+  elsif input['file_path'] then "[#{block['name']}] #{input['file_path']}"
+  end
+end
+
+def parse_transcript(path)
+  meta = { 'cwd' => nil, 'branch' => nil, 'first' => nil, 'last' => nil, 'prompts' => 0,
+           'first_prompt' => nil, 'ai_title' => nil, 'custom_title' => nil, 'color' => nil }
+  models = Hash.new(0)
+  costs = {} # cost-state is cumulative per process; a resume starts a new one
+  text = []
+  File.foreach(path) do |line|
+    # Skip the bulky records nothing here reads
+    next if line.include?('"toolUseResult"') || line.include?('"type":"api-request') ||
+            line.include?('"type":"attachment"')
+
+    record = begin
+      JSON.parse(line)
+    rescue JSON::ParserError
+      next
+    end
+    case record['type']
+    when 'user', 'assistant'
+      next if record['isSidechain']
+
+      meta['cwd'] ||= record['cwd']
+      meta['branch'] = record['gitBranch'] if record['gitBranch'] && record['gitBranch'] != 'HEAD'
+      if (ts = record['timestamp'])
+        meta['first'] ||= ts
+        meta['last'] = ts
+      end
+      message = record['message'] || {}
+      if record['type'] == 'user'
+        next if record['isMeta'] || record['isCompactSummary']
+        next unless (record.dig('origin', 'kind') || 'human') == 'human'
+        next unless (prompt = prompt_text(message['content']))
+
+        meta['prompts'] += 1
+        # The title fallback; a slash command like /clear says nothing about the session
+        meta['first_prompt'] ||= prompt[0, 300] unless prompt.start_with?('/')
+        time = ts ? Time.iso8601(ts).localtime.strftime(' · %F %H:%M') : ''
+        text << "━━ you#{time}\n#{prompt}\n"
+      else
+        model = message['model']
+        models[model.delete_prefix('claude-')] += 1 if model && !model.start_with?('<')
+        lines = (message['content'] || []).filter_map do |block|
+          if block['type'] == 'text' then block['text'].strip.then { it unless it.empty? }
+          elsif block['type'] == 'tool_use' then tool_line(block)
+          end
+        end
+        next if lines.empty?
+
+        text << "━━ claude\n" unless text.last&.start_with?('━━ claude')
+        text[-1] += "#{lines.join("\n")}\n"
+      end
+    when 'ai-title' then meta['ai_title'] = record['aiTitle']
+    when 'custom-title' then meta['custom_title'] = record['customTitle']
+    when 'agent-name' then meta['custom_title'] = record['agentName']
+    when 'agent-color' then meta['color'] = record['agentColor']
+    when 'cost-state'
+      costs[record['startTime'].to_s] = [record['totalCostUSD'].to_f, record['totalLinesAdded'].to_i,
+                                         record['totalLinesRemoved'].to_i]
+    end
+  end
+  meta['models'] = models.sort_by { -it[1] }.map(&:first)
+  meta['cost'], meta['added'], meta['removed'] = costs.values.transpose.map(&:sum) if costs.any?
+  [meta, text.join("\n")]
+end
+
+# Re-parses only transcripts whose size or mtime changed since the last run
+def update_index
+  FileUtils.mkdir_p(TEXT)
+  File.chmod(0o700, CACHE) # transcripts can hold secrets; Claude keeps them 0600
+  old = begin
+    JSON.parse(File.read(INDEX))
+  rescue Errno::ENOENT, JSON::ParserError
+    {}
+  end
+  old = {} unless old['version'] == INDEX_VERSION
+  old_sessions = old['sessions'] || {}
+  changed = false
+  # Top level only: subfolders hold subagent transcripts
+  sessions = Dir[File.join(PROJECTS, '*', '*.jsonl')].to_h do |path|
+    id = File.basename(path, '.jsonl')
+    stat = File.stat(path)
+    stamp = [stat.mtime.to_f, stat.size]
+    prev = old_sessions[id]
+    next [id, prev] if prev && prev['stamp'] == stamp && prev['path'] == path
+
+    changed = true
+    meta, text = parse_transcript(path)
+    File.write(text_path(id), text, perm: 0o600)
+    [id, meta.merge('id' => id, 'path' => path, 'stamp' => stamp)]
+  end
+  (old_sessions.keys - sessions.keys).each { FileUtils.rm_f(text_path(it)) }
+  if changed || old_sessions.keys.sort != sessions.keys.sort
+    File.write("#{INDEX}.tmp", JSON.generate('version' => INDEX_VERSION, 'sessions' => sessions))
+    File.rename("#{INDEX}.tmp", INDEX)
+  end
+  sessions
+end
+
+def load_index
+  JSON.parse(File.read(INDEX))['sessions']
+rescue Errno::ENOENT, JSON::ParserError
+  update_index
+end
+
+# --------------------------------------------------------------------------- live sessions
+
+# session id -> [tmux session, window id, pane id] for each claude running in a tmux pane.
+# Its session id is in the environment of its child processes (tool shells, MCP servers). A
+# claude without such a child, if it is the only one in its folder, is on the newest
+# transcript there written since it started (/clear starts new sessions in the same process).
+# Two in one folder are skipped: a wrong pane is worse than none.
+def find_live
+  return {} unless ENV['TMUX']
+
+  panes = `tmux list-panes -a -F '\#{pane_tty} \#{session_name} \#{window_id} \#{pane_id}'`
+          .lines.to_h { |line| line.split.then { [it[0], it[1..]] } }
+  live = {}
+  orphans = Hash.new { |h, k| h[k] = [] }
+  `ps -axco pid=,tty=,comm=`.each_line do |line|
+    pid, tty, comm = line.split(nil, 3)
+    next unless comm&.strip == 'claude' && (pane = panes["/dev/#{tty}"])
+
+    kids = `pgrep -a -P #{pid}`.split # -a: macOS pgrep leaves out its own ancestors
+    env = kids.empty? ? '' : `ps -Eww -o command= -p #{kids.join(',')}`
+    if (session = env[/\bCLAUDE_CODE_SESSION_ID=(\S+)/, 1])
+      live[session] = pane
+    elsif (cwd = `lsof -a -p #{pid} -d cwd -Fn`[/^n(.*)$/, 1])
+      orphans[cwd] << [pid, pane]
+    end
+  end
+  orphans.each do |cwd, procs|
+    next unless procs.one?
+
+    pid, pane = procs.first
+    start = begin
+      Time.parse(`ps -o lstart= -p #{pid}`)
+    rescue ArgumentError
+      next
+    end
+    newest = Dir[File.join(project_dir(cwd), '*.jsonl')]
+             .select { File.mtime(it) >= start }
+             .reject { live.key?(File.basename(it, '.jsonl')) }
+             .max_by { File.mtime(it) }
+    live[File.basename(newest, '.jsonl')] = pane if newest
+  end
+  live
+end
+
+def load_live
+  JSON.parse(File.read(LIVE))
+rescue Errno::ENOENT, JSON::ParserError
+  {}
+end
+
+# ------------------------------------------------------------------------------ formatting
+
+def title(meta)
+  (meta['custom_title'] || meta['ai_title'] || meta['first_prompt'] || '(untitled)').split.join(' ')
+end
+
+def project(meta)
+  cwd = meta['cwd'] or return '?'
+  return File.basename(ROOT) if cwd == ROOT
+  return cwd.delete_prefix("#{ROOT}/") if cwd.start_with?("#{ROOT}/")
+
+  cwd == HOME ? '~' : File.basename(cwd)
+end
+
+def color(meta)
+  NAMED_COLORS[meta['color']] || COLORS[meta['id'].delete('-')[0, 8].to_i(16) % COLORS.size]
+end
+
+def local(ts) = Time.iso8601(ts).localtime
+
+# Age for the list: 12m, a time today, a weekday this week, then days or a date
+def ago(ts)
+  time = local(ts)
+  seconds = Time.now - time
+  return 'now' if seconds < 60
+  return "#{(seconds / 60).to_i}m" if seconds < 3600
+
+  days = (Date.today - time.to_date).to_i
+  return time.strftime('%H:%M') if days.zero?
+  return time.strftime('%a') if days < 7
+
+  days < 60 ? "#{days}d" : time.strftime('%b %d')
+end
+
+def span(from, to)
+  seconds = (local(to) - local(from)).to_i
+  return "#{seconds / 60}m" if seconds < 3600
+  return format('%dh%02dm', seconds / 3600, seconds % 3600 / 60) if seconds < 86_400
+
+  "#{seconds / 86_400}d#{seconds % 86_400 / 3600}h"
+end
+
+def clip(text, width) = text.length > width ? "#{text[0, width - 1]}…" : text
+
+# ----------------------------------------------------------------------------------- query
+
+def parse_query(query)
+  words = begin
+    Shellwords.split(query)
+  rescue ArgumentError # an unclosed quote while typing
+    query.split
+  end
+  spec = { terms: [], exclude: [], projects: [] }
+  words.each do |word|
+    if word.start_with?('@') && word.size > 1 then spec[:projects] << word[1..]
+    elsif word.start_with?('-') && word.size > 1 then spec[:exclude] << word[1..]
+    else spec[:terms] << word
+    end
+  end
+  spec
+end
+
+# Smart case: a needle with no capitals ignores case
+def has?(haystack, needle)
+  needle.match?(/[[:upper:]]/) ? haystack.include?(needle) : haystack.downcase.include?(needle)
+end
+
+# Sessions whose transcript contains the text (smart case)
+def conversation_hits(text)
+  out, = Open3.capture2('rg', '--files-with-matches', '--smart-case', '--fixed-strings', '--', text, TEXT)
+  out.lines.to_set { File.basename(it.chomp, '.txt') }
+end
+
+def filter(sessions, query)
+  spec = parse_query(query)
+  list = sessions.values.select { it['prompts'].positive? && it['last'] }
+  unless spec[:projects].empty?
+    list.select! { |m| spec[:projects].any? { project(m) == it || has?(m['cwd'].to_s, it) } }
+  end
+  about = ->(m) { [title(m), project(m), m['branch'], m['id']].join(' ') }
+  spec[:exclude].each do |text|
+    hits = conversation_hits(text)
+    list.reject! { hits.include?(it['id']) || has?(about.(it), text) }
+  end
+  conversation_only = Set.new
+  spec[:terms].each do |text|
+    hits = conversation_hits(text)
+    list.select! do |m|
+      next true if has?(about.(m), text)
+
+      conversation_only << m['id'] if hits.include?(m['id'])
+    end
+  end
+  list.sort_by { [conversation_only.include?(it['id']) ? 1 : 0, -local(it['last']).to_f] }
+end
+
+# ------------------------------------------------------------------------------- commands
+
+def list(query)
+  sessions = filter(load_index, query)
+  live = load_live
+  width = sessions.map { project(it).length }.max.to_i.clamp(8, 20)
+  sessions.each do |m|
+    pane = live.dig(m['id'], 2).to_s
+    puts [m['id'], [ago(m['last']).rjust(5).dim,
+                    pane.ljust(4).green,
+                    clip(project(m), width).ljust(width).blue,
+                    m['prompts'].to_s.rjust(3),
+                    clip(m['branch'].to_s, 14).ljust(14).dim,
+                    title(m).fg(color(m))].join('  ')].join("\t")
+  end
+end
+
+def preview(id, query)
+  m = load_index[id] or return
+  width = ENV.fetch('FZF_PREVIEW_COLUMNS', '80').to_i
+  label = ->(text) { text.ljust(9).dim }
+  rule = ->(text) { puts "\n#{"── #{text} ".ljust(width, '─').dim}" }
+
+  puts title(m).fg(color(m)).bold
+  puts project(m).blue + (m['branch'] ? " · #{m['branch']}".dim : '')
+  puts m['cwd'].to_s.dim
+  puts 'folder no longer exists, cannot resume'.red if m['cwd'] && !Dir.exist?(m['cwd'])
+  if (pane = load_live[id])
+    puts "running in tmux pane #{pane[2]}, enter switches to it".green
+  end
+  puts
+  puts label.('started') + local(m['first']).strftime('%a %d %b %H:%M')
+  puts label.('last') + local(m['last']).strftime('%a %d %b %H:%M') + " (span #{span(m['first'], m['last'])})".dim
+  puts label.('prompts') + m['prompts'].to_s + (m['models'].empty? ? '' : " · #{m['models'].first(2).join(', ')}".dim)
+  if m['cost']
+    puts label.('cost') + format('$%.2f', m['cost']) + " · #{"+#{m['added']}".green} #{"-#{m['removed']}".red} lines"
+  end
+  puts label.('id') + id.dim
+
+  terms = parse_query(query)[:terms]
+  if terms.any?
+    rule.('matches')
+    args = ['rg', '--fixed-strings', '--smart-case', '--line-number', '--context=1', '--color=always',
+            '--colors=match:bg:yellow', '--colors=match:fg:black', '--max-columns=200', '--max-columns-preview']
+    terms.each { args.push('-e', it) }
+    out, = Open3.capture2(*args, '--', text_path(id))
+    puts out.empty? ? 'matched the title or project'.dim : out
+  else
+    rule.('prompts')
+    File.read(text_path(id)).split(/^━━ /).select { it.start_with?('you') }.each_with_index do |block, i|
+      head, body = block.split("\n", 2)
+      lines = body.to_s.strip.lines
+      more = lines.size > 1 ? " (+#{lines.size - 1} lines)".dim : ''
+      puts "#{(i + 1).to_s.rjust(3).blue} #{head[/\d\d:\d\d$/].to_s.dim}  #{clip(lines.first.to_s.split.join(' '), 400)}#{more}"
+    end
+  end
+end
+
+def resume_command(m) = "cd #{m['cwd'].shellescape} && #{CLAUDE} --resume #{m['id']}"
+
+# alt-o: the transcript in nvim, at the first match of the first search word
+def view(id, query)
+  cmd = ['nvim', '-R', '-c', 'setlocal filetype=markdown wrap linebreak']
+  if (term = parse_query(query)[:terms].first)
+    # \V: literal, except backslash and the / that ends the search
+    pattern = (term.match?(/[[:upper:]]/) ? '\C' : '\c') + '\V' + term.gsub('\\') { '\\\\' }.gsub('/') { '\/' }
+    cmd.push('-c', "silent! /#{pattern}", '-c', 'set hlsearch')
+  end
+  # fzf reads its own stdout, so talk to the terminal directly
+  system(*cmd, text_path(id), in: '/dev/tty', out: '/dev/tty', err: '/dev/tty')
+end
+
+def pick(query)
+  abort 'cr: needs fzf and rg' unless system('command -v fzf rg >/dev/null')
+  sessions = update_index
+  FileUtils.mkdir_p(CACHE)
+  File.write(LIVE, JSON.generate(find_live))
+  header = "#{'enter'.bold} resume, or switch to its tmux pane   #{'alt-o'.bold} transcript   " \
+           "#{'ctrl-y'.bold} copy resume command   #{'ctrl-/'.bold} preview\n" +
+           'words "a phrase" -exclude @project'.dim
+  fzf = ['fzf', '--ansi', '--disabled', '--query', query, '--prompt', 'session> ',
+         '--style', 'full', '--layout', 'reverse', '--info', 'inline-right', '--no-sort',
+         '--border-label', " Claude sessions (#{sessions.size}) ", '--header', header, '--header-first',
+         '--delimiter', "\t", '--with-nth', '2..', '--accept-nth', '1',
+         '--preview', "#{SELF} _preview {1} {q}",
+         '--preview-window', 'right,50%,wrap,<100(down,55%,wrap)',
+         '--bind', "start:reload(#{SELF} _list {q})",
+         '--bind', "change:reload(#{SELF} _list {q})+first",
+         '--bind', "alt-o:execute(#{SELF} _view {1} {q})",
+         '--bind', "ctrl-y:execute-silent(#{SELF} _copy {1})",
+         '--bind', 'ctrl-/:toggle-preview']
+  id = IO.popen(fzf, in: File::NULL, &:read).strip
+  return if id.empty?
+
+  m = sessions[id]
+  if (pane = load_live[id])
+    # Resuming would start a second claude on the same session
+    tmux_session, window, pane_id = pane
+    exec('tmux', 'switch-client', '-t', tmux_session, ';', 'select-window', '-t', window, ';',
+         'select-pane', '-t', pane_id)
+  end
+  abort "cr: #{m['cwd']} no longer exists; a session can only resume in its folder" unless Dir.exist?(m['cwd'].to_s)
+  warn resume_command(m).dim
+  Dir.chdir(m['cwd'])
+  exec(CLAUDE, '--resume', id)
+end
+
+case ARGV.first
+when '_list' then list(ARGV[1].to_s)
+when '_preview' then preview(ARGV[1], ARGV[2].to_s)
+when '_view' then view(ARGV[1], ARGV[2].to_s)
+when '_copy' then IO.popen('pbcopy', 'w') { it.write(resume_command(load_index[ARGV[1]])) }
+when '--reindex'
+  FileUtils.rm_f(INDEX)
+  puts "cr: indexed #{update_index.size} sessions"
+when '-h', '--help' then puts File.read(__FILE__)[/^# cr:.*?(?=\n\n)/m].gsub(/^# ?/, '')
+else
+  words = ARGV.map { it == '.' ? "@#{project('cwd' => Dir.pwd)}" : it }
+  pick(words.map { it.include?(' ') ? it.shellescape : it }.join(' ').then { it.empty? ? it : "#{it} " })
+end
