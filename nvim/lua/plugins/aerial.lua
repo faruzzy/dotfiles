@@ -1,6 +1,6 @@
 return {
   'stevearc/aerial.nvim',
-  dependencies = { 'nvim-treesitter/nvim-treesitter', 'echasnovski/mini.icons' },
+  dependencies = { 'nvim-treesitter/nvim-treesitter' },
   event = 'LspAttach',
   opts = {
     backends = { 'lsp', 'treesitter', 'markdown', 'man' },

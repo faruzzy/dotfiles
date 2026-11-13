@@ -72,9 +72,6 @@ local function get_custom_highlights(colors)
     -- markdown.nvim
     RenderMarkdownCodeInline = inline_code,
 
-    -- mini.icons
-    MiniIconsGrey = { fg = colors.overlay0 },
-
     -- nvim-cmp
     CmpItemAbbr = { fg = colors.text },
     CmpItemAbbrMatch = { fg = colors.blue },

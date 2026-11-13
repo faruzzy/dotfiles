@@ -2,7 +2,6 @@
 return {
   {
     'ibhagwan/fzf-lua',
-    dependencies = { 'echasnovski/mini.icons' },
     event = 'VeryLazy',
     init = function()
       -- At startup, not on first picker use, so buffers visited before then are tracked too
