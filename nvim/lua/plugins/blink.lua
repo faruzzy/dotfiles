@@ -1,40 +1,3 @@
-local lspkind_icons = {
-  Array = '󰅪 ',
-  Boolean = '◩ ',
-  Class = '󰠱 ',
-  Color = '󰏘 ',
-  Constant = '󰏿 ',
-  Constructor = '',
-  Enum = '',
-  EnumMember = '',
-  Event = '',
-  Field = '󰜢 ',
-  File = '󰈙 ',
-  Folder = '󰉋 ',
-  Function = '󰊕 ',
-  Interface = '',
-  Key = '󰌋 ',
-  Keyword = '󰌋 ',
-  Method = '󰆧 ',
-  Module = '',
-  Namespace = '󰌗 ',
-  Null = '󰟢 ',
-  Number = '󰎠 ',
-  Object = '󰅩 ',
-  Operator = '',
-  Package = '󰏗 ',
-  Property = '',
-  Reference = '󰈇 ',
-  Snippet = ' ',
-  String = '󰉿 ',
-  Struct = '󰙅 ',
-  Text = '󰉿 ',
-  TypeParameter = '',
-  Unit = '',
-  Value = '󰎠 ',
-  Variable = '󰀫 ',
-}
-
 -- Enhanced LSP completion context function
 local function get_lsp_completion_context(completion)
   local ok, source_name = pcall(function() return vim.lsp.get_client_by_id(completion.client_id).name end)
@@ -192,6 +155,17 @@ local function prioritize_score_for_words(sorts)
   return reordered
 end
 
+---@return string?, string?
+local function path_icon(ctx)
+  if ctx.source_id ~= 'path' then
+    return
+  end
+  -- devicons has no folder icon; folders keep blink's
+  if ctx.kind ~= 'Folder' then
+    return require('nvim-web-devicons').get_icon(ctx.label)
+  end
+end
+
 return {
   'saghen/blink.cmp',
   version = '1.*',
@@ -204,12 +178,12 @@ return {
     },
     'rafamadriz/friendly-snippets',
     'folke/lazydev.nvim',
+    'nvim-tree/nvim-web-devicons',
   },
   ---@module 'blink.cmp'
   ---@type blink.cmp.Config
   opts = {
     appearance = {
-      kind_icons = lspkind_icons,
       nerd_font_variant = 'mono',
     },
     cmdline = {
@@ -279,10 +253,12 @@ return {
             { 'source_name' },
           },
           components = {
+            -- blink's built-in kind icons (no appearance.kind_icons table needed); path completions
+            -- get the file type's icon and color from nvim-web-devicons, not a generic file icon
             kind_icon = {
               ellipsis = false,
-              text = function(ctx) return ctx.kind_icon end,
-              highlight = function(ctx) return 'BlinkCmpKind' .. ctx.kind end,
+              text = function(ctx) return path_icon(ctx) or ctx.kind_icon end,
+              highlight = function(ctx) return select(2, path_icon(ctx)) or ('BlinkCmpKind' .. ctx.kind) end,
             },
             label = {
               width = {
