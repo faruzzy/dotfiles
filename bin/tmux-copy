@@ -1,0 +1,29 @@
+#!/usr/bin/perl
+# tmux copy-command: cleans copied text, then hands it to pbcopy.
+# - Claude Code's line markers (⏺ reply, ⎿ tool result, ❯ prompt) become spaces, so the text
+#   keeps its alignment
+# - trailing whitespace is trimmed (tmux pads lines to the pane width)
+# - the indentation shared by every non-blank line is removed
+# Idea from justinmk's TextYankPost hook for :terminal yanks.
+use strict;
+use warnings;
+use utf8;
+binmode STDIN, ':encoding(UTF-8)';
+
+local $/;
+my $text = <STDIN> // '';
+my $trailing_newline = $text =~ /\n\z/;
+my @lines = split /\n/, $text, -1;
+pop @lines if $trailing_newline;
+
+for (@lines) {
+  s/^(\s*)[⏺⎿❯]/$1 /;
+  s/[ \t]+$//;
+}
+
+my ($indent) = sort { $a <=> $b } map { /^( *)/; length $1 } grep { /\S/ } @lines;
+if ($indent) { s/^ {$indent}// for @lines }
+
+open my $pbcopy, '|-:encoding(UTF-8)', 'pbcopy' or die "tmux-copy: pbcopy: $!\n";
+print {$pbcopy} join("\n", @lines), ($trailing_newline ? "\n" : '');
+close $pbcopy;
