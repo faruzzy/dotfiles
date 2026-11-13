@@ -34,7 +34,6 @@ cursor-style-blink = true
 cursor-color = #827263
 
 # Terminal behavior
-term = xterm-256color
 scrollback-limit = 10000
 
 # Mouse configuration
