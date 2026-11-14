@@ -92,6 +92,10 @@ if (( $+widgets[fzf-completion] )); then
     bindkey '^X^I' fzf-completion
 fi
 bindkey '^I' expand-or-complete
+# tmux sends Shift/Ctrl+Enter as CSI u (extended-keys always, see .tmux.conf); without these zsh
+# inserts the tail of the sequence (;2u) instead of running the line
+bindkey '^[[13;2u' accept-line
+bindkey '^[[13;5u' accept-line
 
 # Mise (Language runtime manager)
 if command -v mise > /dev/null; then
