@@ -183,6 +183,7 @@ lg = !"                                                                         
 [push]
   default = simple
   followTags = true
+  autoSetupRemote = true # first push of a new branch sets its upstream (no --set-upstream)
 
 [web]
   browser = open
