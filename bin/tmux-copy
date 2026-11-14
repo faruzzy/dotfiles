@@ -1,6 +1,6 @@
 #!/usr/bin/perl
 # tmux copy-command: cleans copied text, then hands it to pbcopy.
-# - Claude Code's line markers (⏺ reply, ⎿ tool result, ❯ prompt) become spaces, so the text
+# - Claude Code's line markers (⏺ reply, ⎿ tool result, ❯ prompt, ▎ blockquote bar) become spaces, so the text
 #   keeps its alignment
 # - trailing whitespace is trimmed (tmux pads lines to the pane width)
 # - the indentation shared by every non-blank line is removed
@@ -17,7 +17,7 @@ my @lines = split /\n/, $text, -1;
 pop @lines if $trailing_newline;
 
 for (@lines) {
-  s/^(\s*)[⏺⎿❯]/$1 /;
+  s/^(\s*)[⏺⎿❯▎]/$1 /;
   s/[ \t]+$//;
 }
 
