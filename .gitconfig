@@ -194,6 +194,12 @@ lg = !"                                                                         
 [pull]
   rebase = true
 
+[rebase]
+  # Stash uncommitted changes around pull --rebase / git update instead of refusing to run
+  autoStash = true
+  # Interactive rebase lists show each commit's author and age
+  instructionFormat = "[%an - %ar] %s"
+
 [rerere]
   enabled = true
 
