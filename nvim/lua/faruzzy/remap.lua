@@ -132,7 +132,6 @@ map('n', '<Leader>X', '<cmd>wqa!<cr>', { desc = 'Save all and quit forcefully' }
 map('n', '<Esc>', '<cmd>noh<cr>', { desc = 'Turn off search highlighting' })
 
 -- Window management
-map('n', '<Leader>o', '<cmd>only<cr>', { desc = 'Show only current buffer' })
 map('n', '<Leader>O', '<cmd>!open .<cr>', { desc = 'Open current directory in Finder' })
 
 -- Diagnostic navigation
