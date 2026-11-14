@@ -28,7 +28,7 @@ Pulling doesn't apply what `install.sh` installs (Homebrew packages, fonts, clon
 
 - **Zsh config**: `zsh -i -c 'exit'` (check for errors/unexpected output), or `source ~/.zshrc` in a running shell
 - **Tmux config**: `tmux source-file ~/.tmux.conf` or `prefix + r` (bound to reload)
-- **Neovim**: `:checkhealth` after changes, or `nvim --headless "+q"` for startup errors. Without file arguments nvim restores and re-saves the current directory's session, so run session/layout tests from a scratch directory with `XDG_STATE_HOME` pointed at a temp dir
+- **Neovim**: `nvim/tests/run` runs headless checks of the real config (startup errors, servers attaching, past regressions) in a scratch directory; `nvim/tests/run <word>` runs only checks whose name contains it. When fixing a regression, add a check to `nvim/tests/check.lua`. Also `:checkhealth`, or `nvim --headless "+q"` for startup errors. Without file arguments nvim restores and re-saves the current directory's session, so run session/layout tests from a scratch directory with `XDG_STATE_HOME` pointed at a temp dir
 - **Shell startup time**: `ZSH_PROFILE=1 zsh -i -c 'zsh-profile'` (built-in profiling support)
 
 ## Architecture

@@ -1,0 +1,20 @@
+#!/usr/bin/env bash
+# Headless checks for the Neovim config: starts nvim with the real config in a scratch directory
+# and runs tests/check.lua. Exits non-zero if any check fails.
+#
+#   nvim/tests/run           all checks
+#   nvim/tests/run lsp       only checks whose name contains "lsp"
+set -euo pipefail
+
+here=$(cd "$(dirname "$0")" && pwd)
+tmp=$(mktemp -d)
+trap 'rm -rf "$tmp"' EXIT
+
+# Own state dir: no session restore or save, no shada or undo files mixed with the real ones
+export XDG_STATE_HOME="$tmp/state"
+export CHECK_FILTER="${1:-}"
+cd "$tmp"
+
+# The first file opened at startup gets its own check: it used to miss its FileType
+printf 'local M = {}\nreturn M\n' > first.lua
+nvim --headless first.lua "+luafile $here/check.lua"
