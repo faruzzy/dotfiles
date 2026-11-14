@@ -5,7 +5,7 @@ set -euo pipefail
 action="${1:-}"
 
 case "$action" in
-    left-half|right-half|maximize|center) ;;
+    left-half|right-half|maximize|center|fit) ;;
     *) exit 64 ;;
 esac
 
@@ -71,6 +71,20 @@ if (!screen) {
   screen = axFrames[0]
 }
 
+// fit: leave a window that already lies inside a screen alone; only re-center one that hangs
+// off it (e.g. moved from the Philips to the smaller built-in display)
+if (action === 'fit') {
+  const fits = axFrames.some((frame) =>
+    position[0] >= frame.x &&
+    position[1] >= frame.y &&
+    position[0] + size[0] <= frame.x + frame.width &&
+    position[1] + size[1] <= frame.y + frame.height
+  )
+  if (fits) {
+    $.exit(0)
+  }
+}
+
 let target
 const halfWidth = Math.floor(screen.width / 2)
 
@@ -89,6 +103,7 @@ switch (action) {
   case 'maximize':
     target = { x: screen.x, y: screen.y, width: screen.width, height: screen.height }
     break
+  case 'fit':
   case 'center': {
     const targetWidth = Math.floor(screen.width * 0.7)
     const targetHeight = Math.floor(screen.height * 0.8)
