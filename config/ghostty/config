@@ -21,6 +21,8 @@ macos-non-native-fullscreen = true
 # Auto-start tmux for new windows
 command = zsh -c "tmux new-session -A -s main"
 
+bold-is-bright = true
+
 # Window configuration
 window-decoration = false
 window-width = 160
