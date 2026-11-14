@@ -1,0 +1,4 @@
+#!/bin/sh
+# pull.rebase is on, so a pull ends in a rebase, which runs this hook rather than post-merge
+[ "$1" = rebase ] || exit 0
+exec "$(dirname "$0")/after-pull"

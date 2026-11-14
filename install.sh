@@ -565,6 +565,12 @@ setup_git_work_identity() {
     log_success "Work git identity set to $work_email for repos under ~/github/work"
 }
 
+# Use the repo's tracked hooks (.githooks), e.g. reloading AeroSpace after a pull changes its config
+setup_repo_git_hooks() {
+    git -C "$SCRIPT_DIR" config core.hooksPath .githooks
+    log_success "Git hooks enabled from .githooks"
+}
+
 # Setup AeroSpace
 setup_aerospace() {
     log_info "Setting up AeroSpace..."
@@ -628,6 +634,7 @@ main() {
     # Dotfiles setup
     setup_dotfiles
     setup_git_work_identity
+    setup_repo_git_hooks
     setup_aerospace
     setup_antidote
     setup_atuin

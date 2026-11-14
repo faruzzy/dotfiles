@@ -1,0 +1,10 @@
+#!/bin/sh
+# Run by post-merge and post-rewrite: applies config that a pull changed, for tools that only read
+# their config at startup and would otherwise keep running the old one.
+
+changed=$(git diff --name-only ORIG_HEAD HEAD 2>/dev/null) || exit 0
+
+if printf '%s\n' "$changed" | grep -q '^config/aerospace/' && pgrep -xq AeroSpace; then
+  aerospace=$(command -v aerospace || echo /opt/homebrew/bin/aerospace)
+  "$aerospace" reload-config && echo 'AeroSpace config reloaded'
+fi

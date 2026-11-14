@@ -20,6 +20,8 @@ The install script symlinks individual files to `$HOME` and config directories t
 
 Pulling doesn't apply what `install.sh` installs (Homebrew packages, fonts, cloned repos). After pulling changes to `install.sh` from the other Mac, re-run it.
 
+Git hooks live in `.githooks/` (`install.sh` sets `core.hooksPath`). After a pull, `after-pull` reloads AeroSpace if its config changed; add other tools that only read their config at startup there. It runs from both `post-merge` and `post-rewrite`, since `pull.rebase` makes most pulls a rebase.
+
 ## Workflow Requirements
 
 - Update CLAUDE.md when a change adds a non-obvious constraint, gotcha or cross-machine assumption, or makes existing text here wrong. Don't document keymaps or features that are visible in the code.
