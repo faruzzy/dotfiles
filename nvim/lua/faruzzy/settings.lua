@@ -20,6 +20,16 @@ opt.title = true -- Set window title
 opt.titlestring = '%t - Nvim'
 opt.spell = false -- Default off, enabled per filetype by spell_group (autocmd.lua)
 opt.spelllang = 'en_us,fr' -- Spell check languages
+-- zg/zw word list, shared by both Macs. Only the .add is committed: Neovim reads the compiled
+-- .add.spl and won't build it itself, so rebuild it when it's missing or older (after a pull)
+opt.spellfile = vim.fn.stdpath('config') .. '/spell/en.utf-8.add'
+do
+  local add = vim.uv.fs_stat(vim.o.spellfile)
+  local spl = vim.uv.fs_stat(vim.o.spellfile .. '.spl')
+  if add and (not spl or spl.mtime.sec < add.mtime.sec) then
+    vim.cmd('silent! mkspell! ' .. vim.fn.fnameescape(vim.o.spellfile))
+  end
+end
 opt.display = 'lastline' -- Show last line even if truncated
 opt.diffopt = 'internal,filler,closeoff,vertical' -- Diff settings
 opt.splitright = true -- Vertical splits to the right

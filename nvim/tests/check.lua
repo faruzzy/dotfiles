@@ -166,6 +166,23 @@ local function run_checks()
     assert(vim.uv.fs_stat('new/nested/dir/file.txt'), 'file was not written')
   end)
 
+  -- The word list only takes effect once compiled to .spl, which isn't committed
+  check('spell: shared word list is compiled, markdown skips the capital check', function()
+    write('notes.md', 'Files are symlinked from codex/config. base.toml')
+    edit('notes.md')
+    assert(vim.wo.spell, 'spell is off in markdown')
+    assert(vim.uv.fs_stat(vim.o.spellfile .. '.spl'), 'word list not compiled: ' .. vim.o.spellfile)
+    local flagged = {}
+    vim.api.nvim_win_set_cursor(0, { 1, 0 })
+    for _ = 1, 5 do
+      local word, kind = unpack(vim.fn.spellbadword())
+      if word == '' then break end
+      table.insert(flagged, word .. ' (' .. kind .. ')')
+      vim.cmd('normal! ' .. #word .. 'l')
+    end
+    assert(#flagged == 0, 'flagged: ' .. table.concat(flagged, ', '))
+  end)
+
   -- CLAUDE.md: a mapping that is also the prefix of others waits 'timeoutlen' before firing
   check('keymaps: no normal-mode <Leader> mapping is the prefix of another', function()
     local leader = vim.g.mapleader or '\\'

@@ -103,8 +103,13 @@ augroup('spell_group', {
   {
     'FileType',
     pattern = { 'gitcommit', 'markdown', 'text', 'tex', 'rst' },
-    callback = function()
+    callback = function(args)
       vim.opt_local.spell = true
+      -- File names like `config.base.toml` wrap or end a sentence, so the word after their dot
+      -- was flagged as an uncapitalized sentence start
+      if args.match == 'markdown' then
+        vim.opt_local.spellcapcheck = ''
+      end
     end,
   },
 })
