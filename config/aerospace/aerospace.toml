@@ -323,6 +323,16 @@ run = 'move-node-to-workspace N'
 if.app-name-regex-substring = '^Spark$'
 run = 'move-node-to-workspace N'
 
+# Small utilities float over the focused monitor's workspace instead of tiling into it
+# (Qbserve tiled behind Safari in A and took its place when Safari's fullscreen dropped)
+[[on-window-detected]]
+if.app-id = 'com.apple.calculator'
+run = 'layout floating'
+
+[[on-window-detected]]
+if.app-id = 'com.QotoQot.Qbserve'
+run = 'layout floating'
+
 [[on-window-detected]]
 if.app-id = 'com.apple.Safari'
 run = [
