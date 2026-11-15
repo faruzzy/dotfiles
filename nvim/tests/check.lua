@@ -166,6 +166,42 @@ local function run_checks()
     assert(vim.uv.fs_stat('new/nested/dir/file.txt'), 'file was not written')
   end)
 
+  check('git: <leader>hB reviews the branch against its merge-base, and toggles back', function(skip)
+    if not executable('git') then skip('git not installed') end
+    local function sh(cmd)
+      local result = vim.system({ 'sh', '-c', cmd }, { cwd = 'review', text = true }):wait()
+      assert(result.code == 0, cmd .. ': ' .. result.stderr)
+    end
+    write('review/a.txt', 'one')
+    write('review/b.txt', 'one')
+    sh('git init -q -b main && git add . && git -c user.name=t -c user.email=t@t commit -qm base')
+    sh([[git checkout -qb feature && echo two >> a.txt && git -c user.name=t -c user.email=t@t commit -qam a]])
+    sh('echo two >> b.txt')
+
+    local buf = edit('review/a.txt')
+    local gitsigns = require('gitsigns')
+    -- The toggle's notifications would print into this output
+    local notify = vim.notify
+    vim.notify = function() end
+    local function hunks() return #(gitsigns.get_hunks(buf) or {}) end
+    -- Wait for gitsigns' first diff: a base change made while it runs is overwritten by it
+    assert(vim.wait(5000, function() return gitsigns.get_hunks(buf) ~= nil end, 50), 'gitsigns did not attach')
+    assert(hunks() == 0, 'a.txt has hunks against the last commit')
+
+    feed(',hB')
+    assert(vim.wait(5000, function() return hunks() > 0 end, 50), 'no hunk against the merge-base')
+    local files = vim.tbl_map(function(item) return vim.fs.basename(vim.api.nvim_buf_get_name(item.bufnr)) end, vim.fn.getqflist())
+    table.sort(files)
+    assert(vim.deep_equal(files, { 'a.txt', 'b.txt' }), 'quickfix: ' .. table.concat(files, ', '))
+
+    feed(',hB')
+    -- gitsigns stores the new base only after re-diffing every buffer
+    assert(vim.wait(5000, function() return hunks() == 0 and not require('gitsigns.config').config.base end, 50),
+      'still comparing against the merge-base')
+    vim.notify = notify
+    vim.cmd('cclose')
+  end)
+
   -- The word list only takes effect once compiled to .spl, which isn't committed
   check('spell: shared word list is compiled, markdown skips the capital check', function()
     write('notes.md', 'Files are symlinked from codex/config. base.toml')

@@ -2,6 +2,13 @@ return {
   -- Adds git related signs to the gutter, as well as utilities for managing changes
   'lewis6991/gitsigns.nvim',
   event = { 'BufReadPre', 'BufNewFile' },
+  keys = {
+    {
+      '<leader>hB',
+      function() require('config.branch_review').toggle() end,
+      desc = 'Review branch: signs and quickfix against the merge-base',
+    },
+  },
   opts = {
     -- See `:help gitsigns.txt`
     sign_priority = 100, -- above diagnostic signs (~10) so hunks stay visible
