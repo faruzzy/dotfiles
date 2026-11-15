@@ -202,6 +202,22 @@ local function run_checks()
     vim.cmd('cclose')
   end)
 
+  check('git: <leader>dv opens a diffview of the changes and closes it again', function(skip)
+    if not executable('git') then skip('git not installed') end
+    write('dv/a.txt', 'one')
+    local result = vim.system({ 'sh', '-c', 'git init -q && git add . && git -c user.name=t -c user.email=t@t commit -qm base && echo two >> a.txt' }, { cwd = 'dv' }):wait()
+    assert(result.code == 0, 'repo setup failed')
+    edit('dv/a.txt')
+    vim.cmd.lcd('dv')
+    local tabs = #vim.api.nvim_list_tabpages()
+    feed(',dv')
+    assert(vim.wait(5000, function() return require('diffview.lib').get_current_view() ~= nil end, 50), 'no diffview opened')
+    assert(#vim.api.nvim_list_tabpages() == tabs + 1, 'diffview did not open in its own tab')
+    feed(',dv')
+    assert(vim.wait(5000, function() return require('diffview.lib').get_current_view() == nil end, 50), 'diffview did not close')
+    assert(#vim.api.nvim_list_tabpages() == tabs, 'diffview tab left open')
+  end)
+
   -- The word list only takes effect once compiled to .spl, which isn't committed
   check('spell: shared word list is compiled, markdown skips the capital check', function()
     write('notes.md', 'Files are symlinked from codex/config. base.toml')

@@ -1,6 +1,7 @@
--- Cycling through diffs for all modified files for any git rev
+-- Cycling through diffs for all modified files for any git rev. diffview-plus is the maintained
+-- fork of sindrets/diffview.nvim (unchanged since 2024); the Lua module is still `diffview`
 return {
-  'sindrets/diffview.nvim',
+  'dlyongemallo/diffview-plus.nvim',
   cmd = { 'DiffviewOpen', 'DiffviewFileHistory' },
   dependencies = { 'nvim-lua/plenary.nvim' },
   init = function()
