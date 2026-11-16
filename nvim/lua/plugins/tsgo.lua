@@ -1,12 +1,10 @@
 -- tsgo: native TypeScript LSP plus TypeScript-specific commands
 
 local ts_filetypes = { 'typescript', 'typescriptreact', 'javascript', 'javascriptreact' }
-local local_checkout = vim.fn.expand('~/github/tsgo.nvim')
 
 return {
   'faruzzy/tsgo.nvim',
-  -- Use the local checkout when present, otherwise install from GitHub
-  dir = vim.fn.isdirectory(local_checkout) == 1 and local_checkout or nil,
+  -- dir = '~/github/tsgo.nvim',
   ft = ts_filetypes,
   -- LSP setup, cmd resolution, root detection and inlay hint settings come from the plugin defaults
   opts = {
