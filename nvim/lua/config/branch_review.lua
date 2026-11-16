@@ -26,6 +26,10 @@ function M.toggle()
   -- gitsigns keeps the base it compares against; it's set only while a review is on
   if require('gitsigns.config').config.base then
     gitsigns.reset_base(true)
+    -- Close the list this review opened, but not one that has replaced it since (e.g. a grep)
+    if vim.startswith(vim.fn.getqflist({ title = 1 }).title, 'Branch changes since ') then
+      vim.cmd('cclose')
+    end
     vim.notify('Branch review off: signs compare against the last commit')
     return
   end
