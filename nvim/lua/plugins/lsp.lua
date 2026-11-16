@@ -61,6 +61,7 @@ return {
         'goimports',
         -- Debug adapters
         'js-debug-adapter',
+        'delve',
       },
       auto_update = false,
     })

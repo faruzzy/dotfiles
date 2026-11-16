@@ -1,6 +1,6 @@
--- Debugger for JavaScript/TypeScript (Rust gets its adapter from rustaceanvim). The adapter is
--- vscode-js-debug, installed by Mason as js-debug-adapter (see plugins/lsp.lua); neotest's
--- <Leader>Td debugs a test through it
+-- Debugger for JavaScript/TypeScript and Go (Rust gets its adapter from rustaceanvim). The adapters
+-- are vscode-js-debug and delve, installed by Mason (see plugins/lsp.lua); neotest's <Leader>Td
+-- debugs a JS test through vscode-js-debug
 local function dap() return require('dap') end
 
 local js_filetypes = { 'javascript', 'javascriptreact', 'typescript', 'typescriptreact' }
@@ -8,8 +8,9 @@ local js_filetypes = { 'javascript', 'javascriptreact', 'typescript', 'typescrip
 return {
   {
     'mfussenegger/nvim-dap',
-    dependencies = { 'rcarriga/nvim-dap-ui' },
+    dependencies = { 'rcarriga/nvim-dap-ui', 'leoluz/nvim-dap-go' },
     keys = {
+      { '<Leader>DT', function() require('dap-go').debug_test() end, ft = 'go', desc = 'Debug: Go test under cursor' },
       { '<Leader>Db', function() dap().toggle_breakpoint() end, desc = 'Debug: Toggle breakpoint' },
       {
         '<Leader>DB',
@@ -62,6 +63,9 @@ return {
       for _, ft in ipairs(js_filetypes) do
         d.configurations[ft] = configs
       end
+
+      -- Mason's dlv, so it works without delve on the shell PATH
+      require('dap-go').setup({ delve = { path = vim.fn.stdpath('data') .. '/mason/bin/dlv' } })
 
       local sign = vim.fn.sign_define
       sign('DapBreakpoint', { text = '\u{f111}', texthl = 'DiagnosticError' })
