@@ -344,3 +344,41 @@ augroup('fugitive_refresh', {
     end,
   },
 })
+
+-- A branch switch or rebase rewrites many files at once and language servers (tsgo especially)
+-- can miss some of the changes, then keep answering from stale copies. Restart the current
+-- buffer's servers when the repo's HEAD commit changes.
+local last_head = {}
+augroup('restart_lsp_on_checkout', {
+  {
+    { 'FocusGained', 'CursorHold' },
+    callback = function(args)
+      local buf = args.buf
+      if #vim.lsp.get_clients({ bufnr = buf }) == 0 then
+        return
+      end
+      local root = vim.fs.root(buf, '.git')
+      if not root then
+        return
+      end
+      vim.system({ 'git', '-C', root, 'rev-parse', 'HEAD' }, { text = true }, function(out)
+        local head = vim.trim(out.stdout or '')
+        if out.code ~= 0 or head == '' then
+          return
+        end
+        local previous = last_head[root]
+        last_head[root] = head
+        if not previous or previous == head then
+          return
+        end
+        vim.schedule(function()
+          if buf ~= vim.api.nvim_get_current_buf() or #vim.lsp.get_clients({ bufnr = buf }) == 0 then
+            return
+          end
+          vim.cmd('lsp restart')
+          vim.notify('Checkout changed, restarted language servers')
+        end)
+      end)
+    end,
+  },
+})
