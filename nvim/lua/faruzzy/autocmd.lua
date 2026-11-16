@@ -248,6 +248,30 @@ augroup('numbertoggle', {
   },
 })
 
+-- Apply tmux and AeroSpace config on save; both only re-read it when told to
+augroup('reload_on_save', {
+  {
+    'BufWritePost',
+    pattern = { '*tmux.conf', 'aerospace.toml' },
+    callback = function(args)
+      local path = vim.api.nvim_buf_get_name(args.buf)
+      local is_tmux = not vim.endswith(path, 'aerospace.toml')
+      local cmd = is_tmux and { 'tmux', 'source-file', path } or { 'aerospace', 'reload-config' }
+      if vim.fn.executable(cmd[1]) == 0 or (is_tmux and not vim.env.TMUX) then return end
+
+      vim.system(cmd, { text = true }, function(res)
+        vim.schedule(function()
+          if res.code == 0 then
+            vim.notify('Reloaded ' .. cmd[1] .. ' config')
+          else
+            vim.notify(cmd[1] .. ' reload failed:\n' .. vim.trim(res.stderr ~= '' and res.stderr or res.stdout), vim.log.levels.ERROR)
+          end
+        end)
+      end)
+    end,
+  },
+})
+
 -- Create jsconfig.json at the nearest project root
 vim.api.nvim_create_user_command('JsConfig', function()
   local root = vim.fs.root(0, { 'package.json', '.git' })
