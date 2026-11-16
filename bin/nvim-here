@@ -1,0 +1,101 @@
+#!/usr/bin/env bash
+# nvim-here: print the RPC socket of the Neovim you're working with, for `nvim --server <socket>`.
+# Used by the `neovim` agent skill (ai-dotfiles) so an agent in a tmux pane can reach the editor.
+#
+# Every Neovim listens on $TMPDIR/nvim.$USER/*/nvim.<pid>.0 by default. Picks, in order:
+#   1. the Neovim running in the same tmux window as the caller ($TMUX_PANE)
+#   2. the Neovim whose working directory is in the caller's git repository (or directory)
+# Exits 2 when several match, listing them on stderr; 1 when none is running.
+#
+#   nvim-here          the socket
+#   nvim-here --list   every running Neovim: socket, tmux window, cwd, current file
+
+set -euo pipefail
+
+sock_dir="${TMPDIR:-/tmp/}"
+sock_dir="${sock_dir%/}/nvim.${USER:-$(id -un)}"
+
+# Answers a Lua expression from a Neovim; a hung one doesn't hang the caller. --headless and no
+# stdin: when the connection fails in a terminal, a plain client opens a full Neovim instead
+ask() { perl -e 'alarm 2; exec @ARGV' nvim --headless --server "$1" --remote-expr "luaeval('$2')" </dev/null 2>/dev/null; }
+
+# Editors as "pid socket". Skips sockets of exited Neovims, and headless ones (no UI attached):
+# those an agent starts itself, e.g. a test run, descend from its own pane
+candidates=()
+for sock in "$sock_dir"/*/nvim.*.0; do
+  [[ -S "$sock" ]] || continue
+  pid=${sock##*/nvim.}
+  pid=${pid%.0}
+  kill -0 "$pid" 2>/dev/null || continue
+  [[ "$(ask "$sock" '#vim.api.nvim_list_uis()')" -gt 0 ]] 2>/dev/null && candidates+=("$pid $sock")
+done
+
+if [[ ${#candidates[@]} -eq 0 ]]; then
+  echo "nvim-here: no running Neovim" >&2
+  exit 1
+fi
+
+# The tmux window (session:index) a process runs in: the window of the pane it descends from
+declare -A pane_window=()
+if command -v tmux >/dev/null && tmux info >/dev/null 2>&1; then
+  while read -r pane_pid window; do
+    pane_window[$pane_pid]=$window
+  done < <(tmux list-panes -a -F '#{pane_pid} #{session_name}:#{window_index}')
+fi
+window_of() {
+  local pid=$1
+  while [[ -n "$pid" && "$pid" -gt 1 ]]; do
+    if [[ -n "${pane_window[$pid]:-}" ]]; then
+      echo "${pane_window[$pid]}"
+      return
+    fi
+    pid=$(ps -o ppid= -p "$pid" 2>/dev/null | tr -d ' ')
+  done
+}
+
+describe() {
+  local pid=$1 sock=$2
+  printf '%s  window=%s  cwd=%s  file=%s\n' "$sock" "$(window_of "$pid")" \
+    "$(ask "$sock" 'vim.fn.getcwd()')" "$(ask "$sock" 'vim.api.nvim_buf_get_name(0)')"
+}
+
+if [[ "${1:-}" == --list ]]; then
+  for c in "${candidates[@]}"; do describe "${c% *}" "${c#* }"; done
+  exit 0
+fi
+
+pick() {
+  if [[ $# -eq 1 ]]; then
+    echo "${1#* }"
+    exit 0
+  fi
+  if [[ $# -gt 1 ]]; then
+    echo "nvim-here: several Neovims match; pass the socket you mean:" >&2
+    for c in "$@"; do describe "${c% *}" "${c#* }" >&2; done
+    exit 2
+  fi
+}
+
+# 1. Same tmux window
+if [[ -n "${TMUX_PANE:-}" ]]; then
+  here=$(tmux display -p -t "$TMUX_PANE" '#{session_name}:#{window_index}')
+  same_window=()
+  for c in "${candidates[@]}"; do
+    [[ "$(window_of "${c% *}")" == "$here" ]] && same_window+=("$c")
+  done
+  pick ${same_window[@]+"${same_window[@]}"}
+fi
+
+# 2. Same project: the caller's git root, else its directory
+project=$(git rev-parse --show-toplevel 2>/dev/null || pwd -P)
+same_project=()
+for c in "${candidates[@]}"; do
+  cwd=$(ask "${c#* }" 'vim.fn.getcwd()') || continue
+  cwd=$(cd "$cwd" 2>/dev/null && pwd -P) || continue
+  [[ "$cwd" == "$project" || "$cwd" == "$project"/* ]] && same_project+=("$c")
+done
+pick ${same_project[@]+"${same_project[@]}"}
+
+echo "nvim-here: no Neovim in this tmux window or in $project; running ones:" >&2
+for c in "${candidates[@]}"; do describe "${c% *}" "${c#* }" >&2; done
+exit 1
