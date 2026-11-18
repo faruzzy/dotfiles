@@ -17,7 +17,7 @@ return {
 
     -- Useful status updates for LSP
     {
-      'j-hui/fidget.nvim',
+      'j-hui/fidget.nvim', -- love this plugin
       opts = {
         notification = {
           window = {
@@ -105,9 +105,9 @@ return {
       local ret = register_capability(err, result, ctx, config)
       -- Enable hints for servers that register inlayHint dynamically after attach,
       -- but leave buffers where they were turned off with <Leader>ti
-      local registers_inlay_hint = vim.iter(result and result.registrations or {}):any(function(reg)
-        return reg.method == vim.lsp.protocol.Methods.textDocument_inlayHint
-      end)
+      local registers_inlay_hint = vim
+        .iter(result and result.registrations or {})
+        :any(function(reg) return reg.method == vim.lsp.protocol.Methods.textDocument_inlayHint end)
       local client = registers_inlay_hint and vim.lsp.get_client_by_id(ctx.client_id)
       if client then
         for bufnr in pairs(client.attached_buffers) do
@@ -160,7 +160,9 @@ return {
             return
           end
           for ns, info in pairs(vim.diagnostic.get_namespaces()) do
-            if info.name:match('^nvim%.lsp%.[^.]+%.' .. client_id .. '$') or info.name:match('^nvim%.lsp%.[^.]+%.' .. client_id .. '%.') then
+            if
+              info.name:match('^nvim%.lsp%.[^.]+%.' .. client_id .. '$') or info.name:match('^nvim%.lsp%.[^.]+%.' .. client_id .. '%.')
+            then
               vim.diagnostic.reset(ns)
             end
           end
