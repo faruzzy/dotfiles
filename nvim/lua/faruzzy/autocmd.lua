@@ -91,7 +91,7 @@ augroup('YankHighlight', {
     'TextYankPost',
     callback = function()
       if vim.bo.buftype == '' then
-        vim.hl.on_yank({ higroup = 'IncSearch', timeout = 200 })
+        require('undo-glow').yank()
       end
     end,
     pattern = '*',

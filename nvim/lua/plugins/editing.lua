@@ -308,6 +308,7 @@ return {
 
       local function paste(key)
         return function()
+          require('undo-glow').highlight_changes({ hlgroup = 'UgPaste' })
           if disabled[vim.bo.filetype] then
             local count = vim.v.count > 0 and vim.v.count or ''
             vim.cmd('normal! "' .. vim.v.register .. count .. key)
