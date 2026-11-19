@@ -101,21 +101,23 @@ def default_branch(main)
   %w[origin/main origin/master main master].find { git('rev-parse', '--verify', '--quiet', _1, dir: main) }
 end
 
-# Ignored .env files: a new worktree only gets tracked files. Only ignored ones, so the copies
+# Ignored files a checkout needs but git doesn't carry into a new worktree: .env settings and
+# certificates (e.g. mkcert's *.pem for a dev server on HTTPS). Only ignored ones, so the copies
 # don't show up as changes that would block `ws done`.
-def copy_env_files(main, path)
-  ignored_env_files(main).each do |name|
+def copy_local_files(main, path)
+  ignored_local_files(main).each do |name|
     # Ignored on this branch too: an older branch without that .gitignore entry would see the
     # copy as an untracked file, which then blocks `ws done`
     next if File.exist?(File.join(path, name)) || !git('check-ignore', '-q', name, dir: path)
 
-    FileUtils.cp(File.join(main, name), File.join(path, name))
+    # preserve: a private key stays readable by its owner only
+    FileUtils.cp(File.join(main, name), File.join(path, name), preserve: true)
     puts "Copied #{name}"
   end
 end
 
-def ignored_env_files(dir)
-  Dir.glob('.env*', File::FNM_DOTMATCH, base: dir).select do
+def ignored_local_files(dir)
+  Dir.glob(['.env*', '*.pem'], File::FNM_DOTMATCH, base: dir).select do
     File.file?(File.join(dir, _1)) && git('check-ignore', '-q', _1, dir: dir)
   end
 end
@@ -149,7 +151,7 @@ def cmd_new(branch, claude: true)
     FileUtils.mkdir_p(File.dirname(path))
     git!('worktree', 'add', '--quiet', *args, dir: main)
     puts "Created #{path}"
-    copy_env_files(main, path)
+    copy_local_files(main, path)
     lock = INSTALL.keys.find { File.exist?(File.join(path, _1)) }
     puts "Dependencies aren't installed here: run `#{INSTALL[lock]}`" if lock
   end
@@ -504,7 +506,7 @@ def cmd_done
   die("#{changes} uncommitted change(s) in #{path}") if changes.positive?
 
   # Ignored files vanish with the worktree; .env files are the ones that hold settings
-  changed_env = ignored_env_files(path).reject do
+  changed_env = ignored_local_files(path).reject do
     File.file?(File.join(main, _1)) && FileUtils.compare_file(File.join(path, _1), File.join(main, _1))
   end
   die("#{changed_env.join(', ')} differ from the main checkout's (or are new there): copy what you need first") if changed_env.any?

@@ -74,7 +74,8 @@ git clone -q "$T/origin.git" "$T/seed" 2>/dev/null
   git checkout -q -b remote-only && git commit -q --allow-empty -m ro && git push -q origin remote-only && git checkout -q main )
 git clone -q "$T/origin.git" "$HOME/github/work/app" 2>/dev/null
 APP=$HOME/github/work/app
-printf 'SECRET=1\n' > "$APP/.env"; printf '.env\n' > "$APP/.gitignore"; touch "$APP/package-lock.json"
+printf 'SECRET=1\n' > "$APP/.env"; printf '.env\n*.pem\n' > "$APP/.gitignore"; touch "$APP/package-lock.json"
+echo cert > "$APP/dev.pem"; echo key > "$APP/dev-key.pem"; chmod 600 "$APP/dev-key.pem"
 ( cd "$APP" && git add .gitignore package-lock.json && git commit -qm setup && git push -q origin main )
 ( cd "$T/seed" && git pull -q && git commit -q --allow-empty -m newer && git push -q origin main )
 # A PR branch in this repo, and a fork's PR as GitHub exposes it: refs/pull/7/head
@@ -94,6 +95,7 @@ ok "new: branch starts at origin's latest main" "[ \"\$(git -C '$wt/feat' rev-pa
 ok "new: branch doesn't track main" "! git -C '$wt/feat' rev-parse --abbrev-ref @{u} >/dev/null 2>&1"
 ok "new: tmux session work/app/feat" "tm has-session -t =work/app/feat 2>/dev/null"
 ok "new: copies ignored .env only" "[ -f '$wt/feat/.env' ] && [ ! -f '$wt/feat/.env.untracked' ]"
+ok "new: copies ignored certificates, the key still private" "[ -f '$wt/feat/dev.pem' ] && [ \"\$(stat -f %Lp '$wt/feat/dev-key.pem')\" = 600 ]"
 ok "new: prints the install hint" "grep -q 'npm ci' <<<\"\$out\""
 ok "new: work identity applies in the worktree" "[ \"\$(git -C '$wt/feat' config user.email)\" = me@work ]"
 before=$(git -C "$APP" worktree list | wc -l)
@@ -101,6 +103,7 @@ before=$(git -C "$APP" worktree list | wc -l)
 ok "new again: reuses the workspace" "[ \"\$(git -C '$APP' worktree list | wc -l)\" = '$before' ]"
 (cd "$wt/feat" && "$WS" new remote-only >/dev/null 2>&1)
 ok "new: skips .env on a branch that doesn't ignore it" "[ ! -e '$wt/remote-only/.env' ]"
+ok "new: skips certificates on a branch that doesn't ignore them" "[ ! -e '$wt/remote-only/dev.pem' ]"
 ok "new from a worktree, remote branch: tracks it" "[ \"\$(git -C '$wt/remote-only' rev-parse --abbrev-ref @{u})\" = origin/remote-only ]"
 ok "new: rejects an invalid name" "! (cd '$APP' && '$WS' new 'bad..name' 2>/dev/null)"
 (cd "$APP" && "$WS" new stale >/dev/null 2>&1); tm kill-session -t =work/app/stale; rm -rf "$wt/stale"
