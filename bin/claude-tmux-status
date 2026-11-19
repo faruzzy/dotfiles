@@ -1,0 +1,21 @@
+#!/bin/sh
+# Claude Code hook (ai-dotfiles claude/settings.json): records Claude's state on its tmux pane, as
+# pane options @claude (working or waiting) and @claude_since (epoch seconds), for the `ws` picker.
+#
+#   claude-tmux-status working|waiting   set the state; since only moves when the state changes
+#   claude-tmux-status clear             Claude is exiting
+#
+# Always exits 0: a failing hook shows an error notice in Claude.
+
+[ -n "$TMUX_PANE" ] || exit 0
+
+case "$1" in
+  clear)
+    tmux set -pu -t "$TMUX_PANE" @claude \; set -pu -t "$TMUX_PANE" @claude_since
+    ;;
+  working | waiting)
+    [ "$(tmux show -pqv -t "$TMUX_PANE" @claude)" = "$1" ] && exit 0
+    tmux set -p -t "$TMUX_PANE" @claude "$1" \; set -p -t "$TMUX_PANE" @claude_since "$(date +%s)"
+    ;;
+esac >/dev/null 2>&1
+exit 0

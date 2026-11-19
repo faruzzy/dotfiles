@@ -31,6 +31,7 @@ Git hooks live in `.githooks/` (`install.sh` sets `core.hooksPath`). After a pul
 - **Zsh config**: `zsh -i -c 'exit'` (check for errors/unexpected output), or `source ~/.zshrc` in a running shell
 - **Tmux config**: `tmux source-file ~/.tmux.conf` or `prefix + r` (bound to reload)
 - **Neovim**: `nvim/tests/run` runs headless checks of the real config (startup errors, servers attaching, past regressions) in a scratch directory; `nvim/tests/run <word>` runs only checks whose name contains it. When fixing a regression, add a check to `nvim/tests/check.lua`. Also `:checkhealth`, or `nvim --headless "+q"` for startup errors. Without file arguments nvim restores and re-saves the current directory's session, so run session/layout tests from a scratch directory with `XDG_STATE_HOME` pointed at a temp dir
+- **`ws`** (`bin/ws`): `tests/ws` runs it against scratch repos and its own tmux server; it never touches the real tmux server or repos. Add a check there when changing `ws`, especially `ws done`'s refusals.
 - **Shell startup time**: `ZSH_PROFILE=1 zsh -i -c 'zsh-profile'` (built-in profiling support)
 
 ## Architecture
@@ -55,6 +56,8 @@ Git hooks live in `.githooks/` (`install.sh` sets `core.hooksPath`). After a pul
 ### Scripts (`bin/`)
 
 On `PATH` via `.zshenv`. Any symlink committed here must be relative: the username differs between the two Macs.
+
+`ws` keeps one git worktree per branch under `~/github/.worktrees/<repo>/<branch>` (`WS_ROOT`), each with a tmux session named `<repo>/<branch>`; `<repo>` is the repo's path below `~/github` (e.g. `work/app`), so same-named repos stay apart. It stores nothing: `git worktree list` and the tmux sessions are the source of truth. `ws done` refuses whenever work could be lost, including unsaved buffers in any Neovim, which it finds by their RPC sockets under `$TMPDIR/nvim*`. The picker's Claude status comes from Claude Code hooks in ai-dotfiles' `claude/settings.json`, which run `bin/claude-tmux-status` to set the pane options `@claude` and `@claude_since`; without those hooks a running Claude shows as plain "claude".
 
 [everything.fzf](https://github.com/junegunn/everything.fzf) scripts (`claude.fzf`, `pr.fzf`, …) aren't in `bin/`: `setup_everything_fzf` in `install.sh` clones the repo to `~/github/everything.fzf` and links every `*.fzf` into `~/.local/bin` (first on `PATH`). Re-run it to pick up new scripts.
 

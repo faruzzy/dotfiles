@@ -1,0 +1,475 @@
+#!/opt/homebrew/opt/ruby/bin/ruby
+# frozen_string_literal: true
+
+# ws: a workspace per branch — a git worktree, a tmux session named <repo>/<branch> and Neovim in
+# it — so switching work never means stashing, and each branch has its own editor and agents.
+#
+#   ws                pick a workspace (fzf): enter opens it, ctrl-d removes it
+#   ws new <branch>   create (or switch to) the workspace for <branch> in the current repo
+#   ws pr <number>    the same for a GitHub pull request (gh)
+#   ws done           remove the current workspace: session, worktree and branch
+#
+# Nothing is stored: worktrees (git worktree list) and tmux sessions are the source of truth.
+# Worktrees live under $WS_ROOT (default ~/github/.worktrees)/<repo>/<branch>, where <repo> is the
+# repo's path under ~/github (e.g. work/app), so same-named repos don't share sessions. New
+# workspaces start Neovim in window 1 and Claude in a second window (--no-claude to skip).
+
+require 'fileutils'
+require 'io/console'
+require 'json'
+require 'open3'
+require 'rbconfig'
+require 'shellwords'
+
+def resolved(path) = File.directory?(path) ? File.realpath(path) : path
+ROOT = resolved(File.expand_path(ENV.fetch('WS_ROOT', '~/github/.worktrees')))
+GITHUB = resolved(File.expand_path('~/github'))
+CLAUDE_PROJECTS = File.join(File.expand_path(ENV.fetch('CLAUDE_CONFIG_DIR', '~/.claude')), 'projects')
+SELF = "#{RbConfig.ruby.shellescape} #{File.realpath(__FILE__).shellescape}"
+
+def die(msg, code = 1)
+  warn "ws: #{msg}"
+  exit code
+end
+
+# Runs a command; returns stdout, or nil when it fails
+def run(*cmd, chdir: nil)
+  opts = chdir ? { chdir: chdir } : {}
+  out, _err, status = Open3.capture3(*cmd, **opts)
+  status.success? ? out.strip : nil
+end
+
+def run!(*cmd, chdir: nil)
+  opts = chdir ? { chdir: chdir } : {}
+  out, err, status = Open3.capture3(*cmd, **opts)
+  die("#{cmd.join(' ')}: #{err.strip}") unless status.success?
+  out.strip
+end
+
+def git(*args, dir:) = run('git', '-C', dir, *args)
+def git!(*args, dir:) = run!('git', '-C', dir, *args)
+
+# The main checkout of the repo the current directory belongs to (also from inside a worktree):
+# always the first entry of `git worktree list`
+def main_checkout(dir = '.') = main_of(dir) || die('not in a git repository')
+
+# Like main_checkout, but nil when `dir` doesn't resolve (e.g. a worktree whose repo was moved)
+def main_of(dir)
+  run('git', '-C', dir, 'worktree', 'list', '--porcelain')&.[](/\Aworktree (.+)$/, 1)
+end
+
+# { path => branch } for every worktree of the repo, the main checkout included; branch is nil
+# when detached (e.g. mid-rebase). Skips worktrees whose folder is gone (git marks them prunable)
+def worktrees(main)
+  git!('worktree', 'list', '--porcelain', dir: main).split("\n\n").filter_map do |entry|
+    path = entry[/^worktree (.+)$/, 1]
+    next if entry.match?(/^prunable/) || !File.directory?(path)
+
+    [path, entry[/^branch refs\/heads\/(.+)$/, 1]]
+  end.to_h
+end
+
+# tmux turns '.' and ':' in session names into '_'; do it first so the name can be found again
+def session_name(repo, branch) = "#{repo}/#{branch}".tr('.:', '__')
+
+# A repo's name in sessions and under ROOT: its path below ~/github, so ~/github/app and
+# ~/github/work/app stay apart; repos elsewhere use their folder name
+def repo_label(main) = main.start_with?("#{GITHUB}/") ? main.delete_prefix("#{GITHUB}/") : File.basename(main)
+
+# A worktree under ROOT is named after its folder, which `ws new` chose from the branch and which
+# stays put through a rebase or a `git switch` inside it; the main checkout after its branch
+def workspace_name(main, path, branch)
+  repo = repo_label(main)
+  prefix = File.join(ROOT, repo, '')
+  path.start_with?(prefix) ? session_name(repo, path.delete_prefix(prefix)) : session_name(repo, branch.to_s)
+end
+
+def session?(name) = system('tmux', 'has-session', '-t', "=#{name}", err: File::NULL, out: File::NULL)
+
+def switch_to(name)
+  if ENV['TMUX']
+    system('tmux', 'switch-client', '-t', "=#{name}")
+  else
+    exec('tmux', 'attach-session', '-t', "=#{name}")
+  end
+end
+
+def default_branch(main)
+  head = git('rev-parse', '--abbrev-ref', 'origin/HEAD', dir: main)
+  return head if head && head != 'origin/HEAD'
+
+  %w[origin/main origin/master main master].find { git('rev-parse', '--verify', '--quiet', _1, dir: main) }
+end
+
+# Ignored .env files: a new worktree only gets tracked files. Only ignored ones, so the copies
+# don't show up as changes that would block `ws done`.
+def copy_env_files(main, path)
+  ignored_env_files(main).each do |name|
+    # Ignored on this branch too: an older branch without that .gitignore entry would see the
+    # copy as an untracked file, which then blocks `ws done`
+    next if File.exist?(File.join(path, name)) || !git('check-ignore', '-q', name, dir: path)
+
+    FileUtils.cp(File.join(main, name), File.join(path, name))
+    puts "Copied #{name}"
+  end
+end
+
+def ignored_env_files(dir)
+  Dir.glob('.env*', File::FNM_DOTMATCH, base: dir).select do
+    File.file?(File.join(dir, _1)) && git('check-ignore', '-q', _1, dir: dir)
+  end
+end
+
+INSTALL = {
+  'pnpm-lock.yaml' => 'pnpm install', 'package-lock.json' => 'npm ci', 'yarn.lock' => 'yarn install',
+  'bun.lock' => 'bun install', 'bun.lockb' => 'bun install', 'Gemfile.lock' => 'bundle install'
+}.freeze
+
+def cmd_new(branch, claude: true)
+  die('usage: ws new <branch>') if branch.nil? || branch.empty?
+  die("invalid branch name: #{branch}") unless system('git', 'check-ref-format', '--branch', branch, out: File::NULL, err: File::NULL)
+
+  main = main_checkout
+  repo = repo_label(main)
+  git('worktree', 'prune', dir: main) # forget worktrees whose folder was deleted by hand
+  path = worktrees(main).key(branch)
+
+  unless path
+    path = File.join(ROOT, repo, branch)
+    git('fetch', '--quiet', 'origin', dir: main) if git('remote', 'get-url', 'origin', dir: main)
+    args =
+      if git('show-ref', '--verify', '--quiet', "refs/heads/#{branch}", dir: main)
+        [path, branch]
+      elsif git('show-ref', '--verify', '--quiet', "refs/remotes/origin/#{branch}", dir: main)
+        ['--track', '-b', branch, path, "origin/#{branch}"]
+      else
+        base = default_branch(main) or die('no origin/HEAD, main or master to branch from')
+        ['--no-track', '-b', branch, path, base]
+      end
+    FileUtils.mkdir_p(File.dirname(path))
+    git!('worktree', 'add', '--quiet', *args, dir: main)
+    puts "Created #{path}"
+    copy_env_files(main, path)
+    lock = INSTALL.keys.find { File.exist?(File.join(path, _1)) }
+    puts "Dependencies aren't installed here: run `#{INSTALL[lock]}`" if lock
+  end
+
+  open_session(workspace_name(main, path, branch), path, claude:)
+end
+
+# Neovim in the first window, Claude in a second one; both typed into a shell, so the windows
+# stay when the program exits
+def open_session(name, path, claude: true)
+  unless session?(name)
+    run!('tmux', 'new-session', '-d', '-s', name, '-c', path)
+    run!('tmux', 'send-keys', '-t', "=#{name}:", 'nvim', 'Enter')
+    if claude
+      window = run!('tmux', 'new-window', '-d', '-P', '-F', '#{window_id}', '-t', "=#{name}:", '-n', 'claude', '-c', path)
+      run!('tmux', 'send-keys', '-t', window, claude_command(path), 'Enter')
+    end
+  end
+  switch_to(name)
+end
+
+# Picks up the folder's last conversation when it has one (a reopened workspace), else starts fresh
+def claude_command(path)
+  dir = File.join(CLAUDE_PROJECTS, path.gsub(/[^a-zA-Z0-9]/, '-'))
+  Dir.glob(File.join(dir, '*.jsonl')).empty? ? 'claude' : 'claude --continue'
+end
+
+# A GitHub PR's workspace: its own branch when the PR comes from this repo (so pushing works and
+# `ws done` sees the merge), a local pr/<n> branch from pull/<n>/head when it comes from a fork
+# The fork PR number of a pr/<n> branch, else nil
+def fork_pr(branch) = branch.to_s[%r{\Apr/(\d+)\z}, 1]
+
+def cmd_pr(number, claude: true)
+  die('usage: ws pr <number>') unless number.to_s.match?(/\A\d+\z/)
+  main = main_checkout
+  out, err, status = Open3.capture3('gh', 'pr', 'view', number, '--json', 'headRefName,isCrossRepository', chdir: main)
+  die("gh couldn't find PR ##{number}: #{err.strip}") unless status.success?
+  pr = JSON.parse(out)
+  unless pr['isCrossRepository']
+    head = pr['headRefName']
+    git('fetch', '--quiet', 'origin', dir: main)
+    # When origin isn't the PR's repo (a fork clone), cmd_new would quietly branch from main
+    unless git('show-ref', '--verify', '--quiet', "refs/heads/#{head}", dir: main) ||
+           git('show-ref', '--verify', '--quiet', "refs/remotes/origin/#{head}", dir: main)
+      die("origin has no branch #{head} for PR ##{number} (is origin the PR's repo?)")
+    end
+    return Dir.chdir(main) { cmd_new(head, claude:) }
+  end
+
+  branch = "pr/#{number}"
+  unless worktrees(main).value?(branch)
+    git!('fetch', '--quiet', 'origin', "+pull/#{number}/head:refs/heads/#{branch}", dir: main)
+  end
+  Dir.chdir(main) { cmd_new(branch, claude:) }
+end
+
+# Worktree folders under ROOT; a branch like feature/x nests, so descend until a worktree's .git
+def worktree_dirs(dir = ROOT)
+  git = File.join(dir, '.git')
+  return [dir] if File.file?(git)
+  return [] if File.directory?(git) # a plain clone, not a worktree
+
+  Dir.children(dir).sort.flat_map do |c|
+    child = File.join(dir, c)
+    File.directory?(child) && !File.symlink?(child) ? worktree_dirs(child) : []
+  end
+rescue Errno::ENOENT
+  []
+end
+
+# Every workspace: worktrees under ROOT plus their repos' main checkouts, as
+# { path:, branch:, name:, main: }, each repo's main checkout first
+def workspaces
+  # A worktree whose repo was moved or deleted resolves to nothing: skipped, not fatal
+  worktree_dirs.filter_map { main_of(_1) }.uniq.flat_map do |main|
+    worktrees(main).filter_map do |path, branch|
+      next unless path == main || path.start_with?("#{ROOT}/")
+
+      { path:, branch:, name: workspace_name(main, path, branch), main: }
+    end
+  end
+end
+
+C = { green: 32, dim: 2, yellow: 33, cyan: 36 }.freeze
+def color(text, c) = "\e[#{C[c]}m#{text}\e[0m"
+
+def ago(seconds)
+  return "#{seconds.to_i}s" if seconds < 60
+  return "#{(seconds / 60).to_i}m" if seconds < 3600
+
+  "#{(seconds / 3600).to_i}h"
+end
+
+# Claude's state per tmux session, from the pane options its hooks set (bin/claude-tmux-status):
+# { session => [state, since] }. A Claude without them (started before the hooks) is just "claude"
+def claude_panes(procs)
+  rows = run('tmux', 'list-panes', '-a', '-F', "\#{session_name}\t\#{pane_pid}\t\#{@claude}\t\#{@claude_since}").to_s
+  rows.lines.each_with_object({}) do |line, by_session|
+    session, pane, state, since = line.chomp.split("\t", 4)
+    running = procs.any? do |pid, (_, comm)|
+      next false unless comm == 'claude'
+      pid = procs.dig(pid, 0) while pid && pid > 1 && pid != pane.to_i
+      pid == pane.to_i
+    end
+    by_session[session] ||= [state.to_s.empty? ? nil : state, since.to_i] if running
+  end
+end
+
+def claude_status(state, since)
+  case state
+  when 'waiting' then color("claude waiting #{ago(Time.now.to_i - since)}", :yellow)
+  when 'working' then color('claude working', :cyan)
+  else color('claude', :cyan)
+  end
+end
+
+# One line per workspace, for fzf: <path>\t<what you see>
+def cmd_list
+  claude = claude_panes(processes)
+  workspaces.each do |ws|
+    # --no-optional-locks: a background read mustn't make a commit in that workspace fail
+    changes = git('--no-optional-locks', 'status', '--porcelain', dir: ws[:path]).to_s.lines.size
+    counts = git('rev-list', '--left-right', '--count', '@{u}...HEAD', dir: ws[:path])
+    gone = ws[:branch] && git('for-each-ref', '--format=%(upstream:track)', "refs/heads/#{ws[:branch]}", dir: ws[:path]) == '[gone]'
+    behind, ahead = counts&.split&.map(&:to_i)
+    info = [
+      session?(ws[:name]) ? color('●', :green) : color('○', :dim),
+      ws[:name] + (ws[:path] == ws[:main] ? color(' (main checkout)', :dim) : ''),
+      (color("#{changes} changed", :yellow) if changes.positive?),
+      (color("↑#{ahead}", :cyan) if ahead&.positive?),
+      (color("↓#{behind}", :cyan) if behind&.positive?),
+      (color('upstream gone (merged?)', :dim) if gone),
+      (color("fork PR ##{fork_pr(ws[:branch])}", :dim) if fork_pr(ws[:branch]) && !counts),
+      (color('no upstream', :dim) unless counts || gone || fork_pr(ws[:branch])),
+      (color('detached', :yellow) unless ws[:branch]),
+      (claude_status(*claude[ws[:name]]) if claude.key?(ws[:name]))
+    ].compact.join('  ')
+    puts "#{ws[:path]}\t#{info}"
+  end
+end
+
+def cmd_preview(path)
+  head = git('rev-parse', '--abbrev-ref', 'HEAD', dir: path)
+  upstream = git('rev-parse', '--abbrev-ref', '@{u}', dir: path) || 'no upstream'
+  puts "#{color(head, :green)} → #{upstream}", path, ''
+  puts git('log', '--color=always', '--format=%C(yellow)%h%C(reset) %s %C(dim)%cr%C(reset)', '-15', dir: path), ''
+  changes = git('--no-optional-locks', '-c', 'color.status=always', 'status', '--short', dir: path).to_s
+  puts changes.empty? ? color('no uncommitted changes', :dim) : changes
+end
+
+def cmd_open(path)
+  ws = workspaces.find { _1[:path] == path } or die("no workspace at #{path}")
+  open_session(ws[:name], path)
+end
+
+def cmd_pick
+  die('nothing to pick: no workspaces yet (ws new <branch>)') if worktree_dirs.empty?
+  exec('fzf', '--ansi', '--delimiter', "\t", '--with-nth', '2', '--no-sort', '--reverse',
+       '--header', 'enter: open  ╱  ctrl-d: remove (ws done)',
+       '--preview', "#{SELF} _preview {1}", '--preview-window', 'right,55%',
+       '--bind', "start:reload(#{SELF} _list)",
+       '--bind', "enter:become(#{SELF} _open {1})",
+       '--bind', "ctrl-d:execute(#{SELF} _remove {1})+reload(#{SELF} _list)")
+end
+
+# ctrl-d in the picker: confirm, then `ws done` in that workspace, with all its checks
+def cmd_remove(path)
+  print "Remove #{path}? [y/N] "
+  if $stdin.gets.to_s.strip.casecmp?('y')
+    # On success ws done reports in tmux's status line; pause only to show a refusal
+    unless system(RbConfig.ruby, File.realpath(__FILE__), 'done', chdir: path)
+      print "\n(any key) "
+      $stdin.tty? ? $stdin.getch : $stdin.gets
+    end
+  end
+end
+
+# { pid => [ppid, command name] } for every process
+def processes
+  (run('ps', '-A', '-o', 'pid=,ppid=,comm=') || '').lines.to_h do
+    pid, ppid, comm = _1.strip.split(/\s+/, 3)
+    [pid.to_i, [ppid.to_i, File.basename(comm.to_s)]]
+  end
+end
+
+# Whether a process runs in tmux session `name` (in any pane, at any depth)
+def in_session(name, procs)
+  panes = session?(name) ? run('tmux', 'list-panes', '-s', '-t', "=#{name}", '-F', '#{pane_pid}').to_s.split.map(&:to_i) : []
+  lambda do |pid|
+    pid = procs.dig(pid, 0) while pid && pid > 1 && !panes.include?(pid)
+    panes.include?(pid)
+  end
+end
+
+# Modified buffer names of the Neovim at `sock`, or nil when it doesn't answer (e.g. a prompt)
+def modified_buffers(sock)
+  expr = %q{luaeval('vim.json.encode(vim.tbl_map(vim.api.nvim_buf_get_name, vim.tbl_filter(function(b) return vim.bo[b].modified end, vim.api.nvim_list_bufs())))')}
+  out = run('perl', '-e', 'alarm 3; exec @ARGV', 'nvim', '--headless', '--server', sock, '--remote-expr', expr)
+  out && JSON.parse(out)
+end
+
+# Refuses when removing the workspace could drop unsaved edits: any Neovim in its tmux session
+# (which goes away with it), and any other Neovim holding modified files from the worktree
+def check_neovims(name, path)
+  procs = processes
+  inside = in_session(name, procs)
+  # $TMPDIR/nvim.<user>/<random>/nvim.<pid>.0, or nvim.<random>/nvim.<pid>.0 when Neovim found
+  # nvim.<user> not private (anything but 0700) and fell back
+  tmp = ENV.fetch('TMPDIR', '/tmp/')
+  sockets = Dir.glob(File.join(tmp, 'nvim*', '{*/,}nvim.*.0')).to_h { [File.basename(_1)[/\d+/].to_i, _1] }
+                .select { |pid, _| procs.key?(pid) }
+
+  # A Neovim whose socket ws can't find can't be asked. Neovim runs as a UI process and a server
+  # process (parent and child), and only the server owns the socket
+  procs.each do |pid, (ppid, comm)|
+    next unless comm == 'nvim' && inside.(pid)
+    reachable = sockets.key?(pid) || sockets.key?(ppid) ||
+                procs.any? { |child, (parent, _)| parent == pid && sockets.key?(child) }
+    die("Neovim (pid #{pid}) in #{name} can't be asked about unsaved buffers; close it first") unless reachable
+  end
+
+  real = File.realpath(path)
+  sockets.each do |pid, sock|
+    modified = modified_buffers(sock)
+    if inside.(pid)
+      die("Neovim in #{name} isn't answering (a prompt open?); close it first") unless modified
+      die("Neovim in #{name} has #{modified.size} unsaved buffer(s)") if modified.any?
+    elsif modified&.any? { _1.start_with?("#{real}/") }
+      die("Neovim (pid #{pid}) has unsaved buffers from #{path}")
+    end
+  end
+end
+
+# Whether everything on `branch` is in `base`: merged, or squash-merged (a commit in `base` with
+# the same patch as the whole branch, the way GitHub squash-merges)
+def landed?(branch, base, main)
+  return true if git('merge-base', '--is-ancestor', branch, base, dir: main)
+
+  fork = git('merge-base', base, branch, dir: main) or return false
+  squashed = git('commit-tree', "#{branch}^{tree}", '-p', fork, '-m', 'ws', dir: main) or return false
+  git('cherry', base, squashed, dir: main)&.start_with?('-') || false
+end
+
+def notify(msg)
+  ENV['TMUX'] ? system('tmux', 'display-message', "ws: #{msg}") : puts(msg)
+rescue Errno::EIO
+  nil # the terminal went away with the session
+end
+
+def cmd_done
+  main = main_checkout
+  path = run('git', 'rev-parse', '--show-toplevel') or die('not in a git repository')
+  die("#{path} is the main checkout, not a workspace") if path == main
+  branch = worktrees(main)[path] or die('this worktree has no branch checked out')
+  name = workspace_name(main, path, branch)
+
+  changes = git!('status', '--porcelain', dir: path).lines.size
+  die("#{changes} uncommitted change(s) in #{path}") if changes.positive?
+
+  # Ignored files vanish with the worktree; .env files are the ones that hold settings
+  changed_env = ignored_env_files(path).reject do
+    File.file?(File.join(main, _1)) && FileUtils.compare_file(File.join(path, _1), File.join(main, _1))
+  end
+  die("#{changed_env.join(', ')} differ from the main checkout's (or are new there): copy what you need first") if changed_env.any?
+
+  # A deleted upstream usually means merged on GitHub, but not always (closed PR, a later local
+  # commit), so check that the commits landed
+  if git('for-each-ref', '--format=%(upstream:track)', "refs/heads/#{branch}", dir: main) == '[gone]'
+    base = default_branch(main)
+    unless base && landed?(branch, base, main)
+      die("#{branch}'s remote branch was deleted, but not all of it is in #{base || 'the default branch'}: check `git log` first")
+    end
+  else
+    # A fork PR's commits live under GitHub's pull/<n>/head, which is never a remote branch:
+    # only commits added here count, checked against the PR's current head
+    published = []
+    if (pr = fork_pr(branch))
+      git('fetch', '--quiet', 'origin', "pull/#{pr}/head", dir: main) or
+        die("couldn't fetch PR ##{pr} from origin to check #{branch}; try again online")
+      published = [git!('rev-parse', 'FETCH_HEAD', dir: main)]
+    end
+    unpushed = git!('rev-list', '--count', branch, '--not', '--remotes', *published, dir: main).to_i
+    die("#{unpushed} commit(s) on #{branch} aren't on any remote: push or merge them first") if unpushed.positive?
+  end
+
+  check_neovims(name, path)
+
+  # Killing the session hangs up its panes, this process included
+  Signal.trap('HUP', 'IGNORE')
+  if ENV['TMUX'] && run('tmux', 'display', '-p', '-t', ENV.fetch('TMUX_PANE', ''), '#{session_name}') == name
+    # Off this session first: when the attached client's session is destroyed, tmux detaches it
+    # and the terminal window closes
+    unless system('tmux', 'switch-client', '-l', err: File::NULL) || system('tmux', 'switch-client', '-n', err: File::NULL)
+      home = session_name(repo_label(main), worktrees(main)[main].to_s)
+      system('tmux', 'new-session', '-d', '-s', home, '-c', main) unless session?(home)
+      system('tmux', 'switch-client', '-t', "=#{home}")
+    end
+  end
+  system('tmux', 'kill-session', '-t', "=#{name}", err: File::NULL) if session?(name)
+  git!('worktree', 'remove', path, dir: main)
+  git!('branch', '-D', branch, dir: main)
+  notify("removed #{path} and branch #{branch}")
+end
+
+claude = !ARGV.delete('--no-claude')
+case ARGV.shift
+when nil then cmd_pick
+when 'new' then cmd_new(ARGV.first, claude:)
+when 'pr'
+  begin
+    cmd_pr(ARGV.first, claude:)
+  rescue Errno::ENOENT
+    die('gh is not installed (brew install gh)')
+  end
+when 'done' then cmd_done
+when '_list' then cmd_list
+when '_preview' then cmd_preview(ARGV.first)
+when '_open' then cmd_open(ARGV.first)
+when '_remove' then cmd_remove(ARGV.first)
+else
+  puts File.read(__FILE__)[/^# ws:.*?(?=\n\n)/m].gsub(/^# ?/, '')
+  exit 1
+end

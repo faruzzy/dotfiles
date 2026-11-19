@@ -1,0 +1,297 @@
+#!/usr/bin/env bash
+# Tests for bin/ws in isolation: scratch HOME, its own tmux socket, worktree root and repos, so
+# the real tmux server, repos and git config are never touched. Run: tests/ws
+set -u
+WS="$(cd "$(dirname "$0")/.." && pwd)/bin/ws"
+HOOK="$(dirname "$WS")/claude-tmux-status"
+REAL_NVIM=$(command -v nvim)
+T=$(mktemp -d /tmp/ws-test.XXXX)
+T=$(cd "$T" && pwd -P)
+# Never the real tmux: every call goes to this socket, and $TMUX points ws at it
+unset TMUX
+SOCK=$T/tmux.sock
+tm() { tmux -S "$SOCK" "$@"; }
+# Neovims killed with the server still write their state files: let them, then delete
+cleanup() { tm kill-server 2>/dev/null; pkill -f "$T" 2>/dev/null; sleep 0.5; rm -rf "$T"; }
+trap cleanup EXIT
+
+pass=0 fail=0
+ok() { if eval "$2"; then pass=$((pass+1)); echo "PASS $1"; else fail=$((fail+1)); echo "FAIL $1"; fi; }
+done_in() { (cd "$1" && "$WS" done 2>&1); }
+# Polls a condition instead of guessing a sleep; fails the run if it never holds
+wait_for() { local i; for i in $(seq 50); do eval "$1" && return 0; sleep 0.1; done; echo "  timed out waiting for: $1"; return 1; }
+nv() { "$REAL_NVIM" --headless --server "$1" "${@:2}" </dev/null 2>/dev/null; }
+modified() { nv "$1" --remote-expr 'luaeval("#vim.tbl_filter(function(b) return vim.bo[b].modified end, vim.api.nvim_list_bufs())")'; }
+# Starts a real Neovim in tmux target $1 on file $2, edits it without saving, sets $sock
+start_unsaved_nvim() {
+  rm -f "$T/sn"; tm new-window -t "$1" -c "$wt/feat" "$REAL_NVIM --clean -c 'call writefile([v:servername], \"$T/sn\")' $2"
+  wait_for '[ -s "$T/sn" ] && [ -S "$(cat "$T/sn")" ]'; sock=$(cat "$T/sn")
+  nv "$sock" --remote-send 'ichanged<Esc>'; wait_for '[ "$(modified "$sock")" = 1 ]'
+}
+quit_nvim() { nv "$sock" --remote-send '<Esc>:qa!<CR>'; wait_for '[ ! -S "$sock" ]'; }
+refuses() { out=$(done_in "$1"); local code=$?; [ $code -ne 0 ] && [ -d "$1" ] && grep -q "$2" <<<"$out" || { echo "  got (exit $code): $out"; false; }; }
+
+export HOME=$T/home WS_ROOT=$T/home/github/.worktrees TMPDIR=$T/tmp/ CLAUDE_CONFIG_DIR=$T/claude
+NVDIR=$TMPDIR/nvim.$(id -un)
+mkdir -p "$HOME/github/work" "$NVDIR" "$T/stub" "$T/fake"
+chmod 700 "$NVDIR" # Neovim only uses nvim.<user> when it is private
+# Sessions start this stand-in instead of a real Neovim; RPC calls go to the real one
+printf '#!/bin/sh\ncase " $* " in *" --server "*) exec "%s" "$@";; esac\nexec sleep 600\n' "$REAL_NVIM" > "$T/stub/nvim"
+chmod +x "$T/stub/nvim"
+ln -s /bin/sleep "$T/fake/nvim" # a process named nvim without an RPC socket (macOS kills a copy of a system binary)
+# Stand-ins for Claude (a process named claude) and gh (pr view 5: this repo's pr-branch;
+# pr view 7: a fork's PR, fetched from pull/7/head)
+ln -s /bin/sleep "$T/fake/claude"
+printf '#!/bin/sh\necho "claude $*" >> "%s"\nexec "%s" 600\n' "$T/claude-args" "$T/fake/claude" > "$T/stub/claude"; chmod +x "$T/stub/claude"
+cat > "$T/stub/gh" <<'GH'
+#!/bin/sh
+case "$*" in
+  "pr view 5 "*) echo '{"headRefName":"pr-branch","isCrossRepository":false}' ;;
+  "pr view 7 "*) echo '{"headRefName":"their-feature","isCrossRepository":true}' ;;
+  "pr view 9 "*) echo '{"headRefName":"not-on-origin","isCrossRepository":false}' ;;
+  *) echo "no such PR" >&2; exit 1 ;;
+esac
+GH
+chmod +x "$T/stub/gh"
+cat > "$HOME/.gitconfig" <<EOF
+[user]
+  name = Personal
+  email = me@personal
+[init]
+  defaultBranch = main
+[includeIf "gitdir:~/github/work/"]
+  path = ~/.gitconfig-work
+EOF
+printf '[user]\n  email = me@work\n' > "$HOME/.gitconfig-work"
+# Without a .zshrc, zsh starts its first-run wizard and swallows typed commands; no history file,
+# or killed shells write one after cleanup and leave the folder behind
+echo 'unset HISTFILE' > "$HOME/.zshrc"
+
+# origin with main and a remote-only branch; the clone then misses one newer commit on main
+git init -q --bare "$T/origin.git"
+git clone -q "$T/origin.git" "$T/seed" 2>/dev/null
+( cd "$T/seed" && git commit -q --allow-empty -m init && git push -q origin main &&
+  git checkout -q -b remote-only && git commit -q --allow-empty -m ro && git push -q origin remote-only && git checkout -q main )
+git clone -q "$T/origin.git" "$HOME/github/work/app" 2>/dev/null
+APP=$HOME/github/work/app
+printf 'SECRET=1\n' > "$APP/.env"; printf '.env\n' > "$APP/.gitignore"; touch "$APP/package-lock.json"
+( cd "$APP" && git add .gitignore package-lock.json && git commit -qm setup && git push -q origin main )
+( cd "$T/seed" && git pull -q && git commit -q --allow-empty -m newer && git push -q origin main )
+# A PR branch in this repo, and a fork's PR as GitHub exposes it: refs/pull/7/head
+( cd "$T/seed" && git checkout -q -b pr-branch && git commit -q --allow-empty -m pr5 && git push -q origin pr-branch &&
+  git checkout -q --detach main && git commit -q --allow-empty -m fork7 && git push -q origin HEAD:refs/pull/7/head && git checkout -q main )
+printf 'x\n' > "$APP/.env.untracked"
+
+tm new-session -d -s home -c "$T"
+export TMUX="$SOCK,0,0"
+export PATH="$T/stub:$PATH"
+wt=$WS_ROOT/work/app
+
+# --- ws new
+out=$(cd "$APP" && "$WS" new feat 2>&1)
+ok "new: creates the worktree" "[ -d '$wt/feat' ]"
+ok "new: branch starts at origin's latest main" "[ \"\$(git -C '$wt/feat' rev-parse HEAD)\" = \"\$(git -C '$APP' rev-parse origin/main)\" ]"
+ok "new: branch doesn't track main" "! git -C '$wt/feat' rev-parse --abbrev-ref @{u} >/dev/null 2>&1"
+ok "new: tmux session work/app/feat" "tm has-session -t =work/app/feat 2>/dev/null"
+ok "new: copies ignored .env only" "[ -f '$wt/feat/.env' ] && [ ! -f '$wt/feat/.env.untracked' ]"
+ok "new: prints the install hint" "grep -q 'npm ci' <<<\"\$out\""
+ok "new: work identity applies in the worktree" "[ \"\$(git -C '$wt/feat' config user.email)\" = me@work ]"
+before=$(git -C "$APP" worktree list | wc -l)
+(cd "$APP" && "$WS" new feat >/dev/null 2>&1)
+ok "new again: reuses the workspace" "[ \"\$(git -C '$APP' worktree list | wc -l)\" = '$before' ]"
+(cd "$wt/feat" && "$WS" new remote-only >/dev/null 2>&1)
+ok "new: skips .env on a branch that doesn't ignore it" "[ ! -e '$wt/remote-only/.env' ]"
+ok "new from a worktree, remote branch: tracks it" "[ \"\$(git -C '$wt/remote-only' rev-parse --abbrev-ref @{u})\" = origin/remote-only ]"
+ok "new: rejects an invalid name" "! (cd '$APP' && '$WS' new 'bad..name' 2>/dev/null)"
+(cd "$APP" && "$WS" new stale >/dev/null 2>&1); tm kill-session -t =work/app/stale; rm -rf "$wt/stale"
+(cd "$APP" && "$WS" new stale >/dev/null 2>&1)
+ok "new: recreates a worktree deleted by hand" "[ -d '$wt/stale' ]"
+
+# --- ws done: refusals
+ok "done: refuses in the main checkout" "refuses '$APP' 'main checkout'"
+echo change > "$wt/feat/file"
+ok "done: refuses with uncommitted changes" "refuses '$wt/feat' 'uncommitted'"
+(cd "$wt/feat" && git add file && git commit -qm work)
+ok "done: refuses with unpushed commits" "refuses '$wt/feat' 'remote'"
+(cd "$wt/feat" && git push -q -u origin feat 2>/dev/null)
+echo 'SECRET=2' > "$wt/feat/.env"
+ok "done: refuses when .env differs from the main checkout's" "refuses '$wt/feat' '.env'"
+cp "$APP/.env" "$wt/feat/.env"
+
+# Neovims: in the session (unsaved, silent, no socket) and elsewhere (unsaved worktree file)
+start_unsaved_nvim =work/app/feat: file
+ok "done: refuses with unsaved buffers in the session's Neovim" "refuses '$wt/feat' 'unsaved buffer'"
+quit_nvim
+
+tm new-window -t =work/app/feat: -c "$wt/feat" "python3 -c \"import socket,os,time; s=socket.socket(socket.AF_UNIX); os.makedirs('$NVDIR/hang', exist_ok=True); s.bind('$NVDIR/hang/nvim.%d.0' % os.getpid()); s.listen(); time.sleep(600)\""
+sleep 1
+start=$(date +%s)
+ok "done: refuses, within seconds, when the session's Neovim doesn't answer" "refuses '$wt/feat' 'answering' && [ \$(( \$(date +%s) - start )) -lt 10 ]"
+tm kill-window -t =work/app/feat:2; rm -rf "$NVDIR/hang"
+
+tm new-window -t =work/app/feat: -c "$wt/feat" "$T/fake/nvim 600"; sleep 0.5
+ok "(setup) the socketless nvim is running" "pgrep -f '$T/fake/nvim' >/dev/null"
+ok "done: refuses when a Neovim in the session has no reachable socket" "refuses '$wt/feat' \"can't be asked\""
+tm kill-window -t =work/app/feat:2
+
+start_unsaved_nvim =home: "$wt/feat/file"
+ok "done: refuses when another session's Neovim has unsaved worktree files" "refuses '$wt/feat' 'unsaved buffers from'"
+quit_nvim
+
+# --- ws done: removal, run inside the workspace's own session with a client attached to it
+( sleep 20 | script -q /dev/null tmux -S "$SOCK" attach -t =work/app/feat >/dev/null 2>&1 ) &
+wait_for '[ "$(tm list-clients -F "#{session_name}")" = work/app/feat ]'
+ok "(setup) a client is attached to work/app/feat" "[ \"\$(tm list-clients -F '#{session_name}')\" = work/app/feat ]"
+tm new-window -t =work/app/feat: -c "$wt/feat"; sleep 0.5
+tm send-keys -t =work/app/feat: "'$WS' done > '$T/done.out' 2>&1" Enter
+wait_for '! tm has-session -t =work/app/feat 2>/dev/null'; sleep 0.3
+[ -s "$T/done.out" ] && sed 's/^/  ws said: /' "$T/done.out"
+[ -s "$T/done.out" ] || tm capture-pane -p -t =work/app/feat: 2>/dev/null | grep -v '^\s*$' | head -5 | sed 's/^/  pane: /'
+ok "done in-session: worktree and branch removed" "[ ! -d '$wt/feat' ] && ! git -C '$APP' show-ref --verify --quiet refs/heads/feat"
+ok "done in-session: its session is closed" "! tm has-session -t =work/app/feat 2>/dev/null"
+ok "done in-session: the client moved to another session instead of detaching" "c=\$(tm list-clients -F '#{session_name}'); [ -n \"\$c\" ] && [ \"\$c\" != work/app/feat ]"
+
+# --- ws done: upstream deleted after a squash merge
+(cd "$APP" && "$WS" new sq >/dev/null 2>&1)
+(cd "$wt/sq" && echo s > sq.txt && git add sq.txt && git commit -qm sq && git push -q -u origin sq 2>/dev/null)
+( cd "$T/seed" && git pull -q && git fetch -q origin sq && git merge -q --squash origin/sq && git commit -qm 'sq (#1)' && git push -q origin main && git push -q origin --delete sq )
+git -C "$APP" fetch -q --prune
+(cd "$wt/sq" && echo more >> sq.txt && git commit -qam 'follow-up, never pushed')
+ok "done: refuses a gone branch with a commit that never landed" "refuses '$wt/sq' 'remote branch was deleted'"
+(cd "$wt/sq" && git reset -q --hard HEAD~1)
+ok "done: removes a gone branch that was squash-merged" "(cd '$wt/sq' && '$WS' done >/dev/null 2>&1) && [ ! -d '$wt/sq' ]"
+
+# --- ws done: upstream deleted without merging (closed PR)
+(cd "$APP" && "$WS" new closed >/dev/null 2>&1)
+(cd "$wt/closed" && echo c > c.txt && git add c.txt && git commit -qm c && git push -q -u origin closed 2>/dev/null)
+git -C "$APP" push -q origin --delete closed 2>/dev/null; git -C "$APP" fetch -q --prune
+ok "done: refuses a gone branch that was never merged" "refuses '$wt/closed' 'remote branch was deleted'"
+
+# --- milestone 2: the picker and its commands
+(cd "$APP" && "$WS" new pick-me >/dev/null 2>&1)
+echo dirty > "$wt/pick-me/d.txt"
+tm kill-session -t =work/app/remote-only 2>/dev/null
+list=$("$WS" _list)
+first=$(head -1 <<<"$list")
+ok "list: main checkout first, marked" "[ \"\$(cut -f1 <<<\"\$first\")\" = '$APP' ] && grep -q 'main checkout' <<<\"\$first\""
+ok "list: one line per workspace" "[ \"\$(wc -l <<<\"\$list\" | tr -d ' ')\" = \"\$(git -C '$APP' worktree list | wc -l | tr -d ' ')\" ]"
+ok "list: uncommitted changes counted" "grep -F \"$wt/pick-me\" <<<\"\$list\" | grep -q '1 changed'"
+ok "list: open session shows ●, closed shows ○" "grep -F \"$wt/pick-me\" <<<\"\$list\" | grep -q '●' && grep -F \"$wt/remote-only\" <<<\"\$list\" | grep -q '○'"
+ok "list: ahead/behind or no upstream" "grep -F \"$wt/pick-me\" <<<\"\$list\" | grep -q 'no upstream'"
+prev=$("$WS" _preview "$wt/pick-me")
+ok "preview: branch, upstream and the uncommitted file" "grep -q 'pick-me' <<<\"\$prev\" && grep -q 'no upstream' <<<\"\$prev\" && grep -q 'd.txt' <<<\"\$prev\""
+"$WS" _open "$wt/remote-only" >/dev/null 2>&1
+ok "open: recreates a closed workspace's session" "tm has-session -t =work/app/remote-only 2>/dev/null"
+ok "open: refuses a path that isn't a workspace" "! '$WS' _open /nope 2>/dev/null"
+echo n | "$WS" _remove "$wt/remote-only" >/dev/null 2>&1
+ok "remove: 'n' keeps the workspace" "[ -d '$wt/remote-only' ]"
+printf 'y\n\n' | "$WS" _remove "$wt/pick-me" 2>&1 | grep -q 'uncommitted'
+ok "remove: 'y' still goes through ws done's checks" "[ -d '$wt/pick-me' ]"
+(cd "$wt/stale" && git push -q -u origin stale 2>/dev/null)
+printf 'y\n\n' | "$WS" _remove "$wt/stale" >/dev/null 2>&1
+ok "remove: 'y' removes a clean, pushed workspace" "[ ! -d '$wt/stale' ]"
+ok "pick: says so when there are no workspaces" "WS_ROOT='$T/empty' '$WS' 2>&1 | grep -q 'no workspaces'"
+
+# The real fzf picker, driven in a pane: rows render, enter opens the selected workspace
+tm kill-session -t =work/app/remote-only
+tm new-window -t =home: -c "$T" "'$WS'"
+# The header shows at once; the rows once the first _list returns
+wait_for 'tm capture-pane -p -t =home: | grep -q "work/app/remote-only"'
+screen=$(tm capture-pane -p -t =home:)
+ok "picker: shows the rows and the key help" "grep -q 'work/app/remote-only' <<<\"\$screen\" && grep -q 'ctrl-d: remove' <<<\"\$screen\""
+tm send-keys -t =home: 'remote-only'; sleep 0.3; tm send-keys -t =home: Enter
+wait_for 'tm has-session -t =work/app/remote-only 2>/dev/null'
+ok "picker: enter opens the selected workspace" "tm has-session -t =work/app/remote-only 2>/dev/null"
+
+# --- milestone 2 review: detached HEAD, deleted and orphaned worktrees, gone upstream, ctrl-d in fzf
+(cd "$APP" && "$WS" new det >/dev/null 2>&1)
+git -C "$wt/det" checkout -q --detach
+row=$("$WS" _list | grep -F "$wt/det")
+ok "list: a detached worktree keeps its session name and open marker" "grep -q 'work/app/det' <<<\"\$row\" && grep -q '●' <<<\"\$row\" && grep -q 'detached' <<<\"\$row\""
+n=$(tm list-sessions | wc -l)
+"$WS" _open "$wt/det" >/dev/null 2>&1
+ok "open: a detached worktree reuses its session" "[ \"\$(tm list-sessions | wc -l)\" = '$n' ]"
+
+(cd "$APP" && "$WS" new gone-by-hand >/dev/null 2>&1); rm -rf "$wt/gone-by-hand"
+ok "list: skips a worktree deleted by hand" "! '$WS' _list | grep -qF '$wt/gone-by-hand'"
+
+(cd "$APP" && "$WS" new up-gone >/dev/null 2>&1)
+(cd "$wt/up-gone" && git push -q -u origin up-gone 2>/dev/null)
+git -C "$APP" push -q origin --delete up-gone 2>/dev/null; git -C "$APP" fetch -q --prune
+ok "list: shows a deleted upstream as gone" "'$WS' _list | grep -F '$wt/up-gone' | grep -q 'upstream gone'"
+
+git clone -q "$T/origin.git" "$HOME/github/other" 2>/dev/null
+(cd "$HOME/github/other" && "$WS" new orphan >/dev/null 2>&1)
+mv "$HOME/github/other" "$HOME/github/moved"
+out=$("$WS" _list 2>&1); code=$?
+ok "list: a worktree whose repo moved doesn't empty the picker" "[ $code -eq 0 ] && grep -qF '$APP' <<<\"\$out\" && ! grep -q 'orphan' <<<\"\$out\""
+
+# ctrl-d through the real fzf: select up-gone (merged? no: closed), confirm, it's refused and kept;
+# then remote-only (pushed, clean) is removed and the list reloads without it
+tm new-window -t =home: -c "$T" "'$WS'"
+wait_for 'tm capture-pane -p -t =home: | grep -q "work/app/remote-only"'
+tm send-keys -t =home: 'remote-only'; sleep 0.3; tm send-keys -t =home: C-d
+wait_for 'tm capture-pane -p -t =home: | grep -q "Remove .*remote-only"'
+tm send-keys -t =home: y Enter
+wait_for '[ ! -d "$wt/remote-only" ]' || tm capture-pane -p -t =home: | grep -v '^\s*$' | head -6 | sed 's/^/  pane: /'
+ok "picker: ctrl-d + y removes the selected workspace" "[ ! -d '$wt/remote-only' ]"
+# Clear the query until the remaining rows show: a clear sent while the reload runs is lost,
+# so send it on every poll (clearing twice is harmless)
+wait_for 'tm send-keys -t =home: C-u; tm capture-pane -p -t =home: | grep -q "work/app/det"'
+ok "picker: the list reloads without it" "tm capture-pane -p -t =home: | grep -q 'work/app/det' && ! tm capture-pane -p -t =home: | grep -q 'work/app/remote-only'"
+
+# --- milestone 3: Claude window, ws pr, same-named repos, Claude status in the picker
+ok "new: opens Claude in a second window" "tm list-windows -t =work/app/det -F '#{window_name}' | grep -qx claude"
+(cd "$APP" && "$WS" new --no-claude quiet >/dev/null 2>&1)
+ok "new --no-claude: no Claude window" "! tm list-windows -t =work/app/quiet -F '#{window_name}' | grep -qx claude"
+
+(cd "$APP" && "$WS" pr 5 >/dev/null 2>&1)
+ok "pr: a PR from this repo checks out its branch, tracking origin" "[ \"\$(git -C '$wt/pr-branch' rev-parse --abbrev-ref @{u} 2>/dev/null)\" = origin/pr-branch ]"
+(cd "$APP" && "$WS" pr 7 >/dev/null 2>&1)
+ok "pr: a fork's PR becomes pr/<n> from pull/<n>/head" "[ \"\$(git -C '$wt/pr/7' rev-parse HEAD)\" = \"\$(git -C '$T/origin.git' rev-parse refs/pull/7/head)\" ] && tm has-session -t =work/app/pr/7"
+(cd "$APP" && "$WS" pr 7 >/dev/null 2>&1)
+ok "pr again: reuses the workspace" "[ \"\$(git -C '$APP' worktree list | grep -c 'pr/7')\" = 1 ]"
+ok "pr: rejects a non-number" "! (cd '$APP' && '$WS' pr abc 2>/dev/null)"
+ok "pr: refuses a same-repo PR whose branch isn't on origin, instead of branching from main" "! (cd '$APP' && '$WS' pr 9 2>/dev/null) && [ ! -d '$wt/not-on-origin' ]"
+ok "list: a fork PR's workspace says so" "'$WS' _list | grep -F '$wt/pr/7' | grep -q 'fork PR #7'"
+(cd "$wt/pr/7" && git commit -q --allow-empty -m 'local review note')
+ok "done: refuses a fork PR's workspace with a commit added here" "refuses '$wt/pr/7' 'remote'"
+(cd "$wt/pr/7" && git reset -q --hard HEAD~1)
+ok "done: removes an unchanged fork PR's workspace" "(cd '$wt/pr/7' && '$WS' done >/dev/null 2>&1) && [ ! -d '$wt/pr/7' ]"
+ok "pr: reports a PR gh can't find" "(cd '$APP' && '$WS' pr 99 2>&1) | grep -q \"couldn't find PR\""
+
+git clone -q "$T/origin.git" "$HOME/github/app" 2>/dev/null
+(cd "$HOME/github/app" && "$WS" new same >/dev/null 2>&1); (cd "$APP" && "$WS" new same >/dev/null 2>&1)
+ok "same-named repos: separate worktrees and sessions" "[ -d '$WS_ROOT/app/same' ] && [ -d '$wt/same' ] && tm has-session -t =app/same && tm has-session -t =work/app/same"
+
+# Claude status: the hook (bin/claude-tmux-status) sets pane options, the picker reads them
+cpane=$(tm list-panes -t '=work/app/det:claude' -F '#{pane_id}')
+row() { "$WS" _list | grep -F "$1"; }
+ok "list: a Claude without hook state shows plain 'claude'" "row '$wt/det' | grep -q claude && ! row '$wt/det' | grep -q 'claude waiting\|claude working'"
+TMUX_PANE=$cpane "$HOOK" waiting
+since=$(tm show -pqv -t "$cpane" @claude_since)
+ok "hook: sets waiting with the time it started" "[ \"\$(tm show -pqv -t '$cpane' @claude)\" = waiting ] && [ -n '$since' ]"
+sleep 1.1; TMUX_PANE=$cpane "$HOOK" waiting
+ok "hook: the same state again keeps its start time" "[ \"\$(tm show -pqv -t '$cpane' @claude_since)\" = '$since' ]"
+ok "list: Claude waiting, with how long" "row '$wt/det' | grep -q 'claude waiting [0-9]s'"
+TMUX_PANE=$cpane "$HOOK" working
+ok "list: Claude working" "row '$wt/det' | grep -q 'claude working'"
+TMUX_PANE=$cpane "$HOOK" clear
+ok "hook: clear removes the state" "[ -z \"\$(tm show -pqv -t '$cpane' @claude)\" ]"
+ok "hook: outside tmux, a silent no-op that exits 0" "out=\$(env -u TMUX_PANE '$HOOK' waiting 2>&1) && [ -z \"\$out\" ]"
+tm set -p -t "$(tm list-panes -t '=work/app/quiet' -F '#{pane_id}' | head -1)" @claude waiting
+ok "list: hook state on a pane without a Claude process isn't shown" "! row '$wt/quiet' | grep -q claude"
+
+# Reopening a workspace continues the folder's last conversation; a fresh one starts new
+mkdir -p "$CLAUDE_CONFIG_DIR/projects/$(sed 's/[^a-zA-Z0-9]/-/g' <<<"$wt/det")"
+touch "$CLAUDE_CONFIG_DIR/projects/$(sed 's/[^a-zA-Z0-9]/-/g' <<<"$wt/det")/s.jsonl"
+tm kill-session -t =work/app/det; : > "$T/claude-args"
+"$WS" _open "$wt/det" >/dev/null 2>&1
+wait_for '[ -s "$T/claude-args" ]'
+ok "open: a reopened workspace runs claude --continue" "grep -qx 'claude --continue' '$T/claude-args'"
+: > "$T/claude-args"; (cd "$APP" && "$WS" new fresh >/dev/null 2>&1)
+wait_for '[ -s "$T/claude-args" ]'
+ok "new: a new workspace starts a fresh claude" "grep -qx 'claude ' '$T/claude-args'"
+
+echo; echo "$pass passed, $fail failed"
+[ "$fail" -eq 0 ]
