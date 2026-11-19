@@ -293,5 +293,28 @@ ok "open: a reopened workspace runs claude --continue" "grep -qx 'claude --conti
 wait_for '[ -s "$T/claude-args" ]'
 ok "new: a new workspace starts a fresh claude" "grep -qx 'claude ' '$T/claude-args'"
 
+# --- running scripts: npm run from a shell shows with its port and, from another session, where
+RUBY=$(head -1 "$WS" | sed 's/^#!//')
+cat > "$T/stub/npm" <<EOF
+#!$RUBY
+# A stand-in npm: titled like the real one, with a child listening on a free port as vite does
+require 'socket'
+Process.setproctitle("npm #{ARGV.join(' ')}")
+fork { _server = TCPServer.new('127.0.0.1', 0); sleep 600 }
+Process.wait
+EOF
+chmod +x "$T/stub/npm"
+tm new-window -d -t =work/app/fresh: -c "$wt/fresh"; tm send-keys -t '=work/app/fresh:{end}' "'$T/stub/npm' run dev" Enter
+tm new-window -d -t =home: -c "$wt/det"; tm send-keys -t '=home:{end}' "'$T/stub/npm' run storybook" Enter
+tm new-window -d -t =work/app/pr-branch: -c "$wt/pr-branch" "'$T/stub/npm' run e2e"
+( cd "$wt/quiet" && "$RUBY" -e 'spawn(ARGV[0], "exec", "some-mcp"); sleep 600' "$T/stub/npm" >/dev/null 2>&1 & )
+wait_for "row '$wt/fresh' | grep -q '▶ dev :[0-9]'"
+ok "list: a script run in the workspace shows with its port, no location" "row '$wt/fresh' | grep -q '▶ dev :[0-9]' && ! row '$wt/fresh' | grep -q '▶ dev :[0-9]* ('"
+wait_for "row '$wt/det' | grep -q '▶ storybook'"
+ok "list: a script run from another session says where" "row '$wt/det' | grep -q '▶ storybook :[0-9]* (home:[0-9]*)'"
+ok "list: a script started as a window's command, not typed in a shell, shows too" "row '$wt/pr-branch' | grep -q '▶ e2e :[0-9]'"
+ok "list: npm started by a program, not a shell (an MCP server), isn't shown" "! row '$wt/quiet' | grep -q '▶'"
+ok "preview: lists the running script" "'$WS' _preview '$wt/fresh' | grep -q '▶ dev :[0-9]*.*pid [0-9]*, since'"
+
 echo; echo "$pass passed, $fail failed"
 [ "$fail" -eq 0 ]

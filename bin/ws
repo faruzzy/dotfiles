@@ -233,7 +233,7 @@ def workspaces
   end
 end
 
-C = { green: 32, dim: 2, yellow: 33, cyan: 36 }.freeze
+C = { green: 32, dim: 2, yellow: 33, cyan: 36, magenta: 35 }.freeze
 def color(text, c) = "\e[#{C[c]}m#{text}\e[0m"
 
 def ago(seconds)
@@ -266,9 +266,92 @@ def claude_status(state, since)
   end
 end
 
+RUNNERS = %w[npm pnpm yarn bun npx].freeze
+SHELLS = %w[zsh bash sh fish dash].freeze
+# Flags whose value comes next and isn't the script (`pnpm --filter web dev`)
+VALUE_FLAGS = %w[--filter -F --dir -C --prefix --workspace -w --cwd].freeze
+
+# What a package-manager command line runs, as [script, how]: `npm run dev` → ['dev', :run],
+# `npx vite` → ['vite', :exec]; nil for anything else and for installs. npm shows as its process
+# title; pnpm and yarn as `node <path>/pnpm.cjs …` (Yarn Berry: .yarn/releases/yarn-4.5.0.cjs)
+def script_of(args)
+  words = args.split
+  words.shift if File.basename(words.first.to_s) == 'node'
+  runner = File.basename(words.shift.to_s).sub(/(-cli|-[\d.]+)?\.c?js\z/, '')
+  return unless RUNNERS.include?(runner)
+
+  how = runner == 'npx' ? :exec : :run
+  while (word = words.shift)
+    if VALUE_FLAGS.include?(word) || (runner == 'yarn' && word == 'workspace') then words.shift
+    elsif %w[exec x dlx].include?(word) then how = :exec
+    elsif !word.start_with?('-') && !%w[run run-script].include?(word) then break
+    end
+  end
+  [word, how] unless word.nil? || %w[install i ci add remove update].include?(word)
+end
+
+def stdout_of(*cmd) = Open3.capture3(*cmd)[0] # lsof exits 1 when one of several pids is gone
+
+# lsof -F output as [pid, name] pairs: a p<pid> line applies to the n<name> lines after it
+def lsof_names(*args)
+  pid = nil
+  stdout_of('lsof', *args).lines.filter_map do |line|
+    case line[0]
+    when 'p'
+      pid = line[1..].to_i
+      nil
+    when 'n' then [pid, line[1..].chomp]
+    end
+  end
+end
+
+# Running package scripts, each with its working directory, the ports its process tree listens on
+# and the tmux window it runs in. `npx` and `npm exec` count only when a shell started them:
+# Claude's MCP servers and Copilot's language server run that way too
+def scripts(procs)
+  args = stdout_of('ps', '-A', '-o', 'pid=,args=').lines.to_h { _1.strip.split(/\s+/, 2).then { |p, a| [p.to_i, a.to_s] } }
+  ancestors = ->(pid) { Enumerator.produce(procs.dig(pid, 0)) { procs.dig(_1, 0) }.take_while { _1.to_i > 1 } }
+  named = args.filter_map do |pid, a|
+    name, how = script_of(a)
+    next unless name
+    next if how == :exec && !SHELLS.include?(procs.dig(procs.dig(pid, 0), 1).to_s.delete_prefix('-'))
+
+    [pid, name]
+  end.to_h
+  # A script that runs another (`"dev": "npm run build && npm run serve"`) is one entry
+  tops = named.reject { |pid, _| ancestors.(pid).any? { named.key?(_1) } }
+  return [] if tops.empty?
+
+  cwds = lsof_names('-a', '-d', 'cwd', '-Fn', '-p', tops.keys.join(',')).to_h
+  ports = lsof_names('-nP', '-iTCP', '-sTCP:LISTEN', '-Fpn').group_by(&:first).transform_values do |names|
+    names.map { |_, address| address[/:(\d+)\z/, 1].to_i }
+  end
+  panes = stdout_of('tmux', 'list-panes', '-a', '-F', "\#{pane_pid}\t\#{session_name}\t\#{window_index}").lines.to_h do
+    pid, session, window = _1.chomp.split("\t")
+    [pid.to_i, [session, window]]
+  end
+  tops.filter_map do |pid, name|
+    next unless cwds.key?(pid)
+
+    tree = procs.keys.select { |p| p == pid || ancestors.(p).include?(pid) }
+    session, window = panes[[pid, *ancestors.(pid)].find { panes.key?(_1) }]
+    { pid:, name:, cwd: cwds[pid], ports: tree.flat_map { ports.fetch(_1, []) }.uniq.sort, session:, window: }
+  end
+end
+
+def inside?(dir, path) = dir == path || dir.start_with?("#{path}/")
+
+# `▶ dev :8005`, plus where it runs when that isn't the workspace's own session
+def script_label(script, ws)
+  where = " (#{script[:session]}:#{script[:window]})" if script[:session] && script[:session] != ws[:name]
+  color("▶ #{script[:name]}#{script[:ports].map { " :#{_1}" }.join}#{where}", :magenta)
+end
+
 # One line per workspace, for fzf: <path>\t<what you see>
 def cmd_list
-  claude = claude_panes(processes)
+  procs = processes
+  claude = claude_panes(procs)
+  running = scripts(procs)
   workspaces.each do |ws|
     # --no-optional-locks: a background read mustn't make a commit in that workspace fail
     changes = git('--no-optional-locks', 'status', '--porcelain', dir: ws[:path]).to_s.lines.size
@@ -285,6 +368,7 @@ def cmd_list
       (color("fork PR ##{fork_pr(ws[:branch])}", :dim) if fork_pr(ws[:branch]) && !counts),
       (color('no upstream', :dim) unless counts || gone || fork_pr(ws[:branch])),
       (color('detached', :yellow) unless ws[:branch]),
+      *running.select { inside?(_1[:cwd], ws[:path]) }.map { script_label(_1, ws) },
       (claude_status(*claude[ws[:name]]) if claude.key?(ws[:name]))
     ].compact.join('  ')
     puts "#{ws[:path]}\t#{info}"
@@ -298,6 +382,16 @@ def cmd_preview(path)
   puts git('log', '--color=always', '--format=%C(yellow)%h%C(reset) %s %C(dim)%cr%C(reset)', '-15', dir: path), ''
   changes = git('--no-optional-locks', '-c', 'color.status=always', 'status', '--short', dir: path).to_s
   puts changes.empty? ? color('no uncommitted changes', :dim) : changes
+
+  running = scripts(processes).select { inside?(_1[:cwd], path) }
+  return if running.empty?
+
+  puts '', 'Running'
+  running.each do |s|
+    started = run('env', 'LC_ALL=C', 'ps', '-o', 'lstart=', '-p', s[:pid].to_s).to_s[/\A\w+ +\w+ +\d+ +\d+:\d+/]
+    where = ", in #{s[:session]}:#{s[:window]}" if s[:session]
+    puts "  #{color("▶ #{s[:name]}#{s[:ports].map { " :#{_1}" }.join}", :magenta)}  pid #{s[:pid]}, since #{started}#{where}"
+  end
 end
 
 def cmd_open(path)
