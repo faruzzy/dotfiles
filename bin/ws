@@ -31,10 +31,7 @@ GITHUB = resolved(File.expand_path('~/github'))
 CLAUDE_PROJECTS = File.join(File.expand_path(ENV.fetch('CLAUDE_CONFIG_DIR', '~/.claude')), 'projects')
 SELF = "#{RbConfig.ruby.shellescape} #{File.realpath(__FILE__).shellescape}"
 
-def die(msg, code = 1)
-  warn "ws: #{msg}"
-  exit code
-end
+def die(msg) = abort("ws: #{msg}")
 
 # Runs a command; returns stdout, or nil when it fails
 def run(*cmd, chdir: nil)
@@ -697,9 +694,25 @@ def review_status(ws)
   color("review: #{verdict}", verdict.match?(/\b[1-9]\d* blocker/) ? :yellow : :green)
 end
 
+# --notify (the scheduled run): the summary, or why it stopped, as a macOS notification
 def cmd_review(args)
+  notify = args.delete('--notify')
+  summary = review(args)
+  mac_notification(summary) if notify
+rescue SystemExit => e
+  mac_notification(e.message.delete_prefix('ws: ')) if notify && !e.success?
+  raise
+end
+
+def mac_notification(text)
+  system('osascript', '-e', 'on run argv', '-e', 'display notification (item 1 of argv) with title "ws review"',
+         '-e', 'end run', text)
+end
+
+# Returns a one-line summary
+def review(args)
   max = args.include?('--max') ? Integer(args[args.index('--max') + 1], exception: false) : 8
-  die('usage: ws review [--max <n>] [--dry-run]') unless max&.positive?
+  die('usage: ws review [--max <n>] [--dry-run] [--notify]') unless max&.positive?
   config = review_config
   me = run('gh', 'api', 'user', '-q', '.login') or die("gh can't tell who you are: gh auth status")
   since = previous_workday
@@ -711,8 +724,8 @@ def cmd_review(args)
   end
   todo.sort_by! { -Time.iso8601(_2['updatedAt']).to_i }
   label = ->((main, pr)) { "#{repo_label(main)}##{pr['number']} #{pr['title']}" }
-  return puts('Nothing new to review') if todo.empty?
-  return todo.each { puts "would review #{label.(_1)}" } if args.include?('--dry-run')
+  return 'Nothing new to review'.tap { puts _1 } if todo.empty?
+  return "#{todo.size} to review".tap { todo.each { |job| puts "would review #{label.(job)}" } } if args.include?('--dry-run')
 
   # Worktrees one at a time (git locks the repo); the reviews themselves two at a time
   jobs = todo.first(max).filter_map do |job|
@@ -720,12 +733,15 @@ def cmd_review(args)
   rescue StandardError, SystemExit => e
     warn "skipped #{label.(job)}#{": #{e.message}" unless e.is_a?(SystemExit)}"
   end
+  verdicts = Queue.new
   queue = Queue.new.tap { |q| jobs.each { q << _1 } }.tap(&:close)
   Array.new(2) do
     Thread.new do
       while (main, pr, path = queue.pop)
         begin
-          puts "reviewed #{label.([main, pr])}: #{review_verdict(run_review(main, pr, path, config[:prompt])) || 'done'}"
+          verdict = review_verdict(run_review(main, pr, path, config[:prompt]))
+          verdicts << verdict
+          puts "reviewed #{label.([main, pr])}: #{verdict}"
         rescue StandardError, SystemExit => e
           warn "failed #{label.([main, pr])}#{": #{e.message}" unless e.is_a?(SystemExit)}"
         end
@@ -733,6 +749,15 @@ def cmd_review(args)
     end
   end.each(&:join)
   puts "#{todo.size - max} more left for the next run (--max #{max})" if todo.size > max
+
+  verdicts = Array.new(verdicts.size) { verdicts.pop }
+  blocked = verdicts.count { _1.match?(/\b[1-9]\d* blocker/) }
+  [
+    "#{verdicts.size} PR#{'s' unless verdicts.size == 1} reviewed",
+    ("#{blocked} with blockers" if blocked.positive?),
+    ("#{todo.first(max).size - verdicts.size} skipped or failed" if todo.first(max).size > verdicts.size),
+    ("#{todo.size - max} left for the next run" if todo.size > max)
+  ].compact.join(', ')
 end
 
 claude = !ARGV.delete('--no-claude')

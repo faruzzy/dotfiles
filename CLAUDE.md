@@ -57,6 +57,8 @@ Git hooks live in `.githooks/` (`install.sh` sets `core.hooksPath`). After a pul
 
 On `PATH` via `.zshenv`. Any symlink committed here must be relative: the username differs between the two Macs.
 
+`ws review` also runs from launchd (`setup_ws_review` in `install.sh`, only where `~/.config/ws/review.json` exists). launchd gives it no shell environment, so the job sources `~/.zshenv` for `PATH` and `~/.extra` for `GITHUB_TOKEN`; moving the token out of `~/.extra` breaks the scheduled run. After changing the job, re-run `install.sh` to reload it.
+
 `ws` keeps one git worktree per branch under `~/github/.worktrees/<repo>/<branch>` (`WS_ROOT`), each with a tmux session named `<repo>/<branch>`; `<repo>` is the repo's path below `~/github` (e.g. `work/app`), so same-named repos stay apart. It stores nothing: `git worktree list` and the tmux sessions are the source of truth. `ws done` refuses whenever work could be lost, including unsaved buffers in any Neovim, which it finds by their RPC sockets under `$TMPDIR/nvim*`. The picker's Claude status comes from Claude Code hooks in ai-dotfiles' `claude/settings.json`, which run `bin/claude-tmux-status` to set the pane options `@claude` and `@claude_since`; without those hooks a running Claude shows as plain "claude".
 
 [everything.fzf](https://github.com/junegunn/everything.fzf) scripts (`claude.fzf`, `pr.fzf`, …) aren't in `bin/`: `setup_everything_fzf` in `install.sh` clones the repo to `~/github/everything.fzf` and links every `*.fzf` into `~/.local/bin` (first on `PATH`). Re-run it to pick up new scripts.

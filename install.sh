@@ -565,6 +565,51 @@ setup_git_work_identity() {
     log_success "Work git identity set to $work_email for repos under ~/github/work"
 }
 
+# `ws review` every weekday at 6:30 (launchd runs a missed one on wake), only where
+# ~/.config/ws/review.json exists: that file is the opt-in, and it lists the repos to review.
+# launchd starts jobs without a shell environment, so the job sources .zshenv for PATH and .extra
+# for GITHUB_TOKEN (stdin closed, so nothing in .extra can wait on a prompt)
+setup_ws_review() {
+    local label="local.dotfiles.ws-review"
+    local plist="$HOME/Library/LaunchAgents/$label.plist"
+
+    if [[ ! -f "$HOME/.config/ws/review.json" ]]; then
+        log_info "Skipping scheduled PR reviews: no ~/.config/ws/review.json"
+        return 0
+    fi
+
+    mkdir -p "$HOME/Library/LaunchAgents" "$HOME/Library/Logs"
+    cat > "$plist" <<EOF
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>Label</key>
+    <string>$label</string>
+    <key>ProgramArguments</key>
+    <array>
+        <string>/bin/zsh</string>
+        <string>-c</string>
+        <string>source ~/.zshenv; [[ -f ~/.extra ]] &amp;&amp; source ~/.extra &lt;/dev/null; echo "== \$(date)"; exec ws review --notify</string>
+    </array>
+    <key>StartCalendarInterval</key>
+    <array>
+$(for day in 1 2 3 4 5; do printf '        <dict><key>Weekday</key><integer>%s</integer><key>Hour</key><integer>6</integer><key>Minute</key><integer>30</integer></dict>\n' "$day"; done)
+    </array>
+    <key>StandardOutPath</key>
+    <string>$HOME/Library/Logs/ws-review.log</string>
+    <key>StandardErrorPath</key>
+    <string>$HOME/Library/Logs/ws-review.log</string>
+</dict>
+</plist>
+EOF
+    plutil -lint -s "$plist" || return 1
+    # Reload so a changed plist takes effect
+    launchctl bootout "gui/$(id -u)/$label" 2>/dev/null || true
+    launchctl bootstrap "gui/$(id -u)" "$plist"
+    log_success "Scheduled ws review on weekdays at 6:30 (log: ~/Library/Logs/ws-review.log)"
+}
+
 # Use the repo's tracked hooks (.githooks), e.g. reloading AeroSpace after a pull changes its config
 setup_repo_git_hooks() {
     git -C "$SCRIPT_DIR" config core.hooksPath .githooks
@@ -634,6 +679,7 @@ main() {
     # Dotfiles setup
     setup_dotfiles
     setup_git_work_identity
+    setup_ws_review
     setup_repo_git_hooks
     setup_aerospace
     setup_antidote

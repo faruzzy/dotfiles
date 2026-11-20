@@ -393,6 +393,11 @@ ok "review: a report without its VERDICT line isn't saved" "'$WS' review 2>&1 | 
 prs FAILME
 ok "review: a failed review saves nothing, so the next run retries it" "'$WS' review 2>&1 | grep -q 'failed work/app#5' && [ ! -f '$reviews/pr-branch/$sha5.md' ] && '$WS' review --dry-run | grep -q '#5'"
 ok "review: says what's missing without a config" "XDG_CONFIG_HOME='$T/none' '$WS' review 2>&1 | grep -q 'review.json'"
+printf '#!/bin/sh\nshift 6; echo "$*" >> "%s"\n' "$T/notified" > "$T/stub/osascript"; chmod +x "$T/stub/osascript"
+prs; "$WS" review --notify >/dev/null 2>&1
+ok "review --notify: the summary as a notification" "grep -q '^1 PR reviewed' '$T/notified'"
+XDG_CONFIG_HOME="$T/none" "$WS" review --notify >/dev/null 2>&1
+ok "review --notify: why it stopped, as a notification" "tail -1 '$T/notified' | grep -q 'review.json'"
 
 echo; echo "$pass passed, $fail failed"
 [ "$fail" -eq 0 ]
