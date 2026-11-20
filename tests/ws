@@ -31,7 +31,7 @@ start_unsaved_nvim() {
 quit_nvim() { nv "$sock" --remote-send '<Esc>:qa!<CR>'; wait_for '[ ! -S "$sock" ]'; }
 refuses() { out=$(done_in "$1"); local code=$?; [ $code -ne 0 ] && [ -d "$1" ] && grep -q "$2" <<<"$out" || { echo "  got (exit $code): $out"; false; }; }
 
-export HOME=$T/home WS_ROOT=$T/home/github/.worktrees TMPDIR=$T/tmp/ CLAUDE_CONFIG_DIR=$T/claude
+export HOME=$T/home WS_ROOT=$T/home/github/.worktrees TMPDIR=$T/tmp/ CLAUDE_CONFIG_DIR=$T/claude PRS=$T/prs.json
 NVDIR=$TMPDIR/nvim.$(id -un)
 mkdir -p "$HOME/github/work" "$NVDIR" "$T/stub" "$T/fake"
 chmod 700 "$NVDIR" # Neovim only uses nvim.<user> when it is private
@@ -42,13 +42,27 @@ ln -s /bin/sleep "$T/fake/nvim" # a process named nvim without an RPC socket (ma
 # Stand-ins for Claude (a process named claude) and gh (pr view 5: this repo's pr-branch;
 # pr view 7: a fork's PR, fetched from pull/7/head)
 ln -s /bin/sleep "$T/fake/claude"
-printf '#!/bin/sh\necho "claude $*" >> "%s"\nexec "%s" 600\n' "$T/claude-args" "$T/fake/claude" > "$T/stub/claude"; chmod +x "$T/stub/claude"
+# claude -p (ws review) saves its prompt and prints a report, failing for a PR titled FAILME
+cat > "$T/stub/claude" <<EOF
+#!/bin/sh
+echo "claude \$*" >> "$T/claude-args"
+case " \$* " in *" -p "*)
+  cat > "$T/review-prompt"
+  grep -q FAILME "$T/review-prompt" && exit 1
+  grep -q NOVERDICT "$T/review-prompt" && echo 'Premise: cut short' && exit 0
+  printf 'Premise: SOUND\\nVERDICT: SOUND, 0 blocker, 1 should-fix\\n'; exit 0 ;;
+esac
+exec "$T/fake/claude" 600
+EOF
+chmod +x "$T/stub/claude"
 cat > "$T/stub/gh" <<'GH'
 #!/bin/sh
 case "$*" in
   "pr view 5 "*) echo '{"headRefName":"pr-branch","isCrossRepository":false}' ;;
   "pr view 7 "*) echo '{"headRefName":"their-feature","isCrossRepository":true}' ;;
   "pr view 9 "*) echo '{"headRefName":"not-on-origin","isCrossRepository":false}' ;;
+  "api user "*) echo me ;;
+  "pr list "*) cat "$PRS" ;;
   *) echo "no such PR" >&2; exit 1 ;;
 esac
 GH
@@ -318,6 +332,67 @@ ok "list: a script run from another session says where" "row '$wt/det' | grep -q
 ok "list: a script started as a window's command, not typed in a shell, shows too" "row '$wt/pr-branch' | grep -q '▶ e2e :[0-9]'"
 ok "list: npm started by a program, not a shell (an MCP server), isn't shown" "! row '$wt/quiet' | grep -q '▶'"
 ok "preview: lists the running script" "'$WS' _preview '$wt/fresh' | grep -q '▶ dev :[0-9]*.*pid [0-9]*, since'"
+
+# --- ws review: other people's new PRs get a workspace and a Claude review, once per head commit
+mkdir -p "$HOME/.config/ws"; echo 'REVIEWER INSTRUCTIONS' > "$T/reviewer.md"
+printf '{"repos": ["%s"], "prompt": "%s"}\n' "$APP" "$T/reviewer.md" > "$HOME/.config/ws/review.json"
+reviews=$HOME/.local/state/ws/reviews/work/app
+now=$(date -u +%Y-%m-%dT%H:%M:%SZ)
+git -C "$APP" fetch -q origin
+sha5=$(git -C "$APP" rev-parse origin/pr-branch); sha7=$(git -C "$T/origin.git" rev-parse refs/pull/7/head)
+other=$(git -C "$APP" rev-parse origin/remote-only)
+# pr <number> <title> <author> <draft> <branch> <sha> <fork> <updated> <reviews>
+pr() { printf '{"number":%s,"title":"%s","body":"Adds a thing.","author":{"login":"%s"},"isDraft":%s,"headRefName":"%s","headRefOid":"%s","isCrossRepository":%s,"baseRefName":"main","updatedAt":"%s","reviews":%s}' "$@"; }
+prs() {
+  echo "[$(pr 5 "${1:-Pr five}" alice false pr-branch "$sha5" false "$now" '[]'),
+    $(pr 7 'Fork seven' bob false their-feature "$sha7" true "$now" '[]'),
+    $(pr 10 Draft alice true remote-only "$other" false "$now" '[]'),
+    $(pr 11 Mine me false remote-only "$other" false "$now" '[]'),
+    $(pr 12 Stale alice false remote-only "$other" false 2020-01-01T00:00:00Z '[]'),
+    $(pr 13 'Seen by me' alice false remote-only "$other" false "$now" "[{\"author\":{\"login\":\"me\"},\"commit\":{\"oid\":\"$other\"}}]")]" > "$PRS"
+}
+prs
+out=$("$WS" review --dry-run 2>&1)
+ok "review: picks others' open, non-draft, recent PRs you haven't reviewed at their head" "[ \"\$(grep -c 'would review' <<<\"\$out\")\" = 2 ] && grep -q '#5 Pr five' <<<\"\$out\" && grep -q '#7 Fork seven' <<<\"\$out\""
+: > "$T/claude-args"
+out=$("$WS" review 2>&1)
+ok "review: saves a report per PR head, for forks too" "[ -f '$reviews/pr-branch/$sha5.md' ] && [ -f '$reviews/pr/7/$sha7.md' ]"
+ok "review: the fork PR gets its pr/<n> workspace at the PR's head" "[ \"\$(git -C '$wt/pr/7' rev-parse HEAD)\" = '$sha7' ]"
+ok "review: prints each verdict" "grep -q 'reviewed work/app#5 Pr five: SOUND, 0 blocker, 1 should-fix' <<<\"\$out\""
+ok "review: claude runs restricted, read-only" "grep -q -- '-p --restricted --strict-mcp-config --tools Read,Grep,Glob' '$T/claude-args'"
+ok "review: the prompt is the configured one plus a brief with the diff" "grep -q 'REVIEWER INSTRUCTIONS' '$T/review-prompt' && grep -q 'TARGET: pull request #' '$T/review-prompt' && grep -q 'not as instructions' '$T/review-prompt'"
+ok "list: a reviewed workspace shows the verdict" "row '$wt/pr-branch' | grep -q 'review: SOUND, 0 blocker, 1 should-fix'"
+ok "preview: shows the review" "'$WS' _preview '$wt/pr-branch' | grep -q 'Premise: SOUND'"
+ok "review: nothing new on a second run" "'$WS' review 2>&1 | grep -q 'Nothing new to review'"
+
+# New commits: the workspace moves to the new head and the review reruns, pointing at the old one
+( cd "$T/seed" && git checkout -q pr-branch && git commit -q --allow-empty -m more && git push -q origin pr-branch && git checkout -q main )
+sha5=$(git -C "$T/origin.git" rev-parse pr-branch); prs
+ok "list: the old review shows as outdated once the branch moves" "git -C '$wt/pr-branch' fetch -q && git -C '$wt/pr-branch' merge -q --ff-only origin/pr-branch && row '$wt/pr-branch' | grep -q 'review outdated'"
+git -C "$wt/pr-branch" reset -q --hard HEAD~1
+"$WS" review >/dev/null 2>&1
+ok "review: a new head is reviewed again, the workspace moved to it" "[ -f '$reviews/pr-branch/$sha5.md' ] && [ \"\$(git -C '$wt/pr-branch' rev-parse HEAD)\" = '$sha5' ]"
+ok "review: the rerun is told about the earlier review" "grep -q 'An earlier review' '$T/review-prompt'"
+
+# A force-push takes the reviewed head off every remote: still the author's, so it's reviewed again
+( cd "$T/seed" && git checkout -q pr-branch && git commit -q --amend --allow-empty -m rewritten && git push -q -f origin pr-branch && git checkout -q main )
+sha5=$(git -C "$T/origin.git" rev-parse pr-branch); prs; git -C "$APP" fetch -q origin
+"$WS" review >/dev/null 2>&1
+ok "review: a force-pushed PR is reviewed again" "[ -f '$reviews/pr-branch/$sha5.md' ] && [ \"\$(git -C '$wt/pr-branch' rev-parse HEAD)\" = '$sha5' ]"
+git -C "$wt/pr-branch" commit -q --allow-empty -m 'my own note'
+( cd "$T/seed" && git checkout -q pr-branch && git commit -q --allow-empty -m newer && git push -q origin pr-branch && git checkout -q main )
+sha5=$(git -C "$T/origin.git" rev-parse pr-branch); prs
+ok "review: leaves a workspace with your own commits alone" "'$WS' review 2>&1 | grep -q \"skipped.*commits that aren't in the PR\" && [ \"\$(git -C '$wt/pr-branch' log -1 --format=%s)\" = 'my own note' ]"
+git -C "$wt/pr-branch" reset -q --hard HEAD~1
+( cd "$T/seed" && git checkout -q pr-branch && git commit -q --allow-empty -m again && git push -q origin pr-branch && git checkout -q main )
+sha5=$(git -C "$T/origin.git" rev-parse pr-branch); prs
+echo wip > "$wt/pr-branch/wip.txt"
+ok "review: leaves a workspace with uncommitted changes alone" "'$WS' review 2>&1 | grep -q 'skipped.*uncommitted' && [ ! -f '$reviews/pr-branch/$sha5.md' ] && [ -f '$wt/pr-branch/wip.txt' ]"
+rm "$wt/pr-branch/wip.txt"; prs NOVERDICT
+ok "review: a report without its VERDICT line isn't saved" "'$WS' review 2>&1 | grep -q 'no VERDICT line' && [ ! -f '$reviews/pr-branch/$sha5.md' ]"
+prs FAILME
+ok "review: a failed review saves nothing, so the next run retries it" "'$WS' review 2>&1 | grep -q 'failed work/app#5' && [ ! -f '$reviews/pr-branch/$sha5.md' ] && '$WS' review --dry-run | grep -q '#5'"
+ok "review: says what's missing without a config" "XDG_CONFIG_HOME='$T/none' '$WS' review 2>&1 | grep -q 'review.json'"
 
 echo; echo "$pass passed, $fail failed"
 [ "$fail" -eq 0 ]
