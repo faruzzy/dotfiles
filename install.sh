@@ -567,8 +567,7 @@ setup_git_work_identity() {
 
 # `ws review` every weekday at 6:30 (launchd runs a missed one on wake), only where
 # ~/.config/ws/review.json exists: that file is the opt-in, and it lists the repos to review.
-# launchd starts jobs without a shell environment, so the job sources .zshenv for PATH and .extra
-# for GITHUB_TOKEN (stdin closed, so nothing in .extra can wait on a prompt)
+# The job runs bin/ws-review-daily, which sets up the environment launchd doesn't give it
 setup_ws_review() {
     local label="local.dotfiles.ws-review"
     local plist="$HOME/Library/LaunchAgents/$label.plist"
@@ -588,9 +587,7 @@ setup_ws_review() {
     <string>$label</string>
     <key>ProgramArguments</key>
     <array>
-        <string>/bin/zsh</string>
-        <string>-c</string>
-        <string>source ~/.zshenv; [[ -f ~/.extra ]] &amp;&amp; source ~/.extra &lt;/dev/null; echo "== \$(date)"; exec ws review --notify</string>
+        <string>$SCRIPT_DIR/bin/ws-review-daily</string>
     </array>
     <key>StartCalendarInterval</key>
     <array>

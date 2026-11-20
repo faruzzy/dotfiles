@@ -1,0 +1,8 @@
+#!/bin/zsh
+# The scheduled `ws review`, run by launchd (setup_ws_review in install.sh), which also names it in
+# System Settings > Login Items. launchd starts jobs without a shell environment: .zshenv gives
+# PATH and .extra GITHUB_TOKEN (stdin closed, so nothing in .extra can wait on a prompt)
+source ~/.zshenv
+[[ -f ~/.extra ]] && source ~/.extra </dev/null
+echo "== $(date)"
+exec ws review --notify "$@"
