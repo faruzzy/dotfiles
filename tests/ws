@@ -58,6 +58,7 @@ chmod +x "$T/stub/claude"
 cat > "$T/stub/gh" <<'GH'
 #!/bin/sh
 case "$*" in
+  "pr view "*" --json state "*) grep -q "\"number\":${3#pr/}," "$PRS" 2>/dev/null && echo OPEN || echo MERGED ;;
   "pr view 5 "*) echo '{"headRefName":"pr-branch","isCrossRepository":false}' ;;
   "pr view 7 "*) echo '{"headRefName":"their-feature","isCrossRepository":true}' ;;
   "pr view 9 "*) echo '{"headRefName":"not-on-origin","isCrossRepository":false}' ;;
@@ -398,6 +399,28 @@ prs; "$WS" review --notify >/dev/null 2>&1
 ok "review --notify: the summary as a notification" "grep -q '^1 PR reviewed' '$T/notified'"
 XDG_CONFIG_HOME="$T/none" "$WS" review --notify >/dev/null 2>&1
 ok "review --notify: why it stopped, as a notification" "tail -1 '$T/notified' | grep -q 'review.json'"
+
+# --- ws prune: workspaces of reviewed PRs that closed go, unless something of yours is in them
+# Only #5 is still open: pr/7 closed
+echo "[$(pr 5 'Pr five' alice false pr-branch "$sha5" false "$now" '[]')]" > "$PRS"
+ok "review: the summary offers to clean up closed PRs" "'$WS' review 2>&1 | grep -q '1 closed PR to clean up (ws prune)'"
+echo n | "$WS" prune >/dev/null 2>&1
+ok "prune: 'n' keeps the workspace" "[ -d '$wt/pr/7' ]"
+mkdir -p "$reviews/merged-long-ago"; echo old > "$reviews/merged-long-ago/abc.md"
+out=$("$WS" prune --yes 2>&1)
+ok "prune: removes a closed PR's workspace, branch and reviews" "[ ! -d '$wt/pr/7' ] && ! git -C '$APP' show-ref -q refs/heads/pr/7 && [ ! -d '$reviews/pr/7' ]"
+ok "prune: keeps the open PR's workspace" "[ -d '$wt/pr-branch' ] && [ -d '$reviews/pr-branch' ]"
+ok "prune: deletes reviews of a closed PR whose workspace is already gone" "[ ! -d '$reviews/merged-long-ago' ]"
+echo '[]' > "$PRS"
+echo wip > "$wt/pr-branch/wip.txt"
+ok "prune: keeps a closed PR's workspace with uncommitted changes" "'$WS' prune --yes 2>&1 | grep -q 'Keeping.*uncommitted' && [ -d '$wt/pr-branch' ]"
+rm "$wt/pr-branch/wip.txt"; git -C "$wt/pr-branch" commit -q --allow-empty -m mine
+echo 'SECRET=edited' > "$wt/pr-branch/.env"
+ok "prune: keeps a closed PR's workspace whose .env was changed" "'$WS' prune --yes 2>&1 | grep -q 'Keeping.*\.env changed' && [ -f '$wt/pr-branch/.env' ]"
+cp "$APP/.env" "$wt/pr-branch/.env"
+ok "prune: keeps a closed PR's workspace with commits since the review" "'$WS' prune --yes 2>&1 | grep -q 'Keeping.*commits since the review' && [ -d '$wt/pr-branch' ]"
+git -C "$wt/pr-branch" reset -q --hard HEAD~1
+ok "prune: a gh failure doesn't make a repo's PRs look closed" "PRS=/nonexistent '$WS' prune --yes 2>&1 | grep -q 'gh pr list failed' && [ -d '$wt/pr-branch' ]"
 
 echo; echo "$pass passed, $fail failed"
 [ "$fail" -eq 0 ]

@@ -10,6 +10,7 @@
 #   ws done           remove the current workspace: session, worktree and branch
 #   ws review         review other people's new PRs with Claude, in their own workspaces
 #                     (--max <n>, --dry-run); the repos and prompt are in ~/.config/ws/review.json
+#   ws prune          remove reviewed workspaces whose PR was merged or closed (--yes: don't ask)
 #
 # Nothing is stored: worktrees (git worktree list) and tmux sessions are the source of truth.
 # Worktrees live under $WS_ROOT (default ~/github/.worktrees)/<repo>/<branch>, where <repo> is the
@@ -505,6 +506,13 @@ def landed?(branch, base, main)
   git('cherry', base, squashed, dir: main)&.start_with?('-') || false
 end
 
+# puts that survives its terminal going away with a killed session
+def say(msg)
+  puts msg
+rescue Errno::EIO
+  nil
+end
+
 def notify(msg)
   ENV['TMUX'] ? system('tmux', 'display-message', "ws: #{msg}") : puts(msg)
 rescue Errno::EIO
@@ -521,10 +529,7 @@ def cmd_done
   changes = git!('status', '--porcelain', dir: path).lines.size
   die("#{changes} uncommitted change(s) in #{path}") if changes.positive?
 
-  # Ignored files vanish with the worktree; .env files are the ones that hold settings
-  changed_env = ignored_local_files(path).reject do
-    File.file?(File.join(main, _1)) && FileUtils.compare_file(File.join(path, _1), File.join(main, _1))
-  end
+  changed_env = changed_local_files(main, path)
   die("#{changed_env.join(', ')} differ from the main checkout's (or are new there): copy what you need first") if changed_env.any?
 
   # A deleted upstream usually means merged on GitHub, but not always (closed PR, a later local
@@ -548,7 +553,19 @@ def cmd_done
   end
 
   check_neovims(name, path)
+  remove_workspace(main, path, branch, name)
+  notify("removed #{path} and branch #{branch}")
+end
 
+# Ignored files vanish with the worktree; .env files and certificates are the ones that hold settings
+def changed_local_files(main, path)
+  ignored_local_files(path).reject do
+    File.file?(File.join(main, _1)) && FileUtils.compare_file(File.join(path, _1), File.join(main, _1))
+  end
+end
+
+# Kills the workspace's session, then removes its worktree and branch. The caller checks first
+def remove_workspace(main, path, branch, name)
   # Killing the session hangs up its panes, this process included
   Signal.trap('HUP', 'IGNORE')
   if ENV['TMUX'] && run('tmux', 'display', '-p', '-t', ENV.fetch('TMUX_PANE', ''), '#{session_name}') == name
@@ -563,7 +580,6 @@ def cmd_done
   system('tmux', 'kill-session', '-t', "=#{name}", err: File::NULL) if session?(name)
   git!('worktree', 'remove', path, dir: main)
   git!('branch', '-D', branch, dir: main)
-  notify("removed #{path} and branch #{branch}")
 end
 
 # --- ws review: a first, unattended review of other people's PRs, ready to read in the morning
@@ -715,6 +731,8 @@ def review(args)
   die('usage: ws review [--max <n>] [--dry-run] [--notify]') unless max&.positive?
   config = review_config
   me = run('gh', 'api', 'user', '-q', '.login') or die("gh can't tell who you are: gh auth status")
+  closed = closed_reviews(config).count { _1[:path] && !kept_because(_1) }
+  hint = ", #{closed} closed PR#{'s' unless closed == 1} to clean up (ws prune)" if closed.positive?
   since = previous_workday
   todo = config[:repos].flat_map do |repo|
     main = main_of(repo)
@@ -724,7 +742,7 @@ def review(args)
   end
   todo.sort_by! { -Time.iso8601(_2['updatedAt']).to_i }
   label = ->((main, pr)) { "#{repo_label(main)}##{pr['number']} #{pr['title']}" }
-  return 'Nothing new to review'.tap { puts _1 } if todo.empty?
+  return "Nothing new to review#{hint}".tap { puts _1 } if todo.empty?
   return "#{todo.size} to review".tap { todo.each { |job| puts "would review #{label.(job)}" } } if args.include?('--dry-run')
 
   # Worktrees one at a time (git locks the repo); the reviews themselves two at a time
@@ -757,7 +775,78 @@ def review(args)
     ("#{blocked} with blockers" if blocked.positive?),
     ("#{todo.first(max).size - verdicts.size} skipped or failed" if todo.first(max).size > verdicts.size),
     ("#{todo.size - max} left for the next run" if todo.size > max)
-  ].compact.join(', ')
+  ].compact.join(', ') + hint.to_s
+end
+
+# Reviewed workspaces whose PR is no longer open, plus reviews left of closed PRs whose workspace is
+# already gone (path nil). A repo gh can't list is skipped: its PRs mustn't look closed
+def closed_reviews(config = review_config)
+  config[:repos].filter_map { main_of(_1) }.flat_map do |main|
+    out = run('gh', 'pr', 'list', '--state', 'open', '--limit', '200', '--json', 'number,headRefName,isCrossRepository', chdir: main)
+    next warn("ws: #{repo_label(main)}: gh pr list failed, skipping it") || [] unless out
+
+    open = JSON.parse(out).map { pr_branch_name(_1) }
+    root = File.join(REVIEWS, repo_label(main), '')
+    reviewed = Dir.glob(File.join(root, '**', '*.md')).map { File.dirname(_1).delete_prefix(root) }.uniq
+    paths = worktrees(main).invert
+    (reviewed - open).filter_map do |branch|
+      # Absent from the open list isn't proof (over 200 open PRs, gh pointed at another repo)
+      state = run('gh', 'pr', 'view', fork_pr(branch) || branch, '--json', 'state', '-q', '.state', chdir: main)
+      next unless %w[MERGED CLOSED].include?(state)
+
+      path = paths[branch]
+      { main:, branch:, path:, dir: review_dir(main, branch), name: (workspace_name(main, path, branch) if path) }
+    end
+  end
+end
+
+# Why a closed PR's workspace stays: only one exactly as ws review left it goes
+def kept_because(ws)
+  return "it isn't under #{ROOT}" unless ws[:path].start_with?("#{ROOT}/")
+  return 'it has uncommitted changes' unless git('--no-optional-locks', 'status', '--porcelain', dir: ws[:path]).to_s.empty?
+  return "#{changed_local_files(ws[:main], ws[:path]).join(', ')} changed" if changed_local_files(ws[:main], ws[:path]).any?
+
+  head = git('rev-parse', 'HEAD', dir: ws[:path])
+  "it has commits since the review (yours?)" unless File.exist?(File.join(ws[:dir], "#{head}.md"))
+end
+
+def delete_reviews(dir)
+  FileUtils.rm_f(Dir.glob(File.join(dir, '*.{md,diff}')))
+  Dir.rmdir(dir) if Dir.empty?(dir)
+end
+
+def cmd_prune(args)
+  closed = closed_reviews
+  gone, present = closed.partition { _1[:path].nil? }
+  gone.each { delete_reviews(_1[:dir]) }
+  puts "Deleted the reviews of #{gone.size} closed PR(s) whose workspace was already gone" if gone.any?
+  removable = present.reject do |ws|
+    reason = kept_because(ws)
+    puts "Keeping #{ws[:path]}: #{reason}" if reason
+    reason
+  end
+  return puts('No workspaces of closed PRs to remove') if removable.empty?
+
+  puts 'Workspaces of merged or closed PRs:', *removable.map { "  #{_1[:path]}" }
+  unless args.include?('--yes')
+    print "Remove #{removable.size == 1 ? 'it' : "these #{removable.size}"}? [y/N] "
+    return unless $stdin.gets.to_s.strip.casecmp?('y')
+  end
+  current = run('tmux', 'display', '-p', '-t', ENV.fetch('TMUX_PANE', ''), '#{session_name}') if ENV['TMUX']
+  removable.sort_by { _1[:name] == current ? 1 : 0 }.each do |ws|
+    begin
+      check_neovims(ws[:name], ws[:path])
+    rescue SystemExit
+      next say("Kept #{ws[:path]}") # check_neovims said why
+    end
+    begin
+      remove_workspace(ws[:main], ws[:path], ws[:branch], ws[:name])
+    rescue SystemExit
+      next say("Couldn't remove #{ws[:path]} (see above)")
+    end
+    delete_reviews(ws[:dir])
+    say "Removed #{ws[:path]}"
+  end
 end
 
 claude = !ARGV.delete('--no-claude')
@@ -772,6 +861,7 @@ when 'pr'
   end
 when 'done' then cmd_done
 when 'review' then cmd_review(ARGV)
+when 'prune' then cmd_prune(ARGV)
 when '_list' then cmd_list
 when '_preview' then cmd_preview(ARGV.first)
 when '_open' then cmd_open(ARGV.first)
