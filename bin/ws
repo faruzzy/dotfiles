@@ -12,6 +12,8 @@
 #                     (--max <n>, --dry-run); the repos and prompt are in ~/.config/ws/review.json
 #   ws prune          remove reviewed workspaces whose PR was merged or closed (--yes: don't ask)
 #
+# How to use them: docs/ws.md
+#
 # Nothing is stored: worktrees (git worktree list) and tmux sessions are the source of truth.
 # Worktrees live under $WS_ROOT (default ~/github/.worktrees)/<repo>/<branch>, where <repo> is the
 # repo's path under ~/github (e.g. work/app), so same-named repos don't share sessions. New

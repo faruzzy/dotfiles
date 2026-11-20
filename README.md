@@ -276,6 +276,8 @@ The shell setup is optimized for fast interactive use:
 
 `bin/` is on `PATH` (via `.zshenv`) for personal scripts.
 
+`ws` gives each branch its own workspace (a git worktree with its own tmux session, Neovim and Claude) and reviews other people's pull requests overnight. See [docs/ws.md](docs/ws.md).
+
 fzf-based helpers (`claude.fzf`, `codex.fzf`, `pr.fzf`, `mise.fzf`, `chrome.fzf`, and more) come from [everything.fzf](https://github.com/junegunn/everything.fzf): `install.sh` clones it to `~/github/everything.fzf` and links every `*.fzf` script into `~/.local/bin`. Re-run `install.sh` to pick up new scripts.
 
 ## Other Configurations
