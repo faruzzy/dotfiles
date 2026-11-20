@@ -99,7 +99,7 @@ yours, and nobody has reviewed its **current head commit**: neither `ws` nor you
 For each PR it creates or updates the workspace (without opening a session or installing
 dependencies), checks out the PR's head, and runs Claude with your reviewer prompt plus a brief: the
 diff, the commits, and the PR description as the author's intent. A workspace with your own changes
-or commits is left alone.
+or commits, or a Neovim with unsaved buffers, is left alone; the next run tries again.
 
 ```sh
 ws review              # newest first, at most 8 PRs, 2 at a time

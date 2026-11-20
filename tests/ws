@@ -389,7 +389,10 @@ git -C "$wt/pr-branch" reset -q --hard HEAD~1
 sha5=$(git -C "$T/origin.git" rev-parse pr-branch); prs
 echo wip > "$wt/pr-branch/wip.txt"
 ok "review: leaves a workspace with uncommitted changes alone" "'$WS' review 2>&1 | grep -q 'skipped.*uncommitted' && [ ! -f '$reviews/pr-branch/$sha5.md' ] && [ -f '$wt/pr-branch/wip.txt' ]"
-rm "$wt/pr-branch/wip.txt"; prs NOVERDICT
+rm "$wt/pr-branch/wip.txt"
+start_unsaved_nvim =work/app/pr-branch: "$wt/pr-branch/notes.txt"
+ok "review: leaves a workspace whose Neovim has unsaved buffers alone" "'$WS' review 2>&1 | grep -q 'unsaved buffer' && [ \"\$(git -C '$wt/pr-branch' rev-parse HEAD)\" != '$sha5' ]"
+quit_nvim; prs NOVERDICT
 ok "review: a report without its VERDICT line isn't saved" "'$WS' review 2>&1 | grep -q 'no VERDICT line' && [ ! -f '$reviews/pr-branch/$sha5.md' ]"
 prs FAILME
 ok "review: a failed review saves nothing, so the next run retries it" "'$WS' review 2>&1 | grep -q 'failed work/app#5' && [ ! -f '$reviews/pr-branch/$sha5.md' ] && '$WS' review --dry-run | grep -q '#5'"

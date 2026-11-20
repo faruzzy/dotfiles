@@ -648,6 +648,8 @@ def prepare_review(main, pr)
   if !reviewed && git('rev-list', '--count', 'HEAD', '--not', sha, '--remotes', dir: path).to_i.positive?
     raise Skip, "#{path} has commits that aren't in the PR"
   end
+  # Unsaved edits would end up on top of the PR's new files; dies (skipping this PR) with the reason
+  check_neovims(workspace_name(main, path, branch), path)
 
   git!('reset', '--quiet', '--hard', sha, dir: path)
   path
