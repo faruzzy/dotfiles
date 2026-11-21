@@ -175,16 +175,36 @@ def open_session(name, path, claude: true)
     run!('tmux', 'send-keys', '-t', "=#{name}:", 'nvim', 'Enter')
     if claude
       window = run!('tmux', 'new-window', '-d', '-P', '-F', '#{window_id}', '-t', "=#{name}:", '-n', 'claude', '-c', path)
-      run!('tmux', 'send-keys', '-t', window, claude_command(path), 'Enter')
+      command, color = claude_command(name, path)
+      run!('tmux', 'set', '-p', '-t', window, '@claude_color', color)
+      run!('tmux', 'send-keys', '-t', window, command, 'Enter')
     end
   end
   switch_to(name)
 end
 
-# Picks up the folder's last conversation when it has one (a reopened workspace), else starts fresh
-def claude_command(path)
+# Claude's /color choices, in the order ws hands them out
+CLAUDE_COLORS = %w[blue green purple orange cyan pink yellow red].freeze
+
+# The color /color last set in the folder's newest conversation, if any
+def previous_color(transcript)
+  return unless transcript
+
+  File.foreach(transcript).select { _1.include?('"agent-color"') }.last&.then { JSON.parse(_1)['agentColor'] }
+rescue JSON::ParserError
+  nil
+end
+
+# Claude named after the workspace (prompt bar, pane title, `claude --resume <name>`) and colored:
+# a reopened workspace continues its last conversation in its previous color; a new one gets the
+# first color no other open workspace's Claude has (the panes' @claude_color says which)
+def claude_command(name, path)
   dir = File.join(CLAUDE_PROJECTS, path.gsub(/[^a-zA-Z0-9]/, '-'))
-  Dir.glob(File.join(dir, '*.jsonl')).empty? ? 'claude' : 'claude --continue'
+  transcript = Dir.glob(File.join(dir, '*.jsonl')).max_by { File.mtime(_1) }
+  used = run('tmux', 'list-panes', '-a', '-F', "\#{@claude_color}").to_s.split
+  color = previous_color(transcript) || CLAUDE_COLORS.find { !used.include?(_1) } ||
+          CLAUDE_COLORS[name.sum % CLAUDE_COLORS.size]
+  [['claude', ('--continue' if transcript), '-n', name, "/color #{color}"].compact.shelljoin, color]
 end
 
 # A GitHub PR's workspace: its own branch when the PR comes from this repo (so pushing works and

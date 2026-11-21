@@ -302,14 +302,19 @@ ok "list: hook state on a pane without a Claude process isn't shown" "! row '$wt
 
 # Reopening a workspace continues the folder's last conversation; a fresh one starts new
 mkdir -p "$CLAUDE_CONFIG_DIR/projects/$(sed 's/[^a-zA-Z0-9]/-/g' <<<"$wt/det")"
-touch "$CLAUDE_CONFIG_DIR/projects/$(sed 's/[^a-zA-Z0-9]/-/g' <<<"$wt/det")/s.jsonl"
+# A conversation whose color was last set to pink
+printf '%s\n' '{"type":"agent-color","agentColor":"orange"}' '{"type":"agent-color","agentColor":"pink"}' \
+  > "$CLAUDE_CONFIG_DIR/projects/$(sed 's/[^a-zA-Z0-9]/-/g' <<<"$wt/det")/s.jsonl"
 tm kill-session -t =work/app/det; : > "$T/claude-args"
 "$WS" _open "$wt/det" >/dev/null 2>&1
 wait_for '[ -s "$T/claude-args" ]'
-ok "open: a reopened workspace runs claude --continue" "grep -qx 'claude --continue' '$T/claude-args'"
+ok "open: a reopened workspace continues, named, in its previous color" "grep -qx 'claude --continue -n work/app/det /color pink' '$T/claude-args'"
+ok "open: the pane records that color" "tm list-panes -t '=work/app/det:claude' -F '#{@claude_color}' | grep -qx pink"
+# The first color no open workspace's Claude has, worked out from the panes just before
+expected=$(used=$(tm list-panes -a -F '#{@claude_color}'); for c in blue green purple orange cyan pink yellow red; do grep -qx "$c" <<<"$used" || { echo "$c"; break; }; done)
 : > "$T/claude-args"; (cd "$APP" && "$WS" new fresh >/dev/null 2>&1)
 wait_for '[ -s "$T/claude-args" ]'
-ok "new: a new workspace starts a fresh claude" "grep -qx 'claude ' '$T/claude-args'"
+ok "new: a fresh, named claude in the first unused color ($expected)" "[ -n '$expected' ] && grep -qx 'claude -n work/app/fresh /color $expected' '$T/claude-args'"
 
 # --- running scripts: npm run from a shell shows with its port and, from another session, where
 RUBY=$(head -1 "$WS" | sed 's/^#!//')
