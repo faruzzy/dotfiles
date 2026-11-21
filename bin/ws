@@ -240,14 +240,19 @@ end
 # { path:, branch:, name:, main: }, each repo's main checkout first
 def workspaces
   # A worktree whose repo was moved or deleted resolves to nothing: skipped, not fatal
-  worktree_dirs.filter_map { main_of(_1) }.uniq.flat_map do |main|
+  mains = in_parallel(worktree_dirs) { main_of(_1) }.compact.uniq
+  in_parallel(mains) do |main|
     worktrees(main).filter_map do |path, branch|
       next unless path == main || path.start_with?("#{ROOT}/")
 
       { path:, branch:, name: workspace_name(main, path, branch), main: }
     end
-  end
+  end.flatten(1)
 end
+
+# Maps `items` through the block, each in its own thread, keeping their order. ws mostly waits on
+# git and tmux, once per workspace, so this is what keeps the picker quick
+def in_parallel(items, &) = items.map { |item| Thread.new(item, &) }.map(&:value)
 
 C = { green: 32, dim: 2, yellow: 33, cyan: 36, magenta: 35 }.freeze
 def color(text, c) = "\e[#{C[c]}m#{text}\e[0m"
@@ -366,30 +371,35 @@ end
 # One line per workspace, for fzf: <path>\t<what you see>
 def cmd_list
   procs = processes
-  claude = claude_panes(procs)
-  running = scripts(procs)
-  workspaces.each do |ws|
-    # --no-optional-locks: a background read mustn't make a commit in that workspace fail
-    changes = git('--no-optional-locks', 'status', '--porcelain', dir: ws[:path]).to_s.lines.size
-    counts = git('rev-list', '--left-right', '--count', '@{u}...HEAD', dir: ws[:path])
-    gone = ws[:branch] && git('for-each-ref', '--format=%(upstream:track)', "refs/heads/#{ws[:branch]}", dir: ws[:path]) == '[gone]'
-    behind, ahead = counts&.split&.map(&:to_i)
-    info = [
-      session?(ws[:name]) ? color('●', :green) : color('○', :dim),
-      ws[:name] + (ws[:path] == ws[:main] ? color(' (main checkout)', :dim) : ''),
-      (color("#{changes} changed", :yellow) if changes.positive?),
-      (color("↑#{ahead}", :cyan) if ahead&.positive?),
-      (color("↓#{behind}", :cyan) if behind&.positive?),
-      (color('upstream gone (merged?)', :dim) if gone),
-      (color("fork PR ##{fork_pr(ws[:branch])}", :dim) if fork_pr(ws[:branch]) && !counts),
-      (color('no upstream', :dim) unless counts || gone || fork_pr(ws[:branch])),
-      (color('detached', :yellow) unless ws[:branch]),
-      review_status(ws),
-      *running.select { inside?(_1[:cwd], ws[:path]) }.map { script_label(_1, ws) },
-      (claude_status(*claude[ws[:name]]) if claude.key?(ws[:name]))
-    ].compact.join('  ')
-    puts "#{ws[:path]}\t#{info}"
-  end
+  claude = Thread.new { claude_panes(procs) }
+  running = Thread.new { scripts(procs) }
+  sessions = run('tmux', 'list-sessions', '-F', '#{session_name}').to_s.lines.map(&:chomp)
+  rows = in_parallel(workspaces) { list_row(_1, sessions, claude.value, running.value) }
+  rows.each { puts _1 }
+end
+
+# <path>\t<what you see>, for fzf
+def list_row(ws, sessions, claude, running)
+  # --no-optional-locks: a background read mustn't make a commit in that workspace fail
+  changes = git('--no-optional-locks', 'status', '--porcelain', dir: ws[:path]).to_s.lines.size
+  counts = git('rev-list', '--left-right', '--count', '@{u}...HEAD', dir: ws[:path])
+  gone = ws[:branch] && git('for-each-ref', '--format=%(upstream:track)', "refs/heads/#{ws[:branch]}", dir: ws[:path]) == '[gone]'
+  behind, ahead = counts&.split&.map(&:to_i)
+  info = [
+    sessions.include?(ws[:name]) ? color('●', :green) : color('○', :dim),
+    ws[:name] + (ws[:path] == ws[:main] ? color(' (main checkout)', :dim) : ''),
+    (color("#{changes} changed", :yellow) if changes.positive?),
+    (color("↑#{ahead}", :cyan) if ahead&.positive?),
+    (color("↓#{behind}", :cyan) if behind&.positive?),
+    (color('upstream gone (merged?)', :dim) if gone),
+    (color("fork PR ##{fork_pr(ws[:branch])}", :dim) if fork_pr(ws[:branch]) && !counts),
+    (color('no upstream', :dim) unless counts || gone || fork_pr(ws[:branch])),
+    (color('detached', :yellow) unless ws[:branch]),
+    review_status(ws),
+    *running.select { inside?(_1[:cwd], ws[:path]) }.map { script_label(_1, ws) },
+    (claude_status(*claude[ws[:name]]) if claude.key?(ws[:name]))
+  ].compact.join('  ')
+  "#{ws[:path]}\t#{info}"
 end
 
 def cmd_preview(path)
