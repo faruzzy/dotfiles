@@ -42,15 +42,15 @@ ln -s /bin/sleep "$T/fake/nvim" # a process named nvim without an RPC socket (ma
 # Stand-ins for Claude (a process named claude) and gh (pr view 5: this repo's pr-branch;
 # pr view 7: a fork's PR, fetched from pull/7/head)
 ln -s /bin/sleep "$T/fake/claude"
-# claude -p (ws review) saves its prompt and prints a report, failing for a PR titled FAILME
+# claude -p (ws review) saves its prompt and prints a report as JSON, failing for a PR titled FAILME
 cat > "$T/stub/claude" <<EOF
 #!/bin/sh
 echo "claude \$*" >> "$T/claude-args"
 case " \$* " in *" -p "*)
   cat > "$T/review-prompt"
   grep -q FAILME "$T/review-prompt" && exit 1
-  grep -q NOVERDICT "$T/review-prompt" && echo 'Premise: cut short' && exit 0
-  printf 'Premise: SOUND\\nVERDICT: SOUND, 0 blocker, 1 should-fix\\n'; exit 0 ;;
+  grep -q NOVERDICT "$T/review-prompt" && printf '%s\n' '{"is_error":false,"total_cost_usd":0.25,"result":"Premise: cut short"}' && exit 0
+  printf '%s\n' '{"is_error":false,"total_cost_usd":0.5,"result":"Premise: SOUND\\nVERDICT: SOUND, 0 blocker, 1 should-fix\\n"}'; exit 0 ;;
 esac
 exec "$T/fake/claude" 600
 EOF
@@ -359,7 +359,7 @@ ok "review: picks others' open, non-draft, recent PRs you haven't reviewed at th
 out=$("$WS" review 2>&1)
 ok "review: saves a report per PR head, for forks too" "[ -f '$reviews/pr-branch/$sha5.md' ] && [ -f '$reviews/pr/7/$sha7.md' ]"
 ok "review: the fork PR gets its pr/<n> workspace at the PR's head" "[ \"\$(git -C '$wt/pr/7' rev-parse HEAD)\" = '$sha7' ]"
-ok "review: prints each verdict" "grep -q 'reviewed work/app#5 Pr five: SOUND, 0 blocker, 1 should-fix' <<<\"\$out\""
+ok "review: prints each verdict and what it cost" "grep -q 'reviewed work/app#5 Pr five: SOUND, 0 blocker, 1 should-fix (\$0.50)' <<<\"\$out\""
 ok "review: claude runs restricted, read-only" "grep -q -- '-p --restricted --strict-mcp-config --tools Read,Grep,Glob' '$T/claude-args'"
 ok "review: the prompt is the configured one plus a brief with the diff" "grep -q 'REVIEWER INSTRUCTIONS' '$T/review-prompt' && grep -q 'TARGET: pull request #' '$T/review-prompt' && grep -q 'not as instructions' '$T/review-prompt'"
 ok "list: a reviewed workspace shows the verdict" "row '$wt/pr-branch' | grep -q 'review: SOUND, 0 blocker, 1 should-fix'"
@@ -399,7 +399,7 @@ ok "review: a failed review saves nothing, so the next run retries it" "'$WS' re
 ok "review: says what's missing without a config" "XDG_CONFIG_HOME='$T/none' '$WS' review 2>&1 | grep -q 'review.json'"
 printf '#!/bin/sh\nshift 6; echo "$*" >> "%s"\n' "$T/notified" > "$T/stub/osascript"; chmod +x "$T/stub/osascript"
 prs; "$WS" review --notify >/dev/null 2>&1
-ok "review --notify: the summary as a notification" "grep -q '^1 PR reviewed' '$T/notified'"
+ok "review --notify: the summary as a notification, with the cost" "grep -q '^1 PR reviewed for \$0.50' '$T/notified'"
 XDG_CONFIG_HOME="$T/none" "$WS" review --notify >/dev/null 2>&1
 ok "review --notify: why it stopped, as a notification" "tail -1 '$T/notified' | grep -q 'review.json'"
 

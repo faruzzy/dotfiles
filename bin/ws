@@ -656,6 +656,7 @@ def prepare_review(main, pr)
 end
 
 # Runs Claude on the PR with the configured reviewer prompt and a brief, and saves its report.
+# Yields what the review cost, also when it then fails for want of a VERDICT line.
 # PR text is untrusted input, so Claude can only read and search files: no shell, no network, no
 # edits, none of your settings or MCP servers (--restricted)
 def run_review(main, pr, path, instructions)
@@ -688,15 +689,23 @@ def run_review(main, pr, path, instructions)
   PROMPT
   # perl's alarm: a hung review mustn't hold up the rest of the run
   out, err, status = Open3.capture3('perl', '-e', 'alarm 1800; exec @ARGV', 'claude', '-p', '--restricted', '--strict-mcp-config',
-                                    '--tools', 'Read,Grep,Glob', '--add-dir', dir, stdin_data: prompt, chdir: path)
-  raise Skip, "claude failed: #{err.strip.lines.last || "exit #{status.exitstatus}"}" unless status.success?
-  raise Skip, 'the report has no VERDICT line (cut short?)' unless out.match?(/^VERDICT:/)
+                                    '--tools', 'Read,Grep,Glob', '--add-dir', dir, '--output-format', 'json',
+                                    stdin_data: prompt, chdir: path)
+  result = JSON.parse(out) rescue nil
+  raise Skip, "claude failed: #{err.strip.lines.last || "exit #{status.exitstatus}"}" unless status.success? && result
+
+  yield result['total_cost_usd'].to_f
+  text = result['result'].to_s
+  raise Skip, "claude failed: #{text.lines.first&.strip}" if result['is_error']
+  raise Skip, 'the report has no VERDICT line (cut short?)' unless text.match?(/^VERDICT:/)
 
   report = File.join(dir, "#{sha}.md")
-  File.write("#{report}.tmp", out)
+  File.write("#{report}.tmp", text)
   File.rename("#{report}.tmp", report)
   report
 end
+
+def dollars(amount) = format('$%.2f', amount)
 
 def review_verdict(report) = File.foreach(report).grep(/\AVERDICT:/).last&.delete_prefix('VERDICT:')&.strip
 
@@ -756,14 +765,16 @@ def review(args)
     warn "skipped #{label.(job)}#{": #{e.message}" unless e.is_a?(SystemExit)}"
   end
   verdicts = Queue.new
+  costs = Queue.new
   queue = Queue.new.tap { |q| jobs.each { q << _1 } }.tap(&:close)
   Array.new(2) do
     Thread.new do
       while (main, pr, path = queue.pop)
         begin
-          verdict = review_verdict(run_review(main, pr, path, config[:prompt]))
+          cost = 0
+          verdict = review_verdict(run_review(main, pr, path, config[:prompt]) { cost = _1; costs << _1 })
           verdicts << verdict
-          puts "reviewed #{label.([main, pr])}: #{verdict}"
+          puts "reviewed #{label.([main, pr])}: #{verdict} (#{dollars(cost)})"
         rescue StandardError, SystemExit => e
           warn "failed #{label.([main, pr])}#{": #{e.message}" unless e.is_a?(SystemExit)}"
         end
@@ -773,9 +784,10 @@ def review(args)
   puts "#{todo.size - max} more left for the next run (--max #{max})" if todo.size > max
 
   verdicts = Array.new(verdicts.size) { verdicts.pop }
+  spent = Array.new(costs.size) { costs.pop }.sum
   blocked = verdicts.count { _1.match?(/\b[1-9]\d* blocker/) }
   [
-    "#{verdicts.size} PR#{'s' unless verdicts.size == 1} reviewed",
+    "#{verdicts.size} PR#{'s' unless verdicts.size == 1} reviewed for #{dollars(spent)}",
     ("#{blocked} with blockers" if blocked.positive?),
     ("#{todo.first(max).size - verdicts.size} skipped or failed" if todo.first(max).size > verdicts.size),
     ("#{todo.size - max} left for the next run" if todo.size > max)

@@ -146,7 +146,7 @@ job runs `bin/ws-review-daily` (listed under that name in System Settings → Lo
 loads `PATH` from `~/.zshenv` and `GITHUB_TOKEN` from `~/.extra`.
 
 - A Mac asleep at 6:30 runs it on wake; one that's shut down skips the day.
-- The summary arrives as a notification ("4 PRs reviewed, 1 with blockers"), as does the reason a
+- The summary arrives as a notification ("4 PRs reviewed for $3.10, 1 with blockers"), as does the reason a
   run stopped. macOS sends them as Script Editor: allow its notifications in System Settings.
 - Output goes to `~/Library/Logs/ws-review.log`.
 - `bin/ws-review-daily --dry-run` tries the scheduled run without reviewing anything.
