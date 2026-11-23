@@ -11,6 +11,8 @@
 #   ws review         review other people's new PRs with Claude, in their own workspaces
 #                     (--max <n>, --dry-run); the repos and prompt are in ~/.config/ws/review.json
 #   ws prune          remove reviewed workspaces whose PR was merged or closed (--yes: don't ask)
+#   ws serve on|off   whether a repo's dev server follows you between its workspaces (on by
+#                     default, for repos in ~/.config/ws/serve.json)
 #
 # How to use them: docs/ws.md
 #
@@ -349,9 +351,12 @@ end
 # Running package scripts, each with its working directory, the ports its process tree listens on
 # and the tmux window it runs in. `npx` and `npm exec` count only when a shell started them:
 # Claude's MCP servers and Copilot's language server run that way too
+def ancestors(pid, procs) = Enumerator.produce(procs.dig(pid, 0)) { procs.dig(_1, 0) }.take_while { _1.to_i > 1 }
+
+def process_tree(pid, procs) = procs.keys.select { |p| p == pid || ancestors(p, procs).include?(pid) }
+
 def scripts(procs)
   args = stdout_of('ps', '-A', '-o', 'pid=,args=').lines.to_h { _1.strip.split(/\s+/, 2).then { |p, a| [p.to_i, a.to_s] } }
-  ancestors = ->(pid) { Enumerator.produce(procs.dig(pid, 0)) { procs.dig(_1, 0) }.take_while { _1.to_i > 1 } }
   named = args.filter_map do |pid, a|
     name, how = script_of(a)
     next unless name
@@ -360,7 +365,7 @@ def scripts(procs)
     [pid, name]
   end.to_h
   # A script that runs another (`"dev": "npm run build && npm run serve"`) is one entry
-  tops = named.reject { |pid, _| ancestors.(pid).any? { named.key?(_1) } }
+  tops = named.reject { |pid, _| ancestors(pid, procs).any? { named.key?(_1) } }
   return [] if tops.empty?
 
   cwds = lsof_names('-a', '-d', 'cwd', '-Fn', '-p', tops.keys.join(',')).to_h
@@ -374,8 +379,8 @@ def scripts(procs)
   tops.filter_map do |pid, name|
     next unless cwds.key?(pid)
 
-    tree = procs.keys.select { |p| p == pid || ancestors.(p).include?(pid) }
-    session, window = panes[[pid, *ancestors.(pid)].find { panes.key?(_1) }]
+    tree = process_tree(pid, procs)
+    session, window = panes[[pid, *ancestors(pid, procs)].find { panes.key?(_1) }]
     { pid:, name:, cwd: cwds[pid], ports: tree.flat_map { ports.fetch(_1, []) }.uniq.sort, session:, window: }
   end
 end
@@ -612,6 +617,161 @@ def remove_workspace(main, path, branch, name)
   system('tmux', 'kill-session', '-t', "=#{name}", err: File::NULL) if session?(name)
   git!('worktree', 'remove', path, dir: main)
   git!('branch', '-D', branch, dir: main)
+end
+
+# --- ws serve: one dev server per repo, running in the workspace you're in
+
+SERVE_CONFIG = File.join(File.expand_path(ENV.fetch('XDG_CONFIG_HOME', '~/.config')), 'ws', 'serve.json')
+STATE = File.join(File.expand_path(ENV.fetch('XDG_STATE_HOME', '~/.local/state')), 'ws')
+SERVE_PAUSED = File.join(STATE, 'serve-paused')
+
+# { main checkout => { command:, setup: } }: {"~/github/work/app": {"command": "npm run dev", "setup": "npm ci"}}
+def serve_config
+  return {} unless File.file?(SERVE_CONFIG)
+
+  JSON.parse(File.read(SERVE_CONFIG)).to_h do |repo, opts|
+    command = opts['command'].to_s
+    # ws finds the running server by its script name: one it can't tell, it would start every time
+    name, = script_of(command.sub(/\A(\w+=\S*\s+)+/, '')) # past FOO=1 prefixes
+    die("#{SERVE_CONFIG}: #{repo}: the command must be a package script, like `npm run dev`") unless name
+    [resolved(File.expand_path(repo)), { command:, setup: opts['setup'], name: }]
+  end
+rescue JSON::ParserError, TypeError, NoMethodError => e
+  die("#{SERVE_CONFIG}: #{e.message}")
+end
+
+# The tmux hook on every session switch (.tmux.conf): moves the repo's dev server to the workspace
+# `session` belongs to. `client` is the tmux client that switched, nil when run by hand
+def cmd_serve_follow(session, client = nil)
+  return if File.exist?(SERVE_PAUSED)
+
+  ws = workspaces.find { _1[:name] == session } or return
+  config = begin
+    serve_config[ws[:main]] or return
+  rescue SystemExit => e
+    return tell(client, e.message.delete_prefix('ws: ')) # the hook's output goes nowhere
+  end
+  return if fork_pr(ws[:branch]) # code from outside the team
+
+  FileUtils.mkdir_p(STATE)
+  File.open(File.join(STATE, "serve-#{repo_label(ws[:main]).tr('/', '-')}.lock"), File::RDWR | File::CREAT) do |lock|
+    # One at a time per repo, so switching back and forth can't start two servers
+    lock.flock(File::LOCK_EX)
+    # The client has moved on since: the hook for where it is now takes over
+    return if client && run('tmux', 'display', '-p', '-c', client, '#{session_name}') != session
+
+    tell(client, serve(ws, config))
+  end
+end
+
+# Stops the repo's server running in its other workspaces and starts it in `ws`; what happened, for
+# the status line, or nil when it already ran there
+def serve(ws, config)
+  paths = worktrees(ws[:main]).keys
+  running = ->(path) { scripts(processes).select { |s| s[:name] == config[:name] && inside?(s[:cwd], path) } }
+  elsewhere = (paths - [ws[:path]]).flat_map(&running)
+  held = stop_scripts(elsewhere)
+  return "dev server: port #{held.join(', ')} still taken, not starting it in #{ws[:name]}" if held.any?
+  return if running.(ws[:path]).any?
+
+  pane = start_server(ws, config)
+  # Holding the lock until the server runs (or setup fails) lets the next switch see, and stop, it.
+  # The prompt is idle until the shell picks up the command, so idle only means failed after busy
+  busy = false
+  wait_until(600) do
+    idle = server_pane(ws[:name]) == pane
+    busy ||= !idle
+    running.(ws[:path]).any? || (busy && idle)
+  end
+  "dev server → #{ws[:name]}"
+end
+
+# Stops each script's process group (only its own tree when it shares its shell's group), then
+# waits for its ports to be free: a dev server that finds its port taken quietly picks another
+# Returns the ports still taken after TERM and then KILL
+def stop_scripts(scripts)
+  return [] if scripts.empty?
+
+  procs = processes
+  targets = scripts.flat_map do |s|
+    Process.getpgid(s[:pid]) == s[:pid] ? [-s[:pid]] : process_tree(s[:pid], procs)
+  rescue Errno::ESRCH
+    [] # gone before we looked
+  end
+  ports = scripts.flat_map { _1[:ports] }
+  taken = -> { ports.select { stdout_of('lsof', '-nP', '-t', '-sTCP:LISTEN', "-iTCP:#{_1}").strip != '' } }
+  stopped = -> { ports.empty? ? scripts.none? { Process.kill(0, _1[:pid]) rescue false } : taken.().empty? }
+  %w[TERM KILL].each do |signal|
+    targets.each { Process.kill(signal, _1) rescue Errno::ESRCH }
+    return [] if wait_until(signal == 'TERM' ? 5 : 2, &stopped)
+  end
+  taken.()
+end
+
+def wait_until(seconds)
+  deadline = Time.now + seconds
+  sleep 0.1 until (done = yield) || Time.now > deadline
+  done
+end
+
+# Typed into the shell of the session's `server` window, like Neovim and Claude are, so the logs
+# stay when the server stops. Installs first when dependencies are missing or older than the lockfile
+def start_server(ws, config)
+  command = [("cd #{ws[:path].shellescape}"), (config[:setup] if config[:setup] && stale_deps?(ws[:path])), config[:command]]
+  pane = server_pane(ws[:name])
+  # A reused prompt may hold a half-typed line or sit in vi command mode, which would garble the
+  # command; C-c clears it. Not on a new window: a shell still starting up dies of it
+  if pane
+    run!('tmux', 'send-keys', '-t', pane, 'C-c')
+  else
+    pane = run!('tmux', 'new-window', '-d', '-P', '-F', '#{pane_id}', '-t', "=#{ws[:name]}:", '-n', 'server', '-c', ws[:path])
+  end
+  run!('tmux', 'send-keys', '-t', pane, command.compact.join(' && '), 'Enter')
+  pane
+end
+
+# Each package manager's lockfile, and the file its install leaves in node_modules
+INSTALL_MARKERS = { 'package-lock.json' => '.package-lock.json', 'pnpm-lock.yaml' => '.modules.yaml',
+                    'yarn.lock' => '.yarn-state.yml' }.freeze
+
+# Dependencies missing, or installed from an older lockfile
+def stale_deps?(path)
+  modules = File.join(path, 'node_modules')
+  return true unless File.directory?(modules)
+
+  lock, marker = INSTALL_MARKERS.find { File.exist?(File.join(path, _1)) }
+  return false unless lock
+
+  marker = File.join(modules, marker)
+  !File.exist?(marker) || File.mtime(File.join(path, lock)) > File.mtime(marker)
+end
+
+# The `server` window's pane, when its shell is free to take a command
+def server_pane(session)
+  rows = run('tmux', 'list-panes', '-s', '-t', "=#{session}", '-F', "\#{window_name}\t\#{pane_id}\t\#{pane_current_command}").to_s
+  rows.lines.map { _1.chomp.split("\t") }.find { |window, _, command| window == 'server' && SHELLS.include?(command) }&.[](1)
+end
+
+def tell(client, msg)
+  system('tmux', 'display-message', '-c', client, "ws: #{msg}") if client && msg
+end
+
+# `ws serve off` leaves servers where they are, e.g. to keep the main checkout's running while
+# reading PRs; `on` follows again, starting with the current workspace
+def cmd_serve(arg)
+  case arg
+  when 'off'
+    FileUtils.mkdir_p(STATE)
+    FileUtils.touch(SERVE_PAUSED)
+    puts 'Dev servers stay where they are until `ws serve on`'
+  when 'on'
+    FileUtils.rm_f(SERVE_PAUSED)
+    puts 'Dev servers follow you between workspaces'
+    session = run('tmux', 'display', '-p', '#{session_name}') if ENV['TMUX']
+    cmd_serve_follow(session) if session
+  else
+    die('usage: ws serve on|off')
+  end
 end
 
 # --- ws review: a first, unattended review of other people's PRs, ready to read in the morning
@@ -929,6 +1089,8 @@ when '_list' then cmd_list
 when '_preview' then cmd_preview(ARGV.first)
 when '_open' then cmd_open(ARGV.first)
 when '_remove' then cmd_remove(ARGV.first)
+when 'serve' then cmd_serve(ARGV.first)
+when '_serve' then cmd_serve_follow(*ARGV.first(2))
 else
   puts File.read(__FILE__)[/^# ws:.*?(?=\n\n)/m].gsub(/^# ?/, '')
   exit 1

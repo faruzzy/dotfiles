@@ -20,6 +20,7 @@ of truth.
 | `ws done` | Remove the current workspace: session, worktree and branch |
 | `ws review` | Review other people's new PRs with Claude, each in its workspace |
 | `ws prune` | Remove reviewed workspaces whose PR was merged or closed |
+| `ws serve on\|off` | Whether a repo's dev server follows you between its workspaces |
 
 `--no-claude` on `ws new` / `ws pr` skips the Claude window.
 
@@ -168,6 +169,38 @@ It only removes a workspace exactly as `ws review` left it, and keeps (saying wh
 
 It also deletes leftover reports of closed PRs whose workspace you already removed.
 
+### Dev servers follow you
+
+For repos listed in `~/.config/ws/serve.json` (machine-local), the dev server runs in whichever of
+the repo's workspaces you're in, so the browser always shows the workspace you're looking at:
+
+```json
+{
+  "~/github/work/customer-portal": { "command": "npm run dev", "setup": "npm ci" }
+}
+```
+
+A tmux hook runs on every session switch: the picker, `prefix s`, `prefix Tab`, `ws new` / `ws pr`.
+When you land in a workspace of a listed repo:
+
+1. If its server already runs there, nothing happens.
+2. The repo's server in any other workspace (the main checkout included, and one you started by
+   hand) is stopped, and `ws` waits until its port is free. The new one gets the same port, so the
+   URL in the browser stays the same; a server that found the port taken would quietly pick
+   another.
+3. `setup` runs first when `node_modules` is missing or older than `package-lock.json`.
+4. `command` starts in a `server` window of the workspace's session, in the background. Its logs
+   stay there.
+
+The tmux status line says `ws: dev server → <workspace>` when it moves. Only that repo's server
+moves: other scripts (Storybook, tests) and other repos' servers keep running. Switching to a
+session that isn't a workspace of a listed repo changes nothing, and neither does a fork PR's
+workspace (`pr/<n>`), whose code comes from outside the team. Serving a colleague's PR runs its
+code on your Mac, as running it by hand would.
+
+`ws serve off` leaves the server where it is (say, the main checkout's, while you read PRs);
+`ws serve on` follows again, starting with the session you're in.
+
 ## A typical day
 
 1. **Morning:** the 6:30 run has reviewed overnight PRs. `prefix W`, go through the rows with a
@@ -183,8 +216,8 @@ It also deletes leftover reports of closed PRs whose workspace you already remov
 | Variable | Default | |
 |---|---|---|
 | `WS_ROOT` | `~/github/.worktrees` | Where worktrees go |
-| `XDG_CONFIG_HOME` | `~/.config` | `ws/review.json` |
-| `XDG_STATE_HOME` | `~/.local/state` | `ws/reviews/` |
+| `XDG_CONFIG_HOME` | `~/.config` | `ws/review.json`, `ws/serve.json` |
+| `XDG_STATE_HOME` | `~/.local/state` | `ws/reviews/`, `ws/serve-paused` |
 | `CLAUDE_CONFIG_DIR` | `~/.claude` | Where Claude keeps conversations (for `--continue`) |
 
 ## Tests

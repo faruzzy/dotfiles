@@ -323,7 +323,7 @@ cat > "$T/stub/npm" <<EOF
 # A stand-in npm: titled like the real one, with a child listening on a free port as vite does
 require 'socket'
 Process.setproctitle("npm #{ARGV.join(' ')}")
-fork { _server = TCPServer.new('127.0.0.1', 0); sleep 600 }
+fork { _server = TCPServer.new('127.0.0.1', Integer(ENV.fetch('PORT', '0'))); sleep 600 }
 Process.wait
 EOF
 chmod +x "$T/stub/npm"
@@ -443,6 +443,36 @@ cp "$APP/.env" "$wt/pr-branch/.env"
 ok "prune: keeps a closed PR's workspace with commits since the review" "'$WS' prune --yes 2>&1 | grep -q 'Keeping.*commits since the review' && [ -d '$wt/pr-branch' ]"
 git -C "$wt/pr-branch" reset -q --hard HEAD~1
 ok "prune: a gh failure doesn't make a repo's PRs look closed" "PRS=/nonexistent '$WS' prune --yes 2>&1 | grep -q 'gh pr list failed' && [ -d '$wt/pr-branch' ]"
+
+# --- ws serve: the repo's dev server follows you to the workspace you switch to, on a fixed port
+# The stand-in by its full path: new tmux windows run login shells, whose PATH puts Homebrew's npm first
+printf '{"%s": {"command": "PORT=48123 %s run dev", "setup": "touch setup-ran"}}\n' "$APP" "$T/stub/npm" > "$HOME/.config/ws/serve.json"
+listener() { lsof -nP -t -iTCP:48123 -sTCP:LISTEN 2>/dev/null; }
+ok "(setup) fresh runs a dev server from the earlier test" "row '$wt/fresh' | grep -q '▶ dev'"
+"$WS" _serve work/app/quiet
+ok "serve: returns once the server runs, so the next switch can see and stop it" "row '$wt/quiet' | grep -q '▶ dev :48123'"
+ok "serve: starts the server in the workspace switched to, after its setup" "row '$wt/quiet' | grep -q '▶ dev :48123' && [ -f '$wt/quiet/setup-ran' ]"
+ok "serve: stops the repo's server in the other workspace" "! row '$wt/fresh' | grep -q '▶ dev'"
+ok "serve: in a server window of that workspace's session" "tm list-windows -t =work/app/quiet -F '#{window_name}' | grep -qx server"
+before=$(listener)
+"$WS" _serve work/app/quiet
+ok "serve: switching to where it already runs leaves it alone" "[ -n '$before' ] && [ \"\$(listener)\" = '$before' ]"
+"$WS" _serve work/app/det
+ok "serve: moves to the next workspace on the same port, once the old one let it go" "row '$wt/det' | grep -q '▶ dev :48123' && ! row '$wt/quiet' | grep -q '▶ dev'"
+ok "serve: other scripts keep running" "row '$wt/det' | grep -q '▶ storybook'"
+"$WS" serve off >/dev/null; "$WS" _serve work/app/quiet
+ok "serve off: the server stays where it is" "row '$wt/det' | grep -q '▶ dev :48123' && ! row '$wt/quiet' | grep -q '▶ dev'"
+env -u TMUX "$WS" serve on >/dev/null # no current session to serve
+(cd "$APP" && "$WS" pr 7 >/dev/null 2>&1); "$WS" _serve work/app/pr/7; "$WS" _serve home
+ok "serve: a fork PR's workspace and other sessions don't take the server" "row '$wt/det' | grep -q '▶ dev :48123'"
+tm send-keys -t '=work/app/quiet:server' 'half-typed junk'
+"$WS" _serve work/app/quiet
+ok "serve: a half-typed line in the server window doesn't garble the command" "row '$wt/quiet' | grep -q '▶ dev :48123'"
+cp "$HOME/.config/ws/serve.json" "$T/serve.json"
+printf '{"%s": {"command": "cd web && npm run dev"}}\n' "$APP" > "$HOME/.config/ws/serve.json"
+"$WS" _serve work/app/det
+ok "serve: a command it can't recognise when running is refused, not started on every switch" "row '$wt/quiet' | grep -q '▶ dev :48123' && ! row '$wt/det' | grep -q '▶ dev'"
+cp "$T/serve.json" "$HOME/.config/ws/serve.json"
 
 echo; echo "$pass passed, $fail failed"
 [ "$fail" -eq 0 ]
