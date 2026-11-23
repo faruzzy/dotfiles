@@ -403,8 +403,22 @@ prs FAILME
 ok "review: a failed review saves nothing, so the next run retries it" "'$WS' review 2>&1 | grep -q 'failed work/app#5' && [ ! -f '$reviews/pr-branch/$sha5.md' ] && '$WS' review --dry-run | grep -q '#5'"
 ok "review: says what's missing without a config" "XDG_CONFIG_HOME='$T/none' '$WS' review 2>&1 | grep -q 'review.json'"
 printf '#!/bin/sh\nshift 6; echo "$*" >> "%s"\n' "$T/notified" > "$T/stub/osascript"; chmod +x "$T/stub/osascript"
-prs; "$WS" review --notify >/dev/null 2>&1
-ok "review --notify: the summary as a notification, with the cost" "grep -q '^1 PR reviewed for \$0.50' '$T/notified'"
+prs
+mkdir -p "$T/mixed/ws"
+printf '{"repos":["%s","%s"],"prompt":"%s"}\n' "$HOME/github/work/missing" "$APP" "$T/reviewer.md" > "$T/mixed/ws/review.json"
+XDG_CONFIG_HOME="$T/mixed" "$WS" review --notify >/dev/null 2>&1
+code=$?
+ok "review --notify: reviews reachable repos and reports the cost and missing repo" "[ $code -ne 0 ] && grep -Fxq '1 PR reviewed for \$0.50, 1 repo unavailable: work/missing' '$T/notified' && [ -f '$reviews/pr-branch/$sha5.md' ]"
+before=$(wc -l < "$T/notified")
+XDG_CONFIG_HOME="$T/mixed" "$WS" review --notify >/dev/null 2>&1
+code=$?
+ok "review --notify: an incomplete run sends one notification, not a second 'why it stopped'" "[ \$(( \$(wc -l < '$T/notified') - $before )) -eq 1 ]"
+ok "review --notify: a reachable repo with nothing new says so, next to the missing one" "[ $code -ne 0 ] && tail -1 '$T/notified' | grep -Fxq 'Nothing new to review, 1 repo unavailable: work/missing'"
+for mode in '' '--dry-run'; do
+  out=$(PRS="$T/no-pr-list" "$WS" review --notify ${mode:+"$mode"} 2>&1)
+  code=$?
+  ok "review --notify${mode:+ $mode}: a failed PR listing names the unavailable repo, once" "[ $code -ne 0 ] && grep -q 'gh pr list failed' <<<\"\$out\" && ! grep -q 'skipping it' <<<\"\$out\" && ! grep -q 'Nothing new' <<<\"\$out\" && tail -1 '$T/notified' | grep -Fxq 'No repo could be scanned, 1 repo unavailable: work/app'"
+done
 XDG_CONFIG_HOME="$T/none" "$WS" review --notify >/dev/null 2>&1
 ok "review --notify: why it stopped, as a notification" "tail -1 '$T/notified' | grep -q 'review.json'"
 
