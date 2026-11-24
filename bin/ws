@@ -497,7 +497,8 @@ end
 # Modified buffer names of the Neovim at `sock`, or nil when it doesn't answer (e.g. a prompt)
 def modified_buffers(sock)
   expr = %q{luaeval('vim.json.encode(vim.tbl_map(vim.api.nvim_buf_get_name, vim.tbl_filter(function(b) return vim.bo[b].modified end, vim.api.nvim_list_bufs())))')}
-  out = run('perl', '-e', 'alarm 3; exec @ARGV', 'nvim', '--headless', '--server', sock, '--remote-expr', expr)
+  # A healthy Neovim answers in a few milliseconds; one at a prompt never does
+  out = run('perl', '-e', 'alarm 1; exec @ARGV', 'nvim', '--headless', '--server', sock, '--remote-expr', expr)
   out && JSON.parse(out)
 end
 
@@ -522,8 +523,9 @@ def check_neovims(name, path)
   end
 
   real = File.realpath(path)
-  sockets.each do |pid, sock|
-    modified = modified_buffers(sock)
+  # All at once: one Neovim stuck at a prompt then costs its timeout once, not on top of the others
+  answers = in_parallel(sockets.values) { modified_buffers(_1) }
+  sockets.keys.zip(answers).each do |pid, modified|
     if inside.(pid)
       die("Neovim in #{name} isn't answering (a prompt open?); close it first") unless modified
       die("Neovim in #{name} has #{modified.size} unsaved buffer(s)") if modified.any?
