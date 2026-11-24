@@ -933,7 +933,9 @@ def review(args)
   max = args.include?('--max') ? Integer(args[args.index('--max') + 1], exception: false) : 8
   die('usage: ws review [--max <n>] [--dry-run] [--notify]') unless max&.positive?
   config = review_config
-  me = run('gh', 'api', 'user', '-q', '.login') or die("gh can't tell who you are: gh auth status")
+  me, err, status = Open3.capture3('gh', 'api', 'user', '-q', '.login')
+  die("gh can't tell who you are: #{err.strip.lines.last || 'gh auth status'}") unless status.success?
+  me = me.strip
   closed = closed_reviews(config, warn: false).count { _1[:path] && !kept_because(_1) }
   hint = ", #{closed} closed PR#{'s' unless closed == 1} to clean up (ws prune)" if closed.positive?
   since = previous_workday

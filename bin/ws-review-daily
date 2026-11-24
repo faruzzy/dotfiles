@@ -5,4 +5,10 @@
 source ~/.zshenv
 [[ -f ~/.extra ]] && source ~/.extra </dev/null
 echo "== $(date)"
+# launchd runs the job on wake, before Wi-Fi is back: wait for GitHub (up to 15 minutes), or the
+# review fails at its first gh call
+for _ in {1..30}; do
+  gh api user --silent 2>/dev/null && break
+  sleep 30
+done
 exec ws review --notify "$@"
