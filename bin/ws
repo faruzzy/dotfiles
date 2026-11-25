@@ -206,7 +206,24 @@ def claude_command(name, path)
   used = run('tmux', 'list-panes', '-a', '-F', "\#{@claude_color}").to_s.split
   color = previous_color(transcript) || CLAUDE_COLORS.find { !used.include?(_1) } ||
           CLAUDE_COLORS[name.sum % CLAUDE_COLORS.size]
-  [['claude', ('--continue' if transcript), '-n', name, "/color #{color}"].compact.shelljoin, color]
+  claude = ['claude', '--ide', ('--continue' if transcript), '-n', name, "/color #{color}"].compact.shelljoin
+  # --ide connects to the workspace's Neovim, which may still be starting in window 1
+  ["#{SELF} _await-ide #{path.shellescape}; #{claude}", color]
+end
+
+# Waits (up to 5s) for an editor to offer itself to Claude Code as the IDE for `path`: a lock file
+# in Claude's ide folder listing a workspace folder that holds it. Returns at once without that folder
+def cmd_await_ide(path)
+  dir = File.join(File.expand_path(ENV.fetch('CLAUDE_CONFIG_DIR', '~/.claude')), 'ide')
+  return unless File.directory?(dir)
+
+  wait_until(5) do
+    Dir.glob(File.join(dir, '*.lock')).any? do |lock|
+      Array(JSON.parse(File.read(lock))['workspaceFolders']).any? { inside?(path, _1) }
+    rescue JSON::ParserError, Errno::ENOENT
+      false
+    end
+  end
 end
 
 # A GitHub PR's workspace: its own branch when the PR comes from this repo (so pushing works and
@@ -1095,6 +1112,7 @@ when '_open' then cmd_open(ARGV.first)
 when '_remove' then cmd_remove(ARGV.first)
 when 'serve' then cmd_serve(ARGV.first)
 when '_serve' then cmd_serve_follow(*ARGV.first(2))
+when '_await-ide' then cmd_await_ide(ARGV.first)
 else
   puts File.read(__FILE__)[/^# ws:.*?(?=\n\n)/m].gsub(/^# ?/, '')
   exit 1
