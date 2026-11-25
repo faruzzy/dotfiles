@@ -310,6 +310,18 @@ local function run_checks()
     assert(#wrong == 0, table.concat(wrong, '; '))
   end)
 
+  check('lsp: lua_ls ignores unused _-prefixed locals', function(skip)
+    if not executable('lua-language-server') then skip('lua-language-server not installed') end
+    write('luals/u.lua', { 'local _x = 1', 'local y = 1' })
+    local buf = edit('luals/u.lua')
+    assert(wait_client(buf, 'lua_ls', 15000), 'lua_ls did not attach')
+    local unused = function()
+      return vim.tbl_map(function(d) return d.lnum + 1 end, vim.tbl_filter(function(d) return d.code == 'unused-local' end, vim.diagnostic.get(buf)))
+    end
+    assert(vim.wait(15000, function() return #unused() > 0 end, 100), 'no unused-local diagnostics at all')
+    assert(vim.deep_equal(unused(), { 2 }), 'unused-local on lines ' .. table.concat(unused(), ', '))
+  end)
+
   check('lazy-lock.json is valid JSON', function()
     local path = vim.fn.stdpath('config') .. '/lazy-lock.json'
     local ok, err = pcall(vim.json.decode, table.concat(vim.fn.readfile(path), '\n'))

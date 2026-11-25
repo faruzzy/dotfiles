@@ -26,9 +26,15 @@ return {
         path = vim.split(package.path, ';'),
       },
       telemetry = { enable = false },
+      -- Show a type alias's name in hovers instead of expanding it
+      hover = { expandAlias = false },
+      -- Infer parameter types from how a function is called, for unannotated Lua
+      type = { inferParamType = true },
       diagnostics = {
         disable = { 'missing-fields' },
-        globals = { 'vim', 'require', 'pcall', 'describe', 'it' },
+        globals = { 'vim', 'describe', 'it' },
+        -- _-prefixed names are unused on purpose (e.g. function(_, opts))
+        unusedLocalExclude = { '_*' },
         severity = {
           ['undefined-global'] = 'Warning',
         },
