@@ -41,6 +41,7 @@ return {
     require('mason-tool-installer').setup({
       ensure_installed = {
         -- LSP servers
+        'buf', -- also the proto formatter
         'clangd',
         'css-lsp',
         'emmet-language-server',

@@ -23,6 +23,7 @@ return {
       norg = { 'injected' },
       lua = { 'stylua' },
       go = { 'goimports', 'gofmt', stop_after_first = true },
+      proto = { 'buf' },
       query = { 'format-queries' },
       sh = { 'shfmt' },
       python = { 'isort', 'black' },

@@ -3,6 +3,12 @@
 
 ---@type table<string, table>
 local servers = {
+  -- Resolves imports through buf.yaml modules and their dependencies, unlike protols
+  buf_ls = {
+    cmd = { 'buf', 'lsp', 'serve', '--timeout=0', '--log-format=text' },
+    filetypes = { 'proto' },
+    root_markers = { 'buf.yaml', '.git' },
+  },
   clangd = {
     cmd = { 'clangd' },
     -- No 'proto': clangd can't parse .proto files ("invalid AST", "expected exactly one compiler job")
