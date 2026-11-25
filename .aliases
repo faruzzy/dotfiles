@@ -20,6 +20,8 @@ alias chrome='open -a "Google Chrome"'
 alias chromium='open -a "Google Chrome Canary"'
 alias ch='chrome.fzf h'  # Chrome history (everything.fzf)
 alias f='open -a Finder'
+# Connect to the Neovim in this folder (claudecode.nvim) when exactly one offers it; otherwise a no-op
+alias claude='claude --ide'
 
 # --- File Listing & Searching ---
 alias ls='eza --icons --git --long --header'
