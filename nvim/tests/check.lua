@@ -166,6 +166,18 @@ local function run_checks()
     assert(vim.uv.fs_stat('new/nested/dir/file.txt'), 'file was not written')
   end)
 
+  check('autocmd: external edits reload without focus or cursor events', function()
+    write('external.txt', 'old')
+    local buf = edit('external.txt')
+    -- The reload notification would print into this output
+    local notify = vim.notify
+    vim.notify = function() end
+    write('external.txt', 'changed on disk')
+    local reloaded = vim.wait(3000, function() return vim.api.nvim_buf_get_lines(buf, 0, 1, false)[1] == 'changed on disk' end, 100)
+    vim.notify = notify
+    assert(reloaded, 'buffer still has: ' .. vim.api.nvim_buf_get_lines(buf, 0, 1, false)[1])
+  end)
+
   check('git: <leader>hB reviews the branch against its merge-base, and toggles back', function(skip)
     if not executable('git') then skip('git not installed') end
     local function sh(cmd)

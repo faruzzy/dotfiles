@@ -302,15 +302,19 @@ end, { desc = 'Create jsconfig.json at project root' })
 -- Claude Code edits). Without this, LSP diagnostics stay pinned to the old
 -- buffer content and auto-save can clobber external edits.
 vim.opt.autoread = true
+local function reload_changed_files()
+  if vim.fn.mode() == 'n' and vim.bo.buftype == '' then
+    pcall(vim.cmd.checktime)
+  end
+end
+-- Also polls, since no event fires while focus is in another tmux pane; without it, Claude Code
+-- reads diagnostics for the old buffer content until you switch back to Neovim
+assert(vim.uv.new_timer()):start(1000, 1000, vim.schedule_wrap(reload_changed_files))
 augroup('external_file_reload', {
   {
-    { 'FocusGained', 'BufEnter', 'CursorHold', 'CursorHoldI' },
+    { 'FocusGained', 'BufEnter' },
     pattern = '*',
-    callback = function()
-      if vim.fn.mode() == 'n' and vim.bo.buftype == '' then
-        pcall(vim.cmd.checktime)
-      end
-    end,
+    callback = reload_changed_files,
   },
   {
     'FileChangedShellPost',
