@@ -47,11 +47,6 @@ local servers = {
       indexing = { includedPatterns = { '{bin,exe}/*' } },
     },
   },
-  rust_analyzer = {
-    cmd = { 'rust-analyzer' },
-    filetypes = { 'rust' },
-    root_markers = { 'Cargo.toml', 'rust-project.json' },
-  },
   tailwindcss = require('lsp.servers.tailwindcss'),
   vimls = {
     cmd = { 'vim-language-server', '--stdio' },

@@ -83,10 +83,8 @@ return {
       end
     end
 
-    -- Enable servers (rust_analyzer managed by rustaceanvim)
-    local skip = { 'rust_analyzer' }
-    local to_enable = vim.tbl_filter(function(name) return not vim.tbl_contains(skip, name) end, vim.tbl_keys(servers))
-    vim.lsp.enable(to_enable)
+    -- rust-analyzer isn't listed: rustaceanvim starts it
+    vim.lsp.enable(vim.tbl_keys(servers))
 
     local function sanitize_watched_file_registrations(result)
       for _, reg in ipairs(result and result.registrations or {}) do
