@@ -414,6 +414,8 @@ return {
       end,
       per_filetype = {
         lua = { inherit_defaults = true, 'lazydev' },
+        -- No buffer words in GraphQL schemas
+        graphql = { 'lsp', 'path', 'snippets' },
       },
       providers = {
         cmdline = {
