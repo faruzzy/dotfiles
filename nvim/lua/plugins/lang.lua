@@ -27,12 +27,6 @@ return {
   },
 
   {
-    'jparise/vim-graphql',
-    ft = 'graphql',
-    desc = 'GraphQL syntax highlighting and indentation'
-  },
-
-  {
     'udalov/javap-vim',
     ft = 'java',
     cmd = 'Javap',

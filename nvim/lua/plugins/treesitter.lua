@@ -51,6 +51,7 @@ return {
       }
 
       local treesitter_indent_filetypes = {
+        graphql = true,
         javascriptreact = true,
         typescriptreact = true,
       }

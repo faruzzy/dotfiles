@@ -255,6 +255,23 @@ local function run_checks()
     assert(#clashes == 0, table.concat(clashes, ', '))
   end)
 
+  -- Regression: vim-graphql's indent read regex syntax, which treesitter turns off, so every new
+  -- line drifted right; and an empty block parses as an ERROR (after/queries/graphql/indents.scm)
+  check('indent: GraphQL blocks indent while typing', function()
+    write('gql/schema.graphql', '')
+    edit('gql/schema.graphql')
+    feed('itype Friend {<CR>id: ID!<CR>name: String<Esc>Go<CR>enum Status {<CR>SENT<Esc>'
+      .. 'Go<CR>input NewFriend {<CR>id: ID!<Esc>Go<CR>query Q {<CR>friends {<CR>id<Esc>')
+    local want = {
+      'type Friend {', '  id: ID!', '  name: String', '}', '',
+      'enum Status {', '  SENT', '}', '',
+      'input NewFriend {', '  id: ID!', '}', '',
+      'query Q {', '  friends {', '    id', '  }', '}',
+    }
+    local got = vim.api.nvim_buf_get_lines(0, 0, -1, false)
+    assert(vim.deep_equal(got, want), 'got:\n' .. table.concat(got, '\n'))
+  end)
+
   check('lazy-lock.json is valid JSON', function()
     local path = vim.fn.stdpath('config') .. '/lazy-lock.json'
     local ok, err = pcall(vim.json.decode, table.concat(vim.fn.readfile(path), '\n'))
