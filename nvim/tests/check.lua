@@ -272,6 +272,44 @@ local function run_checks()
     assert(vim.deep_equal(got, want), 'got:\n' .. table.concat(got, '\n'))
   end)
 
+  -- blink's lsp transform_items hides emmet outside markup; it used to hide it for a new root
+  -- element (no JSX yet) and in every stylesheet
+  check('completion: emmet where markup goes, not in JSX {code}', function(skip)
+    if not executable('emmet-language-server') then skip('emmet-language-server not installed') end
+    local cases = {
+      { 'comp.jsx', 'return (\n    <div>\n      ul>li\n    </div>\n  )', 'ul>li', true },
+      { 'comp.tsx', 'return (\n    <div>\n      ul>li\n    </div>\n  )', 'ul>li', true },
+      { 'comp.jsx', 'return (\n    div.box\n  )', 'div.box', true },
+      { 'comp.tsx', 'return (\n    div.box\n  )', 'div.box', true },
+      { 'comp.tsx', 'return <div>{span}</div>', 'span', false },
+      { 's.css', nil, 'm10', true },
+    }
+    local wrong = {}
+    for i, case in ipairs(cases) do
+      local file, body, abbr, want = unpack(case)
+      local path = ('emmet/%d/%s'):format(i, file)
+      write(path, body and ('export function A() {\n  ' .. body .. '\n}') or '.box {\n  m10\n}')
+      local buf = edit(path)
+      wait_client(buf, 'emmet_language_server', 10000)
+      for row, line in ipairs(vim.api.nvim_buf_get_lines(buf, 0, -1, false)) do
+        local col = line:find(abbr, 1, true)
+        if col then vim.api.nvim_win_set_cursor(0, { row, col - 1 + #abbr }) end
+      end
+      vim.cmd('startinsert!')
+      require('blink.cmp').show()
+      vim.wait(5000, function() return #require('blink.cmp.completion.list').items > 0 end, 50)
+      vim.wait(500)
+      local offered = vim.iter(require('blink.cmp.completion.list').items)
+        :any(function(item) return item.client_name == 'emmet_language_server' end)
+      vim.cmd('stopinsert')
+      require('blink.cmp').hide()
+      vim.wait(200) -- let the menu window close before its buffer is wiped
+      if offered ~= want then table.insert(wrong, ('%s %q: emmet %s'):format(file, abbr, offered and 'shown' or 'missing')) end
+      pcall(vim.cmd, 'silent! %bwipeout!')
+    end
+    assert(#wrong == 0, table.concat(wrong, '; '))
+  end)
+
   check('lazy-lock.json is valid JSON', function()
     local path = vim.fn.stdpath('config') .. '/lazy-lock.json'
     local ok, err = pcall(vim.json.decode, table.concat(vim.fn.readfile(path), '\n'))

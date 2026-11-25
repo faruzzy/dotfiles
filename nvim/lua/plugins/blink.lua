@@ -455,6 +455,7 @@ return {
             -- Strategy: walk up the tree and find the *nearest* JSX-related ancestor.
             -- If it's jsx_expression we're in JS code — suppress emmet.
             -- If it's any other jsx_* node we're in markup — allow emmet.
+            -- Directly inside `return ( … )` with no JSX yet, a new root element is being typed — allow.
             -- If no JSX ancestor is found, check the filetype as a fallback.
             local in_markup = false
             local success, node = pcall(vim.treesitter.get_node)
@@ -468,12 +469,15 @@ return {
                 elseif ntype:match('^jsx_') or ntype == 'html' then
                   in_markup = true
                   break
+                elseif ntype == 'parenthesized_expression' and current:parent() and current:parent():type() == 'return_statement' then
+                  in_markup = true
+                  break
                 end
                 current = current:parent()
               end
-              -- If no jsx ancestor found, allow emmet for HTML files
+              -- If no jsx ancestor found, allow emmet for HTML and stylesheets
               if current == nil then
-                in_markup = vim.bo.filetype == 'html'
+                in_markup = vim.tbl_contains({ 'html', 'css', 'scss', 'less', 'sass' }, vim.bo.filetype)
               end
             end
 
