@@ -2,7 +2,8 @@
 # nvim-here: print the RPC socket of the Neovim you're working with, for `nvim --server <socket>`.
 # Used by the `neovim` agent skill (ai-dotfiles) so an agent in a tmux pane can reach the editor.
 #
-# Every Neovim listens on $TMPDIR/nvim.$USER/*/nvim.<pid>.0 by default. Picks, in order:
+# Every Neovim listens on $TMPDIR/nvim.$USER/*/nvim.<pid>.0, or nvim.<random>/nvim.<pid>.0 when
+# nvim.$USER isn't private (anything but 0700); bin/ws looks in the same places. Picks, in order:
 #   1. the Neovim running in the same tmux window as the caller ($TMUX_PANE)
 #   2. the Neovim whose working directory is in the caller's git repository (or directory)
 # Exits 2 when several match, listing them on stderr; 1 when none is running.
@@ -12,8 +13,8 @@
 
 set -euo pipefail
 
-sock_dir="${TMPDIR:-/tmp/}"
-sock_dir="${sock_dir%/}/nvim.${USER:-$(id -un)}"
+tmp="${TMPDIR:-/tmp/}"
+tmp="${tmp%/}"
 
 # Answers a Lua expression from a Neovim; a hung one doesn't hang the caller. --headless and no
 # stdin: when the connection fails in a terminal, a plain client opens a full Neovim instead
@@ -22,7 +23,7 @@ ask() { perl -e 'alarm 2; exec @ARGV' nvim --headless --server "$1" --remote-exp
 # Editors as "pid socket". Skips sockets of exited Neovims, and headless ones (no UI attached):
 # those an agent starts itself, e.g. a test run, descend from its own pane
 candidates=()
-for sock in "$sock_dir"/*/nvim.*.0; do
+for sock in "$tmp"/nvim*/*/nvim.*.0 "$tmp"/nvim*/nvim.*.0; do
   [[ -S "$sock" ]] || continue
   pid=${sock##*/nvim.}
   pid=${pid%.0}
