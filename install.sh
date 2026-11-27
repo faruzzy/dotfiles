@@ -117,10 +117,11 @@ install_homebrew() {
         fi
 
         log_info "Updating Homebrew..."
-        brew update
-        brew upgrade
-        brew upgrade --cask --greedy
-        log_success "Homebrew updated"
+        if brew update && brew upgrade && brew upgrade --cask --greedy; then
+            log_success "Homebrew updated"
+        else
+            log_warning "Homebrew update or upgrade failed"
+        fi
         return 0
     fi
 
@@ -601,7 +602,7 @@ EOF
     plutil -lint -s "$plist" || return 1
     # Reload so a changed plist takes effect
     launchctl bootout "gui/$(id -u)/$label" 2>/dev/null || true
-    launchctl bootstrap "gui/$(id -u)" "$plist"
+    launchctl bootstrap "gui/$(id -u)" "$plist" || { log_warning "Failed to load the ws review job ($label)"; return 0; }
     log_success "Scheduled ws review on weekdays at 6:30 (log: ~/Library/Logs/ws-review.log)"
 }
 
