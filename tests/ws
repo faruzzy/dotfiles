@@ -156,6 +156,11 @@ start_unsaved_nvim =home: "$wt/feat/file"
 ok "done: refuses when another session's Neovim has unsaved worktree files" "refuses '$wt/feat' 'unsaved buffers from'"
 quit_nvim
 
+tm new-window -n hang -t =home: "python3 -c \"import socket,os,time; s=socket.socket(socket.AF_UNIX); os.makedirs('$NVDIR/hang', exist_ok=True); s.bind('$NVDIR/hang/nvim.%d.0' % os.getpid()); s.listen(); time.sleep(600)\""
+sleep 1
+ok "done: refuses when another session's Neovim doesn't answer" "refuses '$wt/feat' 'answering'"
+tm kill-window -t =home:hang; rm -rf "$NVDIR/hang"
+
 # --- ws done: removal, run inside the workspace's own session with a client attached to it
 ( sleep 20 | script -q /dev/null tmux -S "$SOCK" attach -t =work/app/feat >/dev/null 2>&1 ) &
 wait_for '[ "$(tm list-clients -F "#{session_name}")" = work/app/feat ]'

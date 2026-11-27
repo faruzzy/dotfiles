@@ -546,7 +546,9 @@ def check_neovims(name, path)
     if inside.(pid)
       die("Neovim in #{name} isn't answering (a prompt open?); close it first") unless modified
       die("Neovim in #{name} has #{modified.size} unsaved buffer(s)") if modified.any?
-    elsif modified&.any? { _1.start_with?("#{real}/") }
+    elsif modified.nil?
+      die("Neovim (pid #{pid}) isn't answering (a prompt open?), so its unsaved buffers are unknown; close it first")
+    elsif modified.any? { _1.start_with?("#{real}/") }
       die("Neovim (pid #{pid}) has unsaved buffers from #{path}")
     end
   end
