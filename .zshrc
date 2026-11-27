@@ -54,7 +54,7 @@ fi
 # Starship prompt
 eval "$(starship init zsh)"
 
-# Zsh options (equivalent to your .bash_options)
+# Zsh options
 setopt AUTO_CD              # Automatically cd into typed directory names
 setopt GLOB_DOTS            # Include dotfiles in globbing
 setopt HIST_IGNORE_DUPS     # Don't record duplicates in history

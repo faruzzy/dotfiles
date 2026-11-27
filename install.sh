@@ -478,10 +478,6 @@ setup_dotfiles() {
 
     local dotfiles=(
         ".aliases"
-        ".bash_options"
-        ".bash_profile"
-        ".bash_prompt"
-        ".bashrc"
         ".eslintrc"
         ".functions.zsh"
         ".gitconfig"
@@ -627,15 +623,6 @@ setup_aerospace() {
     fi
 }
 
-# Download git-prompt if needed
-setup_git_prompt() {
-    if [[ ! -e "$HOME/.git-prompt.sh" ]]; then
-        log_info "Downloading git-prompt..."
-        curl -fsSL https://raw.githubusercontent.com/git/git/master/contrib/completion/git-prompt.sh -o "$HOME/.git-prompt.sh" || log_warning "Failed to download git-prompt.sh"
-        log_success "git-prompt downloaded"
-    fi
-}
-
 # Main installation flow
 main() {
     log_info "Starting macOS development environment setup..."
@@ -671,7 +658,6 @@ main() {
     setup_aerospace
     setup_antidote
     setup_atuin
-    setup_git_prompt
 
     # Apply macOS system preferences
     if [[ -f "$SCRIPT_DIR/.osx" ]]; then
