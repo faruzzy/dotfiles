@@ -14,9 +14,14 @@ sudo -v
 # Keep-alive: update existing `sudo` time stamp until `.osx` has finished
 while true; do sudo -n true; sleep 60; kill -0 "$$" || exit; done 2>/dev/null &
 
-# Only set the computer name on a personal machine — skip on work/shared devices
-read -r -p "Is this a personal machine? Set computer name to \"faruzzy\"? [y/N] " personal_machine
-if [[ "$personal_machine" =~ ^[Yy]$ ]]; then
+# install.sh passes WORK_COMPUTER from its own prompt; ask only when run on its own
+if [[ -z "${WORK_COMPUTER:-}" ]]; then
+    read -r -p "Is this a work computer? [y/N] " answer
+    if [[ "$answer" =~ ^[Yy]$ ]]; then WORK_COMPUTER=1; else WORK_COMPUTER=0; fi
+fi
+
+# Only set the computer name on the personal machine
+if [[ "$WORK_COMPUTER" == 0 ]]; then
     sudo scutil --set ComputerName "faruzzy"
     sudo scutil --set HostName "faruzzy"
     sudo scutil --set LocalHostName "faruzzy"

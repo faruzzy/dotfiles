@@ -469,11 +469,6 @@ setup_git_work_identity() {
     local work_gitconfig="$HOME/.gitconfig-work"
     local current_email=""
 
-    if ! ask_yes_no "Is this a work computer?" "n"; then
-        log_info "Skipping work git identity setup"
-        return 0
-    fi
-
     if [[ -f "$work_gitconfig" ]]; then
         current_email="$(git config --file "$work_gitconfig" user.email 2>/dev/null || true)"
     fi
@@ -597,7 +592,12 @@ main() {
 
     # Dotfiles setup
     setup_dotfiles
-    setup_git_work_identity
+    if ask_yes_no "Is this a work computer?" "n"; then
+        WORK_COMPUTER=1
+        setup_git_work_identity
+    else
+        WORK_COMPUTER=0
+    fi
     setup_ws_review
     setup_repo_git_hooks
     setup_aerospace
@@ -607,7 +607,7 @@ main() {
     # Apply macOS system preferences
     if [[ -f "$SCRIPT_DIR/.osx" ]]; then
         log_info "Applying macOS system preferences..."
-        bash "$SCRIPT_DIR/.osx" || log_warning "Failed to apply macOS preferences"
+        WORK_COMPUTER="$WORK_COMPUTER" bash "$SCRIPT_DIR/.osx" || log_warning "Failed to apply macOS preferences"
         log_success "macOS system preferences applied"
     fi
 
