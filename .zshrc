@@ -4,11 +4,14 @@
 
 # Initialize completion system (optimized) — must run before plugins that use compdef
 autoload -Uz compinit
-# Only regenerate .zcompdump if it's older than 24h or doesn't exist
+setopt EXTENDED_GLOB        # Extended globbing patterns; the (#q) check below needs it
+# Only regenerate .zcompdump if it's older than 24h or doesn't exist. compinit leaves an unchanged
+# dump untouched, so touch it or the full check would run on every startup.
 if [[ -n ~/.zcompdump(#qN.mh-24) ]]; then
     compinit -C
 else
     compinit
+    touch ~/.zcompdump
 fi
 
 # --- Antidote Plugin Manager ---
@@ -54,7 +57,6 @@ eval "$(starship init zsh)"
 # Zsh options (equivalent to your .bash_options)
 setopt AUTO_CD              # Automatically cd into typed directory names
 setopt GLOB_DOTS            # Include dotfiles in globbing
-setopt EXTENDED_GLOB        # Extended globbing patterns
 setopt HIST_IGNORE_DUPS     # Don't record duplicates in history
 setopt HIST_IGNORE_ALL_DUPS # Remove older duplicate entries from history
 setopt HIST_REDUCE_BLANKS   # Remove superfluous blanks from history
