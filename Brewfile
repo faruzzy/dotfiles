@@ -20,6 +20,7 @@ brew "fzf"
 # --- Git tools ---
 brew "gh"
 brew "git-delta"
+brew "git-lfs"
 brew "tig"
 
 # --- System utilities ---
