@@ -122,9 +122,6 @@ command -v eza > /dev/null && export EZA_COLORS="di=1;34:ln=1;36:so=32:pi=33:ex=
 # Bat configuration
 # export BAT_THEME="Sublime Snazzy"
 
-# Ripgrep configuration
-export RIPGREP_CONFIG_PATH="$HOME/.ripgreprc"
-
 # Additional helpful exports
 export HOMEBREW_NO_ANALYTICS=1
 export HOMEBREW_NO_AUTO_UPDATE=1

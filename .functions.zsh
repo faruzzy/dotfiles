@@ -90,10 +90,6 @@ gfzf() {
 	export BAT_PAGER='less -S -R -M -c -i'
 	export DELTA_PAGER='less -S -R -M -c -i'
 
-	# Temporarily unset ripgrep config to avoid issues
-	local old_ripgrep_config="$RIPGREP_CONFIG_PATH"
-	unset RIPGREP_CONFIG_PATH
-
 	# Merge commits are hidden by default; alt-m reloads the list with them toggled.
 	# The two commands are passed to fzf as env vars so reload can eval them.
 	local format="%C(bold blue)%h%C(reset) %C(dim white)%an%C(reset)%C(bold yellow)%d%C(reset) %C(white)%s%C(reset) %C(bold green)(%ar)%C(reset)"
@@ -220,13 +216,6 @@ gfzf() {
 			FZFEOF
 		" \
 		--preview-window='right:60%:wrap'
-
-	local fzf_exit=$?
-
-	# Restore ripgrep config
-	[[ -n "$old_ripgrep_config" ]] && export RIPGREP_CONFIG_PATH="$old_ripgrep_config"
-
-	return $fzf_exit
 }
 
 # fstash - easier way to deal with stashes
