@@ -34,7 +34,6 @@ brew "z"
 # --- Programming languages and runtimes ---
 brew "mise"
 brew "python"
-brew "python@3.9"
 brew "lua"
 brew "luajit-openresty"
 brew "perl"

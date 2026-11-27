@@ -491,8 +491,6 @@ setup_dotfiles() {
         ".bash_prompt"
         ".bashrc"
         ".eslintrc"
-        ".exports"
-        ".functions"
         ".functions.zsh"
         ".gitconfig"
         ".gitignore_global"
