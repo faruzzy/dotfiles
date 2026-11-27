@@ -59,7 +59,7 @@ opt.autoindent = true -- Auto-indent new lines
 opt.guicursor = 'n-v-c:block,i-ci-ve:ver25,r-cr:hor20,o:hor50' -- Custom cursor shapes
 opt.conceallevel = 2 -- Hide concealable text (e.g. class attributes)
 opt.fillchars = { eob = ' ', vert = '▏' } -- Clean fill characters
-opt.winborder = MY_CONFIG.border_style -- Default border for every float (0.11+); no per-call border needed
+opt.winborder = 'rounded' -- Default border for every float (0.11+); no per-call border needed
 
 vim.diagnostic.config({
   severity_sort = true,

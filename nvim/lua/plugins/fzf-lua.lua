@@ -18,7 +18,7 @@ return {
     opts = {
       winopts = {
         backdrop = 100,
-        border = MY_CONFIG.border_style,
+        border = 'rounded',
         preview = { border = 'border-double', wrap = 'wrap', flip_columns = 160 },
       },
       fzf_opts = {
