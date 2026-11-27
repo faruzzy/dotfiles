@@ -391,15 +391,6 @@ install_tmux_plugins() {
         git clone --depth 1 --branch yaml https://github.com/catppuccin/alacritty.git "$HOME/.config/alacritty/catppuccin" || log_warning "Failed to clone Catppuccin theme"
     fi
 
-    # Install tmuxwords.rb for fzf-based tmux word completion
-    if [[ ! -x /usr/local/bin/tmuxwords.rb ]]; then
-        if sudo curl -o /usr/local/bin/tmuxwords.rb https://raw.githubusercontent.com/kiooss/dotmagic/master/bin/tmuxwords.rb; then
-            sudo chmod +x /usr/local/bin/tmuxwords.rb || log_warning "Failed to make tmuxwords.rb executable"
-        else
-            log_warning "Failed to install tmuxwords.rb"
-        fi
-    fi
-
     log_success "tmux plugins and themes installed"
 }
 
