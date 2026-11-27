@@ -529,7 +529,7 @@ $(for day in 1 2 3 4 5; do printf '        <dict><key>Weekday</key><integer>%s</
 </dict>
 </plist>
 EOF
-    plutil -lint -s "$plist" || return 1
+    plutil -lint -s "$plist" || { log_warning "Generated an invalid plist: $plist"; return 0; }
     # Reload so a changed plist takes effect
     launchctl bootout "gui/$(id -u)/$label" 2>/dev/null || true
     launchctl bootstrap "gui/$(id -u)" "$plist" || { log_warning "Failed to load the ws review job ($label)"; return 0; }
