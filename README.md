@@ -38,11 +38,14 @@ The `install.sh` script automates the setup process. It is idempotent and Bash 3
 
 When it finishes, it lists any warnings and exits nonzero if there were some.
 
-To start the installation, run the following command:
+To start the installation, clone the repository to `~/github/dotfiles` (the configs expect it there) and run the script from the clone:
 
 ```bash
-/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/faruzzy/dotfiles/master/install.sh)"
+git clone https://github.com/faruzzy/dotfiles.git ~/github/dotfiles
+~/github/dotfiles/install.sh
 ```
+
+On a fresh Mac, the first `git` command asks to install the Xcode Command Line Tools; run the clone again once they're installed.
 
 ## Neovim Configuration
 
