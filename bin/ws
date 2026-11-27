@@ -664,7 +664,7 @@ end
 # The tmux hook on every session switch (.tmux.conf): moves the repo's dev server to the workspace
 # `session` belongs to. `client` is the tmux client that switched, nil when run by hand
 def cmd_serve_follow(session, client = nil)
-  return if File.exist?(SERVE_PAUSED)
+  return if File.exist?(SERVE_PAUSED) || !File.file?(SERVE_CONFIG)
 
   ws = workspaces.find { _1[:name] == session } or return
   config = begin
