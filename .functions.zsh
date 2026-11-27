@@ -55,7 +55,8 @@
 #   - Clipboard integration
 #   - GitHub integration
 #
-gfzf() {
+# The subshell body keeps pipefail, the cd and the pager exports out of the calling shell
+gfzf() (
 	set -o pipefail
 
 	cd -- "${GIT_PREFIX:-.}" || return 1
@@ -216,7 +217,7 @@ gfzf() {
 			FZFEOF
 		" \
 		--preview-window='right:60%:wrap'
-}
+)
 
 # fstash - easier way to deal with stashes
 # type fstash to get a list of your stashes
