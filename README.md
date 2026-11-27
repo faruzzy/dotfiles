@@ -29,12 +29,11 @@ The `install.sh` script automates the setup process. It is idempotent and Bash 3
 4.  Install global Node (LTS) and Java through [mise](https://mise.jdx.dev/), plus global npm packages.
 5.  Install Codex CLI.
 6.  Install tmux plugins and set up [everything.fzf](https://github.com/junegunn/everything.fzf).
-7.  Install VS Code extensions.
-8.  Create symbolic links for the dotfiles in this repository.
-9.  Optionally set up a work Git identity for repos under `~/github/work`.
-10. Start or reload AeroSpace after its config is linked.
-11. Set up Antidote and Atuin.
-12. Apply macOS system preferences.
+7.  Create symbolic links for the dotfiles in this repository.
+8.  Optionally set up a work Git identity for repos under `~/github/work`.
+9.  Start or reload AeroSpace after its config is linked.
+10. Set up Antidote and Atuin.
+11. Apply macOS system preferences.
 
 When it finishes, it lists any warnings and exits nonzero if there were some.
 

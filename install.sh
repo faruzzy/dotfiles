@@ -394,58 +394,6 @@ install_tmux_plugins() {
     log_success "tmux plugins and themes installed"
 }
 
-# Configure VS Code
-configure_vscode() {
-    log_info "Configuring Visual Studio Code extensions..."
-
-    # Make the bundled VS Code CLI available in this shell session when present.
-    if [[ -d "/Applications/Visual Studio Code.app/Contents/Resources/app/bin" ]]; then
-        export PATH="/Applications/Visual Studio Code.app/Contents/Resources/app/bin:$PATH"
-    fi
-
-    if ! command_exists code; then
-        log_info "VS Code 'code' command not found. Attempting to install Visual Studio Code..."
-        brew install --cask visual-studio-code || log_warning "Failed to install Visual Studio Code"
-
-        if [[ -d "/Applications/Visual Studio Code.app/Contents/Resources/app/bin" ]]; then
-            export PATH="/Applications/Visual Studio Code.app/Contents/Resources/app/bin:$PATH"
-        fi
-    fi
-
-    if ! command_exists code; then
-        log_warning "VS Code 'code' command still not found after retry. Skipping extension installation."
-        return 0
-    fi
-
-    local vscode_extensions=(
-        dbaeumer.vscode-eslint
-        ms-vscode.vscode-typescript-next # Replaced msjsdiag.debugger-for-chrome with a more general tool
-        github.github-vscode-theme
-        graphql.vscode-graphql
-        ms-vsliveshare.vsliveshare
-        davidanson.vscode-markdownlint
-        pkief.material-icon-theme
-        christian-kohler.path-intellisense
-        esbenp.prettier-vscode
-        prisma.prisma
-        vscodevim.vim
-        ms-python.python
-        nrwl.angular-console # Added back from original list
-        wmaurer.vscode-jumpy # Added back from original list
-    )
-
-    local installed_extensions
-    installed_extensions="$(code --list-extensions 2>/dev/null || true)"
-
-    for extension in "${vscode_extensions[@]}"; do
-        if ! echo "$installed_extensions" | grep -qi "^${extension}$"; then
-            code --install-extension "$extension" || log_warning "Failed to install $extension"
-        fi
-    done
-
-    log_success "VS Code configured"
-}
-
 # Setup dotfiles
 setup_dotfiles() {
     log_info "Setting up dotfiles symbolic links..."
@@ -646,9 +594,6 @@ main() {
     # Shell and terminal setup
     install_tmux_plugins
     setup_everything_fzf
-
-    # Application configuration
-    configure_vscode
 
     # Dotfiles setup
     setup_dotfiles
