@@ -13,6 +13,16 @@ trap 'rm -rf "$tmp"' EXIT
 # Own state dir: no session restore or save, no shada or undo files mixed with the real ones
 export XDG_STATE_HOME="$tmp/state"
 export CHECK_FILTER="${1:-}"
+
+# Test this checkout's config, not whichever one ~/.config/nvim links to (e.g. from a worktree).
+# The other ~/.config entries stay visible to the tools nvim starts (git, mise…)
+config="${XDG_CONFIG_HOME:-$HOME/.config}"
+mkdir "$tmp/config"
+for entry in "$config"/*; do
+  [[ "$(basename "$entry")" == nvim ]] || ln -s "$entry" "$tmp/config/"
+done
+ln -s "$(dirname "$here")" "$tmp/config/nvim"
+export XDG_CONFIG_HOME="$tmp/config"
 cd "$tmp"
 
 # The first file opened at startup gets its own check: it used to miss its FileType
