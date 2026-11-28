@@ -248,17 +248,21 @@ local function run_checks()
   end)
 
   -- CLAUDE.md: a mapping that is also the prefix of others waits 'timeoutlen' before firing
-  check('keymaps: no normal-mode <Leader> mapping is the prefix of another', function()
-    local leader = vim.g.mapleader or '\\'
+  -- Includes the buffer-local maps a language server adds. Operators are exempt: after < or gc,
+  -- Vim waits for a motion anyway
+  check('keymaps: no normal-mode mapping is the prefix of another', function()
+    local operators = { ['<lt>'] = true, ['>'] = true, ['='] = true, ['gc'] = true }
+    local buf = edit('first.lua')
+    wait_client(buf, 'lua_ls', 15000)
     local lhss = {}
-    for _, map in ipairs(vim.api.nvim_get_keymap('n')) do
-      if vim.startswith(map.lhs, leader) and #map.lhs > #leader then lhss[map.lhs] = true end
+    for _, map in ipairs(vim.list_extend(vim.api.nvim_get_keymap('n'), vim.api.nvim_buf_get_keymap(buf, 'n'))) do
+      if not operators[map.lhs] then lhss[map.lhs] = true end
     end
     local clashes = {}
     for lhs in pairs(lhss) do
       for other in pairs(lhss) do
         if other ~= lhs and vim.startswith(other, lhs) then
-          table.insert(clashes, vim.fn.keytrans(lhs) .. ' < ' .. vim.fn.keytrans(other))
+          table.insert(clashes, lhs .. ' < ' .. other)
           break
         end
       end

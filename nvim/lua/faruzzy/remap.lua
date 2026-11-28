@@ -1,5 +1,11 @@
 local map = require('utils').map
 
+-- gr is fzf-lua's references, and these defaults would make it wait 'timeoutlen'. Rename,
+-- code action and implementations have their own keys (lua/lsp/on_attach.lua, fzf-lua)
+for _, lhs in ipairs({ 'gra', 'gri', 'grn', 'grr', 'grt', 'grx' }) do
+  pcall(vim.keymap.del, 'n', lhs)
+end
+
 -- Switch to last buffer
 map('n', '<Tab>', '<cmd>b#<cr>', { desc = 'Switch to last buffer' })
 
