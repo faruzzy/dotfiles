@@ -12,7 +12,9 @@ local function out(line) io.stdout:write(line .. '\n') end
 ---@param name string
 ---@param fn fun(skip: fun(reason: string))
 local function check(name, fn)
-  if filter ~= '' and not name:find(filter, 1, true) then return end
+  if filter ~= '' and not name:find(filter, 1, true) then
+    return
+  end
   local skipped
   local ok, err = pcall(fn, function(reason)
     skipped = reason
@@ -46,15 +48,15 @@ local function wait_client(buf, name, timeout)
   return vim.wait(timeout, function() return #vim.lsp.get_clients({ bufnr = buf, name = name }) > 0 end, 100)
 end
 
-local function feed(keys)
-  vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes(keys, true, false, true), 'mx', false)
-end
+local function feed(keys) vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes(keys, true, false, true), 'mx', false) end
 
 local function has_injection(buf, lang)
   local parser = vim.treesitter.get_parser(buf)
   parser:parse(true)
   for _, child in pairs(parser:children()) do
-    if child:lang() == lang and #child:trees() > 0 then return true end
+    if child:lang() == lang and #child:trees() > 0 then
+      return true
+    end
   end
   return false
 end
@@ -83,13 +85,17 @@ local function run_checks()
   end)
 
   check('lsp: lua_ls attaches', function(skip)
-    if not executable('lua-language-server') then skip('lua-language-server not installed') end
+    if not executable('lua-language-server') then
+      skip('lua-language-server not installed')
+    end
     local buf = edit('first.lua')
     assert(wait_client(buf, 'lua_ls', 15000), 'lua_ls did not attach')
   end)
 
   check('lsp: tsgo attaches to a loose .ts file', function(skip)
-    if not executable('tsgo') then skip('tsgo not on PATH') end
+    if not executable('tsgo') then
+      skip('tsgo not on PATH')
+    end
     write('ts/app.ts', 'export const answer: number = 42')
     local buf = edit('ts/app.ts')
     assert(wait_client(buf, 'tsgo', 20000), 'tsgo did not attach')
@@ -97,7 +103,9 @@ local function run_checks()
 
   -- Ruby LSP only indexes *.rb by default; scripts are matched by their shebang
   check('lsp: ruby_lsp attaches to an extensionless ruby script', function(skip)
-    if not executable('ruby-lsp') then skip('ruby-lsp not installed') end
+    if not executable('ruby-lsp') then
+      skip('ruby-lsp not installed')
+    end
     write('bin/tool', { '#!/usr/bin/env ruby', 'puts "hi"' })
     local buf = edit('bin/tool')
     assert(vim.bo[buf].filetype == 'ruby', 'filetype is ' .. vim.bo[buf].filetype)
@@ -106,7 +114,9 @@ local function run_checks()
   end)
 
   check('treesitter: SQL inside Prisma raw queries (ts, tsx, js)', function(skip)
-    if not pcall(vim.treesitter.language.add, 'sql') then skip('sql parser not installed') end
+    if not pcall(vim.treesitter.language.add, 'sql') then
+      skip('sql parser not installed')
+    end
     local ts = {
       'const rows = await prisma.$queryRaw<{ id: number }[]>`SELECT id FROM users`;',
       'await prisma.$executeRawUnsafe("DELETE FROM users");',
@@ -156,7 +166,9 @@ local function run_checks()
   check('dap: JavaScript adapter points at an installed js-debug-adapter', function(skip)
     local adapter = require('dap').adapters['pwa-node']
     assert(adapter, 'no pwa-node adapter')
-    if executable(adapter.executable.command) then return end
+    if executable(adapter.executable.command) then
+      return
+    end
     assert(
       not require('mason-registry').is_installed('js-debug-adapter'),
       'js-debug-adapter is installed but the adapter runs ' .. adapter.executable.command
@@ -184,7 +196,9 @@ local function run_checks()
   end)
 
   check('git: <leader>hB reviews the branch against its merge-base, and toggles back', function(skip)
-    if not executable('git') then skip('git not installed') end
+    if not executable('git') then
+      skip('git not installed')
+    end
     local function sh(cmd)
       local result = vim.system({ 'sh', '-c', cmd }, { cwd = 'review', text = true }):wait()
       assert(result.code == 0, cmd .. ': ' .. result.stderr)
@@ -213,16 +227,25 @@ local function run_checks()
 
     feed(',hB')
     -- gitsigns stores the new base only after re-diffing every buffer
-    assert(vim.wait(5000, function() return hunks() == 0 and not require('gitsigns.config').config.base end, 50),
-      'still comparing against the merge-base')
+    assert(
+      vim.wait(5000, function() return hunks() == 0 and not require('gitsigns.config').config.base end, 50),
+      'still comparing against the merge-base'
+    )
     vim.notify = notify
     vim.cmd('cclose')
   end)
 
   check('git: <leader>dv opens a diffview of the changes and closes it again', function(skip)
-    if not executable('git') then skip('git not installed') end
+    if not executable('git') then
+      skip('git not installed')
+    end
     write('dv/a.txt', 'one')
-    local result = vim.system({ 'sh', '-c', 'git init -q && git add . && git -c user.name=t -c user.email=t@t commit -qm base && echo two >> a.txt' }, { cwd = 'dv' }):wait()
+    local result = vim
+      .system(
+        { 'sh', '-c', 'git init -q && git add . && git -c user.name=t -c user.email=t@t commit -qm base && echo two >> a.txt' },
+        { cwd = 'dv' }
+      )
+      :wait()
     assert(result.code == 0, 'repo setup failed')
     edit('dv/a.txt')
     vim.cmd.lcd('dv')
@@ -245,7 +268,9 @@ local function run_checks()
     vim.api.nvim_win_set_cursor(0, { 1, 0 })
     for _ = 1, 5 do
       local word, kind = unpack(vim.fn.spellbadword())
-      if word == '' then break end
+      if word == '' then
+        break
+      end
       table.insert(flagged, word .. ' (' .. kind .. ')')
       vim.cmd('normal! ' .. #word .. 'l')
     end
@@ -261,7 +286,9 @@ local function run_checks()
     wait_client(buf, 'lua_ls', 15000)
     local lhss = {}
     for _, map in ipairs(vim.list_extend(vim.api.nvim_get_keymap('n'), vim.api.nvim_buf_get_keymap(buf, 'n'))) do
-      if not operators[map.lhs] then lhss[map.lhs] = true end
+      if not operators[map.lhs] then
+        lhss[map.lhs] = true
+      end
     end
     local clashes = {}
     for lhs in pairs(lhss) do
@@ -292,7 +319,9 @@ local function run_checks()
   -- Without lsp_format = 'last' on conform's "_" entry, its trims count as formatters and the
   -- 'fallback' language server never formats filetypes that have no formatter of their own
   check('format: language server formats filetypes conform has no formatter for', function(skip)
-    if not executable('clangd') then skip('clangd not installed') end
+    if not executable('clangd') then
+      skip('clangd not installed')
+    end
     write('fmt/a.c', 'int main(){int x=1;return x;}  ')
     local buf = edit('fmt/a.c')
     assert(wait_client(buf, 'clangd', 10000), 'clangd did not attach')
@@ -306,13 +335,29 @@ local function run_checks()
   check('indent: GraphQL blocks indent while typing', function()
     write('gql/schema.graphql', '')
     edit('gql/schema.graphql')
-    feed('itype Friend {<CR>id: ID!<CR>name: String<Esc>Go<CR>enum Status {<CR>SENT<Esc>'
-      .. 'Go<CR>input NewFriend {<CR>id: ID!<Esc>Go<CR>query Q {<CR>friends {<CR>id<Esc>')
+    feed(
+      'itype Friend {<CR>id: ID!<CR>name: String<Esc>Go<CR>enum Status {<CR>SENT<Esc>'
+        .. 'Go<CR>input NewFriend {<CR>id: ID!<Esc>Go<CR>query Q {<CR>friends {<CR>id<Esc>'
+    )
     local want = {
-      'type Friend {', '  id: ID!', '  name: String', '}', '',
-      'enum Status {', '  SENT', '}', '',
-      'input NewFriend {', '  id: ID!', '}', '',
-      'query Q {', '  friends {', '    id', '  }', '}',
+      'type Friend {',
+      '  id: ID!',
+      '  name: String',
+      '}',
+      '',
+      'enum Status {',
+      '  SENT',
+      '}',
+      '',
+      'input NewFriend {',
+      '  id: ID!',
+      '}',
+      '',
+      'query Q {',
+      '  friends {',
+      '    id',
+      '  }',
+      '}',
     }
     local got = vim.api.nvim_buf_get_lines(0, 0, -1, false)
     assert(vim.deep_equal(got, want), 'got:\n' .. table.concat(got, '\n'))
@@ -321,7 +366,9 @@ local function run_checks()
   -- blink's lsp transform_items hides emmet outside markup; it used to hide it for a new root
   -- element (no JSX yet) and in every stylesheet
   check('completion: emmet where markup goes, not in JSX {code}', function(skip)
-    if not executable('emmet-language-server') then skip('emmet-language-server not installed') end
+    if not executable('emmet-language-server') then
+      skip('emmet-language-server not installed')
+    end
     local cases = {
       { 'comp.jsx', 'return (\n    <div>\n      ul>li\n    </div>\n  )', 'ul>li', true },
       { 'comp.tsx', 'return (\n    <div>\n      ul>li\n    </div>\n  )', 'ul>li', true },
@@ -339,18 +386,23 @@ local function run_checks()
       wait_client(buf, 'emmet_language_server', 10000)
       for row, line in ipairs(vim.api.nvim_buf_get_lines(buf, 0, -1, false)) do
         local col = line:find(abbr, 1, true)
-        if col then vim.api.nvim_win_set_cursor(0, { row, col - 1 + #abbr }) end
+        if col then
+          vim.api.nvim_win_set_cursor(0, { row, col - 1 + #abbr })
+        end
       end
       vim.cmd('startinsert!')
       require('blink.cmp').show()
       vim.wait(5000, function() return #require('blink.cmp.completion.list').items > 0 end, 50)
       vim.wait(500)
-      local offered = vim.iter(require('blink.cmp.completion.list').items)
+      local offered = vim
+        .iter(require('blink.cmp.completion.list').items)
         :any(function(item) return item.client_name == 'emmet_language_server' end)
       vim.cmd('stopinsert')
       require('blink.cmp').hide()
       vim.wait(200) -- let the menu window close before its buffer is wiped
-      if offered ~= want then table.insert(wrong, ('%s %q: emmet %s'):format(file, abbr, offered and 'shown' or 'missing')) end
+      if offered ~= want then
+        table.insert(wrong, ('%s %q: emmet %s'):format(file, abbr, offered and 'shown' or 'missing'))
+      end
       pcall(vim.cmd, 'silent! %bwipeout!')
     end
     assert(#wrong == 0, table.concat(wrong, '; '))
@@ -362,19 +414,26 @@ local function run_checks()
     local unknown = {}
     for id, provider in pairs(providers) do
       for _, fallback in ipairs(type(provider.fallbacks) == 'table' and provider.fallbacks or {}) do
-        if not providers[fallback] then table.insert(unknown, id .. ' -> ' .. fallback) end
+        if not providers[fallback] then
+          table.insert(unknown, id .. ' -> ' .. fallback)
+        end
       end
     end
     assert(#unknown == 0, 'unknown: ' .. table.concat(unknown, ', '))
   end)
 
   check('lsp: lua_ls ignores unused _-prefixed locals', function(skip)
-    if not executable('lua-language-server') then skip('lua-language-server not installed') end
+    if not executable('lua-language-server') then
+      skip('lua-language-server not installed')
+    end
     write('luals/u.lua', { 'local _x = 1', 'local y = 1' })
     local buf = edit('luals/u.lua')
     assert(wait_client(buf, 'lua_ls', 15000), 'lua_ls did not attach')
     local unused = function()
-      return vim.tbl_map(function(d) return d.lnum + 1 end, vim.tbl_filter(function(d) return d.code == 'unused-local' end, vim.diagnostic.get(buf)))
+      return vim.tbl_map(
+        function(d) return d.lnum + 1 end,
+        vim.tbl_filter(function(d) return d.code == 'unused-local' end, vim.diagnostic.get(buf))
+      )
     end
     assert(vim.wait(15000, function() return #unused() > 0 end, 100), 'no unused-local diagnostics at all')
     assert(vim.deep_equal(unused(), { 2 }), 'unused-local on lines ' .. table.concat(unused(), ', '))
