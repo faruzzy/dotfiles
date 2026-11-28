@@ -356,6 +356,18 @@ local function run_checks()
     assert(#wrong == 0, table.concat(wrong, '; '))
   end)
 
+  -- blink matches fallbacks against provider ids and silently drops any other name
+  check('completion: every blink fallback names a provider', function()
+    local providers = require('blink.cmp.config').sources.providers
+    local unknown = {}
+    for id, provider in pairs(providers) do
+      for _, fallback in ipairs(type(provider.fallbacks) == 'table' and provider.fallbacks or {}) do
+        if not providers[fallback] then table.insert(unknown, id .. ' -> ' .. fallback) end
+      end
+    end
+    assert(#unknown == 0, 'unknown: ' .. table.concat(unknown, ', '))
+  end)
+
   check('lsp: lua_ls ignores unused _-prefixed locals', function(skip)
     if not executable('lua-language-server') then skip('lua-language-server not installed') end
     write('luals/u.lua', { 'local _x = 1', 'local y = 1' })
