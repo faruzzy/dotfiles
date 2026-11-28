@@ -267,6 +267,19 @@ local function run_checks()
     assert(#clashes == 0, table.concat(clashes, ', '))
   end)
 
+  -- If live-command's :g wrapper is named G, it takes fugitive's :G (E148) until fugitive loads,
+  -- and from then on :g/re/d runs git
+  check('commands: :g previews, :G stays fugitive', function()
+    require('lazy').load({ plugins = { 'live-command.nvim' } })
+    local ok, err = pcall(vim.cmd, 'G')
+    assert(ok or not tostring(err):find('E148'), ':G ran :g: ' .. tostring(err))
+    vim.cmd('silent! only | enew')
+    vim.api.nvim_buf_set_lines(0, 0, -1, false, { 'a', 'foo', 'b' })
+    feed(':g/foo/d<CR>')
+    local got = vim.api.nvim_buf_get_lines(0, 0, -1, false)
+    assert(vim.deep_equal(got, { 'a', 'b' }), ':g/foo/d left ' .. vim.inspect(got))
+  end)
+
   -- Regression: vim-graphql's indent read regex syntax, which treesitter turns off, so every new
   -- line drifted right; and an empty block parses as an ERROR (after/queries/graphql/indents.scm)
   check('indent: GraphQL blocks indent while typing', function()

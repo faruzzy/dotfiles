@@ -9,7 +9,8 @@ return {
   opts = {
     commands = {
       Norm = { cmd = 'norm' },
-      G = { cmd = 'g' },
+      -- Not G: that's fugitive's command
+      Global = { cmd = 'g' },
     },
   },
   init = function()
@@ -24,6 +25,6 @@ return {
     end
     alias('norm', 'Norm')
     alias('normal', 'Norm')
-    alias('g', 'G')
+    alias('g', 'Global')
   end,
 }
