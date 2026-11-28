@@ -8,43 +8,20 @@ return {
   config = function()
     require('catppuccin').setup({
       flavour = 'mocha',
-      term_colors = true, -- Setting for baleia.nvim
-      background = { light = 'latte', dark = 'macchiato' },
+      term_colors = true,
       custom_highlights = require('catppuccin_highlights').get_custom_highlights,
+      -- Hints have no underline (catppuccin_highlights.lua)
+      lsp_styles = {
+        underlines = {
+          errors = { 'undercurl' },
+          warnings = { 'undercurl' },
+          information = { 'undercurl' },
+        },
+      },
+      -- The rest are detected from the installed plugins; diffview-plus.nvim isn't
       integrations = {
-        cmp = true,
-        treesitter = true,
-        colorful_winsep = { enabled = true, color = 'blue' },
-        dap = true,
-        dap_ui = true,
         diffview = true,
-        fidget = true,
-        fzf = true,
-        gitsigns = true,
-        indent_blankline = {
-          enabled = true,
-          colored_indent_levels = false,
-          scope_color = 'blue',
-        },
-        native_lsp = {
-          enabled = true,
-          virtual_text = {
-            errors = { 'italic' },
-            warnings = { 'italic' },
-            hints = { 'italic' },
-            information = { 'italic' },
-          },
-          underlines = {
-            errors = { 'undercurl' },
-            hints = { 'undercurl' },
-            warnings = { 'undercurl' },
-            information = { 'undercurl' },
-          },
-        },
-        neotest = true,
-        notify = true,
-        symbols_outline = true,
-        treesitter_context = true,
+        indent_blankline = { scope_color = 'blue' },
       },
     })
 
