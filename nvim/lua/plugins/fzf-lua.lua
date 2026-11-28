@@ -18,8 +18,7 @@ return {
     opts = {
       winopts = {
         backdrop = 100,
-        border = 'rounded',
-        preview = { border = 'border-double', wrap = 'wrap', flip_columns = 160 },
+        preview = { wrap = 'wrap', flip_columns = 160 },
       },
       fzf_opts = {
         ['--border'] = 'none',

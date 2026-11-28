@@ -4,7 +4,7 @@ return {
   -- name = 'Fterm',
   config = function ()
     require'FTerm'.setup({
-      border = 'single',
+      border = vim.o.winborder, -- FTerm passes its own default ('single') otherwise
       dimensions  = {
         height = 0.9,
         width = 0.9,

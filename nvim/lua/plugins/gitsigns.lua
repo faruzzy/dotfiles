@@ -21,9 +21,6 @@ return {
       topdelete = { text = '‾' },
       changedelete = { text = '~' },
     },
-    preview_config = {
-      border = 'single',
-    },
     on_attach = function(bufnr)
       local gs = require('gitsigns')
 
