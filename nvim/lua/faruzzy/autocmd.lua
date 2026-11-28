@@ -157,8 +157,8 @@ augroup('mode_highlights', {
   },
 })
 
--- Set LSP hover border on attach
-augroup('lsp_hover_border', {
+-- LSP hover and signature help keys
+augroup('lsp_hover_keys', {
   {
     'LspAttach',
     callback = function(args)
