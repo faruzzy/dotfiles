@@ -156,7 +156,12 @@ local function run_checks()
   check('dap: JavaScript adapter points at an installed js-debug-adapter', function(skip)
     local adapter = require('dap').adapters['pwa-node']
     assert(adapter, 'no pwa-node adapter')
-    if not executable(adapter.executable.command) then skip('js-debug-adapter not installed') end
+    if executable(adapter.executable.command) then return end
+    assert(
+      not require('mason-registry').is_installed('js-debug-adapter'),
+      'js-debug-adapter is installed but the adapter runs ' .. adapter.executable.command
+    )
+    skip('js-debug-adapter not installed')
   end)
 
   check('autocmd: :w creates missing parent folders', function()
