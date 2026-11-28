@@ -65,9 +65,14 @@ return function(client, bufnr)
           last_lightbulb_line = line
           last_lightbulb_tick = tick
 
-          local params = vim.lsp.util.make_range_params(0, client.offset_encoding)
-          ---@diagnostic disable-next-line: inject-field
-          params.context = { diagnostics = vim.lsp.diagnostic.from(vim.diagnostic.get(bufnr, { lnum = line })) }
+          local diagnostics = vim.lsp.diagnostic.from(vim.diagnostic.get(bufnr, { lnum = line }))
+          -- Each server gets the range in its own position encoding
+          local function params(c)
+            local p = vim.lsp.util.make_range_params(0, c.offset_encoding)
+            ---@diagnostic disable-next-line: inject-field
+            p.context = { diagnostics = diagnostics }
+            return p
+          end
 
           vim.lsp.buf_request_all(bufnr, 'textDocument/codeAction', params, function(response)
             vim.api.nvim_buf_clear_namespace(bufnr, lightbulb_ns, 0, -1)
