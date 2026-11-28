@@ -28,7 +28,9 @@ return {
       sh = { 'shfmt' },
       python = { 'isort', 'black' },
       zig = { 'zigfmt' },
-      ['_'] = { 'trim_whitespace', 'trim_newlines' },
+      -- Then the language server formats, if one can (clangd, ruby-lsp, rust-analyzer…); with the
+      -- default 'fallback', these trims would count as formatters and the server would never run
+      ['_'] = { 'trim_whitespace', 'trim_newlines', lsp_format = 'last' },
     },
     formatters = {
       injected = {
@@ -46,7 +48,8 @@ return {
     format_on_save = function(bufnr)
       if vim.b[bufnr].disable_autoformat then return end
       if vim.fs.basename(vim.api.nvim_buf_get_name(bufnr)) == 'lazy-lock.json' then return end
-      return { timeout_ms = 5000, lsp_format = 'fallback' }
+      -- No lsp_format here: an explicit one overrides the per-filetype one in formatters_by_ft
+      return { timeout_ms = 5000 }
     end,
   },
 }

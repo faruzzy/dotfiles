@@ -280,6 +280,18 @@ local function run_checks()
     assert(vim.deep_equal(got, { 'a', 'b' }), ':g/foo/d left ' .. vim.inspect(got))
   end)
 
+  -- Without lsp_format = 'last' on conform's "_" entry, its trims count as formatters and the
+  -- 'fallback' language server never formats filetypes that have no formatter of their own
+  check('format: language server formats filetypes conform has no formatter for', function(skip)
+    if not executable('clangd') then skip('clangd not installed') end
+    write('fmt/a.c', 'int main(){int x=1;return x;}  ')
+    local buf = edit('fmt/a.c')
+    assert(wait_client(buf, 'clangd', 10000), 'clangd did not attach')
+    vim.cmd('silent write')
+    local got = vim.api.nvim_buf_get_lines(buf, 0, -1, false)
+    assert(#got > 1 and not got[#got]:find('%s$'), 'not formatted: ' .. vim.inspect(got))
+  end)
+
   -- Regression: vim-graphql's indent read regex syntax, which treesitter turns off, so every new
   -- line drifted right; and an empty block parses as an ERROR (after/queries/graphql/indents.scm)
   check('indent: GraphQL blocks indent while typing', function()
